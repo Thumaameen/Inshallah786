@@ -14,7 +14,6 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "incremental": true,
-    "ignoreDeprecations": "6.0",
     "tsBuildInfoFile": "./dist/.tsbuildinfo",
     "noEmitOnError": false,
     "isolatedModules": true,
