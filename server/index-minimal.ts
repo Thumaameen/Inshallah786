@@ -53,16 +53,52 @@ registerRoutes(app);
 
 // Serve static files in production
 const staticPath = join(process.cwd(), 'dist/public');
-app.use(express.static(staticPath));
+const fs = await import('fs');
 
-// Serve React app for non-API routes
-app.get('*', (req, res) => {
-  if (!req.path.startsWith('/api')) {
-    res.sendFile(join(staticPath, 'index.html'));
-  } else {
-    res.status(404).json({ error: 'API endpoint not found' });
-  }
-});
+// Check if dist exists, if not serve API-only mode
+if (fs.existsSync(staticPath)) {
+  app.use(express.static(staticPath));
+  
+  // Serve React app for non-API routes
+  app.get('*', (req, res) => {
+    if (!req.path.startsWith('/api')) {
+      const indexPath = join(staticPath, 'index.html');
+      if (fs.existsSync(indexPath)) {
+        res.sendFile(indexPath);
+      } else {
+        res.send('<h1>DHA API Server Running</h1><p>Frontend not built yet. API endpoints available at /api/*</p>');
+      }
+    } else {
+      res.status(404).json({ error: 'API endpoint not found' });
+    }
+  });
+} else {
+  console.log('⚠️  Frontend not built - serving API-only mode');
+  app.get('*', (req, res) => {
+    if (!req.path.startsWith('/api')) {
+      res.send(`
+        <html>
+          <head><title>DHA API Server</title></head>
+          <body style="font-family: Arial; padding: 40px; background: #0a0a0a; color: white;">
+            <h1>🇿🇦 DHA Digital Services API Server</h1>
+            <p>✅ Server is running successfully</p>
+            <p>⚠️ Frontend not built yet</p>
+            <p>Run: <code>npm run build:client</code> to build the frontend</p>
+            <h2>Available API Endpoints:</h2>
+            <ul>
+              <li>/api/health - Health check</li>
+              <li>/api/ai/chat - AI Assistant</li>
+              <li>/api/auth/* - Authentication</li>
+              <li>/api/documents/* - Document services</li>
+            </ul>
+          </body>
+        </html>
+      `);
+    } else {
+      res.status(404).json({ error: 'API endpoint not found' });
+    }
+  });
+}
 
 // API status endpoint for non-API routes
 app.get('*', (req, res) => {
