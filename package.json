@@ -7,7 +7,7 @@
     "npm": ">=9.0.0"
   },
   "scripts": {
-    "start": "node dist/server/index-minimal.js",
+    "start": "tsx server/index-minimal.ts",
     "dev": "tsx server/index-minimal.ts",
     "build": "npm run clean && npm run build:client && npm run build:server",
     "build:client": "cd client && npm install --include=dev && npm run build",
