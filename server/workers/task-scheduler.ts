@@ -1,4 +1,5 @@
-import cron from 'node-cron';
+import type * as cron from 'node-cron';
+import { schedule } from 'node-cron';
 import { promises as fs } from 'fs';
 import path from 'path';
 
@@ -38,8 +39,8 @@ class TaskScheduler {
     }
 
     start() {
-        for (const { schedule, name, task } of this.tasks) {
-            cron.schedule(schedule, async () => {
+        for (const { schedule: schedulePattern, name, task } of this.tasks) {
+            schedule(schedulePattern, async () => {
                 try {
                     console.log(`Running task: ${name}`);
                     await task();

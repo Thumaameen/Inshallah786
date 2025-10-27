@@ -350,4 +350,5 @@ if (!isMainThread && parentPort) {
   console.log('[MetricsWorker] Worker ready for commands');
 }
 
-export { HighFrequencyMetricsWorker, WorkerConfig, MetricsSample, SHARED_BUFFER_INDICES };
+export { HighFrequencyMetricsWorker, SHARED_BUFFER_INDICES };
+export type { WorkerConfig, MetricsSample };
