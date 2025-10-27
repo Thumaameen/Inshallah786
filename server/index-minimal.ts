@@ -51,6 +51,19 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 // Register routes
 registerRoutes(app);
 
+// Serve static files in production
+const staticPath = join(process.cwd(), 'dist/public');
+app.use(express.static(staticPath));
+
+// Serve React app for non-API routes
+app.get('*', (req, res) => {
+  if (!req.path.startsWith('/api')) {
+    res.sendFile(join(staticPath, 'index.html'));
+  } else {
+    res.status(404).json({ error: 'API endpoint not found' });
+  }
+});
+
 // API status endpoint for non-API routes
 app.get('*', (req, res) => {
   if (!req.path.startsWith('/api')) {

@@ -1,28 +1,21 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "target": "ES2020",
+    "module": "ESNext",
+    "lib": ["ES2020"],
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": false,
     "esModuleInterop": true,
     "strict": false,
-    "skipLibCheck": true,
-    "outDir": "dist",
-    "rootDir": ".",
-    "baseUrl": ".",
-    "allowJs": true,
-    "resolveJsonModule": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "incremental": true,
-    "tsBuildInfoFile": "./dist/.tsbuildinfo",
-    "noEmitOnError": false,
-    "isolatedModules": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
-    "paths": {
-      "*": ["node_modules/*", "src/*", "server/*"],
-      "@shared/*": ["shared/*"]
-    }
+    "noEmitOnError": false,
+    "outDir": "./dist"
   },
   "include": [
     "server/index-minimal.ts",
