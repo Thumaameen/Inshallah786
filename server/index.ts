@@ -38,7 +38,7 @@ const apiOverride = {
 
 // Real service imports
 import { storage } from './storage.js';
-import { registerRoutes } from './routes.js';
+import { registerRoutes } from './routes-simple.js';
 // import { setupVite } from './vite.js'; // Removed Vite import
 import { validateRailwayConfig } from './config/railway.js';
 import { initializeDatabase } from './config/database-railway.js';

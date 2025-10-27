@@ -7,7 +7,7 @@ import { securityCorrelationEngine } from './security-correlation-engine.js';
 import { intelligentAlertingService } from './intelligent-alerting-service.js';
 import { queenUltraAiService } from './queen-ultra-ai.js';
 import { selfHealingMonitor } from './self-healing-monitor.js';
-import { type InsertSecurityEvent, type InsertAuditLog, type InsertSystemMetric } from '@shared/schema';
+import { type InsertSecurityEvent, type InsertAuditLog, type InsertSystemMetric } from '../../shared/schema/index.js';
 import { performance } from 'perf_hooks';
 import crypto from 'crypto';
 

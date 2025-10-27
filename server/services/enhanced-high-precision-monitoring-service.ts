@@ -30,7 +30,7 @@ import { storage } from '../storage.js';
 import { enhancedSecurityResponseService } from './enhanced-security-response.js';
 import { monitoringHooksService } from './monitoring-hooks.js';
 import { databaseFallbackService } from './database-fallback-service.js';
-import { type InsertSecurityEvent, type InsertSystemMetric, type InsertSelfHealingAction } from '@shared/schema';
+import { type InsertSecurityEvent, type InsertSystemMetric, type InsertSelfHealingAction } from '../../shared/schema/index.js';
 
 interface HighPrecisionRequestMetrics {
   requestId: string;

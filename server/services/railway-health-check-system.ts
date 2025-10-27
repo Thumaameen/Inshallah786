@@ -17,7 +17,7 @@ import { selfHealingService } from './self-healing-service.js';
 import { queenUltraAI } from './queen-ultra-ai.js';
 import { productionHealthCheck } from './production-health-check.js';
 import { railwayAutoScalingService } from './railway-auto-scaling-service.js';
-import { type InsertSystemMetric, type InsertSecurityEvent, type InsertSelfHealingAction } from '@shared/schema';
+import { type InsertSystemMetric, type InsertSecurityEvent, type InsertSelfHealingAction } from '../../shared/schema/index.js';
 
 interface HealthCheckResult {
   service: string;

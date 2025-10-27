@@ -7,7 +7,7 @@ import { intelligentAlertingService } from "./intelligent-alerting-service.js";
 import { webSocketMonitoringService } from "./websocket-monitoring.js";
 import { storage } from "../storage.js";
 import { db, pool, getConnectionStatus } from "../db.js";
-import { type InsertAutonomousOperation } from "@shared/schema";
+import { type InsertAutonomousOperation } from '../../shared/schema/index.js';
 import { Server } from "http";
 
 export interface MonitoringConfig {

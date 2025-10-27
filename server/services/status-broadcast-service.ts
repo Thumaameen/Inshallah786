@@ -1,8 +1,8 @@
 import { getWebSocketService } from "../websocket.js";
 import { storage } from "../storage.js";
 import { notificationService } from "./notification-service.js";
-import { EventType, NotificationCategory, NotificationPriority } from "@shared/schema";
-import type { StatusUpdate, Document, DhaApplication } from "@shared/schema";
+import { EventType, NotificationCategory, NotificationPriority } from '../../shared/schema/index.js';
+import type { StatusUpdate, Document, DhaApplication } from '../../shared/schema/index.js';
 
 export interface StatusBroadcast {
   entityType: string;

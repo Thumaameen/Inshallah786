@@ -70,7 +70,7 @@ import type {
   PermanentResidencePermitData,
   CertificateOfExemptionData,
   CertificateOfSouthAfricanCitizenshipData
-} from "@shared/schema";
+} from '../../shared/schema/index.js';
 
 const DOCUMENTS_DIR = process.env.DOCUMENTS_DIR || "./documents";
 

@@ -19,7 +19,7 @@ import type {
   InsertDocumentVerificationRecord, 
   InsertDocumentVerificationHistory,
   DocumentVerificationRecord
-} from '@shared/schema';
+} from '../../shared/schema/index.js';
 
 interface BlockchainTransaction {
   transactionId: string;

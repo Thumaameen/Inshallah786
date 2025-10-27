@@ -3,7 +3,7 @@ import { getWebSocketService } from "../websocket.js";
 import { notificationService } from "./notification-service.js";
 import { monitoringService } from "./monitoring.js";
 import { fraudDetectionService } from "./fraud-detection.js";
-import { NotificationCategory, NotificationPriority, EventType } from "@shared/schema";
+import { NotificationCategory, NotificationPriority, EventType } from '../../shared/schema/index.js';
 import type { 
   NotificationEvent, 
   User,
@@ -11,7 +11,7 @@ import type {
   FraudAlert,
   ErrorLog,
   Document 
-} from "@shared/schema";
+} from '../../shared/schema/index.js';
 
 export interface AdminNotificationRule {
   id: string;

@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import { storage } from "../storage.js";
-import { InsertAuditLog } from "@shared/schema";
+import { InsertAuditLog } from '../../shared/schema/index.js';
 import { privacyProtectionService } from "./privacy-protection.js";
 
 /**

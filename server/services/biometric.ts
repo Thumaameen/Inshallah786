@@ -1,5 +1,5 @@
 import { storage } from "../storage.js";
-import { InsertBiometricProfile } from "@shared/schema";
+import { InsertBiometricProfile } from '../../shared/schema/index.js';
 import CryptoJS from "crypto-js";
 
 const BIOMETRIC_ENCRYPTION_KEY = process.env.BIOMETRIC_ENCRYPTION_KEY || 'dev-biometric-key-for-testing-only-12345678901234567890123456789012';

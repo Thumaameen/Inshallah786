@@ -1,5 +1,5 @@
 import { storage } from "../storage.js";
-import { InsertFraudAlert, InsertSecurityEvent } from "@shared/schema";
+import { InsertFraudAlert, InsertSecurityEvent } from '../../shared/schema/index.js';
 import { auditTrailService } from "./audit-trail-service.js";
 import { securityCorrelationEngine } from "./security-correlation-engine.js";
 import { EventEmitter } from "events";

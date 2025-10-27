@@ -1,7 +1,7 @@
 import { createHash, randomBytes, createCipheriv, createDecipheriv, createHmac, pbkdf2Sync } from 'crypto';
 import { Request } from 'express';
 import { storage } from '../storage.js';
-import { insertSecurityEventSchema, insertSecurityIncidentSchema } from '@shared/schema';
+import { insertSecurityEventSchema, insertSecurityIncidentSchema } from '../../shared/schema/index.js';
 // Lazy load military services to prevent circular dependencies and initialization issues
 // These will be imported when actually needed
 // import { militarySecurityService } from './military-security.js';

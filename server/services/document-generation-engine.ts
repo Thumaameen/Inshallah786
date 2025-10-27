@@ -16,7 +16,7 @@ import * as crypto from 'crypto';
 import { z } from 'zod';
 import { nanoid } from 'nanoid';
 import { storage } from '../storage.js';
-import { AuditAction } from '@shared/schema';
+import { AuditAction } from '../../shared/schema/index.js';
 import { OfficialDHAAPIClient } from './official-dha-api.js';
 import type {
   IdentityVerificationResponse,

@@ -4,7 +4,7 @@ import {
   dhaDocuments, 
   dhaDocumentVerifications,
   DHA_DOCUMENT_TYPES
-} from "@shared/schema";
+} from '../../shared/schema/index.js';
 import { sql } from "drizzle-orm";
 
 async function seedDhaData() {

@@ -25,11 +25,23 @@
     }
   },
   "include": [
-    "server/**/*",
-    "src/**/*"
+    "server/index-minimal.ts",
+    "server/routes-simple.ts",
+    "server/storage/postgresql-storage.ts",
+    "server/storage/db.ts",
+    "server/db.ts",
+    "shared/schema/index.ts"
   ],
   "exclude": [
     "node_modules",
-    "dist"
+    "dist",
+    "server/services",
+    "server/workers",
+    "server/routes",
+    "server/middleware",
+    "server/utils",
+    "server/seed-*.ts",
+    "server/database-migration.ts",
+    "server/startup-health-checks.ts"
   ]
 }

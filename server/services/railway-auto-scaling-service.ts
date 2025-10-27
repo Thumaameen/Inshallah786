@@ -17,7 +17,7 @@ import { storage } from '../storage.js';
 import { enhancedHighPrecisionMonitoringService } from './enhanced-high-precision-monitoring-service.js';
 import { queenUltraAI } from './queen-ultra-ai.js';
 import { railwayAPI, RAILWAY_SERVICE_CONFIG } from '../config/railway-api.js';
-import { type InsertSystemMetric, type InsertSelfHealingAction } from '@shared/schema';
+import { type InsertSystemMetric, type InsertSelfHealingAction } from '../../shared/schema/index.js';
 
 interface ScalingMetrics {
   timestamp: Date;

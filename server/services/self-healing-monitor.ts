@@ -8,7 +8,7 @@ import { auditTrailService } from './audit-trail-service.js';
 import { fraudDetectionService } from './fraud-detection.js';
 import { intelligentAlertingService } from './intelligent-alerting-service.js';
 import { queenUltraAiService } from './queen-ultra-ai.js';
-import { type InsertAuditLog, type InsertSystemMetric, type InsertSecurityEvent } from '@shared/schema';
+import { type InsertAuditLog, type InsertSystemMetric, type InsertSecurityEvent } from '../../shared/schema/index.js';
 import os from 'os';
 import { performance } from 'perf_hooks';
 import cluster from 'cluster';

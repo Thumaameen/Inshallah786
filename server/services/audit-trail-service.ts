@@ -1,5 +1,5 @@
 import { storage } from "../storage.js";
-import { type InsertAuditLog, type InsertComplianceEvent, AuditAction, ComplianceEventType } from "@shared/schema";
+import { type InsertAuditLog, type InsertComplianceEvent, AuditAction, ComplianceEventType } from '../../shared/schema/index.js';
 import { EventEmitter } from "events";
 
 export interface AuditContext {

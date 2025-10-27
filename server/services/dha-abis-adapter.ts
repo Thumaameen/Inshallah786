@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import { storage } from "../storage.js";
-import { InsertDhaVerification, InsertDhaAuditEvent } from "@shared/schema";
+import { InsertDhaVerification, InsertDhaAuditEvent } from '../../shared/schema/index.js';
 import { privacyProtectionService } from "./privacy-protection.js";
 import { createSecureGovernmentClient } from "./secure-mtls-client.js";
 
