@@ -7,6 +7,9 @@ import { dirname, join } from 'path';
 import { createServer } from 'http';
 import dotenv from 'dotenv';
 
+// Load environment variables first
+dotenv.config();
+
 import {
   universalAPIOverrideMiddleware,
   selfHealingErrorHandler,
@@ -39,13 +42,15 @@ const apiOverride = {
 // Real service imports
 import { storage } from './storage.js';
 import { registerRoutes } from './routes-simple.js';
-// import { setupVite } from './vite.js'; // Removed Vite import
 import { validateRailwayConfig } from './config/railway.js';
 import { initializeDatabase } from './config/database-railway.js';
 
-// Ultra-advanced PDF routes import (commented out due to syntax errors)
-// import { ultraPDFRoutes } from './routes/ultra-pdf-api.js';
-// import { governmentPrintIntegration } from './services/government-print-integration.js';
+// Critical service imports
+import { documentPdfFacade } from './services/document-pdf-facade.js';
+import { authenticPDFGenerationService } from './services/authentic-pdf-generation.js';
+import { dhaDocumentGenerator } from './services/dha-document-generator.js';
+import { universalAPIManager } from './services/universal-api-manager.js';
+import { queenUltraAiService } from './services/queen-ultra-ai.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -214,6 +219,10 @@ app.use(apiKeyStatusRoutes);
 // Register comprehensive API status routes
 import apiStatusRoutes from './routes/api-status.js';
 app.use(apiStatusRoutes);
+
+// Register core features verification
+import coreFeaturesRoutes from './routes/core-features.js';
+app.use(coreFeaturesRoutes);
 
 // Initialize Universal API Manager
 import { universalAPIManager } from './services/universal-api-manager.js';
