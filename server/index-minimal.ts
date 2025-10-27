@@ -57,64 +57,69 @@ const fs = await import('fs');
 
 // Check if dist exists, if not serve API-only mode
 if (fs.existsSync(staticPath)) {
-  app.use(express.static(staticPath));
+  console.log('✅ Serving static files from:', staticPath);
   
-  // Serve React app for non-API routes
+  // Serve static files with proper cache headers
+  app.use(express.static(staticPath, {
+    maxAge: '1d',
+    etag: true,
+    lastModified: true
+  }));
+  
+  // Serve React app for non-API routes (SPA fallback)
   app.get('*', (req, res) => {
-    if (!req.path.startsWith('/api')) {
-      const indexPath = join(staticPath, 'index.html');
-      if (fs.existsSync(indexPath)) {
-        res.sendFile(indexPath);
-      } else {
-        res.send('<h1>DHA API Server Running</h1><p>Frontend not built yet. API endpoints available at /api/*</p>');
-      }
+    // Don't serve HTML for API routes
+    if (req.path.startsWith('/api')) {
+      return res.status(404).json({ error: 'API endpoint not found' });
+    }
+    
+    // Serve index.html for all other routes (React Router will handle routing)
+    const indexPath = join(staticPath, 'index.html');
+    if (fs.existsSync(indexPath)) {
+      res.sendFile(indexPath);
     } else {
-      res.status(404).json({ error: 'API endpoint not found' });
+      res.status(503).send(`
+        <html>
+          <head><title>DHA Services - Building</title></head>
+          <body style="font-family: Arial; padding: 40px; background: #0a0a0a; color: white;">
+            <h1>🇿🇦 DHA Digital Services</h1>
+            <p>⚠️ Frontend is being built...</p>
+            <p>API is running at <a href="/api/health" style="color: #4CAF50;">/api/health</a></p>
+          </body>
+        </html>
+      `);
     }
   });
 } else {
   console.log('⚠️  Frontend not built - serving API-only mode');
+  console.log('💡 Run: ./build-client.sh or npm run build:client');
+  
+  // Serve helpful message for non-API routes
   app.get('*', (req, res) => {
-    if (!req.path.startsWith('/api')) {
-      res.send(`
-        <html>
-          <head><title>DHA API Server</title></head>
-          <body style="font-family: Arial; padding: 40px; background: #0a0a0a; color: white;">
-            <h1>🇿🇦 DHA Digital Services API Server</h1>
-            <p>✅ Server is running successfully</p>
-            <p>⚠️ Frontend not built yet</p>
-            <p>Run: <code>npm run build:client</code> to build the frontend</p>
-            <h2>Available API Endpoints:</h2>
-            <ul>
-              <li>/api/health - Health check</li>
-              <li>/api/ai/chat - AI Assistant</li>
-              <li>/api/auth/* - Authentication</li>
-              <li>/api/documents/* - Document services</li>
-            </ul>
-          </body>
-        </html>
-      `);
-    } else {
-      res.status(404).json({ error: 'API endpoint not found' });
+    if (req.path.startsWith('/api')) {
+      return res.status(404).json({ error: 'API endpoint not found' });
     }
+    
+    res.send(`
+      <html>
+        <head><title>DHA API Server</title></head>
+        <body style="font-family: Arial; padding: 40px; background: #0a0a0a; color: white;">
+          <h1>🇿🇦 DHA Digital Services API Server</h1>
+          <p>✅ Server is running successfully</p>
+          <p>⚠️ Frontend not built yet</p>
+          <p>Run: <code>./build-client.sh</code> or <code>npm run build:client</code></p>
+          <h2>Available API Endpoints:</h2>
+          <ul>
+            <li><a href="/api/health" style="color: #4CAF50;">/api/health</a> - Health check</li>
+            <li>/api/ai/chat - AI Assistant</li>
+            <li>/api/auth/* - Authentication</li>
+            <li>/api/documents/* - Document services</li>
+          </ul>
+        </body>
+      </html>
+    `);
   });
 }
-
-// API status endpoint for non-API routes
-app.get('*', (req, res) => {
-  if (!req.path.startsWith('/api')) {
-    res.json({
-      message: 'DHA Digital Services API',
-      version: '2.0.0',
-      status: 'running',
-      endpoints: {
-        health: '/api/health',
-        auth: '/api/auth/login, /api/auth/register',
-        ai: '/api/ai/chat'
-      }
-    });
-  }
-});
 
 // Start server
 server.listen(PORT, HOST, () => {
