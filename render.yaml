@@ -5,10 +5,14 @@ services:
     region: frankfurt
     plan: pro
     buildCommand: |
+      export NODE_VERSION=20.18.1
+      curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+      export NVM_DIR="$HOME/.nvm"
+      [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+      nvm install 20.18.1
+      nvm use 20.18.1
       npm install
       npm run build
-      chmod +x render-build.sh
-      ./render-build.sh
     startCommand: NODE_ENV=production node dist/server/index.js
     healthCheckPath: /api/health
     autoDeploy: true

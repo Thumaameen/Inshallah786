@@ -9,13 +9,27 @@ echo "========================="
 export NODE_ENV=production
 export NODE_VERSION=20.18.1
 
+# Install and use correct Node.js version
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+nvm install 20.18.1
+nvm use 20.18.1
+
+# Force npm to ignore engine restrictions
+export npm_config_engine_strict=false
+export npm_config_force=true
+
 # Verify Node version
 echo "🔍 Node.js version:"
 node -v
 
 # Clean install dependencies
 echo "📦 Installing dependencies..."
-npm install --no-audit --no-fund
+npm install --no-audit --no-fund --legacy-peer-deps --ignore-engines || {
+    echo "⚠️ Initial install failed, retrying with legacy peer deps..."
+    npm install --legacy-peer-deps --ignore-engines --no-audit
+}
 
 # Prepare build directory
 echo "🧹 Preparing build directory..."
