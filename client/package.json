@@ -5,7 +5,8 @@
   "scripts": {
     "build": "vite build",
     "dev": "vite",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "install:deps": "npm install --include=dev"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",

@@ -10,7 +10,7 @@
     "start": "node dist/server/index-minimal.js",
     "dev": "tsx server/index-minimal.ts",
     "build": "npm run clean && npm run build:client && npm run build:server",
-    "build:client": "cd client && npm install && npm run build",
+    "build:client": "cd client && npm install --include=dev && npm run build",
     "build:server": "tsc -p tsconfig.json --skipLibCheck --noEmitOnError false || echo 'Build completed with warnings'",
     "clean": "rm -rf dist",
     "validate": "node ai-validation-suite.cjs",
