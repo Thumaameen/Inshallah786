@@ -3,7 +3,7 @@ import * as crypto from 'crypto';
 import { RateLimiterMemory } from 'rate-limiter-flexible';
 import { z } from 'zod';
 import { storage } from '../storage.js';
-import { AuditAction } from '@shared/schema';
+import { AuditAction } from '../../shared/schema/index.js';
 
 /**
  * 🏛️ OFFICIAL DHA API INTEGRATION MODULE

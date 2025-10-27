@@ -1,16 +1,14 @@
 
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import themePlugin from "@replit/vite-plugin-shadcn-theme-json";
 import path, { dirname } from "path";
-import runtimeErrorModal from "@replit/vite-plugin-runtime-error-modal";
 import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 export default defineConfig({
-  plugins: [react(), themePlugin(), runtimeErrorModal()],
+  plugins: [react()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src"),
@@ -39,5 +37,12 @@ export default defineConfig({
     host: '0.0.0.0',
     port: 5173,
     strictPort: false,
+    proxy: {
+      '/api': {
+        target: 'http://0.0.0.0:5000',
+        changeOrigin: true,
+        secure: false
+      }
+    }
   },
 });

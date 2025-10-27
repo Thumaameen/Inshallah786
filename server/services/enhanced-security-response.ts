@@ -7,7 +7,7 @@
 import { EventEmitter } from 'events';
 // import { storage } from '../storage.js'; // Replaced with database fallback service
 import { databaseFallbackService } from './database-fallback-service.js';
-import { type InsertSecurityIncident, type InsertSecurityEvent, type InsertSelfHealingAction } from '@shared/schema';
+import { type InsertSecurityIncident, type InsertSecurityEvent, type InsertSelfHealingAction } from '../../shared/schema/index.js';
 
 interface ThreatData {
   type: string;

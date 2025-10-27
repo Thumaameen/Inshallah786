@@ -1,5 +1,5 @@
 import { storage } from "../storage.js";
-import { InsertDocument } from "@shared/schema";
+import { InsertDocument } from '../../shared/schema/index.js';
 import multer from "multer";
 import path from "path";
 import fs from "fs/promises";

@@ -16,14 +16,6 @@ localPort = 5000
 externalPort = 80
 
 [[ports]]
-localPort = 41631
-externalPort = 8008
-
-[[ports]]
-localPort = 42489
-externalPort = 8080
-
-[[ports]]
 localPort = 43101
 externalPort = 5173
 
@@ -52,7 +44,7 @@ integrations = ["javascript_database:1.0.0", "javascript_openai:1.0.0", "javascr
 expertMode = true
 
 [workflows]
-runButton = "Production Server"
+runButton = "Project"
 
 [[workflows.workflow]]
 name = "Simple "
@@ -1037,13 +1029,13 @@ args = "NODE_ENV=production PORT=5000 npm start"
 name = "Server"
 author = "agent"
 
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npm run dev"
-waitForPort = 5000
-
 [workflows.workflow.metadata]
 outputType = "webview"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm start"
+waitForPort = 5000
 
 [[workflows.workflow]]
 name = "Dev Server"

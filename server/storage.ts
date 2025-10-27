@@ -1,7 +1,7 @@
 // PostgreSQL Storage Implementation for Railway Deployment
 // This replaces the volatile MemStorage with persistent PostgreSQL database
 
-import { PostgreSQLStorage } from "./postgresql-storage.js";
+import { PostgreSQLStorage } from "./storage/postgresql-storage.js";
 
 // Export the storage interface for backward compatibility
 export interface IStorage {
@@ -182,17 +182,12 @@ console.log('🔧 DHA tables are now accessible through the database');
 
 // Re-export types for backward compatibility
 export type {
-  User, InsertUser,
-  Conversation, InsertConversation,
-  Message, InsertMessage,
-  Document, InsertDocument,
-  SecurityEvent, InsertSecurityEvent,
-  FraudAlert, InsertFraudAlert,
-  SystemMetric, InsertSystemMetric,
-  AuditLog, InsertAuditLog,
-  ComplianceEvent, InsertComplianceEvent,
-  UserBehaviorProfile, InsertUserBehaviorProfile,
-  AiBotSession, InsertAiBotSession,
-  AiCommandInterface, InsertAiCommandInterface,
-  AiBotMode, AiCommandStatus
-} from "@shared/schema";
+  DhaDocumentVerification,
+  InsertDhaDocumentVerification,
+  VerificationSession,
+  InsertVerificationSession,
+  ApiAccess,
+  InsertApiAccess,
+  VerificationHistory,
+  InsertVerificationHistory
+} from "../shared/schema/index.js";

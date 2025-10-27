@@ -10,7 +10,7 @@ import type {
   InsertAiDocumentSession,
   DocumentAutoFillTemplate,
   OcrFieldDefinition
-} from "@shared/schema";
+} from '../../shared/schema/index.js';
 
 export interface AIDocumentUpload {
   file: Express.Multer.File;

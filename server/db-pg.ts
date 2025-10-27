@@ -1,6 +1,6 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
-import * as schema from "@shared/schema";
+import * as schema from '../../shared/schema/index.js';
 
 // Get DATABASE_URL from environment - critical for Railway deployment
 let databaseUrl = process.env.DATABASE_URL;

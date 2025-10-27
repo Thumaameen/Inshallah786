@@ -6,7 +6,7 @@ import { enhancedMonitoringService } from './enhanced-monitoring-service.js';
 import { auditTrailService } from './audit-trail-service.js';
 import { selfHealingMonitor } from './self-healing-monitor.js';
 import { queenUltraAiService } from './queen-ultra-ai.js';
-import { type InsertAuditLog, type InsertSystemMetric, type InsertSecurityEvent } from '@shared/schema';
+import { type InsertAuditLog, type InsertSystemMetric, type InsertSecurityEvent } from '../../shared/schema/index.js';
 import { performance } from 'perf_hooks';
 import fs from 'fs/promises';
 import path from 'path';

@@ -7,7 +7,7 @@ import { selfHealingMonitor } from './self-healing-monitor.js';
 import { autoErrorCorrection } from './auto-error-correction.js';
 import { instantSecurityResponse } from './instant-security-response.js';
 import { queenUltraAiService } from './queen-ultra-ai.js';
-import { type InsertSystemMetric, type InsertAuditLog, type InsertSecurityEvent } from '@shared/schema';
+import { type InsertSystemMetric, type InsertAuditLog, type InsertSecurityEvent } from '../../shared/schema/index.js';
 import { performance } from 'perf_hooks';
 import os from 'os';
 import fs from 'fs/promises';

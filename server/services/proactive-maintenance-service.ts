@@ -4,7 +4,7 @@ import { autonomousMonitoringBot } from "./autonomous-monitoring-bot.js";
 import { selfHealingService } from "./self-healing-service.js";
 import { optimizedCacheService } from "./optimized-cache.js";
 import { getConnectionStatus, db } from "../db.js";
-import { type InsertMaintenanceTask, type InsertAutonomousOperation, type InsertPerformanceBaseline } from "@shared/schema";
+import { type InsertMaintenanceTask, type InsertAutonomousOperation, type InsertPerformanceBaseline } from '../../shared/schema/index.js';
 // Removed node-cron dependency - using standard timers instead
 import os from "os";
 import fs from "fs/promises";

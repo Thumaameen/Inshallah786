@@ -20,7 +20,7 @@ import { zeroDowntimeDeployment } from './zero-downtime-deployment.js';
 import { queenUltraAI } from './queen-ultra-ai.js';
 import { selfHealingService } from './self-healing-service.js';
 import { enhancedHighPrecisionMonitoringService } from './enhanced-high-precision-monitoring-service.js';
-import { type InsertSystemMetric, type InsertSecurityEvent, type InsertSelfHealingAction } from '@shared/schema';
+import { type InsertSystemMetric, type InsertSecurityEvent, type InsertSelfHealingAction } from '../../shared/schema/index.js';
 
 interface MonitoringAlert {
   id: string;

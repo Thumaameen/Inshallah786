@@ -185,7 +185,7 @@ class ThreatDetectionWorker {
   ): Promise<Omit<ThreatAnalysisResult, 'responseTime' | 'detectionTime'>> {
     
     // Implement time-boxed analysis to enforce latency budget
-    const budgetPromise = new Promise<ThreatAnalysisResult>((resolve, reject) => {
+    const budgetPromise = new Promise<Omit<ThreatAnalysisResult, 'responseTime' | 'detectionTime'>>((resolve, reject) => {
       const timeoutId = setTimeout(() => {
         reject(new Error(`Analysis exceeded ${this.config.latencyBudget}ms budget`));
       }, this.config.latencyBudget);
@@ -526,4 +526,5 @@ if (!isMainThread && parentPort) {
   console.log('[ThreatWorker] Worker ready for threat analysis');
 }
 
-export { ThreatDetectionWorker, ThreatDetectionConfig, ThreatAnalysisRequest, ThreatAnalysisResult };
+export { ThreatDetectionWorker };
+export type { ThreatDetectionConfig, ThreatAnalysisRequest, ThreatAnalysisResult };

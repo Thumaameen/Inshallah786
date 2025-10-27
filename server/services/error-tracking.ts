@@ -1,5 +1,5 @@
 import { storage } from "../storage.js";
-import { type InsertErrorLog, type ErrorLog } from "@shared/schema";
+import { type InsertErrorLog, type ErrorLog } from '../../shared/schema/index.js';
 import os from "os";
 import { EventEmitter } from "events";
 import { privacyProtectionService } from "./privacy-protection.js";

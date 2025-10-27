@@ -1,12 +1,18 @@
 import { EventEmitter } from 'events';
 import type { 
-  ErrorCorrection,
-  InsertErrorCorrection,
-  HealthCheckResult,
-  InsertHealthCheckResult
-} from '../shared/schema.js';
-import { db } from './db.js';
-import { Logger } from '../utils/logger.js';
+  DhaDocumentVerification,
+  InsertDhaDocumentVerification
+} from '../../shared/schema/index.js';
+import { db } from '../db.js';
+
+// Simple logger stub
+class Logger {
+  constructor(private context: string) {}
+  info(...args: any[]) { console.log(`[${this.context}]`, ...args); }
+  error(...args: any[]) { console.error(`[${this.context}]`, ...args); }
+  warn(...args: any[]) { console.warn(`[${this.context}]`, ...args); }
+  debug(...args: any[]) { console.debug(`[${this.context}]`, ...args); }
+}
 
 const logger = new Logger('self-healing-error-handler');
 

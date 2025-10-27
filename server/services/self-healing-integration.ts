@@ -7,7 +7,7 @@ import { zeroDowntimeManager } from './zero-downtime-manager.js';
 import { queenUltraAiService } from './queen-ultra-ai.js';
 import { auditTrailService } from './audit-trail-service.js';
 import { storage } from '../storage.js';
-import { type InsertAuditLog, type InsertSystemMetric } from '@shared/schema';
+import { type InsertAuditLog, type InsertSystemMetric } from '../../shared/schema/index.js';
 
 export interface SelfHealingStatus {
   overall: 'active' | 'degraded' | 'critical' | 'offline';

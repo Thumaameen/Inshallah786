@@ -13,7 +13,7 @@ import { EventEmitter } from 'events';
 import { performance } from 'perf_hooks';
 import { storage } from '../storage.js';
 import { railwayAutoScalingService } from './railway-auto-scaling-service.js';
-import { type InsertSystemMetric, type InsertSelfHealingAction } from '@shared/schema';
+import { type InsertSystemMetric, type InsertSelfHealingAction } from '../../shared/schema/index.js';
 
 interface ConnectionPoolConfig {
   minConnections: number;

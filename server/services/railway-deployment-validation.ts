@@ -19,7 +19,7 @@ import { enhancedDatabasePooling } from './enhanced-database-pooling.js';
 import { zeroDowntimeDeployment } from './zero-downtime-deployment.js';
 import { railwayMonitoringIntegration } from './railway-monitoring-integration.js';
 import { queenUltraAI } from './queen-ultra-ai.js';
-import { type InsertSystemMetric, type InsertSelfHealingAction } from '@shared/schema';
+import { type InsertSystemMetric, type InsertSelfHealingAction } from '../../shared/schema/index.js';
 
 interface ValidationResult {
   test_name: string;

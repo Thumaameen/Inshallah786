@@ -10,7 +10,7 @@ import { securityCorrelationEngine } from "./security-correlation-engine.js";
 import { intelligentAlertingService } from "./intelligent-alerting-service.js";
 import { privacyProtectionService } from "./privacy-protection.js";
 import { getConnectionStatus } from "../db.js";
-import { type InsertAutonomousOperation, type InsertSystemHealthSnapshot, type InsertIncident, type InsertAlertRule, type InsertMaintenanceTask, type InsertCircuitBreakerState, type InsertGovernmentComplianceAudit, type InsertPerformanceBaseline } from "@shared/schema";
+import { type InsertAutonomousOperation, type InsertSystemHealthSnapshot, type InsertIncident, type InsertAlertRule, type InsertMaintenanceTask, type InsertCircuitBreakerState, type InsertGovernmentComplianceAudit, type InsertPerformanceBaseline } from '../../shared/schema/index.js';
 import os from "os";
 // Removed node-cron dependency - using standard timers instead
 

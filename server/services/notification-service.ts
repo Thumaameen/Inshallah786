@@ -1,13 +1,13 @@
 import { storage } from "../storage.js";
 import { getWebSocketService } from "../websocket.js";
-import { NotificationCategory, NotificationPriority, EventType } from "@shared/schema";
+import { NotificationCategory, NotificationPriority, EventType } from '../../shared/schema/index.js';
 import type { 
   NotificationEvent, 
   InsertNotificationEvent, 
   UserNotificationPreferences,
   StatusUpdate,
   InsertStatusUpdate
-} from "@shared/schema";
+} from '../../shared/schema/index.js';
 
 export interface NotificationPayload {
   userId?: string;

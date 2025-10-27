@@ -6,7 +6,7 @@
 import { EventEmitter } from 'events';
 import { db, getConnectionStatus } from '../db.js';
 import { storage } from '../storage.js';
-import { type InsertSystemMetric, type InsertSecurityEvent, type InsertAuditLog, type InsertSelfHealingAction } from '@shared/schema';
+import { type InsertSystemMetric, type InsertSecurityEvent, type InsertAuditLog, type InsertSelfHealingAction } from '../../shared/schema/index.js';
 import { enhancedSecurityResponseService } from './enhanced-security-response.js';
 import { enhancedErrorCorrectionService } from './enhanced-error-correction.js';
 

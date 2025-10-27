@@ -10,7 +10,7 @@ import {
   InsertDhaConsentRecord,
   type DhaApplication,
   type DhaApplicant
-} from "@shared/schema";
+} from '../../shared/schema/index.js';
 import crypto from "crypto";
 import { privacyProtectionService } from "./privacy-protection.js";
 

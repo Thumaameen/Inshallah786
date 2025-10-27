@@ -164,7 +164,19 @@ export default function UnifiedDocumentGenerationPage() {
       <div className="container mx-auto p-6">
         <div className="text-center py-12">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading document templates...</p>
+          <p className="mt-4 text-gray-600">Loading DHA document templates...</p>
+          <p className="text-sm text-gray-500 mt-2">Authentic certificate and permit generator loading...</p>
+        </div>
+      </div>
+    );
+  }
+  
+  // Show error state if templates failed to load
+  if (templatesError) {
+    return (
+      <div className="container mx-auto p-6">
+        <div className="text-center py-12">
+          <p className="text-red-600">Failed to load templates. Using fallback mode.</p>
         </div>
       </div>
     );

@@ -5,7 +5,7 @@ import type {
   InsertDhaDocumentVerification,
   InsertSecurityEvent,
   DocumentVerificationRecord
-} from '@shared/schema';
+} from '../../shared/schema/index.js';
 import type {
   VerificationSession,
   InsertVerificationSession,
