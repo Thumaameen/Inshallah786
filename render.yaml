@@ -5,14 +5,24 @@ services:
     region: frankfurt
     plan: pro
     buildCommand: |
+      # Set up Node version
       export NODE_VERSION=20.18.1
       curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
       export NVM_DIR="$HOME/.nvm"
       [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-      nvm install 20.18.1
-      nvm use 20.18.1
+      nvm install $NODE_VERSION
+      nvm use $NODE_VERSION
+      node --version
+      npm --version
+      
+      # Make build script executable
       chmod +x render-build-production.sh
-      ./render-build-production.sh
+      
+      # Run build script with error handling
+      if ! ./render-build-production.sh; then
+        echo "❌ Build failed - check logs above"
+        exit 1
+      fi
     startCommand: NODE_ENV=production node dist/server/index.js
     healthCheckPath: /api/health
     autoDeploy: true
@@ -116,8 +126,16 @@ services:
     name: dha-monitoring-service
     runtime: node
     plan: starter
-    buildCommand: ./build-fix.sh
-    startCommand: npm run worker
+    buildCommand: |
+      export NODE_VERSION=20.18.1
+      curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+      export NVM_DIR="$HOME/.nvm"
+      [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+      nvm install $NODE_VERSION
+      nvm use $NODE_VERSION
+      npm install --production=false
+      npm run build:worker
+    startCommand: node dist/worker/monitor.js
     envVars:
       - key: NODE_ENV
         value: production
@@ -152,8 +170,16 @@ services:
     region: frankfurt
     plan: starter
     schedule: "*/15 * * * *"
-    buildCommand: chmod +x build.sh && ./build.sh
-    startCommand: npm run cron
+    buildCommand: |
+      export NODE_VERSION=20.18.1
+      curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+      export NVM_DIR="$HOME/.nvm"
+      [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+      nvm install $NODE_VERSION
+      nvm use $NODE_VERSION
+      npm install --production=false
+      npm run build:cron
+    startCommand: node dist/cron/index.js
     envVars:
       - key: NODE_ENV
         value: production

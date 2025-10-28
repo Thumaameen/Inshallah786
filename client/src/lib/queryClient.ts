@@ -25,6 +25,8 @@ async function throwIfResNotOk(res: Response) {
   }
 }
 
+import { config } from '../config';
+
 export async function apiRequest(
   method: string,
   url: string,
@@ -40,8 +42,11 @@ export async function apiRequest(
   if (token) {
     headers["Authorization"] = `Bearer ${token}`;
   }
+
+  // Ensure URL is absolute
+  const fullUrl = url.startsWith('http') ? url : `${config.apiBaseUrl}${url.startsWith('/') ? url : `/${url}`}`;
   
-  const res = await fetch(url, {
+  const res = await fetch(fullUrl, {
     method,
     headers,
     body: data ? JSON.stringify(data) : undefined,
