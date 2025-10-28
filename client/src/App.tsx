@@ -173,6 +173,26 @@ function AppContent() {
 }
 
 function App() {
+  const { isHealthy, isLoading } = useHealthCheck();
+  
+  // Show loading screen while checking health
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+  
+  // Show error if health check failed
+  if (!isHealthy) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <h1 className="text-4xl font-bold text-red-500">System Unavailable</h1>
+          <p className="text-xl">The DHA Digital Services platform is currently unavailable.</p>
+          <p className="text-sm">Please try again later.</p>
+        </div>
+      </div>
+    );
+  }
+  
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
