@@ -59,11 +59,15 @@ const fs = await import('fs');
 if (fs.existsSync(staticPath)) {
   console.log('✅ Serving static files from:', staticPath);
   
-  // Serve static files with proper cache headers
+  // Serve static files with no-cache headers for development
   app.use(express.static(staticPath, {
-    maxAge: '1d',
-    etag: true,
-    lastModified: true
+    maxAge: 0,
+    etag: false,
+    setHeaders: (res) => {
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+    }
   }));
   
   // Serve React app for non-API routes (SPA fallback)

@@ -58,22 +58,15 @@ function AdminLoadingFallback() {
   );
 }
 
-function App() {
+// Inner app component
+function AppContent() {
   const [showAIChat, setShowAIChat] = useState(false);
   const isMobile = useIsMobile();
-  const { data: healthCheck, isLoading, error } = useHealthCheck();
-  
-  // Show main content only if health check passes
-  const showContent = healthCheck?.status === 'healthy' && !isLoading && !error;
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <ErrorBoundary>
-          <LoadingScreen />
-          {showContent && (
-            <div className="min-h-screen bg-background safe-area-top safe-area-left safe-area-right">
-            <Switch>
+    <>
+      <div className="min-h-screen bg-background safe-area-top safe-area-left safe-area-right">
+        <Switch>
             {/* Direct to Ultra Queen Dashboard - No login needed */}
             <Route path="/" component={UltraQueenDashboardEnhanced} />
             
@@ -149,35 +142,46 @@ function App() {
             <Route path="/queen-dashboard" component={QueenDashboard} />
 
             <Route component={NotFoundPage} />
-          </Switch>
+        </Switch>
+      </div>
+
+      {/* Floating AI Chat Assistant */}
+      {showAIChat && (
+        <AIChatAssistant
+          embedded={true}
+          onMinimize={() => setShowAIChat(false)}
+        />
+      )}
+
+      {/* Floating AI Chat Button */}
+      {!showAIChat && (
+        <Button
+          className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 rounded-full h-12 w-12 sm:h-14 sm:w-14 shadow-lg z-40 touch-manipulation safe-area-bottom"
+          onClick={() => setShowAIChat(true)}
+          data-testid="button-open-ai-chat"
+        >
+          <MessageSquare className="h-5 w-5 sm:h-6 sm:w-6" />
+        </Button>
+      )}
+
+      {/* Mobile Bottom Navigation */}
+      {isMobile && <MobileBottomNav className="pb-safe" />}
+
+      <Toaster />
+    </>
+  );
+}
+
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold mb-4">🇿🇦 DHA Digital Services</h1>
+          <p className="text-xl">Frontend loaded successfully!</p>
+          <p className="text-sm mt-4">React Query Provider is active</p>
         </div>
-        )}
-
-        {/* Floating AI Chat Assistant */}
-        {showAIChat && (
-          <AIChatAssistant
-            embedded={true}
-            onMinimize={() => setShowAIChat(false)}
-          />
-        )}
-
-        {/* Floating AI Chat Button */}
-        {!showAIChat && (
-          <Button
-            className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 rounded-full h-12 w-12 sm:h-14 sm:w-14 shadow-lg z-40 touch-manipulation safe-area-bottom"
-            onClick={() => setShowAIChat(true)}
-            data-testid="button-open-ai-chat"
-          >
-            <MessageSquare className="h-5 w-5 sm:h-6 sm:w-6" />
-          </Button>
-        )}
-
-        {/* Mobile Bottom Navigation */}
-        {isMobile && <MobileBottomNav className="pb-safe" />}
-
-        <Toaster />
-        </ErrorBoundary>
-      </AuthProvider>
+      </div>
     </QueryClientProvider>
   );
 }
