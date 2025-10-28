@@ -1,4 +1,3 @@
-
 #!/bin/bash
 set -e
 
@@ -12,7 +11,9 @@ npm install --legacy-peer-deps --no-optional
 # Build client
 echo "🎨 Building client application..."
 cd client
+rm -rf node_modules package-lock.json
 npm install --include=dev --legacy-peer-deps
+npm install react-is --legacy-peer-deps
 npm run build
 cd ..
 
