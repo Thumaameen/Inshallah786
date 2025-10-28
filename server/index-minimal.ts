@@ -40,8 +40,22 @@ app.use(helmet({
 
 app.use(compression());
 app.use(cors({
-  origin: ['https://*.replit.app', 'https://*.replit.dev', 'https://*.onrender.com'],
-  credentials: true
+  origin: (origin, callback) => {
+    const allowedOrigins = [
+      'https://dha-thisone.onrender.com',
+      'http://localhost:5000',
+      'http://localhost:3000'
+    ];
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(null, true); // Temporarily allow all origins in production
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 
 // Body parsing
@@ -50,6 +64,12 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Register routes
 registerRoutes(app);
+
+// Add monitoring middleware and routes (non-intrusive)
+import { monitoringMiddleware } from './monitoring/monitoring-middleware.js';
+import { monitoringRoutes } from './monitoring/monitoring-routes.js';
+app.use(monitoringMiddleware); // Add monitoring without affecting existing routes
+app.use('/api/monitor', monitoringRoutes); // Add monitoring endpoints
 
 // Serve static files in production
 const staticPath = join(process.cwd(), 'dist/public');

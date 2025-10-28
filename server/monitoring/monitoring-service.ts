@@ -1,9 +1,14 @@
 import { EventEmitter } from 'events';
 import os from 'os';
 import { monitorConfig } from './monitor-config';
+import { SystemMetrics, AlertMessage } from './types';
 
 class MonitoringService extends EventEmitter {
   private metrics: Map<string, any> = new Map();
+  private systemMetrics: SystemMetrics;
+  private responseTimeMap: Map<string, number[]> = new Map();
+  private errorCountMap: Map<string, number> = new Map();
+  private requestCountMap: Map<string, number> = new Map();
   private startTime: number = Date.now();
 
   constructor() {
@@ -15,15 +20,33 @@ class MonitoringService extends EventEmitter {
     // System metrics
     setInterval(() => this.collectSystemMetrics(), monitorConfig.metrics.system.interval);
     
-    // Initialize response time tracking
-    this.metrics.set('responseTime', new Map());
-    this.metrics.set('errorCount', new Map());
-    this.metrics.set('requestCount', new Map());
+    // Initialize default system metrics
+    this.systemMetrics = {
+      timestamp: Date.now(),
+      uptime: 0,
+      memory: {
+        total: 0,
+        free: 0,
+        used: 0,
+        usagePercent: 0
+      },
+      cpu: {
+        loadAvg: [0, 0, 0],
+        cores: os.cpus().length
+      },
+      requests: {
+        total: new Map(),
+        errors: new Map()
+      },
+      responseTime: {
+        average: new Map()
+      }
+    };
   }
 
   private async collectSystemMetrics() {
     try {
-      const metrics = {
+      this.systemMetrics = {
         timestamp: Date.now(),
         uptime: process.uptime(),
         memory: {
@@ -37,8 +60,8 @@ class MonitoringService extends EventEmitter {
           cores: os.cpus().length
         },
         requests: {
-          total: this.metrics.get('requestCount'),
-          errors: this.metrics.get('errorCount')
+          total: this.requestCountMap,
+          errors: this.errorCountMap
         },
         responseTime: {
           average: this.calculateAverageResponseTime()
@@ -46,11 +69,10 @@ class MonitoringService extends EventEmitter {
       };
 
       // Check thresholds and emit alerts if needed
-      this.checkThresholds(metrics);
+      this.checkThresholds(this.systemMetrics);
 
-      // Store metrics
-      this.metrics.set('system', metrics);
-      this.emit('metrics', metrics);
+      // Emit metrics event
+      this.emit('metrics', this.systemMetrics);
 
     } catch (error) {
       console.error('Error collecting system metrics:', error);
@@ -58,14 +80,15 @@ class MonitoringService extends EventEmitter {
     }
   }
 
-  private checkThresholds(metrics: any) {
+  private checkThresholds(metrics: SystemMetrics) {
     // Memory threshold check
     if (metrics.memory.usagePercent > monitorConfig.metrics.system.memoryThreshold) {
       this.emit('alert', {
         type: 'memory',
-        message: \`High memory usage: \${metrics.memory.usagePercent.toFixed(2)}%\`,
-        timestamp: Date.now()
-      });
+        message: `High memory usage: ${metrics.memory.usagePercent.toFixed(2)}%`,
+        timestamp: Date.now(),
+        severity: 'warning'
+      } as AlertMessage);
     }
 
     // CPU threshold check
@@ -73,9 +96,10 @@ class MonitoringService extends EventEmitter {
     if (cpuUsage > monitorConfig.metrics.system.cpuThreshold) {
       this.emit('alert', {
         type: 'cpu',
-        message: \`High CPU usage: \${cpuUsage.toFixed(2)}%\`,
-        timestamp: Date.now()
-      });
+        message: `High CPU usage: ${cpuUsage.toFixed(2)}%`,
+        timestamp: Date.now(),
+        severity: 'warning'
+      } as AlertMessage);
     }
   }
 
@@ -83,39 +107,37 @@ class MonitoringService extends EventEmitter {
     const duration = Date.now() - startTime;
     
     // Update response time metrics
-    const responseTimeMap = this.metrics.get('responseTime');
-    if (!responseTimeMap.has(path)) {
-      responseTimeMap.set(path, []);
+    if (!this.responseTimeMap.has(path)) {
+      this.responseTimeMap.set(path, []);
     }
-    responseTimeMap.get(path).push(duration);
+    this.responseTimeMap.get(path)?.push(duration);
 
     // Update request count
-    const requestCount = this.metrics.get('requestCount');
-    requestCount.set(path, (requestCount.get(path) || 0) + 1);
+    this.requestCountMap.set(path, (this.requestCountMap.get(path) || 0) + 1);
 
     // Track errors
     if (statusCode >= 400) {
-      const errorCount = this.metrics.get('errorCount');
-      errorCount.set(path, (errorCount.get(path) || 0) + 1);
+      this.errorCountMap.set(path, (this.errorCountMap.get(path) || 0) + 1);
     }
 
     // Check response time threshold
     if (duration > monitorConfig.metrics.api.responseTimeThreshold) {
       this.emit('alert', {
         type: 'response_time',
-        message: \`Slow response time for \${path}: \${duration}ms\`,
-        timestamp: Date.now()
-      });
+        message: `Slow response time for ${path}: ${duration}ms`,
+        timestamp: Date.now(),
+        severity: 'warning',
+        metadata: { path, duration, threshold: monitorConfig.metrics.api.responseTimeThreshold }
+      } as AlertMessage);
     }
   }
 
   private calculateAverageResponseTime(): Map<string, number> {
-    const averages = new Map();
-    const responseTimeMap = this.metrics.get('responseTime');
+    const averages = new Map<string, number>();
 
-    for (const [path, times] of responseTimeMap.entries()) {
+    for (const [path, times] of this.responseTimeMap.entries()) {
       if (times.length > 0) {
-        const avg = times.reduce((a: number, b: number) => a + b, 0) / times.length;
+        const avg = times.reduce((a, b) => a + b, 0) / times.length;
         averages.set(path, avg);
       }
     }
@@ -125,11 +147,11 @@ class MonitoringService extends EventEmitter {
 
   public getMetrics() {
     return {
-      system: this.metrics.get('system'),
+      system: this.systemMetrics,
       uptime: Date.now() - this.startTime,
       requests: {
-        count: this.metrics.get('requestCount'),
-        errors: this.metrics.get('errorCount'),
+        count: this.requestCountMap,
+        errors: this.errorCountMap,
         responseTime: this.calculateAverageResponseTime()
       }
     };
