@@ -11,9 +11,8 @@ services:
       [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
       nvm install 20.18.1
       nvm use 20.18.1
-      npm install --legacy-peer-deps
-      cd client && npm install react-is --legacy-peer-deps && cd ..
-      npm run build
+      chmod +x render-build-production.sh
+      ./render-build-production.sh
     startCommand: NODE_ENV=production node dist/server/index.js
     healthCheckPath: /api/health
     autoDeploy: true

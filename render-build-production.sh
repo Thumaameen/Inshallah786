@@ -12,8 +12,9 @@ npm install --legacy-peer-deps --no-optional
 echo "🎨 Building client application..."
 cd client
 rm -rf node_modules package-lock.json
+npm cache clean --force
 npm install --include=dev --legacy-peer-deps
-npm install react-is --legacy-peer-deps
+npm install react-is@^18.3.1 --save --legacy-peer-deps
 npm run build
 cd ..
 

@@ -1,4 +1,3 @@
-
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path, { dirname } from "path";
@@ -27,6 +26,16 @@ export default defineConfig({
     emptyOutDir: true,
     sourcemap: false,
     rollupOptions: {
+      external: [
+        'fsevents',
+        'chokidar',
+        'esbuild',
+        'rollup',
+        'react-is' // Added react-is here
+      ],
+      output: {
+        manualChunks: undefined // Set manualChunks to undefined
+      },
       onwarn(warning, warn) {
         if (warning.code === 'MODULE_LEVEL_DIRECTIVE') return;
         warn(warning);
