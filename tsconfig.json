@@ -24,7 +24,6 @@
     "strictPropertyInitialization": false,
     "noImplicitThis": false,
     "alwaysStrict": false,
-    "suppressImplicitAnyIndexErrors": true,
     "outDir": "./dist"
   },
   "include": [

@@ -16,10 +16,6 @@ localPort = 5000
 externalPort = 80
 
 [[ports]]
-localPort = 33873
-externalPort = 3000
-
-[[ports]]
 localPort = 43101
 externalPort = 5173
 
@@ -48,7 +44,7 @@ integrations = ["javascript_database:1.0.0", "javascript_openai:1.0.0", "javascr
 expertMode = true
 
 [workflows]
-runButton = "Production Build & Start"
+runButton = "Project"
 
 [[workflows.workflow]]
 name = "Simple "
@@ -1038,7 +1034,7 @@ outputType = "webview"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "npm start"
+args = "npm run dev"
 waitForPort = 5000
 
 [[workflows.workflow]]

@@ -21,8 +21,7 @@
     "cron": "node server/workers/scheduled-tasks.js",
     "validate": "node ai-validation-suite.cjs",
     "test:all": "node comprehensive-system-test.ts",
-    "postinstall": "npm run build || true",
-    "prepare": "husky install || true"
+    "postinstall": "npm run build || true"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.67.0",
