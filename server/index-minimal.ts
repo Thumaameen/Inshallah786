@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import compression from 'compression';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import path from 'path';
 import { createServer } from 'http';
 import dotenv from 'dotenv';
 import { registerRoutes } from './routes-simple.js';

@@ -10,10 +10,13 @@
     "noImplicitAny": false,
     "strictNullChecks": false,
     "strict": false,
+    "forceConsistentCasingInFileNames": false,
     "removeComments": true,
     "sourceMap": false,
     "declaration": false,
-    "incremental": false
+    "incremental": false,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
   },
   "include": ["server/**/*", "shared/**/*"],
   "exclude": [

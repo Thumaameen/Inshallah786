@@ -27,7 +27,7 @@ cd ..
 
 # Build server
 echo "⚙️ Building server application..."
-npx tsc -p tsconfig.json --skipLibCheck --noEmitOnError false || echo "⚠️ TypeScript build completed with warnings"
+npx tsc -p tsconfig.production.json || echo "⚠️ TypeScript build completed with warnings"
 
 # Copy client build to dist/public
 echo "📋 Copying client build..."
