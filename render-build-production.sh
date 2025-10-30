@@ -13,10 +13,10 @@ echo "📌 Node version: $NODE_VERSION"
 
 # Install production dependencies only
 echo "📦 Installing production dependencies..."
-npm ci --only=production --no-optional
+npm ci --only=production --no-optional --legacy-peer-deps || npm install --legacy-peer-deps --no-optional
 
 # Install dev dependencies for build
-npm install --include=dev --no-optional
+npm install --include=dev --no-optional --legacy-peer-deps
 
 # Build client
 echo "🎨 Building client application..."
