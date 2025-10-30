@@ -44,7 +44,7 @@ integrations = ["javascript_database:1.0.0", "javascript_openai:1.0.0", "javascr
 expertMode = true
 
 [workflows]
-runButton = "Project"
+runButton = "Production Build & Start"
 
 [[workflows.workflow]]
 name = "Simple "
@@ -1062,3 +1062,68 @@ args = "npm install --legacy-peer-deps --no-optional"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "node start-simple.js"
+
+[[workflows.workflow]]
+name = "Production Build & Start"
+author = 49189426
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"🚀 DHA Production Build & Deployment\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"=====================================\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"📦 Installing dependencies...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm install --legacy-peer-deps --no-optional"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"🔧 Building server with monitoring...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npx tsc -p tsconfig.json --skipLibCheck"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"🎨 Building client...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd client && npm install --legacy-peer-deps && npm run build && cd .."
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"✅ Build complete!\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"🚀 Starting production server...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "NODE_ENV=production PORT=5000 HOST=0.0.0.0 npm start"
