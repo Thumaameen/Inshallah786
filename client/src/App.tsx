@@ -175,13 +175,11 @@ function AppContent() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="min-h-screen bg-black text-white flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4">🇿🇦 DHA Digital Services</h1>
-          <p className="text-xl">Frontend loaded successfully!</p>
-          <p className="text-sm mt-4">React Query Provider is active</p>
-        </div>
-      </div>
+      <ErrorBoundary>
+        <AuthProvider>
+          <AppContent />
+        </AuthProvider>
+      </ErrorBoundary>
     </QueryClientProvider>
   );
 }
