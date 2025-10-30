@@ -99,7 +99,7 @@ services:
 
   - type: worker
     name: dha-monitoring-service
-    runtime: node
+    env: node
     plan: starter
     buildCommand: npm install
     startCommand: npm run worker
