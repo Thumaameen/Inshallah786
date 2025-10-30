@@ -5,8 +5,8 @@
  * Runs periodic maintenance and cleanup tasks
  */
 
-import { promises as fs } from 'fs';
-import path from 'path';
+const fs = require('fs').promises;
+const path = require('path');
 
 class ScheduledTasks {
     constructor() {
@@ -73,7 +73,7 @@ class ScheduledTasks {
 }
 
 // Run tasks if executed directly
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (require.main === module) {
     const tasks = new ScheduledTasks();
     tasks.run().catch(error => {
         console.error('Fatal error in scheduled tasks:', error);
@@ -81,4 +81,4 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     });
 }
 
-export default ScheduledTasks;
+module.exports = ScheduledTasks;

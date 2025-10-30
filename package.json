@@ -17,8 +17,8 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
-    "worker": "node server/workers/monitoring-worker.js",
-    "cron": "node server/workers/scheduled-tasks.js",
+    "worker": "node server/workers/monitoring-worker.cjs",
+    "cron": "node server/workers/scheduled-tasks.cjs",
     "validate": "node ai-validation-suite.cjs",
     "test:all": "node comprehensive-system-test.ts",
     "postinstall": "npm run build || true"

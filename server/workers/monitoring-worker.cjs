@@ -5,7 +5,7 @@
  * Runs as a background worker to monitor the main web service
  */
 
-import { EventEmitter } from 'events';
+const { EventEmitter } = require('events');
 
 class MonitoringWorker extends EventEmitter {
     constructor() {
@@ -60,7 +60,7 @@ class MonitoringWorker extends EventEmitter {
 }
 
 // Start the worker if running directly
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (require.main === module) {
     const worker = new MonitoringWorker();
     worker.start().catch(error => {
         console.error('Failed to start monitoring worker:', error);
@@ -68,4 +68,4 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     });
 }
 
-export default MonitoringWorker;
+module.exports = MonitoringWorker;

@@ -411,27 +411,30 @@ export function registerRoutes(app: Express) {
     try {
       const { documentType, formData } = req.body;
       
-      // Simulate document generation
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      console.log(`📄 Generating ${documentType} document...`);
       
-      res.json({
-        success: true,
-        documentId: `DOC-${Date.now()}`,
-        documentUrl: `/api/documents/download/${documentType}-${Date.now()}.pdf`,
-        verificationCode: `VER-${Math.random().toString(36).substring(2, 10).toUpperCase()}`,
-        message: `${documentType} generated successfully`,
-        metadata: {
-          generatedAt: new Date().toISOString(),
-          documentType,
-          status: 'completed'
-        },
-        securityFeatures: {
-          qrCode: true,
-          watermark: true,
-          hologram: true,
-          biometric: true
-        }
+      // Import PDF generator
+      const { pdfGenerator } = await import('./services/pdf-generator.js');
+      
+      // Generate real PDF
+      const pdfBuffer = await pdfGenerator.generateDocument({
+        documentType,
+        ...formData
       });
+      
+      const documentId = `DOC-${Date.now()}`;
+      const verificationCode = `VER-${Math.random().toString(36).substring(2, 10).toUpperCase()}`;
+      
+      // Set response headers for PDF download
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="${documentType}-${documentId}.pdf"`);
+      res.setHeader('X-Document-ID', documentId);
+      res.setHeader('X-Verification-Code', verificationCode);
+      
+      // Send PDF
+      res.send(pdfBuffer);
+      
+      console.log(`✅ Document ${documentId} generated successfully`);
     } catch (error) {
       console.error('Document generation error:', error);
       res.status(500).json({
