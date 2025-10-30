@@ -11,9 +11,10 @@ echo ""
 NODE_VERSION=$(node -v)
 echo "📌 Node version: $NODE_VERSION"
 
-# Install production dependencies only
-echo "📦 Installing production dependencies..."
-npm ci --only=production --no-optional --legacy-peer-deps || npm install --legacy-peer-deps --no-optional
+# Clean install with legacy peer deps
+echo "📦 Installing dependencies..."
+rm -rf node_modules package-lock.json
+npm install --legacy-peer-deps
 
 # Install dev dependencies for build
 npm install --include=dev --no-optional --legacy-peer-deps

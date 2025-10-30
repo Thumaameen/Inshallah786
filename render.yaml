@@ -5,12 +5,7 @@ services:
     env: node
     region: frankfurt
     plan: pro
-    buildCommand: |
-      npm install --legacy-peer-deps
-      cd client && npm install --legacy-peer-deps && npm run build && cd ..
-      npx tsc -p tsconfig.json --skipLibCheck --noEmitOnError false || echo "Build completed"
-      mkdir -p dist/public
-      cp -r client/dist/* dist/public/
+    buildCommand: bash render-build-production.sh
     startCommand: node dist/server/index-minimal.js
     healthCheckPath: /api/health
     autoDeploy: true
