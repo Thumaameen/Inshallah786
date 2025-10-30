@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "node dist/server/index-minimal.js",
-    "dev": "tsx server/index-minimal.ts",
+    "dev": "npx tsx server/index-minimal.ts",
     "build": "npm run clean && npm run build:client && npm run build:server",
     "build:client": "cd client && npm install --include=dev && npm run build",
     "build:server": "tsc -p tsconfig.json --skipLibCheck --noEmitOnError false || echo 'Build completed with warnings'",
@@ -20,7 +20,8 @@
     "worker": "node server/workers/monitoring-worker.cjs",
     "cron": "node server/workers/scheduled-tasks.cjs",
     "validate": "node ai-validation-suite.cjs",
-    "test:all": "node comprehensive-system-test.ts",
+    "test:all": "npx tsx comprehensive-system-test.ts",
+    "test:render": "npx tsx test-render-deployment.ts",
     "postinstall": "npm run build || true"
   },
   "dependencies": {
@@ -48,6 +49,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "drizzle-orm": "^0.29.0",
+    "esbuild": "^0.21.5",
     "express": "^4.21.2",
     "express-rate-limit": "^7.1.5",
     "express-session": "^1.18.2",
@@ -67,7 +69,7 @@
     "sharp": "^0.34.4",
     "socket.io": "^4.8.1",
     "ts-node": "^10.9.2",
-    "tsx": "^4.6.0",
+    "tsx": "^4.19.2",
     "typescript": "^5.9.3",
     "zod": "^3.22.4"
   },
