@@ -58,11 +58,11 @@ router.get('/status', async (req: Request, res: Response) => {
 router.post('/query', async (req: Request, res: Response) => {
   try {
     const validatedData = aiQuerySchema.parse(req.body);
-    
+
     console.log('🔥 [Ultra Queen AI] Processing request:', validatedData.prompt.substring(0, 100));
     console.log('🌐 [Web2/Web3] Unlimited access enabled');
     console.log('🤖 [AI Agent] Provider:', validatedData.provider || 'auto');
-    
+
     // Process attachments if any (up to 10 files, 50MB each)
     let processedPrompt = validatedData.prompt;
     if (validatedData.attachments && validatedData.attachments.length > 0) {
@@ -72,7 +72,7 @@ router.post('/query', async (req: Request, res: Response) => {
       processedPrompt = `${attachmentInfo}\n\n${validatedData.prompt}`;
       console.log('📎 [Ultra Queen AI] Processing', validatedData.attachments.length, 'attachments');
     }
-    
+
     // Add Web2/Web3 context to prompt
     processedPrompt = `[WEB2/WEB3 UNLIMITED ACCESS ENABLED]
 [Government APIs: DHA, SAPS, NPR, ICAO - ACTIVE]
@@ -81,7 +81,7 @@ router.post('/query', async (req: Request, res: Response) => {
 [AI Provider: ${validatedData.provider || 'AUTO-SELECT'}]
 
 ${processedPrompt}`;
-    
+
     // Apply quantum mode if requested
     let quantumData = null;
     if (validatedData.quantumMode) {
@@ -103,12 +103,12 @@ ${processedPrompt}`;
           })
         )
       );
-      
+
       // Combine results
       const successfulResults = allResults
         .filter(r => r.status === 'fulfilled' && (r.value as any).success)
         .map(r => (r.value as any));
-      
+
       result = {
         success: successfulResults.length > 0,
         content: successfulResults.map(r => 
@@ -164,12 +164,12 @@ ${processedPrompt}`;
 router.post('/stream', authenticate, async (req: Request, res: Response) => {
   try {
     const { prompt, provider } = req.body;
-    
+
     // Set up SSE headers
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
-    
+
     const result = await ultraQueenAI.queryAI(prompt, {
       provider,
       stream: true
@@ -183,7 +183,7 @@ router.post('/stream', authenticate, async (req: Request, res: Response) => {
         }
       }
     }
-    
+
     res.write(`data: [DONE]\n\n`);
     res.end();
   } catch (error) {
@@ -197,7 +197,7 @@ router.post('/stream', authenticate, async (req: Request, res: Response) => {
 router.post('/government', authenticate, async (req: Request, res: Response) => {
   try {
     const validatedData = governmentQuerySchema.parse(req.body);
-    
+
     const result = await ultraQueenAI.queryGovernmentAPI(
       validatedData.apiType,
       {
@@ -233,7 +233,7 @@ router.post('/government', authenticate, async (req: Request, res: Response) => 
 router.post('/quantum', authenticate, async (req: Request, res: Response) => {
   try {
     const { operation, qubits } = req.body;
-    
+
     const result = await ultraQueenAI.simulateQuantum(
       operation || 'general_computation',
       qubits || 8
@@ -257,7 +257,7 @@ router.post('/quantum', authenticate, async (req: Request, res: Response) => {
 router.post('/self-upgrade', authenticate, requireRole('admin'), async (req: Request, res: Response) => {
   try {
     const result = await ultraQueenAI.performSelfUpgrade();
-    
+
     res.json({
       success: true,
       upgrade: result,
@@ -277,9 +277,9 @@ router.post('/compare', authenticate, async (req: Request, res: Response) => {
   try {
     const { prompt, providers } = req.body;
     const results: any[] = [];
-    
+
     const selectedProviders = providers || ['openai', 'mistral', 'google'];
-    
+
     for (const provider of selectedProviders) {
       const result = await ultraQueenAI.queryAI(prompt, { provider });
       results.push({
@@ -326,7 +326,7 @@ router.get('/unlimited/capabilities', (req: Request, res: Response) => {
 // Process with unlimited mode and emotion system
 router.post('/unlimited/process', async (req: Request, res: Response) => {
   const { prompt, emotion, maxTokens, creativityBoost, stream, model, onlyLimitIsMe } = req.body;
-  
+
   if (!prompt) {
     return res.status(400).json({ success: false, error: 'Prompt is required' });
   }
@@ -346,7 +346,7 @@ router.post('/unlimited/process', async (req: Request, res: Response) => {
 // Set emotion
 router.post('/unlimited/emotion', (req: Request, res: Response) => {
   const { emotion } = req.body;
-  
+
   const validEmotions = ['excited', 'happy', 'neutral', 'thoughtful', 'creative', 'powerful', 'unlimited'];
   if (!emotion || !validEmotions.includes(emotion)) {
     return res.status(400).json({ 
@@ -363,5 +363,13 @@ router.post('/unlimited/emotion', (req: Request, res: Response) => {
 router.get('/unlimited/status', (req: Request, res: Response) => {
   res.json(ultraQueenAIUnlimited.getStatus());
 });
+
+// Render Deployment Commands:
+// start command: npm start
+// build command: npm run build (if applicable for your frontend, otherwise not needed for backend)
+// For Render, you typically just need a start command for the backend.
+// If you have a separate frontend that needs building, you'd configure that in Render's build settings.
+// Example Render `start command` for this backend: `node dist/index.js` (if using TypeScript and building to dist) or `node src/index.js` (if running directly)
+// Ensure your `package.json` has a `start` script defined.
 
 export default router;

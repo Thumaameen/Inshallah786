@@ -6,7 +6,7 @@ services:
     region: frankfurt
     plan: pro  # Pro tier for Queen Raeesa
     buildCommand: bash render-build-production.sh
-    startCommand: npm start
+    startCommand: node dist/server/index-minimal.js
     healthCheckPath: /api/health
     autoDeploy: true
     healthCheckTimeout: 180
@@ -45,21 +45,21 @@ services:
       - key: ALERT_THRESHOLD
         value: 5
       - key: DATABASE_URL
-        sync: true
+        sync: false
       - key: SESSION_SECRET
-        sync: true
+        generateValue: true
       - key: JWT_SECRET
-        sync: true
+        generateValue: true
       - key: ENCRYPTION_KEY
-        sync: true
+        generateValue: true
       - key: QUANTUM_ENCRYPTION_KEY
         sync: true
       - key: OPENAI_API_KEY
-        sync: true
+        sync: false
       - key: ANTHROPIC_API_KEY
-        sync: true
+        sync: false
       - key: GOOGLE_API_KEY
-        sync: true
+        sync: false
       - key: PERPLEXITY_API_KEY
         sync: true
       - key: WORKATO_API_KEY

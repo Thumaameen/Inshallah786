@@ -93,6 +93,9 @@ app.use('/api/ultra-queen-ai', ultraQueenAIRoutes);
 app.use('/api/integrations', integrationStatusRoutes);
 
 console.log('✅ All routes registered successfully');
+console.log('✅ Monitoring middleware active');
+console.log('✅ Ultra Queen AI routes active');
+console.log('✅ Integration status routes active');
 
 // Military & Government Portal Routes
 import militaryPortalsRouter from './routes/military-portals.js';

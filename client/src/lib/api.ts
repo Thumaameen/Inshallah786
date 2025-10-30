@@ -1,6 +1,6 @@
 import { queryClient } from "@/lib/queryClient";
 
-const API_BASE = "/api";
+const API_BASE = import.meta.env.PROD ? "/api" : "http://localhost:5000/api";
 
 interface ApiResponse<T = any> {
   data?: T;

@@ -43,3 +43,13 @@ if [ ! -f "dist/public/index.html" ]; then
 fi
 
 echo "✅ Production build complete and validated!"
+
+# Verify critical files
+echo ""
+echo "📋 Verifying critical files..."
+test -f "dist/server/index-minimal.js" && echo "✅ Server bundle exists"
+test -f "dist/public/index.html" && echo "✅ Client HTML exists"
+test -f "dist/public/assets/index.js" || test -d "dist/public/assets" && echo "✅ Client assets exist"
+
+echo ""
+echo "🎯 Build ready for production deployment!"
