@@ -8,8 +8,8 @@ packages = ["libuuid", "cairo", "pango", "giflib", "jq", "python3", "gcc", "pkgc
 
 [deployment]
 deploymentTarget = "cloudrun"
-run = ["sh", "-c", "npm install --legacy-peer-deps && npm run build && npm start"]
-build = ["sh", "-c", "bash render-build-production.sh"]
+run = ["sh", "-c", "npm start"]
+build = ["sh", "-c", "npm run build"]
 
 [[ports]]
 localPort = 5000
