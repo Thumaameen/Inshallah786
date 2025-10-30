@@ -96,6 +96,12 @@ services:
         value: true
       - key: ENABLE_ULTRA_MONITORING
         value: true
+      - key: MILITARY_INTEGRATION_ENABLED
+        value: true
+      - key: GLOBAL_PORTAL_ACCESS
+        value: true
+      - key: CLASSIFIED_DOCUMENT_SUPPORT
+        value: true
 
   - type: worker
     name: dha-monitoring-service

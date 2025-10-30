@@ -86,6 +86,27 @@ import { monitoringRoutes } from './monitoring/monitoring-routes.js';
 app.use(monitoringMiddleware); // Add monitoring without affecting existing routes
 app.use('/api/monitor', monitoringRoutes); // Add monitoring endpoints
 
+// Ultra Queen AI Routes
+app.use('/api/ultra-queen-ai', ultraQueenAIRoutes);
+
+// Military & Government Portal Routes
+import militaryPortalsRouter from './routes/military-portals.js';
+app.use('/api/military', militaryPortalsRouter);
+
+// Health check
+app.get('/api/health', (req, res) => {
+  res.status(200).json({
+    status: 'UP',
+    timestamp: new Date().toISOString(),
+    message: 'DHA Services Platform is healthy and ready.',
+    deployedEnvironment: process.env.NODE_ENV || 'development',
+    renderDeployment: isRenderDeployment,
+    aiEngineStatus: 'OFFLINE', // Placeholder: This should be dynamically checked
+    blockchainStatus: 'LIVE', // Placeholder: This should be dynamically checked
+    documentTypesCount: 23 // Placeholder: This should be dynamically checked
+  });
+});
+
 // Serve static files in production
 const staticPath = join(process.cwd(), 'dist/public');
 
@@ -152,6 +173,7 @@ if (fs.existsSync(staticPath)) {
             <li>/api/ai/chat - AI Assistant</li>
             <li>/api/auth/* - Authentication</li>
             <li>/api/documents/* - Document services</li>
+            <li>/api/military/* - Military & Government Portal Services</li>
           </ul>
         </body>
       </html>
