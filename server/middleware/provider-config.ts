@@ -154,9 +154,26 @@ class ConfigurationService {
         SESSION_SECRET: this.getEnvVar('SESSION_SECRET'),
         JWT_SECRET: this.getEnvVar('JWT_SECRET'),
         DATABASE_URL: this.getEnvVar('DATABASE_URL'),
+        
+        // 5 AI AGENTS - API KEYS
         OPENAI_API_KEY: this.getEnvVar('OPENAI_API_KEY'),
         ANTHROPIC_API_KEY: this.getEnvVar('ANTHROPIC_API_KEY'),
+        GOOGLE_API_KEY: this.getEnvVar('GOOGLE_API_KEY') || this.getEnvVar('GEMINI_API_KEY'),
+        MISTRAL_API_KEY: this.getEnvVar('MISTRAL_API_KEY'),
+        PERPLEXITY_API_KEY: this.getEnvVar('PERPLEXITY_API_KEY'),
+        
+        // WEB2 INTEGRATIONS
         GITHUB_TOKEN: this.getEnvVar('GITHUB_TOKEN'),
+        AWS_ACCESS_KEY_ID: this.getEnvVar('AWS_ACCESS_KEY_ID'),
+        GOOGLE_CLOUD_API_KEY: this.getEnvVar('GOOGLE_CLOUD_API_KEY'),
+        AZURE_API_KEY: this.getEnvVar('AZURE_API_KEY'),
+        
+        // WEB3 INTEGRATIONS
+        ETHEREUM_RPC_URL: this.getEnvVar('ETHEREUM_RPC_URL'),
+        POLYGON_RPC_URL: this.getEnvVar('POLYGON_RPC_URL'),
+        BSC_RPC_URL: this.getEnvVar('BSC_RPC_URL'),
+        INFURA_API_KEY: this.getEnvVar('INFURA_API_KEY'),
+        ALCHEMY_API_KEY: this.getEnvVar('ALCHEMY_API_KEY'),
         ALLOWED_ORIGINS: this.getEnvVar('ALLOWED_ORIGINS'),
         REPL_ID: this.getEnvVar('REPL_ID'),
         RATE_LIMIT_WINDOW_MS: this.getEnvVar('RATE_LIMIT_WINDOW_MS'),

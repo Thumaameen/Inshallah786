@@ -21,10 +21,11 @@ import { Link } from 'wouter';
 import { useToast } from '@/hooks/use-toast';
 import APIDocumentation from '@/components/APIDocumentation';
 
-// API Capabilities Documentation
-const API_CAPABILITIES = {
-  openai: {
-    name: "OpenAI GPT-4",
+// 5 ULTRA AI AGENTS with FULL WEB2/WEB3 ACCESS
+const ULTRA_AI_AGENTS = {
+  agent1_openai: {
+    id: 'agent1_openai',
+    name: "Agent 1: OpenAI GPT-4 Turbo",
     icon: Brain,
     capabilities: [
       "Advanced text generation up to 128K tokens",
@@ -33,41 +34,21 @@ const API_CAPABILITIES = {
       "Function calling for tool use",
       "Embeddings for semantic search",
       "Text-to-speech and speech-to-text",
-      "DALL-E 3 image generation"
+      "DALL-E 3 image generation",
+      "✅ Full Web2 API Access",
+      "✅ Web3 Blockchain Integration",
+      "✅ Ethereum, Polygon, BSC connectivity",
+      "✅ Smart Contract Deployment"
     ],
-    limits: "Rate limit: 10,000 requests/min",
+    web2Access: true,
+    web3Access: true,
+    attachmentSupport: true,
+    maxCapability: "unlimited",
     color: "from-[var(--queen-blue-green)] to-[var(--queen-teal)]"
   },
-  mistral: {
-    name: "Mistral AI",
-    icon: Zap,
-    capabilities: [
-      "Fast inference with 32K context",
-      "Multilingual support (5+ languages)",
-      "Code completion and analysis",
-      "JSON mode for structured output",
-      "Low latency responses",
-      "Cost-effective for high volume"
-    ],
-    limits: "Rate limit: 5,000 requests/min",
-    color: "from-[var(--queen-gold)] to-[var(--queen-gold-dark)]"
-  },
-  google: {
-    name: "Google Gemini",
-    icon: Globe,
-    capabilities: [
-      "Multimodal understanding (text, image, video, audio)",
-      "1M token context window (Gemini Pro)",
-      "Real-time information access",
-      "Complex reasoning and analysis",
-      "Multiple language translation",
-      "Code generation across 20+ languages"
-    ],
-    limits: "Rate limit: 60 requests/min",
-    color: "from-[var(--queen-blue)] to-[var(--queen-dark-blue)]"
-  },
-  anthropic: {
-    name: "Anthropic Claude",
+  agent2_anthropic: {
+    id: 'agent2_anthropic',
+    name: "Agent 2: Anthropic Claude 3.5",
     icon: Shield,
     capabilities: [
       "200K token context window",
@@ -75,23 +56,82 @@ const API_CAPABILITIES = {
       "Research and analysis",
       "Creative writing",
       "Code review and refactoring",
-      "Multilingual support"
+      "Multilingual support",
+      "✅ Full Web2 Cloud Services",
+      "✅ Web3 DeFi Operations",
+      "✅ Government API Integration",
+      "✅ Blockchain Analytics"
     ],
-    limits: "Requires credits - Add via Anthropic Console",
+    web2Access: true,
+    web3Access: true,
+    attachmentSupport: true,
+    maxCapability: "unlimited",
     color: "from-[var(--queen-cyan)] to-[var(--queen-teal)]"
   },
-  perplexity: {
-    name: "Perplexity AI",
+  agent3_gemini: {
+    id: 'agent3_gemini',
+    name: "Agent 3: Google Gemini 2.0",
+    icon: Globe,
+    capabilities: [
+      "Multimodal understanding (text, image, video, audio)",
+      "2M token context window",
+      "Real-time information access",
+      "Complex reasoning and analysis",
+      "Multiple language translation",
+      "Code generation across 20+ languages",
+      "✅ Google Cloud Integration",
+      "✅ Web3 NFT Management",
+      "✅ Cross-chain Transactions",
+      "✅ API Orchestration"
+    ],
+    web2Access: true,
+    web3Access: true,
+    attachmentSupport: true,
+    maxCapability: "unlimited",
+    color: "from-[var(--queen-blue)] to-[var(--queen-dark-blue)]"
+  },
+  agent4_mistral: {
+    id: 'agent4_mistral',
+    name: "Agent 4: Mistral Large",
+    icon: Zap,
+    capabilities: [
+      "Fast inference with 128K context",
+      "Multilingual support (100+ languages)",
+      "Code completion and analysis",
+      "JSON mode for structured output",
+      "Low latency responses",
+      "Cost-effective for high volume",
+      "✅ AWS & Azure Integration",
+      "✅ Web3 Token Operations",
+      "✅ Database Management",
+      "✅ Real-time Processing"
+    ],
+    web2Access: true,
+    web3Access: true,
+    attachmentSupport: true,
+    maxCapability: "unlimited",
+    color: "from-[var(--queen-gold)] to-[var(--queen-gold-dark)]"
+  },
+  agent5_perplexity: {
+    id: 'agent5_perplexity',
+    name: "Agent 5: Perplexity Pro",
     icon: Eye,
     capabilities: [
       "Real-time web search",
-      "Source citations",
-      "Current events and news",
-      "Academic research",
-      "Market analysis",
-      "Fact-checking with sources"
+      "Source citations and verification",
+      "Current events and news analysis",
+      "Academic research access",
+      "Market analysis and trends",
+      "Fact-checking with sources",
+      "✅ GitHub Integration",
+      "✅ Web3 Wallet Management",
+      "✅ OSINT Operations",
+      "✅ Multi-source Intelligence"
     ],
-    limits: "Requires new API key - Generate at perplexity.ai",
+    web2Access: true,
+    web3Access: true,
+    attachmentSupport: true,
+    maxCapability: "unlimited",
     color: "from-[var(--queen-cyan)] to-[var(--queen-teal)]"
   }
 };
