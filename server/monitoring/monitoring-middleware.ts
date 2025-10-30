@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { monitoringService } from './monitoring-service';
+import { monitoringService } from './monitoring-service.js';
 
 export const monitoringMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const startTime = Date.now();

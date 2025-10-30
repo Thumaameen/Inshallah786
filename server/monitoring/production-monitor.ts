@@ -3,13 +3,12 @@
  * Integrates with Render's monitoring system
  */
 
-import { HealthMonitor } from './monitoring/health-check.js';
-import { AlertSystem } from './monitoring/alert-system.js';
-import { ENV_CONFIG } from './config/environment.js';
+import HealthMonitor from './health-check.js';
+import AlertSystem from './alert-system.js';
 
 // Initialize monitoring systems
 const healthMonitor = new HealthMonitor();
-const alertSystem = new AlertSystem(ENV_CONFIG.WEBHOOK_URL);
+const alertSystem = new AlertSystem(process.env.WEBHOOK_URL || '');
 
 // Critical service endpoints to monitor
 const CRITICAL_ENDPOINTS = [
@@ -36,8 +35,8 @@ export const monitoringConfig = {
   metricsEndpoint: '/metrics',
   alerts: {
     enabled: true,
-    webhook: ENV_CONFIG.WEBHOOK_URL,
-    email: ENV_CONFIG.ALERT_EMAIL
+    webhook: process.env.WEBHOOK_URL || '',
+    email: process.env.ALERT_EMAIL || ''
   },
   uptime: {
     enabled: true,
@@ -102,7 +101,7 @@ export async function startMonitoring() {
 function writeHealthStatus(status: any) {
   const healthStatus = {
     timestamp: new Date().toISOString(),
-    environment: ENV_CONFIG.NODE_ENV,
+    environment: process.env.NODE_ENV || 'development',
     status: status.overall,
     services: status.services,
     metrics: status.metrics,

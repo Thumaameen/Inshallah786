@@ -26,6 +26,10 @@ if (fs.existsSync(lockFile)) {
 const app = express();
 const server = createServer(app);
 
+// Server configuration
+const PORT = parseInt(process.env.PORT || '5000', 10);
+const HOST = process.env.HOST || '0.0.0.0';
+
 // Security middleware - Production-hardened CSP
 const isProduction = process.env.NODE_ENV === 'production';
 const isRenderDeployment = process.env.RENDER === 'true';

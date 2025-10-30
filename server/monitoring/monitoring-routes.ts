@@ -1,5 +1,5 @@
 import express from 'express';
-import { monitoringService } from './monitoring-service';
+import { monitoringService } from './monitoring-service.js';
 
 const router = express.Router();
 
