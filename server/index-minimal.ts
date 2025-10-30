@@ -31,9 +31,9 @@ if (fs.existsSync(lockFile)) {
 const app = express();
 const server = createServer(app);
 
-// Server configuration
+// Server configuration - Production optimized
 const PORT = parseInt(process.env.PORT || '5000', 10);
-const HOST = process.env.HOST || '0.0.0.0';
+const HOST = '0.0.0.0'; // Required for production deployment
 
 // Security middleware - Production-hardened CSP
 const isProduction = process.env.NODE_ENV === 'production';
@@ -43,13 +43,12 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      // For Render production, allow inline styles only for Vite-bundled CSS; for Replit dev, keep unsafe-inline
-      styleSrc: isRenderDeployment ? ["'self'", "https://fonts.googleapis.com"] : ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
-      imgSrc: ["'self'", "data:", "https:"],
-      // For Render production, remove unsafe-inline; for Replit dev, keep for HMR
-      scriptSrc: isRenderDeployment ? ["'self'"] : ["'self'", "'unsafe-inline'", "https://replit.com"],
+      imgSrc: ["'self'", "data:", "https:", "blob:"],
+      scriptSrc: ["'self'", "'unsafe-inline'"],
       connectSrc: ["'self'", "https://api.openai.com", "https://api.anthropic.com", "wss:", "ws:"],
+      frameSrc: ["'self'"],
     },
   },
 }));
