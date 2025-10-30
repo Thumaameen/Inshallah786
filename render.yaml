@@ -1,12 +1,12 @@
-
 services:
+  # Web Service - Ultra Queen AI Raeesa Platform
   - type: web
-    name: dha-digital-services
+    name: ultra-queen-ai-raeesa
     env: node
     region: frankfurt
-    plan: pro
+    plan: pro  # Pro tier for Queen Raeesa
     buildCommand: bash render-build-production.sh
-    startCommand: node dist/server/index-minimal.js
+    startCommand: npm start
     healthCheckPath: /api/health
     autoDeploy: true
     healthCheckTimeout: 180
@@ -111,16 +111,16 @@ services:
       - key: MONITOR_INTERVAL
         value: 60000
       - key: TARGET_SERVICE
-        value: dha-digital-services
+        value: ultra-queen-ai-raeesa # Updated service name
       - key: RENDER_EXTERNAL_URL
         fromService:
           type: web
-          name: dha-digital-services
+          name: ultra-queen-ai-raeesa # Updated service name
           envVarKey: RENDER_EXTERNAL_URL
       - key: DATABASE_URL
         fromService:
           type: web
-          name: dha-digital-services
+          name: ultra-queen-ai-raeesa # Updated service name
           envVarKey: DATABASE_URL
       - key: ALERT_WEBHOOK_URL
         sync: false
@@ -146,7 +146,7 @@ services:
       - key: DATABASE_URL
         fromService:
           type: web
-          name: dha-digital-services
+          name: ultra-queen-ai-raeesa # Updated service name
           envVarKey: DATABASE_URL
       - key: CRON_SECRET
         sync: true

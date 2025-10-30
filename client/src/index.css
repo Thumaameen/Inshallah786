@@ -92,27 +92,29 @@
 :root {
   --radius: 4px;
   
-  /* Official South African Government Colors - Republic of South Africa Standards */
-  --sa-green: #007749; /* Official SA Flag Green */
-  --sa-yellow: #FCB514; /* Official SA Flag Yellow/Gold */
-  --sa-black: #000000; /* Official SA Flag Black */
-  --sa-white: #FFFFFF; /* Official SA Flag White */
-  --sa-red: #DE3831; /* Official SA Flag Red */
-  --sa-blue: #001489; /* Official SA Flag Blue */
+  /* Ultra Queen Raeesa Royal Colors - Bluish-Green & Sparkle Gold */
+  --queen-teal: #00CED1; /* Ultra Queen Teal */
+  --queen-cyan: #20B2AA; /* Bluish-Green Cyan */
+  --queen-aqua: #40E0D0; /* Light Aqua */
+  --queen-gold: #FFD700; /* Pure Sparkle Gold */
+  --queen-gold-light: #FFF8DC; /* Light Gold Champagne */
+  --queen-gold-dark: #B8860B; /* Dark Gold */
+  --queen-emerald: #2E8B57; /* Sea Green */
+  --queen-deep-teal: #008B8B; /* Deep Teal */
   
-  /* Official DHA Government Theme */
-  --background: hsl(0, 0%, 100%); /* Pure white background */
-  --foreground: hsl(0, 0%, 10%); /* Very dark text for maximum readability */
-  --card: hsl(0, 0%, 99%); /* Subtle off-white for cards */
-  --card-foreground: hsl(0, 0%, 10%); /* Dark text on cards */
-  --popover: hsl(0, 0%, 100%); /* White popover */
-  --popover-foreground: hsl(0, 0%, 10%); /* Dark text */
+  /* Ultra Queen Theme */
+  --background: hsl(180, 100%, 5%); /* Deep teal-black background */
+  --foreground: hsl(51, 100%, 85%); /* Golden text for maximum royalty */
+  --card: hsl(180, 50%, 10%); /* Dark teal cards */
+  --card-foreground: hsl(51, 100%, 85%); /* Golden text on cards */
+  --popover: hsl(180, 60%, 12%); /* Teal popover */
+  --popover-foreground: hsl(51, 100%, 85%); /* Golden text */
   
-  /* Primary Government Colors */
-  --primary: hsl(151, 100%, 23%); /* SA Government Green #007749 */
-  --primary-foreground: hsl(0, 0%, 100%); /* White text on green */
-  --secondary: hsl(42, 97%, 53%); /* SA Government Gold #FCB514 */
-  --secondary-foreground: hsl(0, 0%, 10%); /* Dark text on gold */
+  /* Primary Queen Colors */
+  --primary: hsl(180, 100%, 40%); /* Bluish-Green Teal */
+  --primary-foreground: hsl(51, 100%, 50%); /* Sparkle Gold text */
+  --secondary: hsl(51, 100%, 50%); /* Sparkle Gold */
+  --secondary-foreground: hsl(180, 100%, 10%); /* Deep teal text on gold */
   
   /* Official Government Professional Styling */
   --muted: hsl(0, 0%, 97%); /* Light gray background */
@@ -172,8 +174,8 @@
 }
 
 body {
-  background-color: var(--background);
-  color: var(--foreground);
+  background: linear-gradient(135deg, #001a1a 0%, #004d4d 50%, #001a1a 100%);
+  color: var(--queen-gold);
   font-family: var(--font-sans);
   min-height: 100vh;
 }
