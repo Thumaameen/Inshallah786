@@ -59,6 +59,51 @@ public static getDerivedStateFromError(error: Error): State {
     }
   }
 
+  private handleRetry = () => {
+    if (this.state.retryCount < this.maxRetries) {
+      this.setState(prev => ({
+        hasError: false,
+        error: null,
+        errorInfo: null,
+        retryCount: prev.retryCount + 1
+      }));
+    }
+  };
+
+  componentWillUnmount() {
+    if (this.retryTimeout) {
+      clearTimeout(this.retryTimeout);
+    }
+  }
+
+  render() {
+    if (this.state.hasError) {
+      if (this.props.fallback) {
+        return this.props.fallback;
+      }
+
+      return (
+        <div className="min-h-screen flex items-center justify-center bg-background p-4">
+          <div className="max-w-lg w-full space-y-4">
+            <h2 className="text-2xl font-bold text-destructive">Integration Error</h2>
+            <p className="text-muted-foreground">{this.state.error?.message}</p>
+            <div className="flex gap-2">
+              <button onClick={this.handleRetry} className="btn btn-primary">
+                Retry ({this.maxRetries - this.state.retryCount} attempts left)
+              </button>
+              <button onClick={() => window.location.reload()} className="btn btn-secondary">
+                Reload Page
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
   public render() {
     if (this.state.hasError) {
       return (
