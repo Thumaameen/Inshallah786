@@ -25,16 +25,33 @@ export default defineConfig({
     outDir: path.resolve(__dirname, "../dist/public"),
     emptyOutDir: true,
     sourcemap: false,
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       external: [
         'fsevents',
         'chokidar',
         'esbuild',
         'rollup',
-        'react-is' // Added react-is here
+        'react-is'
       ],
       output: {
-        manualChunks: undefined // Set manualChunks to undefined
+        manualChunks: {
+          'vendor': [
+            'react',
+            'react-dom',
+            'react-router-dom'
+          ],
+          'ui': [
+            '@/components',
+            '@/hooks'
+          ],
+          'features': [
+            '@/services',
+            '@/contexts'
+          ]
+        },
+        chunkFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash][extname]'
       },
       onwarn(warning, warn) {
         if (warning.code === 'MODULE_LEVEL_DIRECTIVE') return;

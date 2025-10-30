@@ -72,7 +72,8 @@ app.use(cors({
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  maxAge: 86400 // 24 hours CORS cache
 }));
 
 // Body parsing
@@ -124,12 +125,14 @@ if (fs.existsSync(staticPath)) {
 
   // Serve static files with no-cache headers for development
   app.use(express.static(staticPath, {
-    maxAge: 0,
-    etag: false,
+    maxAge: process.env.NODE_ENV === 'production' ? '1d' : 0,
+    etag: process.env.NODE_ENV === 'production',
     setHeaders: (res) => {
-      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-      res.setHeader('Pragma', 'no-cache');
-      res.setHeader('Expires', '0');
+      if (process.env.NODE_ENV !== 'production') {
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
+      }
     }
   }));
 
