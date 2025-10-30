@@ -370,7 +370,7 @@ class UltraQueenAI {
         provider: 'anthropic',
         metadata: {
           executionTime: Date.now() - startTime,
-          model: 'claude-sonnet-4',
+          model: 'claude-3-sonnet-20240229',
           confidence: result.confidence
         }
       };

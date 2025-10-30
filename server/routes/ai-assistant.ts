@@ -173,7 +173,8 @@ router.get('/providers', (req, res) => {
     anthropic: {
       available: !!anthropic,
       model: 'claude-3-sonnet-20240229',
-      capabilities: ['chat', 'analysis', 'writing']
+      capabilities: ['chat', 'analysis', 'writing', 'government'],
+      default: true
     }
   };
 

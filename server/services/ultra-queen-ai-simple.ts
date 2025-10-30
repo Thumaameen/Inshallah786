@@ -10,7 +10,7 @@ const SYSTEM_CONFIG = {
     openai: { active: !!process.env.OPENAI_API_KEY, models: ['gpt-4-turbo-preview', 'gpt-4', 'gpt-3.5-turbo'] },
     mistral: { active: !!process.env.MISTRAL_API_KEY, models: ['mistral-large-latest'] },
     google: { active: !!process.env.GOOGLE_API_KEY, models: ['gemini-pro'] },
-    anthropic: { active: !!process.env.ANTHROPIC_API_KEY, models: ['claude-3-opus'] },
+    anthropic: { active: !!process.env.ANTHROPIC_API_KEY, models: ['claude-3-sonnet-20240229'] },
     perplexity: { active: !!process.env.PERPLEXITY_API_KEY, models: ['llama-3-sonar'] }
   },
   web_services: {

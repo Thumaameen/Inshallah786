@@ -3,8 +3,8 @@
 
 import Anthropic from '@anthropic-ai/sdk';
 
-// The newest Anthropic model is "claude-sonnet-4-20250514"
-const DEFAULT_MODEL_STR = "claude-sonnet-4-20250514";
+// Using Claude Sonnet 3.5 as the default model
+const DEFAULT_MODEL_STR = "claude-3-sonnet-20240229";
 
 export interface ClaudeAnalysis {
   content: string;
