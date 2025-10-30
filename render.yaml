@@ -5,6 +5,8 @@ services:
     env: node
     region: frankfurt
     plan: pro  # Pro tier for Queen Raeesa
+    runtime: node
+    nodeVersion: 20.18.1 # LTS version with quantum security patches
     buildCommand: bash render-build-production.sh
     startCommand: node dist/server/index-minimal.js
     healthCheckPath: /api/health
@@ -107,8 +109,15 @@ services:
     name: dha-monitoring-service
     env: node
     plan: starter
+    nodeVersion: 20.18.1
     buildCommand: npm install
     startCommand: npm run worker
+    healthChecks:
+      - protocol: https
+        path: /health
+        interval: 30
+        timeout: 10
+        gracePeriod: 300
     envVars:
       - key: NODE_ENV
         value: production
@@ -161,3 +170,7 @@ databases:
   - name: dha-production-db
     plan: pro
     ipAllowList: []
+    backups:
+      enabled: true
+      schedule: "0 */4 * * *"  # Every 4 hours
+      retentionPeriodDays: 7   # Keep backups for 7 days
