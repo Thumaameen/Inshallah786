@@ -4,16 +4,8 @@ services:
     env: node
     region: frankfurt
     plan: pro
-    buildCommand: |
-      export NODE_VERSION=20.18.1
-      curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-      export NVM_DIR="$HOME/.nvm"
-      [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-      nvm install 20.18.1
-      nvm use 20.18.1
-      npm install
-      npm run build
-    startCommand: NODE_ENV=production node dist/server/index-minimal.js
+    buildCommand: bash render-build-production.sh
+    startCommand: bash render-start-production.sh
     healthCheckPath: /api/health
     autoDeploy: true
     healthCheckTimeout: 180
@@ -31,20 +23,20 @@ services:
         value: 5000
       - key: HOST
         value: 0.0.0.0
-      # Universal API Override - DISABLED FOR PRODUCTION SECURITY
+      # Production Security Settings
       - key: UNIVERSAL_API_OVERRIDE
         value: false
       - key: BYPASS_API_VALIDATION
         value: false
       - key: FORCE_API_SUCCESS
         value: false
-      # Self-Healing - Conservative defaults for production
+      # Production Resilience - ENABLED for stability
       - key: AUTO_RECOVERY
-        value: false
+        value: true
       - key: CIRCUIT_BREAKER_ENABLED
-        value: false
+        value: true
       - key: GRACEFUL_DEGRADATION
-        value: false
+        value: true
       # Monitoring Configuration
       - key: ENABLE_MONITORING
         value: true
