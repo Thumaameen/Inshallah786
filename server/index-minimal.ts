@@ -25,15 +25,21 @@ const HOST = '0.0.0.0';
 const app = express();
 const server = createServer(app);
 
-// Security middleware
+// Security middleware - Production-hardened CSP
+const isProduction = process.env.NODE_ENV === 'production';
+const isRenderDeployment = process.env.RENDER === 'true';
+
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
+      // For Render production, allow inline styles only for Vite-bundled CSS; for Replit dev, keep unsafe-inline
+      styleSrc: isRenderDeployment ? ["'self'", "https://fonts.googleapis.com"] : ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
       imgSrc: ["'self'", "data:", "https:"],
-      scriptSrc: ["'self'", "'unsafe-inline'"],
-      connectSrc: ["'self'", "https://api.openai.com"],
+      // For Render production, remove unsafe-inline; for Replit dev, keep for HMR
+      scriptSrc: isRenderDeployment ? ["'self'"] : ["'self'", "'unsafe-inline'", "https://replit.com"],
+      connectSrc: ["'self'", "https://api.openai.com", "https://api.anthropic.com", "wss:", "ws:"],
     },
   },
 }));

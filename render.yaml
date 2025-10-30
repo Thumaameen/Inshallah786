@@ -13,7 +13,7 @@ services:
       nvm use 20.18.1
       npm install
       npm run build
-    startCommand: NODE_ENV=production node dist/server/index.js
+    startCommand: NODE_ENV=production node dist/server/index-minimal.js
     healthCheckPath: /api/health
     autoDeploy: true
     healthCheckTimeout: 180
@@ -31,20 +31,20 @@ services:
         value: 5000
       - key: HOST
         value: 0.0.0.0
-      # Universal API Override
+      # Universal API Override - DISABLED FOR PRODUCTION SECURITY
       - key: UNIVERSAL_API_OVERRIDE
-        value: true
+        value: false
       - key: BYPASS_API_VALIDATION
-        value: true
+        value: false
       - key: FORCE_API_SUCCESS
-        value: true
-      # Self-Healing
+        value: false
+      # Self-Healing - Conservative defaults for production
       - key: AUTO_RECOVERY
-        value: true
+        value: false
       - key: CIRCUIT_BREAKER_ENABLED
-        value: true
+        value: false
       - key: GRACEFUL_DEGRADATION
-        value: true
+        value: false
       # Monitoring Configuration
       - key: ENABLE_MONITORING
         value: true
@@ -116,7 +116,7 @@ services:
     name: dha-monitoring-service
     runtime: node
     plan: starter
-    buildCommand: ./build-fix.sh
+    buildCommand: npm install
     startCommand: npm run worker
     envVars:
       - key: NODE_ENV
@@ -152,7 +152,7 @@ services:
     region: frankfurt
     plan: starter
     schedule: "*/15 * * * *"
-    buildCommand: chmod +x build.sh && ./build.sh
+    buildCommand: npm install
     startCommand: npm run cron
     envVars:
       - key: NODE_ENV
@@ -171,10 +171,4 @@ services:
   databases:
     - name: dha-production-db
       plan: pro
-      ipAllowList:
-        - source: 0.0.0.0/0
-          description: "Temporary development access (REMOVE IN PRODUCTION)"
-        - source: ${env:CURRENT_IP}/32
-          description: "Current deployment IP"
-        - source: ${env:RENDER_EXTERNAL_IP}/32
-          description: "Render service IP"
+      ipAllowList: []  # Render services have automatic internal access - no public IP exposure needed
