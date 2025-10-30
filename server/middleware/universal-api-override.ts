@@ -1,6 +1,8 @@
+
 /**
  * PRODUCTION API KEY MANAGER
  * Uses ONLY real API keys from environment variables
+ * All bypass/override functionality removed for production
  */
 
 interface APIConfig {
@@ -80,7 +82,7 @@ export class UniversalAPIOverride {
     const config = this.apiConfigs.get(serviceName);
 
     if (!config?.isConfigured || !config.key) {
-      throw new Error(`❌ PRODUCTION ERROR: ${serviceName} API key not configured in Render environment variables`);
+      throw new Error(`❌ PRODUCTION ERROR: ${serviceName} API key not configured. Set in environment variables.`);
     }
 
     return config.key;
@@ -101,7 +103,7 @@ export class UniversalAPIOverride {
   private logAPIStatus() {
     console.log('\n📊 Production API Status:');
     this.apiConfigs.forEach((config, name) => {
-      const status = config.isConfigured ? '✅ REAL KEY LOADED' : '❌ MISSING - ADD TO RENDER ENV';
+      const status = config.isConfigured ? '✅ CONFIGURED' : '❌ MISSING';
       console.log(`   ${status} ${name}`);
     });
     console.log('');

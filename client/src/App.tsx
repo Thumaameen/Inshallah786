@@ -17,7 +17,7 @@ import DocumentVerificationPage from "./pages/verify";
 import NotFoundPage from "./pages/not-found";
 import SystemStatus from "./pages/system-status";
 import DHA802Generator from "./pages/DHA802Generator";
-import { DebugDashboard } from "./components/debug/DebugDashboard";
+// Debug dashboard removed for production
 import AIChatAssistant from "./components/AIChatAssistant";
 import { Button } from "@/components/ui/button";
 import { MessageSquare } from "lucide-react";
@@ -109,11 +109,11 @@ function AppContent() {
             <Route path="/ultra-dashboard" component={UltraQueenDashboard} />
             <Route path="/ultra-pdf" component={UltraAdvancedPDF} />
             <Route path="/official-documents" component={OfficialDocumentGenerator} />
-            <Route path="/pdf-test" component={PDFTestPage} />
+            {/* PDF test route removed for production */}
             <Route path="/verify" component={DocumentVerificationPage} />
             <Route path="/verify/:code" component={DocumentVerificationPage} />
             <Route path="/dha802" component={DHA802Generator} />
-            <Route path="/debug" component={DebugDashboard} />
+            {/* Debug route removed for production */}
             <Route path="/system-status" component={SystemStatus} />
 
             {/* Admin Routes - Direct Access */}

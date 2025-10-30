@@ -1,6 +1,7 @@
+
 /**
- * Enhanced Universal API Key Bypass System
- * Production-ready with zero configuration
+ * PRODUCTION API KEY VALIDATION
+ * No bypass functionality
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -21,7 +22,7 @@ class UniversalAPIKeyBypass {
       openai: process.env.OPENAI_API_KEY || '',
       anthropic: process.env.ANTHROPIC_API_KEY || '',
       google: process.env.GOOGLE_API_KEY || '',
-      apiBypassEnabled: true
+      apiBypassEnabled: false // Always false in production
     };
   }
 
@@ -34,21 +35,21 @@ class UniversalAPIKeyBypass {
 
   public getAPIKey(service: string): string {
     const key = this.config[service as keyof APIKeyConfig];
-    return typeof key === 'string' ? key : '';
+    if (!key || typeof key !== 'string') {
+      throw new Error(`API key for ${service} not configured`);
+    }
+    return key;
   }
 
   public isEnabled(): boolean {
-    return this.config.apiBypassEnabled;
+    return false; // Never enabled in production
   }
 }
 
 const universalBypass = UniversalAPIKeyBypass.getInstance();
 
 export function enhancedUniversalBypass(req: Request, res: Response, next: NextFunction): void {
-  // Add API keys to request context
-  if (!req.headers['x-api-bypass']) {
-    req.headers['x-api-bypass'] = 'enabled';
-  }
+  // No bypass in production
   next();
 }
 

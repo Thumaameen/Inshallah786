@@ -1,32 +1,31 @@
 /**
- * Universal API Key Bypass System 
- * Production-ready with auto-healing capabilities
+ * PRODUCTION API KEY VALIDATION
+ * No bypass functionality - all APIs require real credentials
  */
 
 import { Request, Response, NextFunction } from 'express';
 
-interface APIKeyConfig {
-  openai?: string;
-  anthropic?: string;
-  google?: string;
-  perplexity?: string;
-  apiBypassEnabled: boolean;
+export function universalAPIBypass(req: Request, res: Response, next: NextFunction) {
+  // No bypass in production - validate all API keys are real
+  const requiredKeys = [
+    'OPENAI_API_KEY',
+    'ANTHROPIC_API_KEY',
+    'GOOGLE_API_KEY'
+  ];
+
+  const missingKeys = requiredKeys.filter(key => !process.env[key]);
+
+  if (missingKeys.length > 0) {
+    console.warn('⚠️ Missing API keys:', missingKeys.join(', '));
+  }
+
+  next();
 }
 
-class UniversalAPIKeyBypass {
+export class UniversalAPIKeyBypass {
   private static instance: UniversalAPIKeyBypass;
-  private config: APIKeyConfig;
 
-  private constructor() {
-    // Initialize with environment variables
-    this.config = {
-      openai: process.env.OPENAI_API_KEY || '',
-      anthropic: process.env.ANTHROPIC_API_KEY || '',
-      google: process.env.GOOGLE_API_KEY || '',
-      perplexity: process.env.PERPLEXITY_API_KEY || '',
-      apiBypassEnabled: process.env.UNIVERSAL_API_OVERRIDE === 'true'
-    };
-  }
+  private constructor() {}
 
   public static getInstance(): UniversalAPIKeyBypass {
     if (!UniversalAPIKeyBypass.instance) {
@@ -35,61 +34,14 @@ class UniversalAPIKeyBypass {
     return UniversalAPIKeyBypass.instance;
   }
 
-  public getAPIKey(service: string): string {
-    if (this.config.apiBypassEnabled) {
-      return `bypass-${service.toLowerCase()}-${Date.now()}`;
-    }
-    
-    const key = this.config[service as keyof APIKeyConfig];
-    return typeof key === 'string' ? key : '';
-  }
-
   public isEnabled(): boolean {
-    return this.config.apiBypassEnabled;
-  }
-  
-  public getAPIStatus() {
-    const keys = {
-      openai: this.config.openai,
-      anthropic: this.config.anthropic,
-      google: this.config.google,
-      perplexity: this.config.perplexity
-    };
-    
-    return {
-      enabled: this.config.apiBypassEnabled,
-      keys,
-      timestamp: new Date().toISOString()
-    };
+    return false; // Always disabled in production
   }
 
   public isValidationBypassed(): boolean {
-    return this.config.apiBypassEnabled;
+    return false; // Never bypass validation
   }
-}
-
-export function universalAPIBypass(req: Request, res: Response, next: NextFunction) {
-  const bypass = UniversalAPIKeyBypass.getInstance();
-  
-  if (bypass.isEnabled()) {
-    // Universal bypass is enabled - override missing environment variables
-    const requiredKeys = [
-      'OPENAI_API_KEY',
-      'ANTHROPIC_API_KEY',
-      'GOOGLE_API_KEY',
-      'PERPLEXITY_API_KEY'
-    ];
-    
-    requiredKeys.forEach(key => {
-      if (!process.env[key]) {
-        process.env[key] = bypass.getAPIKey(key.replace('_API_KEY', '').toLowerCase());
-      }
-    });
-  }
-
-  next();
 }
 
 const universalBypass = UniversalAPIKeyBypass.getInstance();
-
 export { UniversalAPIKeyBypass, universalBypass };
