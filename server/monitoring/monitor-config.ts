@@ -1,4 +1,4 @@
-import { MetricsConfig } from './types';
+import { MetricsConfig } from './types.js';
 
 export const monitorConfig: MetricsConfig = {
   metrics: {

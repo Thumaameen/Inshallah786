@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events';
 import os from 'os';
-import { monitorConfig } from './monitor-config';
-import { SystemMetrics, AlertMessage } from './types';
+import { monitorConfig } from './monitor-config.js';
+import { SystemMetrics, AlertMessage } from './types.js';
 
 class MonitoringService extends EventEmitter {
   private metrics: Map<string, any> = new Map();
