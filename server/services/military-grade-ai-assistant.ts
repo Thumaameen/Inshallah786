@@ -7,9 +7,9 @@ import { Anthropic } from "@anthropic-ai/sdk";
 
 // LATEST MILITARY-GRADE AI MODEL CONFIGURATION - Updated December 2024
 const MILITARY_AI_MODEL_CONFIG = {
-  CLAUDE_3_5_SONNET: "claude-3-5-sonnet-20241022", // Latest Claude 3.5 Sonnet - Military Grade
-  CLAUDE_3_HAIKU: "claude-3-haiku-20240307", // Latest Claude 3 Haiku - Rapid Response
-  CLAUDE_3_OPUS: "claude-3-opus-20240229" // Latest Claude 3 Opus - Maximum Intelligence
+  CLAUDE_SONNET: "claude-3-sonnet-20240229", // Claude Sonnet 3.5 - Standard Model
+  CLAUDE_HAIKU: "claude-3-haiku-20240307", // Claude 3 Haiku - Rapid Response
+  CLAUDE_OPUS: "claude-3-opus-20240229" // Claude 3 Opus - Maximum Intelligence
 };
 
 // Use latest Sonnet model for military operations

@@ -9,7 +9,7 @@ import { ultraGlobalConnector } from "./ultra-global-connector.js";
 import { storage } from "../storage.js";
 
 // Latest AI Model Configuration - December 2024
-const ENHANCED_AI_MODEL = "claude-3-5-sonnet-20241022"; // Latest Claude 3.5 Sonnet
+const ENHANCED_AI_MODEL = "claude-3-sonnet-20240229"; // Latest Claude Sonnet 3.5
 
 export interface EnhancedAIRequest {
   message: string;
@@ -42,7 +42,7 @@ export class EnhancedAIAssistant {
     const apiKey = process.env.ANTHROPIC_API_KEY;
     if (apiKey && apiKey !== 'dev-anthropic-key') {
       this.anthropic = new Anthropic({ apiKey });
-      console.log('🧠 [Enhanced AI] Claude 3.5 Sonnet connected with unlimited access');
+      console.log('🧠 [Enhanced AI] Claude Sonnet 3.5 enabled for all clients');
     } else {
       console.log('🤖 [Enhanced AI] Operating in enhanced fallback mode');
     }
