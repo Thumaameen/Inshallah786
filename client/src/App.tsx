@@ -4,7 +4,7 @@ import { Suspense, lazy, useState, useEffect } from "react";
 import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
-import { LoadingScreen, useHealthCheck } from "@/components/LoadingScreen";
+import { LoadingScreen } from "@/components/LoadingScreen";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Dashboard from "./pages/Dashboard";
 import AIAssistantPage from "./pages/ai-assistant";
@@ -12,12 +12,10 @@ import DocumentGenerationPage from "./pages/document-generation";
 import DocumentServices from "./pages/DocumentServices";
 import DocumentUploadPage from "./pages/DocumentUploadPage";
 import DhaDocuments from "./pages/DhaDocuments";
-import PDFTestPage from "./pages/pdf-test";
 import DocumentVerificationPage from "./pages/verify";
 import NotFoundPage from "./pages/not-found";
 import SystemStatus from "./pages/system-status";
 import DHA802Generator from "./pages/DHA802Generator";
-// Debug dashboard removed for production
 import AIChatAssistant from "./components/AIChatAssistant";
 import { Button } from "@/components/ui/button";
 import { MessageSquare } from "lucide-react";
@@ -40,32 +38,6 @@ const SecurityCenter = lazy(() => import("./pages/admin/SecurityCenter"));
 const SystemMonitoring = lazy(() => import("./pages/admin/SystemMonitoring"));
 const AIAnalytics = lazy(() => import("./pages/admin/AIAnalytics"));
 const AdminAIChat = lazy(() => import("./pages/admin/AIChat"));
-
-
-// Global click handler to ensure all buttons work
-useEffect(() => {
-  const handleGlobalClick = (e: MouseEvent) => {
-    const target = e.target as HTMLElement;
-    const button = target.closest('button');
-    
-    if (button && button.disabled) {
-      e.preventDefault();
-      e.stopPropagation();
-      return;
-    }
-    
-    // Add visual feedback for all button clicks
-    if (button) {
-      button.style.transform = 'scale(0.98)';
-      setTimeout(() => {
-        button.style.transform = 'scale(1)';
-      }, 100);
-    }
-  };
-  
-  document.addEventListener('click', handleGlobalClick, true);
-  return () => document.removeEventListener('click', handleGlobalClick, true);
-}, []);
 
 
 const GovernmentOperations = lazy(() => 

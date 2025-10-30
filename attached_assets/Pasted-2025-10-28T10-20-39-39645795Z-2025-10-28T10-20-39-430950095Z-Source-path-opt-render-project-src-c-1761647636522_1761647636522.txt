@@ -1,0 +1,102 @@
+2025-10-28T10:20:39.39645795Z 
+2025-10-28T10:20:39.430950095Z Source path: /opt/render/project/src/client/src/index.css
+2025-10-28T10:20:39.43322212Z Setting up new context...
+2025-10-28T10:20:39.52822503Z Finding changed files: 7.455ms
+2025-10-28T10:20:39.913659752Z Reading changed files: 384.197ms
+2025-10-28T10:20:39.926050342Z Sorting candidates: 12.212ms
+2025-10-28T10:20:40.235047943Z Generate rules: 321.224ms
+2025-10-28T10:20:40.24689082Z Build stylesheet: 11.676ms
+2025-10-28T10:20:40.256774269Z Potential classes:  16145
+2025-10-28T10:20:40.25679795Z Active contexts:  1
+2025-10-28T10:20:40.28945217Z JIT TOTAL: 892.822ms
+2025-10-28T10:20:40.289477001Z 
+2025-10-28T10:20:40.289481381Z 
+2025-10-28T10:20:41.49055703Z 
+2025-10-28T10:20:41.49058709Z 
+2025-10-28T10:20:41.491259597Z Source path: /opt/render/project/src/client/node_modules/highlight.js/styles/github-dark.css
+2025-10-28T10:20:41.491911742Z JIT TOTAL: 1.257ms
+2025-10-28T10:20:41.491926733Z 
+2025-10-28T10:20:41.491929303Z 
+2025-10-28T10:20:47.091322607Z ✓ 3285 modules transformed.
+2025-10-28T10:20:47.50736247Z rendering chunks...
+2025-10-28T10:20:48.076318336Z computing gzip size...
+2025-10-28T10:20:48.117972724Z ../dist/public/index.html                                   2.65 kB │ gzip:   1.08 kB
+2025-10-28T10:20:48.117997905Z ../dist/public/assets/index-DJ_SlOfF.css                  113.82 kB │ gzip:  19.63 kB
+2025-10-28T10:20:48.118051356Z ../dist/public/assets/clock-CNcNAjag.js                     0.35 kB │ gzip:   0.27 kB
+2025-10-28T10:20:48.118115488Z ../dist/public/assets/circle-x-B8ZngpIW.js                  0.37 kB │ gzip:   0.28 kB
+2025-10-28T10:20:48.118176609Z ../dist/public/assets/activity-BNbs9iSe.js                  0.40 kB │ gzip:   0.30 kB
+2025-10-28T10:20:48.118234521Z ../dist/public/assets/database-BoMi38ti.js                  0.41 kB │ gzip:   0.30 kB
+2025-10-28T10:20:48.118249611Z ../dist/public/assets/circle-alert-BXgH4wUs.js              0.42 kB │ gzip:   0.29 kB
+2025-10-28T10:20:48.118324423Z ../dist/public/assets/download-CH0KzaFl.js                  0.43 kB │ gzip:   0.32 kB
+2025-10-28T10:20:48.118389164Z ../dist/public/assets/zap-gPZCsiiS.js                       0.43 kB │ gzip:   0.31 kB
+2025-10-28T10:20:48.118405535Z ../dist/public/assets/shield-D_D-TKKH.js                    0.44 kB │ gzip:   0.33 kB
+2025-10-28T10:20:48.118462186Z ../dist/public/assets/refresh-cw-voNLPAcF.js                0.49 kB │ gzip:   0.33 kB
+2025-10-28T10:20:48.118480856Z ../dist/public/assets/file-text-BVVYmddd.js                 0.50 kB │ gzip:   0.32 kB
+2025-10-28T10:20:48.118488567Z ../dist/public/assets/server-DZY8O4ss.js                    0.51 kB │ gzip:   0.32 kB
+2025-10-28T10:20:48.118562678Z ../dist/public/assets/crown-BTJbZzoH.js                     0.53 kB │ gzip:   0.36 kB
+2025-10-28T10:20:48.118597469Z ../dist/public/assets/search-Dk4L0XQJ.js                    0.66 kB │ gzip:   0.34 kB
+2025-10-28T10:20:48.11861385Z ../dist/public/assets/badge-ewKCVLFt.js                     0.71 kB │ gzip:   0.37 kB
+2025-10-28T10:20:48.118658621Z ../dist/public/assets/circle-check-big-nbzA7JJE.js          0.81 kB │ gzip:   0.41 kB
+2025-10-28T10:20:48.118665051Z ../dist/public/assets/use-toast-BdZ0LQv9.js                 1.21 kB │ gzip:   0.65 kB
+2025-10-28T10:20:48.118679131Z ../dist/public/assets/settings-DGArS_6z.js                  1.22 kB │ gzip:   0.52 kB
+2025-10-28T10:20:48.118732802Z ../dist/public/assets/table-AKrlQtkT.js                     1.49 kB │ gzip:   0.52 kB
+2025-10-28T10:20:48.118739183Z ../dist/public/assets/useMutation-cV17JeG1.js               2.97 kB │ gzip:   1.25 kB
+2025-10-28T10:20:48.118751223Z ../dist/public/assets/AIChat-C5iUkQjx.js                    9.70 kB │ gzip:   3.51 kB
+2025-10-28T10:20:48.118755403Z ../dist/public/assets/triangle-alert-DslquE86.js           10.77 kB │ gzip:   3.93 kB
+2025-10-28T10:20:48.118766623Z ../dist/public/assets/SecurityCenter-DwSnuTZ_.js           11.29 kB │ gzip:   2.97 kB
+2025-10-28T10:20:48.118810024Z ../dist/public/assets/UserManagement-Co8lMJGC.js           11.73 kB │ gzip:   3.04 kB
+2025-10-28T10:20:48.118826405Z ../dist/public/assets/DocumentManagement-B0as1m0e.js       12.13 kB │ gzip:   2.97 kB
+2025-10-28T10:20:48.118831855Z ../dist/public/assets/SystemMonitoring-CESGjbz6.js         13.46 kB │ gzip:   3.52 kB
+2025-10-28T10:20:48.118839655Z ../dist/public/assets/GovernmentOperations-BWh8xf9s.js     19.34 kB │ gzip:   3.93 kB
+2025-10-28T10:20:48.118862126Z ../dist/public/assets/AdminLayout-CoCZWz9I.js              19.79 kB │ gzip:   6.33 kB
+2025-10-28T10:20:48.118876296Z ../dist/public/assets/AdminDashboard-CbpT6Yby.js           20.12 kB │ gzip:   5.63 kB
+2025-10-28T10:20:48.118882756Z ../dist/public/assets/MonitoringDashboard-Cr78Mh61.js      39.29 kB │ gzip:  10.57 kB
+2025-10-28T10:20:48.118922607Z ../dist/public/assets/AIAnalytics-ChoIX9Hk.js              39.30 kB │ gzip:  11.25 kB
+2025-10-28T10:20:48.118927117Z ../dist/public/assets/AreaChart-BVJbrqmi.js               321.50 kB │ gzip:  95.93 kB
+2025-10-28T10:20:48.118942708Z ../dist/public/assets/index-DsYs6K5E.js                 1,318.59 kB │ gzip: 445.64 kB
+2025-10-28T10:20:48.11904894Z 
+2025-10-28T10:20:48.119057241Z (!) Some chunks are larger than 500 kB after minification. Consider:
+2025-10-28T10:20:48.11906069Z - Using dynamic import() to code-split the application
+2025-10-28T10:20:48.11906409Z - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+2025-10-28T10:20:48.119066931Z - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+2025-10-28T10:20:48.119507511Z ✓ built in 9.08s
+2025-10-28T10:20:49.122774551Z ==> Uploading build...
+2025-10-28T10:21:58.76259046Z ==> Uploaded in 33.0s. Compression took 36.6s
+2025-10-28T10:21:58.991114303Z ==> Build successful 🎉
+2025-10-28T10:22:04.781777346Z ==> Deploying...
+2025-10-28T10:22:48.981175599Z ==> Running 'npm start'
+2025-10-28T10:22:49.116525374Z 
+2025-10-28T10:22:49.116557585Z > dha-digital-services@2.0.0 start
+2025-10-28T10:22:49.116562705Z > tsx server/index-minimal.ts
+2025-10-28T10:22:49.116565345Z 
+2025-10-28T10:22:49.520078699Z 
+2025-10-28T10:22:49.520106491Z 🚀 DHA Digital Services Platform - Production Server
+2025-10-28T10:22:49.520129492Z 🇿🇦 Department of Home Affairs - Implementation
+2025-10-28T10:22:49.520137762Z ============================================================
+2025-10-28T10:22:49.523918717Z 🔧 Registering API routes...
+2025-10-28T10:22:49.52414904Z ✅ All routes registered successfully
+2025-10-28T10:22:49.52415477Z ✅ Frontend routes configured
+2025-10-28T10:22:49.52416109Z ✅ Backend API routes active
+2025-10-28T10:22:49.524195962Z ✅ Middleware integrated
+2025-10-28T10:22:49.524235084Z ✅ PDF Generation routes active
+2025-10-28T10:22:49.524256105Z ✅ DHA Document routes active
+2025-10-28T10:22:49.524295797Z ✅ Ultra Queen Raeesa AI active
+2025-10-28T10:22:49.524302247Z ✅ Universal API Override active
+2025-10-28T10:22:49.524311438Z ✅ Authentication system ready
+2025-10-28T10:22:49.524330209Z ✅ All integrations active
+2025-10-28T10:22:49.524332699Z ✅ System ready for production
+2025-10-28T10:22:49.525783514Z ✅ Serving static files from: /opt/render/project/src/dist/public
+2025-10-28T10:22:49.532428967Z 
+2025-10-28T10:22:49.532443308Z ✅ Server running on http://0.0.0.0:3000
+2025-10-28T10:22:49.532445998Z 📱 Environment: production
+2025-10-28T10:22:49.532452138Z 🌐 Ready to accept connections
+2025-10-28T10:22:49.532453909Z 
+2025-10-28T10:22:58.001739827Z ==> Your service is live 🎉
+2025-10-28T10:22:58.165694615Z ==> 
+2025-10-28T10:22:58.326553613Z ==> ///////////////////////////////////////////////////////////
+2025-10-28T10:22:58.496320089Z ==> 
+2025-10-28T10:22:58.659447948Z ==> Available at your primary URL https://dha-thisone.onrender.com
+2025-10-28T10:22:58.822630546Z ==> 
+2025-10-28T10:23:00.344254641Z ==> ///////////////////////////////////////////////////////////
+2025-10-28T10:28:00.595279002Z ==> Detected service running on port 3000
+2025-10-28T10:28:00.998650239Z ==> Docs on specifying a port: https://render.com/docs/web-services#port-binding

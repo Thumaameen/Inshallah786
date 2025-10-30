@@ -1,13 +1,20 @@
-
 import { execSync, spawn } from 'child_process';
 import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import { dirname, join } from 'path';
+import { existsSync, unlinkSync } from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 console.log('🚀 DHA PRODUCTION STARTUP');
 console.log('=========================\n');
+
+// Clean up lock file on startup
+const lockFile = join(__dirname, 'server-running.lock');
+if (existsSync(lockFile)) {
+  unlinkSync(lockFile);
+  console.log('🧹 Cleaned up stale lock file');
+}
 
 // Kill any existing processes
 try {

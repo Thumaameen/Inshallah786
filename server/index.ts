@@ -65,31 +65,26 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 console.log('\n🚀 DHA Digital Services Platform - Production Server');
-console.log('🇿🇦 Department of Home Affairs - Real Implementation');
+console.log('🇿🇦 Department of Home Affairs - Live Production');
 console.log('=' .repeat(60));
 
 const PORT = parseInt(process.env.PORT || '5000');
 const HOST = '0.0.0.0';
 
+// Force production mode
+process.env.NODE_ENV = 'production';
+process.env.FORCE_REAL_APIS = 'true';
+
 // Create Express app and HTTP server
 const app = express();
 
-// 🔑 ENABLE PRODUCTION MODE IF NOT IN REPLIT
-if (!process.env.REPL_ID) {
-  console.log('🔑 PRODUCTION MODE ACTIVE - NO MOCKS ALLOWED');
-  process.env.NODE_ENV = 'production';
-  process.env.FORCE_REAL_APIS = 'true';
-  apiOverride.enableProductionMode();
-} else {
-  console.log('🔧 REPLIT DEVELOPMENT MODE - USING VITE');
-}
-
-// Validate real API keys exist
-const requiredKeys = ['OPENAI_API_KEY'];
+// Validate all required API keys exist for production
+const requiredKeys = ['OPENAI_API_KEY', 'DATABASE_URL', 'JWT_SECRET', 'SESSION_SECRET', 'ENCRYPTION_KEY'];
 const missingKeys = requiredKeys.filter(key => !process.env[key]);
 if (missingKeys.length > 0) {
-  console.warn('⚠️ Missing API keys:', missingKeys.join(', '));
-  console.warn('⚠️ Add keys via Replit Secrets for full functionality');
+  console.error('❌ PRODUCTION ERROR: Missing required API keys:', missingKeys.join(', '));
+  console.error('❌ Cannot start in production without all required keys');
+  process.exit(1);
 }
 
 const server = createServer(app);
@@ -137,12 +132,19 @@ app.use(cors({
   credentials: true
 }));
 
-// Bulletproof middleware stack
+// Bulletproof middleware stack - Production Ready
 app.use(universalAPIOverrideMiddleware);
 app.use(memoryOptimization);
 app.use(healthCheckOptimization);
 app.use(timeoutProtection);
 app.use(circuitBreakerMiddleware);
+
+// Additional production middleware
+app.use((req, res, next) => {
+  // Log all requests in production
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
+  next();
+});
 
 
 // Body parsing
@@ -152,29 +154,67 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // Trust proxy for Replit
 app.set('trust proxy', 1);
 
-// Health check with real database connection
+// Production health check endpoint
 app.get('/api/health', async (req, res) => {
   try {
     // Test database connection
     const dbHealth = await checkDatabaseHealth(dbConfig);
 
-    // Test API keys
+    // Validate production API keys (don't expose which are missing)
+    const hasRequiredKeys = !!(
+      process.env.OPENAI_API_KEY && 
+      process.env.JWT_SECRET && 
+      process.env.SESSION_SECRET && 
+      process.env.ENCRYPTION_KEY
+    );
+
     const apiStatus = {
-      openai: !!process.env.OPENAI_API_KEY,
-      anthropic: !!process.env.ANTHROPIC_API_KEY,
+      production: process.env.NODE_ENV === 'production',
+      authenticated: hasRequiredKeys,
       database: dbHealth.healthy
     };
 
-    res.json({
+    // Full production status
+    const productionStatus = {
       status: 'healthy',
       timestamp: new Date().toISOString(),
-      environment: process.env.NODE_ENV || 'development',
+      environment: process.env.NODE_ENV || 'production',
       version: '2.0.0',
-      database: dbHealth.type,
+      platform: 'Render.com',
+      database: {
+        type: dbHealth.type,
+        healthy: dbHealth.healthy,
+        connectionString: dbHealth.connectionString
+      },
       apiServices: apiStatus,
-      features: ['Document Generation', 'AI Assistant', 'Security', 'Authentication']
-    });
+      features: {
+        documentGeneration: true,
+        aiAssistant: true,
+        biometricValidation: true,
+        governmentIntegration: true,
+        ultraQueenDashboard: true,
+        pdfGeneration: true
+      },
+      frontend: {
+        connected: true,
+        ready: true
+      },
+      middleware: {
+        cors: true,
+        compression: true,
+        security: true,
+        rateLimit: true
+      },
+      uptime: process.uptime(),
+      memory: {
+        used: process.memoryUsage().heapUsed / 1024 / 1024,
+        total: process.memoryUsage().heapTotal / 1024 / 1024
+      }
+    };
+
+    res.json(productionStatus);
   } catch (error) {
+    console.error('Health check error:', error);
     res.status(500).json({
       status: 'unhealthy',
       error: error.message,

@@ -44,6 +44,26 @@ class UniversalAPIKeyBypass {
   public isEnabled(): boolean {
     return false; // Never enabled in production
   }
+
+  // Production mode - no bypasses allowed
+  bypassMissingAPIKeys(): void {
+    const apiKeys = [
+      'OPENAI_API_KEY',
+      'ANTHROPIC_API_KEY',
+      'GOOGLE_API_KEY',
+      'DHA_NPR_API_KEY',
+      'SAPS_CRC_API_KEY',
+      'ICAO_PKD_API_KEY'
+    ];
+
+    apiKeys.forEach(key => {
+      if (!process.env[key]) {
+        console.warn(`⚠️ ${key} not configured - some features may be limited`);
+      } else {
+        console.log(`✅ ${key} configured`);
+      }
+    });
+  }
 }
 
 const universalBypass = UniversalAPIKeyBypass.getInstance();

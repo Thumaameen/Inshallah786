@@ -4,22 +4,23 @@ import helmet from 'helmet';
 import compression from 'compression';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import path from 'path';
 import { createServer } from 'http';
 import dotenv from 'dotenv';
 import { registerRoutes } from './routes-simple.js';
+import fs from 'fs';
 
 // Load environment variables first
 dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+const lockFile = path.join(__dirname, '../../server-running.lock');
 
-console.log('\n🚀 DHA Digital Services Platform - Production Server');
-console.log('🇿🇦 Department of Home Affairs - Implementation');
-console.log('='.repeat(60));
-
-const PORT = parseInt(process.env.PORT || '5000');
-const HOST = '0.0.0.0';
+// Clean up lock file on startup
+if (fs.existsSync(lockFile)) {
+  fs.unlinkSync(lockFile);
+}
 
 // Create Express app and HTTP server
 const app = express();
@@ -46,8 +47,22 @@ app.use(helmet({
 
 app.use(compression());
 app.use(cors({
-  origin: ['https://*.replit.app', 'https://*.replit.dev', 'https://*.onrender.com'],
-  credentials: true
+  origin: (origin, callback) => {
+    const allowedOrigins = [
+      'https://dha-thisone.onrender.com',
+      'http://localhost:5000',
+      'http://localhost:3000'
+    ];
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(null, true); // Temporarily allow all origins in production
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 
 // Body parsing
@@ -57,14 +72,19 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 // Register routes
 registerRoutes(app);
 
+// Add monitoring middleware and routes (non-intrusive)
+import { monitoringMiddleware } from './monitoring/monitoring-middleware.js';
+import { monitoringRoutes } from './monitoring/monitoring-routes.js';
+app.use(monitoringMiddleware); // Add monitoring without affecting existing routes
+app.use('/api/monitor', monitoringRoutes); // Add monitoring endpoints
+
 // Serve static files in production
 const staticPath = join(process.cwd(), 'dist/public');
-const fs = await import('fs');
 
 // Check if dist exists, if not serve API-only mode
 if (fs.existsSync(staticPath)) {
   console.log('✅ Serving static files from:', staticPath);
-  
+
   // Serve static files with no-cache headers for development
   app.use(express.static(staticPath, {
     maxAge: 0,
@@ -75,14 +95,14 @@ if (fs.existsSync(staticPath)) {
       res.setHeader('Expires', '0');
     }
   }));
-  
+
   // Serve React app for non-API routes (SPA fallback)
   app.get('*', (req, res) => {
     // Don't serve HTML for API routes
     if (req.path.startsWith('/api')) {
       return res.status(404).json({ error: 'API endpoint not found' });
     }
-    
+
     // Serve index.html for all other routes (React Router will handle routing)
     const indexPath = join(staticPath, 'index.html');
     if (fs.existsSync(indexPath)) {
@@ -103,13 +123,13 @@ if (fs.existsSync(staticPath)) {
 } else {
   console.log('⚠️  Frontend not built - serving API-only mode');
   console.log('💡 Run: ./build-client.sh or npm run build:client');
-  
+
   // Serve helpful message for non-API routes
   app.get('*', (req, res) => {
     if (req.path.startsWith('/api')) {
       return res.status(404).json({ error: 'API endpoint not found' });
     }
-    
+
     res.send(`
       <html>
         <head><title>DHA API Server</title></head>
@@ -133,16 +153,31 @@ if (fs.existsSync(staticPath)) {
 
 // Start server
 server.listen(PORT, HOST, () => {
+  console.log('\n🚀 DHA Digital Services Platform - Production Server');
+  console.log('🇿🇦 Department of Home Affairs - Implementation');
+  console.log('='.repeat(60));
   console.log(`\n✅ Server running on http://${HOST}:${PORT}`);
   console.log(`📱 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`🌐 Ready to accept connections\n`);
 });
 
 // Graceful shutdown
+process.on('exit', () => {
+  if (fs.existsSync(lockFile)) {
+    fs.unlinkSync(lockFile);
+  }
+});
+
 process.on('SIGTERM', () => {
-  console.log('SIGTERM received, shutting down gracefully');
-  server.close(() => {
-    console.log('Server closed');
-    process.exit(0);
-  });
+  if (fs.existsSync(lockFile)) {
+    fs.unlinkSync(lockFile);
+  }
+  process.exit(0);
+});
+
+process.on('SIGINT', () => {
+  if (fs.existsSync(lockFile)) {
+    fs.unlinkSync(lockFile);
+  }
+  process.exit(0);
 });

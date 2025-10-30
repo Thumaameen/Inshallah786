@@ -1,0 +1,50 @@
+2025-10-28T03:38:59.991446053Z 2 moderate severity vulnerabilities
+2025-10-28T03:38:59.991450713Z 
+2025-10-28T03:38:59.991456533Z To address all issues (including breaking changes), run:
+2025-10-28T03:38:59.991461714Z   npm audit fix --force
+2025-10-28T03:38:59.991465764Z 
+2025-10-28T03:38:59.991471174Z Run `npm audit` for details.
+2025-10-28T03:39:00.107292115Z 
+2025-10-28T03:39:00.107316065Z > dha-client@2.0.0 build
+2025-10-28T03:39:00.107321485Z > vite build
+2025-10-28T03:39:00.107325225Z 
+2025-10-28T03:39:00.307502345Z vite v5.4.21 building for production...
+2025-10-28T03:39:00.358350191Z transforming...
+2025-10-28T03:39:00.647742873Z 
+2025-10-28T03:39:00.647773124Z 
+2025-10-28T03:39:00.672523285Z Source path: /opt/render/project/src/client/src/index.css
+2025-10-28T03:39:00.674157496Z Setting up new context...
+2025-10-28T03:39:00.752734378Z Finding changed files: 7.973ms
+2025-10-28T03:39:01.145287709Z Reading changed files: 391.076ms
+2025-10-28T03:39:01.166556091Z Sorting candidates: 20.871ms
+2025-10-28T03:39:01.450801022Z Generate rules: 305.318ms
+2025-10-28T03:39:01.459417232Z Build stylesheet: 8.523ms
+2025-10-28T03:39:01.468582025Z Potential classes:  16145
+2025-10-28T03:39:01.468604696Z Active contexts:  1
+2025-10-28T03:39:01.506247095Z JIT TOTAL: 858.373ms
+2025-10-28T03:39:01.506273985Z 
+2025-10-28T03:39:01.506276245Z 
+2025-10-28T03:39:02.771590001Z 
+2025-10-28T03:39:02.771639513Z 
+2025-10-28T03:39:02.772230017Z Source path: /opt/render/project/src/client/node_modules/highlight.js/styles/github-dark.css
+2025-10-28T03:39:02.772816222Z JIT TOTAL: 1.165ms
+2025-10-28T03:39:02.772829843Z 
+2025-10-28T03:39:02.772832523Z 
+2025-10-28T03:39:04.568719996Z ✓ 2353 modules transformed.
+2025-10-28T03:39:04.573139118Z x Build failed in 4.24s
+2025-10-28T03:39:04.57320559Z error during build:
+2025-10-28T03:39:04.57321098Z [vite]: Rollup failed to resolve import "react-is" from "/opt/render/project/src/client/node_modules/recharts/es6/util/ReactUtils.js".
+2025-10-28T03:39:04.57321438Z This is most likely unintended because it can break your application at runtime.
+2025-10-28T03:39:04.57321714Z If you do want to externalize this module explicitly add it to
+2025-10-28T03:39:04.57321992Z `build.rollupOptions.external`
+2025-10-28T03:39:04.57322285Z     at viteWarn (file:///opt/render/project/src/client/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:65855:17)
+2025-10-28T03:39:04.57322506Z     at Object.onwarn (file:///opt/render/project/src/client/vite.config.ts.timestamp-1761622740279-51bccc8edab6b.mjs:31:9)
+2025-10-28T03:39:04.5732281Z     at onwarn (file:///opt/render/project/src/client/node_modules/@vitejs/plugin-react/dist/index.js:89:252)
+2025-10-28T03:39:04.57323016Z     at onRollupWarning (file:///opt/render/project/src/client/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:65885:5)
+2025-10-28T03:39:04.57323268Z     at onwarn (file:///opt/render/project/src/client/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:65550:7)
+2025-10-28T03:39:04.573234831Z     at file:///opt/render/project/src/client/node_modules/rollup/dist/es/shared/node-entry.js:20951:13
+2025-10-28T03:39:04.573236971Z     at Object.logger [as onLog] (file:///opt/render/project/src/client/node_modules/rollup/dist/es/shared/node-entry.js:22823:9)
+2025-10-28T03:39:04.573239121Z     at ModuleLoader.handleInvalidResolvedId (file:///opt/render/project/src/client/node_modules/rollup/dist/es/shared/node-entry.js:21567:26)
+2025-10-28T03:39:04.573241251Z     at file:///opt/render/project/src/client/node_modules/rollup/dist/es/shared/node-entry.js:21525:26
+2025-10-28T03:39:04.69295197Z ==> Build failed 😞
+2025-10-28T03:39:04.692967421Z ==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys

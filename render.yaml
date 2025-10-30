@@ -1,3 +1,4 @@
+
 services:
   - type: web
     name: dha-digital-services
@@ -12,10 +13,10 @@ services:
     healthCheckInterval: 15
     pullRequestPreviewsEnabled: true
     scaling:
-      minInstances: 2  # Increased for high availability
-      maxInstances: 5  # Allow more scaling for production
-      targetMemoryPercent: 75  # Optimized for production
-      targetCPUPercent: 65  # Better resource utilization
+      minInstances: 2
+      maxInstances: 5
+      targetMemoryPercent: 75
+      targetCPUPercent: 65
     envVars:
       - key: NODE_ENV
         value: production
@@ -23,21 +24,18 @@ services:
         value: 5000
       - key: HOST
         value: 0.0.0.0
-      # Production Security Settings
       - key: UNIVERSAL_API_OVERRIDE
         value: false
       - key: BYPASS_API_VALIDATION
         value: false
       - key: FORCE_API_SUCCESS
         value: false
-      # Production Resilience - ENABLED for stability
       - key: AUTO_RECOVERY
         value: true
       - key: CIRCUIT_BREAKER_ENABLED
         value: true
       - key: GRACEFUL_DEGRADATION
         value: true
-      # Monitoring Configuration
       - key: ENABLE_MONITORING
         value: true
       - key: MONITOR_INTERVAL
@@ -46,7 +44,6 @@ services:
         value: 3
       - key: ALERT_THRESHOLD
         value: 5
-      # Core API Keys and Secrets
       - key: DATABASE_URL
         sync: true
       - key: SESSION_SECRET
@@ -57,7 +54,6 @@ services:
         sync: true
       - key: QUANTUM_ENCRYPTION_KEY
         sync: true
-      # AI Service API Keys
       - key: OPENAI_API_KEY
         sync: true
       - key: ANTHROPIC_API_KEY
@@ -72,7 +68,6 @@ services:
         sync: true
       - key: COHERE_API_KEY
         sync: true
-      # Government Integration API Keys
       - key: DHA_NPR_API_KEY
         sync: true
       - key: SAPS_CRC_API_KEY
@@ -87,14 +82,12 @@ services:
         sync: true
       - key: DEL_API_KEY
         sync: true
-      # API Fallback Configuration
       - key: ENABLE_API_FALLBACK
         value: true
       - key: API_FALLBACK_TIMEOUT
         value: 5000
       - key: MAX_FALLBACK_ATTEMPTS
         value: 3
-      # Extra failsafe environment variables
       - key: MAXIMUM_PROTECTION_MODE
         value: true
       - key: ENABLE_SELF_HEALING
@@ -137,7 +130,6 @@ services:
       min: 1
       max: 1
 
-  # Cron Job Service for Scheduled Tasks
   - type: cron
     name: dha-scheduled-tasks
     env: node
@@ -159,8 +151,7 @@ services:
       - key: CRON_SECRET
         sync: true
 
-  # Database Service Configuration
-  databases:
-    - name: dha-production-db
-      plan: pro
-      ipAllowList: []  # Render services have automatic internal access - no public IP exposure needed
+databases:
+  - name: dha-production-db
+    plan: pro
+    ipAllowList: []
