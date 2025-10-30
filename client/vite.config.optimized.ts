@@ -27,36 +27,20 @@ export default defineConfig({
     sourcemap: false,
     chunkSizeWarningLimit: 1000,
     rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          ui: ['@radix-ui/react-dialog', '@radix-ui/react-select', '@radix-ui/react-tabs'],
+          utils: ['date-fns', 'axios', 'zod']
+        }
+      },
       external: [
         'fsevents',
         'chokidar',
         'esbuild',
         'rollup',
         'react-is'
-      ],
-      output: {
-        manualChunks: {
-          'vendor': [
-            'react',
-            'react-dom',
-            'react-router-dom'
-          ],
-          'ui': [
-            '@/components',
-            '@/hooks'
-          ],
-          'features': [
-            '@/services',
-            '@/contexts'
-          ]
-        },
-        chunkFileNames: 'assets/[name]-[hash].js',
-        assetFileNames: 'assets/[name]-[hash][extname]'
-      },
-      onwarn(warning, warn) {
-        if (warning.code === 'MODULE_LEVEL_DIRECTIVE') return;
-        warn(warning);
-      }
+      ]
     }
   },
   server: {
