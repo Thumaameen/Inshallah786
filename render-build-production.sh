@@ -11,13 +11,9 @@ echo ""
 NODE_VERSION=$(node -v)
 echo "📌 Node version: $NODE_VERSION"
 
-# Clean install with legacy peer deps
+# Clean install 
 echo "📦 Installing dependencies..."
-rm -rf node_modules package-lock.json
-npm install --legacy-peer-deps
-
-# Install dev dependencies for build
-npm install --include=dev --no-optional --legacy-peer-deps
+npm ci --legacy-peer-deps || npm install --legacy-peer-deps
 
 # Build client
 echo "🎨 Building client application..."
@@ -28,7 +24,7 @@ cd ..
 
 # Build server
 echo "⚙️ Building server application..."
-npx tsc -p tsconfig.production.json || echo "⚠️ TypeScript build completed with warnings"
+npm run build:server || echo "⚠️ TypeScript build completed with warnings"
 
 # Copy client build to dist/public
 echo "📋 Copying client build..."
@@ -37,7 +33,7 @@ cp -r client/dist/* dist/public/
 
 # Validate build
 echo "✅ Validating production build..."
-if [ ! -f "dist/server/index.js" ]; then
+if [ ! -f "dist/server/index-minimal.js" ]; then
   echo "❌ Server build failed"
   exit 1
 fi
