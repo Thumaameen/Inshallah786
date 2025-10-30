@@ -1,0 +1,38 @@
+2025-10-30T21:29:35.506578038Z ==> Downloading cache...
+2025-10-30T21:29:35.515468585Z ==> Cloning from https://github.com/Thumaameen/Inshallah
+2025-10-30T21:29:47.729158082Z ==> Checking out commit a8f8357944c4519125809c97724bc3d97cab06df in branch main
+2025-10-30T21:29:56.096802836Z ==> Transferred 471MB in 9s. Extraction took 7s.
+2025-10-30T21:30:10.873555937Z ==> Requesting Node.js version >=20.0.0
+2025-10-30T21:30:11.149495221Z ==> Using Node.js version 25.1.0 via /opt/render/project/src/package.json
+2025-10-30T21:30:11.173993053Z ==> Docs on specifying a Node.js version: https://render.com/docs/node-version
+2025-10-30T21:30:11.290971975Z ==> Running build command 'bash render-build-production.sh'...
+2025-10-30T21:30:11.297560081Z 🚀 DHA Digital Services - PRODUCTION BUILD
+2025-10-30T21:30:11.297574312Z ==========================================
+2025-10-30T21:30:11.297577332Z 🇿🇦 Department of Home Affairs
+2025-10-30T21:30:11.297579702Z 
+2025-10-30T21:30:11.302833794Z 📌 Node version: v25.1.0
+2025-10-30T21:30:11.302846565Z 📦 Installing dependencies...
+2025-10-30T21:30:11.644165692Z npm error code EUSAGE
+2025-10-30T21:30:11.645924543Z npm error
+2025-10-30T21:30:11.645937673Z npm error The `npm ci` command can only install with an existing package-lock.json or
+2025-10-30T21:30:11.645942233Z npm error npm-shrinkwrap.json with lockfileVersion >= 1. Run an install with npm@5 or
+2025-10-30T21:30:11.645946453Z npm error later to generate a package-lock.json file, then try again.
+2025-10-30T21:30:11.645949873Z npm error
+2025-10-30T21:30:11.645954003Z npm error Clean install a project
+2025-10-30T21:30:11.645957563Z npm error
+2025-10-30T21:30:11.645961433Z npm error Usage:
+2025-10-30T21:30:11.645965213Z npm error npm ci
+2025-10-30T21:30:11.645969094Z npm error
+2025-10-30T21:30:11.645973654Z npm error Options:
+2025-10-30T21:30:11.645976954Z npm error [--install-strategy <hoisted|nested|shallow|linked>] [--legacy-bundling]
+2025-10-30T21:30:11.645980454Z npm error [--global-style] [--omit <dev|optional|peer> [--omit <dev|optional|peer> ...]]
+2025-10-30T21:30:11.645983834Z npm error [--include <prod|dev|optional|peer> [--include <prod|dev|optional|peer> ...]]
+2025-10-30T21:30:11.645987544Z npm error [--strict-peer-deps] [--foreground-scripts] [--ignore-scripts] [--no-audit]
+2025-10-30T21:30:11.645991624Z npm error [--no-bin-links] [--no-fund] [--dry-run]
+2025-10-30T21:30:11.645995044Z npm error [-w|--workspace <workspace-name> [-w|--workspace <workspace-name> ...]]
+2025-10-30T21:30:11.645998944Z npm error [--workspaces] [--include-workspace-root] [--install-links]
+2025-10-30T21:30:11.646002674Z npm error
+2025-10-30T21:30:11.646005994Z npm error aliases: clean-install, ic, install-clean, isntall-clean
+2025-10-30T21:30:11.646009884Z npm error
+2025-10-30T21:30:11.646013664Z npm error Run "npm help ci" for more info
+2025-10-30T21:30:11.647238086Z npm error A complete log of this run can be found in: /opt/render/.cache/_logs/2025-10-30T21_30_11_362Z-debug-0.log
