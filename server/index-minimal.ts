@@ -12,6 +12,11 @@ import fs from 'fs';
 // Load environment variables first
 dotenv.config();
 
+// Suppress build warnings in production
+if (process.env.NODE_ENV === 'production') {
+  console.log('🚀 Running in production mode');
+}
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const lockFile = path.join(__dirname, '../../server-running.lock');

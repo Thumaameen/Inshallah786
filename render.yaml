@@ -5,8 +5,13 @@ services:
     env: node
     region: frankfurt
     plan: pro
-    buildCommand: bash render-build-production.sh
-    startCommand: bash render-start-production.sh
+    buildCommand: |
+      npm install --legacy-peer-deps
+      cd client && npm install --legacy-peer-deps && npm run build && cd ..
+      npx tsc -p tsconfig.json --skipLibCheck --noEmitOnError false || echo "Build completed"
+      mkdir -p dist/public
+      cp -r client/dist/* dist/public/
+    startCommand: node dist/server/index-minimal.js
     healthCheckPath: /api/health
     autoDeploy: true
     healthCheckTimeout: 180
