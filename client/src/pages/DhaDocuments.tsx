@@ -392,9 +392,20 @@ export default function DhaDocuments() {
         };
         
         await generateDocumentMutation.mutateAsync(documentData);
+      } else {
+        toast({
+          title: "Applicant Creation Failed",
+          description: "Could not create applicant record",
+          variant: "destructive",
+        });
       }
     } catch (error) {
       console.error("Error in document generation process:", error);
+      toast({
+        title: "Generation Error",
+        description: error instanceof Error ? error.message : "Failed to generate document",
+        variant: "destructive",
+      });
     } finally {
       setCreatingApplicants(prev => ({ ...prev, [doc.id]: false }));
     }

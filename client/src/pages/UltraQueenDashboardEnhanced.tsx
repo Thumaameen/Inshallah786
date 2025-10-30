@@ -80,11 +80,15 @@ export default function UltraQueenDashboardEnhanced() {
         if (data.downloadUrl) {
           window.open(data.downloadUrl, '_blank');
         }
+      } else {
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+        throw new Error(errorData.error || 'Generation failed');
       }
     } catch (error) {
+      console.error('Document generation error:', error);
       toast({
         title: 'Generation Failed',
-        description: `Failed to generate document`,
+        description: error instanceof Error ? error.message : 'Failed to generate document',
         variant: 'destructive'
       });
     }

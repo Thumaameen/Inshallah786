@@ -170,7 +170,7 @@ export default function UnifiedDocumentGenerationPage() {
       </div>
     );
   }
-  
+
   // Show error state if templates failed to load
   if (templatesError) {
     return (

@@ -336,7 +336,14 @@ function DocumentProcessor() {
   }, [handleFileSelect]);
 
   const processDocument = useCallback(async () => {
-    if (!selectedFile) return;
+    if (!selectedFile) {
+      toast({
+        title: "No File Selected",
+        description: "Please select a file to process",
+        variant: "destructive",
+      });
+      return;
+    }
 
     const formData = new FormData();
     formData.append('document', selectedFile);
@@ -351,8 +358,12 @@ function DocumentProcessor() {
     formData.append('enablePOPIACompliance', processingOptions.enablePOPIACompliance.toString());
 
     setProcessingProgress(5);
-    uploadMutation.mutate(formData);
-  }, [selectedFile, processingOptions, uploadMutation]);
+    try {
+      await uploadMutation.mutateAsync(formData);
+    } catch (error) {
+      console.error("Upload error:", error);
+    }
+  }, [selectedFile, processingOptions, uploadMutation, toast]);
 
   const getFileIcon = useCallback((mimeType: string) => {
     if (mimeType.includes('pdf')) return '📄';

@@ -40,6 +40,34 @@ const SecurityCenter = lazy(() => import("./pages/admin/SecurityCenter"));
 const SystemMonitoring = lazy(() => import("./pages/admin/SystemMonitoring"));
 const AIAnalytics = lazy(() => import("./pages/admin/AIAnalytics"));
 const AdminAIChat = lazy(() => import("./pages/admin/AIChat"));
+
+
+// Global click handler to ensure all buttons work
+useEffect(() => {
+  const handleGlobalClick = (e: MouseEvent) => {
+    const target = e.target as HTMLElement;
+    const button = target.closest('button');
+    
+    if (button && button.disabled) {
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
+    
+    // Add visual feedback for all button clicks
+    if (button) {
+      button.style.transform = 'scale(0.98)';
+      setTimeout(() => {
+        button.style.transform = 'scale(1)';
+      }, 100);
+    }
+  };
+  
+  document.addEventListener('click', handleGlobalClick, true);
+  return () => document.removeEventListener('click', handleGlobalClick, true);
+}, []);
+
+
 const GovernmentOperations = lazy(() => 
   import("./pages/admin/GovernmentOperations").then(module => ({ default: module.GovernmentOperations }))
 );
