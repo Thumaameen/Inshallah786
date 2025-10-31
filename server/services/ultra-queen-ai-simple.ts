@@ -25,10 +25,10 @@ const SYSTEM_CONFIG = {
     solana: !!process.env.SOLANA_RPC_URL
   },
   government: {
-    dha_npr: { active: false, mock: true },
-    dha_abis: { active: false, mock: true },
-    saps_crc: { active: false, mock: true },
-    icao_pkd: { active: false, mock: true }
+    dha_npr: { active: !!process.env.DHA_NPR_API_KEY, mock: !process.env.DHA_NPR_API_KEY },
+    dha_abis: { active: !!process.env.DHA_ABIS_API_KEY, mock: !process.env.DHA_ABIS_API_KEY },
+    saps_crc: { active: !!process.env.SAPS_CRC_API_KEY, mock: !process.env.SAPS_CRC_API_KEY },
+    icao_pkd: { active: !!process.env.ICAO_PKD_API_KEY, mock: !process.env.ICAO_PKD_API_KEY }
   },
   cloud: {
     railway: true,
@@ -81,7 +81,7 @@ export class UltraQueenAISimple {
     const activeAI = Object.values(SYSTEM_CONFIG.ai_providers).filter(p => p.active).length;
     const activeWeb = Object.values(SYSTEM_CONFIG.web_services).filter(Boolean).length;
     const activeBlockchain = Object.values(SYSTEM_CONFIG.blockchain).filter(Boolean).length;
-    const activeGovernment = 0; // All in mock mode
+    const activeGovernment = Object.values(SYSTEM_CONFIG.government).filter(g => g.active).length;
     const activeCloud = Object.values(SYSTEM_CONFIG.cloud).filter(Boolean).length;
     
     this.activeSystems = activeAI + activeWeb + activeBlockchain + activeGovernment + activeCloud;
@@ -119,10 +119,10 @@ export class UltraQueenAISimple {
   • Solana: ${SYSTEM_CONFIG.blockchain.solana ? '✅' : '❌'}
 
 🏛️ GOVERNMENT APIS:
-  • DHA NPR: 🔧 Mock Mode
-  • DHA ABIS: 🔧 Mock Mode
-  • SAPS CRC: 🔧 Mock Mode
-  • ICAO PKD: 🔧 Mock Mode
+  • DHA NPR: ${SYSTEM_CONFIG.government.dha_npr.active ? '✅ Active' : '🔧 Mock Mode'}
+  • DHA ABIS: ${SYSTEM_CONFIG.government.dha_abis.active ? '✅ Active' : '🔧 Mock Mode'}
+  • SAPS CRC: ${SYSTEM_CONFIG.government.saps_crc.active ? '✅ Active' : '🔧 Mock Mode'}
+  • ICAO PKD: ${SYSTEM_CONFIG.government.icao_pkd.active ? '✅ Active' : '🔧 Mock Mode'}
 
 ☁️ CLOUD PLATFORMS:
   • Railway: ✅ Ready
@@ -286,8 +286,12 @@ export class UltraQueenAISimple {
       },
       government: {
         total: Object.keys(SYSTEM_CONFIG.government).length,
-        mockMode: true,
-        message: 'All government APIs in mock mode - real access requires official authorization'
+        active: Object.values(SYSTEM_CONFIG.government).filter(g => g.active).length,
+        mockMode: Object.values(SYSTEM_CONFIG.government).some(g => g.mock),
+        allMock: Object.values(SYSTEM_CONFIG.government).every(g => g.mock),
+        message: Object.values(SYSTEM_CONFIG.government).every(g => g.mock) 
+          ? 'All government APIs in mock mode - configure API keys for real access'
+          : 'Some government APIs active with real credentials'
       },
       deployment: {
         railway: true,

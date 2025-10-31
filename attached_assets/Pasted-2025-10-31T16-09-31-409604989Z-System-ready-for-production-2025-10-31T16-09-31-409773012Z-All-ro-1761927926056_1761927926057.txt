@@ -1,0 +1,50 @@
+2025-10-31T16:09:31.409604989Z ✅ System ready for production
+2025-10-31T16:09:31.409773012Z ✅ All routes registered successfully
+2025-10-31T16:09:31.409778973Z ✅ Monitoring middleware active
+2025-10-31T16:09:31.409781142Z ✅ Ultra Queen AI routes active
+2025-10-31T16:09:31.409783022Z ✅ Integration status routes active
+2025-10-31T16:09:31.410126449Z ✅ Frontend build ready
+2025-10-31T16:09:31.410130209Z 📱 Serving from dist/public
+2025-10-31T16:09:31.414400405Z 
+2025-10-31T16:09:31.414414765Z 🚀 DHA Digital Services Platform - Production Server
+2025-10-31T16:09:31.414417825Z 🇿🇦 Department of Home Affairs - Implementation
+2025-10-31T16:09:31.414424636Z ============================================================
+2025-10-31T16:09:31.414427066Z 
+2025-10-31T16:09:31.414430036Z ✅ Server running on http://0.0.0.0:10000
+2025-10-31T16:09:31.414455116Z 📱 Environment: production
+2025-10-31T16:09:31.414458326Z 🌐 Ready to accept connections
+2025-10-31T16:09:31.414460556Z 
+2025-10-31T16:09:35.545465529Z ==> Your service is live 🎉
+2025-10-31T16:09:35.725422532Z ==> 
+2025-10-31T16:09:36.469045481Z ==> ///////////////////////////////////////////////////////////
+2025-10-31T16:09:37.299761853Z ==> 
+2025-10-31T16:09:38.296207068Z ==> Available at your primary URL https://dha-thisone.onrender.com
+2025-10-31T16:09:38.472418002Z ==> 
+2025-10-31T16:09:38.652560985Z ==> ///////////////////////////////////////////////////////////
+2025-10-31T16:14:42.429285101Z ==> Detected service running on port 10000
+2025-10-31T16:14:42.802205586Z ==> Docs on specifying a port: https://render.com/docs/web-services#port-binding
+2025-10-31T16:15:43Z clientIP="41.114.18.129" requestID="bb45a4e5-c1c7-400f" responseTimeMS=1 responseBytes=1007 userAgent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15"
+2025-10-31T16:15:43Z clientIP="41.114.18.129" requestID="c3b616e5-1bde-4ebb" responseTimeMS=59 responseBytes=770120 userAgent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15"
+2025-10-31T16:15:43Z clientIP="41.114.18.129" requestID="c537d381-382d-44b2" responseTimeMS=1 responseBytes=1459 userAgent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15"
+2025-10-31T16:15:43Z clientIP="41.114.18.129" requestID="3f53f483-837a-4ee8" responseTimeMS=2 responseBytes=1007 userAgent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15"
+2025-10-31T16:15:43Z clientIP="41.114.18.129" requestID="329f378e-3749-4de2" responseTimeMS=1 responseBytes=1218 userAgent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15"
+2025-10-31T16:15:46Z clientIP="41.114.18.129" requestID="93e6b6e4-67be-47ae" responseTimeMS=6 responseBytes=2254 userAgent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15"
+2025-10-31T16:15:46Z clientIP="41.114.18.129" requestID="7b55b960-9832-4785" responseTimeMS=7 responseBytes=21081 userAgent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15"
+2025-10-31T16:15:46Z clientIP="41.114.18.129" requestID="b954ef8a-0a33-43f1" responseTimeMS=62 responseBytes=770120 userAgent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15"
+2025-10-31T16:15:49Z clientIP="41.114.18.129" requestID="bf336174-77ea-4664" responseTimeMS=3 responseBytes=1459 userAgent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15"
+2025-10-31T16:15:49Z clientIP="41.114.18.129" requestID="cae3db65-7054-40f9" responseTimeMS=1 responseBytes=1007 userAgent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15"
+2025-10-31T16:15:49Z clientIP="41.114.18.129" requestID="366d15b6-fd0f-4a08" responseTimeMS=3 responseBytes=1218 userAgent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15"
+2025-10-31T16:15:49Z clientIP="41.114.18.129" requestID="c90caee7-9abe-46a3" responseTimeMS=5 responseBytes=1007 userAgent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15"
+2025-10-31T16:15:59Z clientIP="41.114.18.129" requestID="a4a6fbff-dd78-4ebe" responseTimeMS=2 responseBytes=1007 userAgent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15"
+2025-10-31T16:15:59Z clientIP="41.114.18.129" requestID="6b500f8c-fc10-47ee" responseTimeMS=2 responseBytes=1007 userAgent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15"
+2025-10-31T16:16:03Z clientIP="41.114.18.129" requestID="f6e14b5c-e767-4627" responseTimeMS=7 responseBytes=1801 userAgent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15"
+2025-10-31T16:16:03Z clientIP="41.114.18.129" requestID="2aaf0090-b968-474f" responseTimeMS=6 responseBytes=4187 userAgent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15"
+2025-10-31T16:16:04Z clientIP="41.114.18.129" requestID="577df062-6d08-4432" responseTimeMS=6 responseBytes=1343 userAgent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15"
+2025-10-31T16:16:04Z clientIP="41.114.18.129" requestID="8067f399-12dc-4cec" responseTimeMS=2 responseBytes=1007 userAgent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15"
+2025-10-31T16:16:04Z clientIP="41.114.18.129" requestID="73d6119e-eba9-44a4" responseTimeMS=3 responseBytes=1363 userAgent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15"
+2025-10-31T16:16:06Z clientIP="41.114.18.129" requestID="4e60bbf0-07d2-4e9a" responseTimeMS=4 responseBytes=2254 userAgent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15"
+2025-10-31T16:16:06Z clientIP="41.114.18.129" requestID="15e63562-dc39-4b4c" responseTimeMS=5 responseBytes=21081 userAgent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15"
+2025-10-31T16:16:06Z clientIP="41.114.18.129" requestID="cfccd67d-8f1d-4a7a" responseTimeMS=61 responseBytes=770120 userAgent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15"
+2025-10-31T16:16:07Z clientIP="41.114.18.129" requestID="0a46f7d2-4667-4d89" responseTimeMS=2 responseBytes=1217 userAgent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15"
+2025-10-31T16:16:07Z clientIP="41.114.18.129" requestID="6ae6fa44-7e6c-49cb" responseTimeMS=2 responseBytes=1218 userAgent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15"
+2025-10-31T16:16:07Z clientIP="41.114.18.129" requestID="2becad90-82ad-4594" responseTimeMS=3 responseBytes=1007 userAgent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15"
