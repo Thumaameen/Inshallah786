@@ -47,8 +47,8 @@ export class DeploymentValidator {
     // API integrations validation
     this.validateAPIIntegrations(errors, warnings);
 
-    // Government API validation
-    this.validateGovernmentAPIs(warnings);
+    // Government API validation - Pass errors array for production fail-hard
+    this.validateGovernmentAPIs(errors, warnings);
 
     // Display summary
     console.log('\n═══════════════════════════════════════════════════════════════');
@@ -176,7 +176,7 @@ export class DeploymentValidator {
   /**
    * Validate government API integrations - FAIL HARD in production if missing
    */
-  private validateGovernmentAPIs(warnings: string[]): void {
+  private validateGovernmentAPIs(errors: string[], warnings: string[]): void {
     console.log('🏛️  GOVERNMENT API INTEGRATIONS:');
 
     const govAPIs = [
@@ -206,11 +206,11 @@ export class DeploymentValidator {
       }
     });
 
-    // CRITICAL: In production, warn if no government APIs configured
-    // Note: We allow production to start without gov APIs if they're not needed for all features
+    // CRITICAL: In production, FAIL HARD if no government APIs configured
+    // Production Render deployments MUST have at least one government API configured
     if (configuredCount === 0 && this.isProduction) {
-      warnings.push('No government API keys configured - government integration features will not be available in production');
-      console.log('  ⚠️  WARNING: No government API credentials configured for production');
+      errors.push('CRITICAL: No government API credentials configured in production - at least one government API (DHA NPR, DHA ABIS, or SAPS CRC) must be configured with API keys and certificates for production deployment');
+      console.log('  ❌ CRITICAL: No government API credentials configured for production');
     }
 
     console.log(`  • Configured government APIs: ${configuredCount}/${govAPIs.length}`);

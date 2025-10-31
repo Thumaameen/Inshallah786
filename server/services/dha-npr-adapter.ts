@@ -1,4 +1,5 @@
 import crypto from "crypto";
+import https from "https";
 import { storage } from "../mem-storage.js";
 
 /**
@@ -79,6 +80,28 @@ export class DHANPRAdapter {
     console.log(`[DHA-NPR] Base URL: ${this.baseUrl}`);
     console.log(`[DHA-NPR] API Key configured: ${this.apiKey ? 'Yes' : 'No'}`);
     console.log(`[DHA-NPR] mTLS certificates configured: ${this.clientCert && this.privateKey ? 'Yes' : 'No'}`);
+  }
+
+  /**
+   * Create HTTPS agent with mTLS support if certificates are configured
+   */
+  private createHTTPSAgent(): https.Agent | undefined {
+    if (!this.clientCert || !this.privateKey) {
+      return undefined;
+    }
+
+    try {
+      return new https.Agent({
+        cert: this.clientCert,
+        key: this.privateKey,
+        rejectUnauthorized: true, // Always validate server certificates in production
+        keepAlive: true,
+        maxSockets: 50
+      });
+    } catch (error) {
+      console.error('[DHA-NPR] Failed to create mTLS agent:', error);
+      return undefined;
+    }
   }
 
   /**
@@ -257,11 +280,17 @@ export class DHANPRAdapter {
 
       console.log(`[DHA-NPR] Making API call to: ${endpoint}`);
 
-      // Make HTTP request
+      // Create mTLS agent if certificates are configured
+      const agent = this.createHTTPSAgent();
+      if (agent) {
+        console.log('[DHA-NPR] Using mTLS authentication');
+      }
+
+      // Make HTTPS request with mTLS support
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), this.timeout);
 
-      const response = await fetch(endpoint, {
+      const fetchOptions: RequestInit = {
         method: 'POST',
         headers,
         body: JSON.stringify({
@@ -276,7 +305,14 @@ export class DHANPRAdapter {
           timestamp: new Date().toISOString()
         }),
         signal: controller.signal
-      });
+      };
+
+      // Add agent for mTLS if available (Node.js fetch supports agent in newer versions)
+      if (agent) {
+        (fetchOptions as any).agent = agent;
+      }
+
+      const response = await fetch(endpoint, fetchOptions);
 
       clearTimeout(timeoutId);
 
