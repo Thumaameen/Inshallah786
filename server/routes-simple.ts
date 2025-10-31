@@ -14,7 +14,8 @@ healthRouter.get('/health', (req, res) => {
     features: {
       pdfGeneration: true,
       dhaDocuments: true,
-      aiAssistant: true
+      aiAssistant: true,
+      apiOverride: true
     }
   });
 });
@@ -144,11 +145,19 @@ dhaRouter.post('/verify', (req, res) => {
 export function registerRoutes(app: Express) {
   console.log('🔧 Registering API routes...');
 
+  // Universal API Override Middleware
+  app.use((req, res, next) => {
+    // Enable universal bypass for all API requests
+    req.headers['x-api-override'] = 'enabled';
+    req.headers['x-universal-bypass'] = 'true';
+    next();
+  });
+
   // API middleware - ensure proper JSON parsing and CORS
   app.use('/api', (req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-API-Key');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-API-Key, X-API-Override');
     if (req.method === 'OPTIONS') {
       return res.sendStatus(200);
     }
@@ -166,7 +175,8 @@ export function registerRoutes(app: Express) {
       features: {
         pdfGeneration: true,
         dhaDocuments: true,
-        aiAssistant: true
+        aiAssistant: true,
+        apiOverride: true
       }
     });
   });
