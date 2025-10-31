@@ -7,14 +7,16 @@ async function processTask(task: any) {
   try {
     switch (task.type) {
       case 'document_analysis':
-        return await ultraQueenAI.analyzeDocument(task.data);
-      
+        // Document analysis available through API routes
+        return { status: 'pending', message: 'Use API endpoint' };
+
       case 'security_scan':
         return await militaryGradeAI.performSecurityScan(task.data);
-      
+
       case 'ai_processing':
-        return await ultraQueenAI.processRequest(task.data);
-      
+        // Request processing available through API routes
+        return { status: 'pending', message: 'Use API endpoint' };
+
       default:
         throw new Error(`Unknown task type: ${task.type}`);
     }
