@@ -90,8 +90,15 @@ const PORT = parseInt(process.env.PORT || '10000', 10);
 const HOST = '0.0.0.0'; // Required for production deployment
 
 // Security middleware - Production-hardened CSP
-const isProduction = true; // Always production on Render
-const isRenderDeployment = true; // Always Render deployment
+const isProduction = process.env.NODE_ENV === 'production' || process.env.RENDER === 'true';
+const isRenderDeployment = !!process.env.RENDER || !!process.env.RENDER_SERVICE_ID;
+
+console.log(`🔍 Environment Detection:
+  NODE_ENV: ${process.env.NODE_ENV}
+  RENDER: ${process.env.RENDER}
+  Is Production: ${isProduction}
+  Is Render: ${isRenderDeployment}
+`);
 
 app.use(helmet({
   contentSecurityPolicy: {

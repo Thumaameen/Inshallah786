@@ -98,7 +98,7 @@ export class DHASAPSAdapter {
     this.clientCert = process.env.SAPS_CLIENT_CERT;
     this.privateKey = process.env.SAPS_PRIVATE_KEY;
 
-    console.log(`[SAPS-CRC] Initialized in PRODUCTION mode`);
+    console.log(`[SAPS-CRC] Initialized in PRODUCTION mode - Real API only`);
     console.log(`[SAPS-CRC] Base URL: ${this.baseUrl}`);
     console.log(`[SAPS-CRC] API Key configured: ${this.apiKey ? 'Yes' : 'No'}`);
     console.log(`[SAPS-CRC] mTLS certificates configured: ${this.clientCert && this.privateKey ? 'Yes' : 'No'}`);
