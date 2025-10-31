@@ -5,8 +5,7 @@ services:
     env: node
     region: frankfurt
     plan: starter
-    runtime: node
-    nodeVersion: 20.18.1
+    nodeVersion: "20.18.1"
     buildCommand: bash render-build-production.sh
     startCommand: node dist/server/index-minimal.js
     healthCheckPath: /api/health
@@ -150,8 +149,7 @@ services:
     name: dha-monitoring-service
     env: node
     plan: starter
-    runtime: node
-    nodeVersion: 20.18.1
+    nodeVersion: "20.18.1"
     buildCommand: npm install
     startCommand: npm run worker
     healthChecks:
@@ -191,8 +189,7 @@ services:
     env: node
     region: frankfurt
     plan: starter
-    runtime: node
-    nodeVersion: 20.18.1
+    nodeVersion: "20.18.1"
     schedule: "*/15 * * * *"
     buildCommand: npm install
     startCommand: npm run cron
