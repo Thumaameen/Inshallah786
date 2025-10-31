@@ -16,6 +16,31 @@ import { WebSocketService } from './websocket.js';
 import { deploymentValidator } from './services/deployment-validation.js';
 import { SecureEnvLoader } from './utils/secure-env-loader.js';
 
+// Load Replit Secrets at startup
+if (process.env.REPL_ID) {
+  console.log('🔐 Loading Replit Secrets...');
+
+  // Replit stores secrets in a special way - check multiple locations
+  const secretKeys = [
+    'OPENAI_API_KEY', 'ANTHROPIC_API_KEY', 'GOOGLE_API_KEY',
+    'MISTRAL_API_KEY', 'PERPLEXITY_API_KEY',
+    'DHA_NPR_API_KEY', 'DHA_ABIS_API_KEY',
+    'SAPS_CRC_API_KEY', 'ICAO_PKD_API_KEY'
+  ];
+
+  let loadedCount = 0;
+  for (const key of secretKeys) {
+    if (process.env[key]) {
+      loadedCount++;
+      console.log(`  ✓ ${key} loaded`);
+    } else {
+      console.log(`  ✗ ${key} not found in secrets`);
+    }
+  }
+
+  console.log(`✅ Loaded ${loadedCount}/${secretKeys.length} API keys from Replit Secrets\n`);
+}
+
 // Load environment variables first
 dotenv.config();
 

@@ -81,7 +81,7 @@ export class DeploymentValidator {
    */
   private validateDatabase(errors: string[], warnings: string[]): void {
     console.log('🗄️  DATABASE:');
-    
+
     if (process.env.DATABASE_URL) {
       console.log('  ✅ Database URL configured');
     } else {
@@ -157,7 +157,7 @@ export class DeploymentValidator {
 
     let configuredCount = 0;
     aiProviders.forEach(provider => {
-      if (process.env[provider.envVar]) {
+      if (this.checkAPIKey(provider.envVar)) {
         console.log(`  ✅ ${provider.name} API key configured`);
         configuredCount++;
       } else {
@@ -188,8 +188,8 @@ export class DeploymentValidator {
 
     let configuredCount = 0;
     govAPIs.forEach(api => {
-      const hasKey = !!process.env[api.key];
-      const hasEndpoint = !!process.env[api.endpoint];
+      const hasKey = this.checkAPIKey(api.key);
+      const hasEndpoint = this.checkAPIKey(api.endpoint);
 
       if (hasKey && hasEndpoint) {
         console.log(`  ✅ ${api.name} fully configured (API key + endpoint)`);
@@ -237,6 +237,31 @@ export class DeploymentValidator {
     } else {
       console.log('✅ Deployment validation passed successfully!\n');
     }
+  }
+
+  /**
+   * Check if an API key is valid.
+   * This is a simple check to ensure the key is not empty and doesn't contain obvious placeholder values.
+   * In a real-world scenario, you might want more sophisticated validation.
+   */
+  private checkAPIKey(key: string): boolean {
+    const value = process.env[key];
+    if (!value || value.length === 0) {
+      return false;
+    }
+
+    // Check for placeholder values
+    const invalidPatterns = ['your_', 'placeholder', 'xxx', 'yyy', 'zzz', 'test_', 'demo_'];
+    if (invalidPatterns.some(pattern => value.toLowerCase().includes(pattern))) {
+      return false;
+    }
+
+    // Validate key length (most real API keys are at least 15 chars)
+    if (value.length < 15) {
+      return false;
+    }
+
+    return true;
   }
 }
 

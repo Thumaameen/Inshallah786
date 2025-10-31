@@ -125,8 +125,18 @@ class ConfigurationService {
   /**
    * Get environment variable or return a default value
    */
-  private getEnvVar(key: string, defaultValue: string = ''): string | undefined {
-    return process.env[key] || defaultValue;
+  private getEnvVar(key: string): string | undefined {
+    // Check multiple sources for environment variables
+    const value = process.env[key] ||
+                  (typeof process !== 'undefined' && (process as any).env?.[key]) ||
+                  (typeof window !== 'undefined' && (window as any)[key]);
+
+    // Log which keys are found (without exposing values)
+    if (value && value.length > 0) {
+      console.log(`✅ Found ${key}`);
+    }
+
+    return value;
   }
 
   /**
@@ -149,7 +159,7 @@ class ConfigurationService {
       // Parse environment variables
       console.log('📝 [CONFIG] Parsing environment variables...');
       const rawConfig = {
-        NODE_ENV: this.getEnvVar('NODE_ENV', 'development'),
+        NODE_ENV: this.getEnvVar('NODE_ENV') || 'development', // Ensure NODE_ENV has a default
         PORT: this.getEnvVar('PORT'),
         SESSION_SECRET: this.getEnvVar('SESSION_SECRET'),
         JWT_SECRET: this.getEnvVar('JWT_SECRET'),
