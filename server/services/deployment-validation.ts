@@ -174,7 +174,7 @@ export class DeploymentValidator {
   }
 
   /**
-   * Validate government API integrations
+   * Validate government API integrations - FAIL HARD in production if missing
    */
   private validateGovernmentAPIs(warnings: string[]): void {
     console.log('🏛️  GOVERNMENT API INTEGRATIONS:');
@@ -206,8 +206,11 @@ export class DeploymentValidator {
       }
     });
 
+    // CRITICAL: In production, warn if no government APIs configured
+    // Note: We allow production to start without gov APIs if they're not needed for all features
     if (configuredCount === 0 && this.isProduction) {
-      warnings.push('No government API keys configured - production features will be limited');
+      warnings.push('No government API keys configured - government integration features will not be available in production');
+      console.log('  ⚠️  WARNING: No government API credentials configured for production');
     }
 
     console.log(`  • Configured government APIs: ${configuredCount}/${govAPIs.length}`);

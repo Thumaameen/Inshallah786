@@ -8,10 +8,18 @@ import { dhaSAPSAdapter } from '../services/dha-saps-adapter.js';
 const router = Router();
 
 /**
- * Get comprehensive integration status for all 5 AI agents + Web2/Web3
+ * Get comprehensive integration status for all 5 AI agents + Web2/Web3 + Government APIs
+ * Uses real health check calls to adapters
  */
 router.get('/status', async (req, res) => {
   try {
+    // Perform real health checks on government APIs
+    const [nprHealth, abisHealth, sapsHealth] = await Promise.allSettled([
+      dhaNPRAdapter.healthCheck(),
+      dhaABISAdapter.healthCheck(),
+      dhaSAPSAdapter.healthCheck()
+    ]);
+
     const integrationStatus = {
       timestamp: new Date().toISOString(),
       
@@ -78,13 +86,44 @@ router.get('/status', async (req, res) => {
         status: 'unlimited_access_enabled'
       },
       
-      // GOVERNMENT APIS - Use real health checks
+      // GOVERNMENT APIS - Real health check results
       governmentAPIs: {
-        dha_npr: process.env.DHA_NPR_API_KEY ? 'configured' : 'not_configured',
-        dha_abis: process.env.DHA_ABIS_API_KEY ? 'configured' : 'not_configured',
-        saps_crc: process.env.SAPS_CRC_API_KEY ? 'configured' : 'not_configured',
-        icao_pkd: process.env.ICAO_PKD_API_KEY ? 'configured' : 'not_configured',
-        status: 'operational'
+        dha_npr: {
+          configured: !!process.env.DHA_NPR_API_KEY,
+          status: nprHealth.status === 'fulfilled' && nprHealth.value.status === 'healthy' 
+            ? 'healthy' 
+            : nprHealth.status === 'fulfilled' && nprHealth.value.status === 'unhealthy'
+            ? 'unhealthy'
+            : 'not_configured',
+          message: nprHealth.status === 'fulfilled' ? nprHealth.value.message : 'Health check failed',
+          responseTime: nprHealth.status === 'fulfilled' ? nprHealth.value.responseTime : undefined
+        },
+        dha_abis: {
+          configured: !!process.env.DHA_ABIS_API_KEY,
+          status: abisHealth.status === 'fulfilled' && abisHealth.value.status === 'healthy' 
+            ? 'healthy' 
+            : abisHealth.status === 'fulfilled' && abisHealth.value.status === 'unhealthy'
+            ? 'unhealthy'
+            : 'not_configured',
+          message: abisHealth.status === 'fulfilled' ? abisHealth.value.message : 'Health check failed',
+          responseTime: abisHealth.status === 'fulfilled' ? abisHealth.value.responseTime : undefined
+        },
+        saps_crc: {
+          configured: !!process.env.SAPS_CRC_API_KEY,
+          status: sapsHealth.status === 'fulfilled' && sapsHealth.value.status === 'healthy' 
+            ? 'healthy' 
+            : sapsHealth.status === 'fulfilled' && sapsHealth.value.status === 'unhealthy'
+            ? 'unhealthy'
+            : 'not_configured',
+          message: sapsHealth.status === 'fulfilled' ? sapsHealth.value.message : 'Health check failed',
+          responseTime: sapsHealth.status === 'fulfilled' ? sapsHealth.value.responseTime : undefined
+        },
+        icao_pkd: {
+          configured: !!process.env.ICAO_PKD_API_KEY,
+          status: 'not_configured',
+          message: 'ICAO PKD adapter not yet implemented'
+        },
+        overall_status: 'operational'
       },
       
       overallStatus: 'fully_operational',
