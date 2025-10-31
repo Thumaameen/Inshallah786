@@ -1,5 +1,5 @@
 import { logger } from '../utils/logger.js';
-import { getGovAPIConfig, governmentAPIConfig, GovAPIConfig } from '../config/government-apis.js';
+import { getGovAPIConfig } from '../config/government-apis.js';
 
 interface FailoverOptions {
   maxRetries: number;
@@ -13,37 +13,28 @@ export class AutomaticFailoverService {
   private backupEndpoints: Map<string, string[]> = new Map();
 
   private constructor() {
-    type ServiceEndpoints = {
-      [K in keyof typeof governmentAPIConfig]: typeof governmentAPIConfig[K]['baseUrl'][];
-    };
+    // Configure backup endpoints for each service
+    this.backupEndpoints.set('DHA_NPR', [
+      'https://backup1.dha.gov.za/npr/v2',
+      'https://backup2.dha.gov.za/npr/v2',
+      'https://dr-site.dha.gov.za/npr/v2'
+    ]);
 
-    const backupConfig: ServiceEndpoints = {
-      DHA_NPR: [
-        'https://api.dha.gov.za/npr/v2',
-        'https://api.dha.gov.za/npr/v2',
-        'https://api.dha.gov.za/npr/v2'
-      ],
-      DHA_ABIS: [
-        'https://api.dha.gov.za/abis/v2',
-        'https://api.dha.gov.za/abis/v2',
-        'https://api.dha.gov.za/abis/v2'
-      ],
-      SAPS_CRC: [
-        'https://api.saps.gov.za/crc/v1',
-        'https://api.saps.gov.za/crc/v1',
-        'https://api.saps.gov.za/crc/v1'
-      ],
-      ICAO_PKD: [
-        'https://api.icao.int/pkd/v2',
-        'https://api.icao.int/pkd/v2',
-        'https://api.icao.int/pkd/v2'
-      ]
-    };
+    this.backupEndpoints.set('DHA_ABIS', [
+      'https://backup1.dha.gov.za/abis/v2',
+      'https://backup2.dha.gov.za/abis/v2',
+      'https://dr-site.dha.gov.za/abis/v2'
+    ]);
 
-    // Initialize backup endpoints
-    Object.entries(backupConfig).forEach(([service, endpoints]) => {
-      this.backupEndpoints.set(service, endpoints);
-    });
+    this.backupEndpoints.set('SAPS_CRC', [
+      'https://backup1.saps.gov.za/crc/v1',
+      'https://backup2.saps.gov.za/crc/v1'
+    ]);
+
+    this.backupEndpoints.set('ICAO_PKD', [
+      'https://backup1.icao.int/pkd/v2',
+      'https://backup2.icao.int/pkd/v2'
+    ]);
   }
 
   static getInstance(): AutomaticFailoverService {
@@ -84,7 +75,7 @@ export class AutomaticFailoverService {
         logger.warn(`Service ${service} failed. Attempt ${attempts}/${options.maxRetries}`, {
           service,
           endpoint: currentEndpoint,
-          error: error instanceof Error ? error.message : String(error),
+          error: error.message,
           failureCount: currentFailures
         });
 
@@ -94,8 +85,7 @@ export class AutomaticFailoverService {
           const backupIndex = attempts - 1;
           
           if (backupIndex < backups.length) {
-            const newEndpoint = backups[backupIndex];
-            currentEndpoint = newEndpoint as typeof config.baseUrl;
+            currentEndpoint = backups[backupIndex];
             logger.info(`Switching to backup endpoint: ${currentEndpoint}`);
           }
 
@@ -113,12 +103,9 @@ export class AutomaticFailoverService {
   async verifyIdentity(idNumber: string): Promise<any> {
     return this.executeWithFailover('DHA_NPR', async (endpoint) => {
       const config = getGovAPIConfig('DHA_NPR');
-      const headers = new Headers();
-      Object.entries(config.headers).forEach(([key, value]) => {
-        if (value) headers.append(key, value);
+      const response = await fetch(`${endpoint}/verify/${idNumber}`, {
+        headers: config.headers
       });
-
-      const response = await fetch(`${endpoint}/verify/${idNumber}`, { headers });
 
       if (!response.ok) {
         throw new Error(`NPR verification failed: ${response.statusText}`);
@@ -129,16 +116,13 @@ export class AutomaticFailoverService {
   }
 
   // Monitor service health
-  async checkServiceHealth<T extends keyof typeof governmentAPIConfig>(service: T): Promise<boolean> {
+  async checkServiceHealth(service: string): Promise<boolean> {
     try {
       await this.executeWithFailover(service, async (endpoint) => {
-        const config = getGovAPIConfig(service);
-        const headers = new Headers();
-        Object.entries(config.headers).forEach(([key, value]) => {
-          if (value) headers.append(key, value);
+        const config = getGovAPIConfig(service as keyof typeof governmentAPIConfig);
+        const response = await fetch(`${endpoint}/health`, {
+          headers: config.headers
         });
-
-        const response = await fetch(`${endpoint}/health`, { headers });
 
         if (!response.ok) {
           throw new Error(`Health check failed: ${response.statusText}`);
@@ -159,12 +143,12 @@ export class AutomaticFailoverService {
   }
 
   // Get current service status
-  getServiceStatus<T extends keyof typeof governmentAPIConfig>(service: T): {
+  getServiceStatus(service: string): {
     failures: number;
     currentEndpoint: string;
     isHealthy: boolean;
   } {
-    const config = getGovAPIConfig(service);
+    const config = getGovAPIConfig(service as keyof typeof governmentAPIConfig);
     return {
       failures: this.failureCount.get(service) || 0,
       currentEndpoint: config.baseUrl,
@@ -172,4 +156,3 @@ export class AutomaticFailoverService {
     };
   }
 }
-

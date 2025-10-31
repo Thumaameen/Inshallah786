@@ -17,40 +17,24 @@ const dhaGuarantee = DHAServicesGuarantee.getInstance();
 })();
 
 // Health check endpoint
-interface ServiceStatus {
-    [key: string]: boolean;
-}
+router.get('/health', async (req, res) => {
+  try {
+    const status = await dhaGuarantee.verifyAllServices();
+    const allServicesHealthy = Object.values(status).every(Boolean);
 
-interface HealthResponse {
-    status: 'healthy' | 'degraded' | 'error';
-    services?: ServiceStatus;
-    message?: string;
-    timestamp: string;
-}
-
-router.get('/health', async (req: express.Request, res: express.Response) => {
-    try {
-        const status: ServiceStatus = await dhaGuarantee.verifyAllServices();
-        const allServicesHealthy: boolean = Object.values(status).every(Boolean);
-
-        const response: HealthResponse = {
-            status: allServicesHealthy ? 'healthy' : 'degraded',
-            services: status,
-            timestamp: new Date().toISOString()
-        };
-
-        res.json(response);
-    } catch (error) {
-        logger.error('Health check failed:', error);
-        
-        const errorResponse: HealthResponse = {
-            status: 'error',
-            message: 'Failed to check services health',
-            timestamp: new Date().toISOString()
-        };
-        
-        res.status(500).json(errorResponse);
-    }
+    res.json({
+      status: allServicesHealthy ? 'healthy' : 'degraded',
+      services: status,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    logger.error('Health check failed:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to check services health',
+      timestamp: new Date().toISOString()
+    });
+  }
 });
 
 // Force service recovery endpoint

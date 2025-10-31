@@ -1,4 +1,4 @@
-import { getGovAPIConfig } from '../config/government-apis';
+import { getGovAPIConfig } from '../config/government-apis.js';
 import { logger } from '../utils/logger.js';
 
 export class GovernmentAPIValidator {
@@ -16,11 +16,8 @@ export class GovernmentAPIValidator {
   async validateDHAAccess(): Promise<boolean> {
     try {
       const config = getGovAPIConfig('DHA_NPR');
-      const headers = Object.fromEntries(
-        Object.entries(config.headers).filter(([_, v]) => v !== undefined)
-      ) as Record<string, string>;
       const response = await fetch(`${config.baseUrl}/health`, {
-        headers
+        headers: config.headers
       });
       return response.status === 200;
     } catch (error) {
@@ -32,11 +29,8 @@ export class GovernmentAPIValidator {
   async validateABISAccess(): Promise<boolean> {
     try {
       const config = getGovAPIConfig('DHA_ABIS');
-      const headers = Object.fromEntries(
-        Object.entries(config.headers).filter(([_, v]) => v !== undefined)
-      ) as Record<string, string>;
       const response = await fetch(`${config.baseUrl}/health`, {
-        headers
+        headers: config.headers
       });
       return response.status === 200;
     } catch (error) {
@@ -48,11 +42,8 @@ export class GovernmentAPIValidator {
   async validateSAPSAccess(): Promise<boolean> {
     try {
       const config = getGovAPIConfig('SAPS_CRC');
-      const headers = Object.fromEntries(
-        Object.entries(config.headers).filter(([_, v]) => v !== undefined)
-      ) as Record<string, string>;
       const response = await fetch(`${config.baseUrl}/health`, {
-        headers
+        headers: config.headers
       });
       return response.status === 200;
     } catch (error) {
@@ -64,11 +55,8 @@ export class GovernmentAPIValidator {
   async validateICAOAccess(): Promise<boolean> {
     try {
       const config = getGovAPIConfig('ICAO_PKD');
-      const headers = Object.fromEntries(
-        Object.entries(config.headers).filter(([_, v]) => v !== undefined)
-      ) as Record<string, string>;
       const response = await fetch(`${config.baseUrl}/health`, {
-        headers
+        headers: config.headers
       });
       return response.status === 200;
     } catch (error) {
