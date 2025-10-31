@@ -103,38 +103,3 @@ public static getDerivedStateFromError(error: Error): State {
     return this.props.children;
   }
 }
-
-  public render() {
-    if (this.state.hasError) {
-      return (
-        <div className="error-boundary">
-          <h2>Something went wrong</h2>
-          <details style={{ whiteSpace: 'pre-wrap' }}>
-            {this.state.error && this.state.error.toString()}
-            <br />
-            {this.state.errorInfo?.componentStack}
-          </details>
-          <button
-            onClick={() => {
-              // Attempt recovery
-              window.location.reload();
-            }}
-            style={{
-              padding: '10px 20px',
-              marginTop: '20px',
-              backgroundColor: '#4a90e2',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer'
-            }}
-          >
-            Try Again
-          </button>
-        </div>
-      );
-    }
-
-    return this.props.children;
-  }
-}

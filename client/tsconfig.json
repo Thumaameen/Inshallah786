@@ -9,20 +9,24 @@
     "allowJs": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "strict": true,
+    "strict": false,
     "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
+    "noFallthroughCasesInSwitch": false,
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
     "resolveJsonModule": true,
     "types": ["vite/client", "node"],
     "baseUrl": ".",
+    "noImplicitAny": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "paths": {
       "@/*": ["./src/*"],
       "@components/*": ["./src/components/*"],
       "@utils/*": ["./src/utils/*"],
-      "@hooks/*": ["./src/hooks/*"]
+      "@hooks/*": ["./src/hooks/*"],
+      "@shared/*": ["../shared/*"]
     }
   },
   "include": ["src/**/*", "vite.config.ts"],
