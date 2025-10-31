@@ -1,13 +1,13 @@
 import { OpenAI } from 'openai';
 import { Anthropic } from '@anthropic-ai/sdk';
-import { PerplexityAI } from './perplexity-integration.js';
+import { PerplexityService } from './perplexity-integration.js';
 import { DocumentAuthenticator } from './document-authenticator.js';
 import { DhaIntegration } from './dha-integration.js';
 
 export class UltraAIOrchestrator {
   private openai: OpenAI;
   private anthropic: Anthropic;
-  private perplexity: PerplexityAI;
+  private perplexity: PerplexityService;
   private documentAuth: DocumentAuthenticator;
   private dhaService: DhaIntegration;
 
@@ -24,10 +24,7 @@ export class UltraAIOrchestrator {
       maxRetries: 5
     });
 
-    this.perplexity = new PerplexityAI({
-      apiKey: process.env.PERPLEXITY_API_KEY,
-      maxTokens: 4096
-    });
+    this.perplexity = new PerplexityService();
 
     this.documentAuth = new DocumentAuthenticator({
       encryptionKey: process.env.DOCUMENT_SIGNING_KEY,
