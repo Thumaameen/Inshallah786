@@ -12,6 +12,7 @@ import fs from 'fs';
 import ultraQueenAIRoutes from './routes/ultra-queen-ai.js';
 import integrationStatusRoutes from './routes/integration-status.js';
 import integrationActivationRoutes from './routes/integration-activation.js';
+import { WebSocketService } from './websocket.js';
 
 // Load environment variables first
 dotenv.config();
@@ -33,6 +34,10 @@ if (fs.existsSync(lockFile)) {
 // Create Express app and HTTP server
 const app = express();
 const server = createServer(app);
+
+// Initialize WebSocket service for real-time features
+const wsService = new WebSocketService(server);
+wsService.initialize();
 
 // Server configuration - Production optimized
 const PORT = parseInt(process.env.PORT || '5000', 10);
@@ -122,13 +127,30 @@ app.get('/api/health', (req, res) => {
 const clientBuildPath = join(process.cwd(), 'dist', 'public');
 
 if (fs.existsSync(clientBuildPath)) {
-  app.use(express.static(clientBuildPath, { maxAge: '1y' }));
+  // Serve static assets with long cache for hashed files, no cache for HTML
+  app.use(express.static(clientBuildPath, {
+    maxAge: 0, // No caching by default
+    setHeaders: (res, path) => {
+      // Long cache for hashed assets (JS, CSS with hash in filename)
+      if (path.match(/\.(js|css)$/) && path.match(/-[a-zA-Z0-9]{8,}\.(js|css)$/)) {
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      } else {
+        // No cache for HTML and other files
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
+      }
+    }
+  }));
 
-  // Serve index.html for all non-API routes
+  // Serve index.html for all non-API routes (with no-cache headers)
   app.get('*', (req, res, next) => {
     if (req.path.startsWith('/api')) {
       return next();
     }
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
     res.sendFile(join(clientBuildPath, 'index.html'));
   });
 

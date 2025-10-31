@@ -18,13 +18,7 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
       minify: mode === 'production' ? 'esbuild' : false,
       rollupOptions: {
         output: {
-          manualChunks: (id) => {
-            if (id.includes('node_modules')) {
-              if (id.includes('react')) return 'vendor';
-              if (id.includes('@radix-ui')) return 'ui';
-              return 'deps';
-            }
-          }
+          manualChunks: undefined, // Let Vite handle chunking automatically
         }
       }
     },

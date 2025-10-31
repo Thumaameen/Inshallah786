@@ -7,9 +7,9 @@ channel = "stable-25_05"
 packages = ["libuuid", "cairo", "pango", "giflib", "jq", "python3", "gcc", "pkgconf", "pixman", "railway", "gnome-secrets"]
 
 [deployment]
-deploymentTarget = "cloudrun"
-run = ["sh", "-c", "npm start"]
-build = ["sh", "-c", "npm run build"]
+deploymentTarget = "autoscale"
+run = ["node", "dist/server/index-minimal.js"]
+build = ["bash", "render-build-production.sh"]
 
 [[ports]]
 localPort = 5000
@@ -20,8 +20,8 @@ localPort = 35719
 externalPort = 3000
 
 [[ports]]
-localPort = 40655
-externalPort = 5000
+localPort = 41763
+externalPort = 3003
 
 [[ports]]
 localPort = 43165
