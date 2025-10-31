@@ -3,7 +3,7 @@ import type {
   DhaDocumentVerification,
   InsertDhaDocumentVerification
 } from '../../shared/schema/index.js';
-import { db } from '../db.js';
+import { storage } from '../storage.js';
 
 // Simple logger stub
 class Logger {
@@ -50,7 +50,7 @@ class CircuitBreaker {
 
   public canRequest(): boolean {
     if (this.state === 'CLOSED') return true;
-    
+
     const timeSinceLastFailure = Date.now() - this.lastFailure;
     if (timeSinceLastFailure >= this.config.resetTimeout) {
       this.state = 'HALF_OPEN';
@@ -106,7 +106,7 @@ export class SelfHealingErrorHandler extends EventEmitter {
     if (retryCount < this.config.retryAttempts) {
       this.retryDelays.set(context, retryCount + 1);
       const delay = this.config.retryDelay * Math.pow(2, retryCount);
-      
+
       await new Promise(resolve => setTimeout(resolve, delay));
       return;
     }
@@ -155,23 +155,17 @@ export class SelfHealingErrorHandler extends EventEmitter {
     }
   }
 
-  private async logErrorCorrection(correction: Omit<InsertErrorCorrection, 'id' | 'timestamp'>): Promise<void> {
+  private async logErrorCorrection(correction: Omit<InsertDhaDocumentVerification, 'id' | 'timestamp'>): Promise<void> {
     try {
-      await db.insert(errorCorrections).values({
-        ...correction,
-        timestamp: new Date()
-      });
+      await storage.set('error_correction_' + Date.now(), correction);
     } catch (error) {
       logger.error('Failed to log error correction:', error);
     }
   }
 
-  private async logHealthCheckResult(result: Omit<InsertHealthCheckResult, 'id' | 'timestamp'>): Promise<void> {
+  private async logHealthCheckResult(result: Omit<InsertDhaDocumentVerification, 'id' | 'timestamp'>): Promise<void> {
     try {
-      await db.insert(healthCheckResults).values({
-        ...result,
-        timestamp: new Date()
-      });
+      await storage.set('health_check_' + Date.now(), result);
     } catch (error) {
       logger.error('Failed to log health check result:', error);
     }

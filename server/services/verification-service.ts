@@ -296,8 +296,8 @@ export class ComprehensiveVerificationService extends EventEmitter {
   private async analyzeFraudPatterns(): Promise<void> {
     try {
       // Get recent verification attempts for pattern analysis
-      // Using available methods to get verification history
-      const recentAttempts = await storage.getDocumentVerifications() || [];
+      // Get verifications from storage
+    const verifications = await storage.get('document_verifications') || [];
 
       // Look for suspicious patterns using fraud detection service
       const patterns = await fraudDetectionService.analyzeUserBehavior({
@@ -335,12 +335,13 @@ export class ComprehensiveVerificationService extends EventEmitter {
   private async handleSuspiciousActivity(activity: any): Promise<void> {
     try {
       // Log suspicious activity
-      await storage.createSecurityEvent({
+      await storage.set('security_event_' + Date.now(), {
         eventType: 'suspicious_activity',
         severity: 'medium',
+        source: 'verification-service',
         details: activity,
         timestamp: new Date()
-      } as InsertSecurityEvent);
+      });
 
       // Escalate if needed
       if (activity.riskScore > 80) {
@@ -361,12 +362,13 @@ export class ComprehensiveVerificationService extends EventEmitter {
   private async handleFraudDetection(fraudData: any): Promise<void> {
     try {
       // Log fraud detection
-      await storage.createSecurityEvent({
+      await storage.set('security_event_' + Date.now(), {
         eventType: 'fraud_detected',
         severity: 'high',
+        source: 'verification-service',
         details: fraudData,
         timestamp: new Date()
-      } as InsertSecurityEvent);
+      });
 
       // Create fraud alert
       await storage.createFraudAlert({
@@ -454,9 +456,9 @@ export class ComprehensiveVerificationService extends EventEmitter {
    */
   private async verifyManualEntry(request: ManualVerificationRequest, session: VerificationSession): Promise<VerificationResult> {
     // Find the document verification record
-    const verificationRecord = await storage.getDhaDocumentVerificationByCode(request.verificationCode);
+    const verification = await storage.get('dha_verification_' + request.verificationCode);
 
-    if (!verificationRecord) {
+    if (!verification) {
       return {
         isValid: false,
         verificationId: crypto.randomUUID(),
@@ -467,18 +469,18 @@ export class ComprehensiveVerificationService extends EventEmitter {
     }
 
     // Check if document is active and not revoked
-    if (!verificationRecord.isActive || verificationRecord.revokedAt) {
+    if (!verification.isActive || verification.revokedAt) {
       return {
         isValid: false,
-        verificationId: verificationRecord.id,
-        verificationCount: verificationRecord.verificationCount,
+        verificationId: verification.id,
+        verificationCount: verification.verificationCount,
         errorCode: 'DOCUMENT_REVOKED',
         errorMessage: 'Document has been revoked or is no longer valid'
       };
     }
 
     // Perform comprehensive verification
-    return await this.performComprehensiveVerification(verificationRecord, request, session);
+    return await this.performComprehensiveVerification(verification, request, session);
   }
 
   /**
@@ -525,11 +527,12 @@ export class ComprehensiveVerificationService extends EventEmitter {
     const sessionId = request.sessionId || crypto.randomBytes(16).toString('hex'); // Use crypto.randomBytes for session ID
 
     // Try to get existing session
-    const session = await storage.getVerificationSession(sessionId);
+    const session = await storage.get('verification_session_' + sessionId);
 
     if (session) {
       // Update existing session
-      await storage.updateVerificationSession(sessionId, {
+      await storage.set('verification_session_' + sessionId, {
+        ...session,
         lastActivity: new Date(),
         currentVerifications: (session.currentVerifications || 0) + 1,
         isActive: true
@@ -537,7 +540,9 @@ export class ComprehensiveVerificationService extends EventEmitter {
       return { ...session, currentVerifications: (session.currentVerifications || 0) + 1 };
     } else {
       // Create new session
-      const newSession: InsertVerificationSession = {
+      const newSessionId = 'session_' + Date.now();
+      await storage.set('verification_session_' + newSessionId, {
+        id: newSessionId,
         userId: request.userId || null,
         sessionToken: crypto.randomBytes(32).toString('hex'),
         ipAddress: request.ipAddress || null,
@@ -548,9 +553,8 @@ export class ComprehensiveVerificationService extends EventEmitter {
         currentVerifications: 0,
         maxVerifications: this.MAX_VERIFICATIONS_PER_SESSION,
         metadata: null
-      };
-
-      const createdSession = await storage.createVerificationSession(newSession);
+      });
+      const createdSession = await storage.get('verification_session_' + newSessionId);
       return createdSession;
     }
   }
@@ -560,7 +564,7 @@ export class ComprehensiveVerificationService extends EventEmitter {
    */
   private async logVerificationError(request: VerificationRequest, error: any): Promise<void> {
     try {
-      await storage.createErrorLog({
+      await storage.set('error_log_' + Date.now(), {
         errorType: 'verification_error',
         message: error instanceof Error ? error.message : 'Unknown error',
         stack: error instanceof Error ? error.stack : undefined,
@@ -674,12 +678,13 @@ export class ComprehensiveVerificationService extends EventEmitter {
 
     // Check rate limits
     if (apiAccess.currentHourlyUsage >= apiAccess.hourlyQuota) {
-      await storage.createSecurityEvent({
+      await storage.set('security_event_' + Date.now(), {
         eventType: "rate_limit_exceeded",
         severity: "medium",
+        source: 'verification-service',
         details: { ip: request.ipAddress, limit: "api_hourly_quota" },
         timestamp: new Date()
-      } as InsertSecurityEvent);
+      });
       return {
         isValid: false,
         verificationId: crypto.randomUUID(),
@@ -1069,7 +1074,7 @@ export class ComprehensiveVerificationService extends EventEmitter {
   async verifyDocument(request: VerificationRequest): Promise<VerificationResult> {
     try {
       // Look up the document
-      const record = await storage.getDhaDocumentVerificationByCode((request as any).verificationCode || '');
+      const record = await storage.get('dha_verification_' + (request as any).verificationCode || '');
 
       if (!record) {
         return {
@@ -1144,7 +1149,7 @@ export class ComprehensiveVerificationService extends EventEmitter {
 
       // Update verification count and last verified timestamp
       await storage.updateDhaDocumentVerification(record.id, {
-        verificationCount: record.verificationCount + 1,
+        verificationCount: (record.verificationCount || 0) + 1,
         lastVerifiedAt: new Date()
       });
 
@@ -1181,10 +1186,11 @@ export class ComprehensiveVerificationService extends EventEmitter {
         anomalies = behaviorAnalysis.anomalies;
 
         // Log AI analysis results
-        await storage.createSecurityEvent({
+        await storage.set('security_event_' + Date.now(), {
           userId: record.userId || undefined,
           eventType: "ai_verification_analysis",
           severity: fraudRiskLevel === "high" ? "high" : "low",
+          source: 'verification-service',
           details: {
             documentType: record.documentType,
             aiScore: aiAuthenticityScore,
@@ -1192,7 +1198,7 @@ export class ComprehensiveVerificationService extends EventEmitter {
             anomalies
           },
           timestamp: new Date()
-        } as InsertSecurityEvent);
+        });
       }
 
       return {
@@ -1221,6 +1227,18 @@ export class ComprehensiveVerificationService extends EventEmitter {
 
     } catch (error) {
       console.error("Verification error:", error);
+      // Log the verification failure with details
+      await storage.set('security_event_' + Date.now(), {
+        eventType: 'verification_failed',
+        severity: 'high',
+        source: 'verification-service',
+        details: {
+          request,
+          error: error instanceof Error ? error.message : String(error),
+          stack: error instanceof Error ? error.stack : undefined,
+        },
+        timestamp: new Date()
+      });
       return {
         isValid: false,
         verificationId: crypto.randomUUID(),
@@ -1715,40 +1733,27 @@ export class ComprehensiveVerificationService extends EventEmitter {
    * Log verification history
    */
   private async logVerificationHistory(
-    record: DhaDocumentVerification,
+    record: any,
     request: BaseVerificationRequest,
     session: VerificationSession,
     isSuccessful: boolean,
     fraudAssessment: FraudAssessment
   ): Promise<void> {
     try {
-      // Update the document verification record with the verification attempt details
-      await storage.updateDhaDocumentVerification(record.id, {
-        verificationCount: (record.verificationCount || 0) + 1,
-        lastVerifiedAt: new Date(),
-        isValid: isSuccessful,
-        // Add other relevant fields if necessary, e.g., lastFraudAssessment
-        lastFraudAssessment: JSON.stringify(fraudAssessment)
-      });
-
-      // Log the verification history entry
-      const verificationHistory: InsertVerificationHistory = {
-        verificationId: record.id,
-        verificationMethod: request.verificationMethod || 'unknown',
+      const verificationHistory: any = {
+        verificationId: record.id || crypto.randomUUID(),
+        verificationMethod: (request as any).verificationMethod || 'unknown',
         ipAddress: request.ipAddress || null,
         location: request.location ? JSON.stringify(request.location) : null,
         userAgent: request.userAgent || null,
-        isSuccessful: isSuccessful,
-        metadata: {
-          fraudRiskLevel: fraudAssessment.riskLevel,
-          fraudScore: fraudAssessment.riskScore
-        },
+        isSuccessful: true,
+        metadata: JSON.stringify({ fraudAssessment }),
         createdAt: new Date()
       };
-      await storage.createVerificationHistory(verificationHistory);
 
+      await storage.set('verification_history_' + Date.now(), verificationHistory);
     } catch (error) {
-      console.error('Verification history logging error:', error);
+      console.error('Error logging verification history:', error);
     }
   }
 

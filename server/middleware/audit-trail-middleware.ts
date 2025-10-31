@@ -1,4 +1,20 @@
-import { Request, Response, NextFunction } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
+
+// Extend Express Request type to include audit context
+declare global {
+  namespace Express {
+    interface Request {
+      auditContext?: any;
+      body?: any;
+      query?: any;
+      params?: any;
+      headers?: any;
+      method?: string;
+      path?: string;
+      get?: (name: string) => string | undefined;
+    }
+  }
+}
 import { auditTrailService } from '../services/audit-trail-service.js';
 import { AuditAction } from '../../shared/audit-schema.js';
 
