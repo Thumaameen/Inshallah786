@@ -6,8 +6,9 @@ echo "======================================"
 
 cd client
 
-echo "📦 Installing client dependencies (including dev)..."
+echo "📦 Installing client dependencies..."
 rm -rf node_modules package-lock.json
+npm cache clean --force
 npm install --legacy-peer-deps
 
 echo "🔨 Building client..."
@@ -19,6 +20,11 @@ if [ ! -f "dist/index.html" ]; then
   exit 1
 fi
 
+if [ ! -d "dist/assets" ]; then
+  echo "❌ Client build failed - assets directory not found"
+  exit 1
+fi
+
 echo "✅ Frontend build complete!"
 cd ..
 
@@ -27,3 +33,4 @@ mkdir -p dist/public
 cp -r client/dist/* dist/public/
 
 echo "✅ Frontend ready for production!"
+ls -la dist/public/

@@ -9,17 +9,26 @@ echo "===================================================="
 echo "🧹 Cleaning previous builds..."
 rm -rf dist client/dist node_modules/.cache
 
-# Install dependencies
-echo "📦 Installing dependencies..."
-npm ci --legacy-peer-deps --no-optional || npm install --legacy-peer-deps --no-optional
+# Install root dependencies
+echo "📦 Installing root dependencies..."
+npm ci --legacy-peer-deps || npm install --legacy-peer-deps
 
 # Build client
 echo "🎨 Building client..."
 cd client
-rm -rf node_modules
+echo "📦 Installing client dependencies..."
+rm -rf node_modules package-lock.json
+npm cache clean --force
 npm install --legacy-peer-deps
+echo "🔨 Running client build..."
 npm run build
 cd ..
+
+# Verify client build
+if [ ! -f "client/dist/index.html" ]; then
+  echo "❌ Client build failed - index.html not found"
+  exit 1
+fi
 
 # Build server
 echo "⚙️ Building server..."
@@ -38,7 +47,7 @@ if [ ! -f "dist/server/index-minimal.js" ]; then
 fi
 
 if [ ! -f "dist/public/index.html" ]; then
-  echo "❌ Client build failed"
+  echo "❌ Client build failed - dist/public/index.html not found"
   exit 1
 fi
 
@@ -46,3 +55,5 @@ echo "✅ Production build complete!"
 echo "📊 Build artifacts:"
 ls -lh dist/server/index-minimal.js
 ls -lh dist/public/index.html
+echo "📁 Client assets:"
+ls -la dist/public/ | head -20
