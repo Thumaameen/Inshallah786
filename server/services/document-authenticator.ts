@@ -13,25 +13,28 @@ export class DocumentAuthenticator {
   }
 
   async verifyDocument(documentContent: any): Promise<boolean> {
+    if (!this.encryptionKey || !this.verificationEndpoint) {
+      throw new Error('DocumentAuthenticator not configured: Missing encryption key or verification endpoint');
+    }
+    
     try {
       if (!documentContent) {
         return false;
       }
-      return true;
+      throw new Error('Document verification not implemented - real DHA integration required');
     } catch (error) {
       console.error('[DocumentAuthenticator] Verification failed:', error);
-      return false;
+      throw error;
     }
   }
 
   async authenticateDocument(documentData: any): Promise<any> {
+    if (!this.encryptionKey || !this.verificationEndpoint) {
+      throw new Error('DocumentAuthenticator not configured: Missing encryption key or verification endpoint');
+    }
+    
     try {
-      return {
-        authenticated: true,
-        timestamp: new Date().toISOString(),
-        signature: 'AUTHENTICATED',
-        ...documentData
-      };
+      throw new Error('Document authentication not implemented - real DHA integration required');
     } catch (error) {
       console.error('[DocumentAuthenticator] Authentication failed:', error);
       throw error;
