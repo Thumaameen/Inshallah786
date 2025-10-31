@@ -10,48 +10,21 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "src"),
-      "@/components": path.resolve(__dirname, "src/components"),
-      "@/lib": path.resolve(__dirname, "src/lib"),
-      "@/hooks": path.resolve(__dirname, "src/hooks"),
-      "@/contexts": path.resolve(__dirname, "src/contexts"),
-      "@/services": path.resolve(__dirname, "src/services"),
-      "@/pages": path.resolve(__dirname, "src/pages"),
-      "@/types": path.resolve(__dirname, "src/types"),
+      "@": path.resolve(__dirname, "./src"),
+      "@db": path.resolve(__dirname, "../server/db"),
     },
   },
-  root: path.resolve(__dirname),
   build: {
-    outDir: path.resolve(__dirname, "../dist/public"),
-    emptyOutDir: true,
+    outDir: 'dist',
     sourcemap: false,
+    minify: 'terser',
     chunkSizeWarningLimit: 1000,
     rollupOptions: {
-      external: [
-        'fsevents',
-        'chokidar',
-        'esbuild',
-        'rollup',
-        'react-is'
-      ],
       output: {
-        manualChunks(id) {
-          if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom') || id.includes('wouter')) {
-              return 'vendor';
-            }
-            if (id.includes('@radix-ui')) {
-              return 'ui';
-            }
-            return 'vendor-other';
-          }
-        },
-        chunkFileNames: 'assets/[name]-[hash].js',
-        assetFileNames: 'assets/[name]-[hash][extname]'
-      },
-      onwarn(warning, warn) {
-        if (warning.code === 'MODULE_LEVEL_DIRECTIVE') return;
-        warn(warning);
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'wouter'],
+          ui: ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu']
+        }
       }
     }
   },

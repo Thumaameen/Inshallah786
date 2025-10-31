@@ -1,46 +1,28 @@
-
 #!/bin/bash
-echo "🔧 Building DHA Frontend"
-echo "========================"
+set -e
 
-# Clean previous build
-echo "🧹 Cleaning previous build..."
-rm -rf dist/public
+echo "🎨 Building Frontend for Production..."
+echo "======================================"
 
-# Create dist directory structure
-mkdir -p dist/public
-
-# Install client dependencies
-echo "📦 Installing client dependencies..."
 cd client
 
-# Ensure vite is installed
-echo "📦 Installing vite explicitly..."
-npm install --save-dev vite@^5.4.10 --legacy-peer-deps
+echo "📦 Installing client dependencies..."
+npm install --legacy-peer-deps --no-optional
 
-# Install all other dependencies
-npm install --legacy-peer-deps --include=dev
-
-# Verify vite is available
-if ! npx vite --version; then
-  echo "❌ Vite installation failed"
-  exit 1
-fi
-
-# Build client
-echo "🏗️ Building client with vite..."
+echo "🔨 Building client..."
 npm run build
 
-# Go back to root
-cd ..
-
-# Verify build output exists
-if [ -d "dist/public" ] && [ "$(ls -A dist/public)" ]; then
-  echo "✅ Frontend build successful!"
-  echo "📦 Build output:"
-  ls -la dist/public
-  exit 0
-else
-  echo "❌ Frontend build failed - no output directory or empty"
+echo "📋 Verifying build..."
+if [ ! -f "dist/index.html" ]; then
+  echo "❌ Client build failed - index.html not found"
   exit 1
 fi
+
+echo "✅ Frontend build complete!"
+cd ..
+
+echo "📂 Copying to dist/public..."
+mkdir -p dist/public
+cp -r client/dist/* dist/public/
+
+echo "✅ Frontend ready for production!"

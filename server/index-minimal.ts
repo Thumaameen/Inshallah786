@@ -117,52 +117,23 @@ app.get('/api/health', (req, res) => {
 });
 
 // Serve static files in production
-const staticPath = join(process.cwd(), 'dist/public');
+const clientBuildPath = join(process.cwd(), 'dist', 'public');
 
-// Check if dist exists, if not serve API-only mode
-if (fs.existsSync(staticPath)) {
-  console.log('✅ Serving static files from:', staticPath);
+if (fs.existsSync(clientBuildPath)) {
+  app.use(express.static(clientBuildPath, { maxAge: '1y' }));
 
-  // Serve static files with no-cache headers for development
-  app.use(express.static(staticPath, {
-    maxAge: process.env.NODE_ENV === 'production' ? '1d' : 0,
-    etag: process.env.NODE_ENV === 'production',
-    setHeaders: (res) => {
-      if (process.env.NODE_ENV !== 'production') {
-        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-        res.setHeader('Pragma', 'no-cache');
-        res.setHeader('Expires', '0');
-      }
-    }
-  }));
-
-  // Serve React app for non-API routes (SPA fallback)
-  app.get('*', (req, res) => {
-    // Don't serve HTML for API routes
+  // Serve index.html for all non-API routes
+  app.get('*', (req, res, next) => {
     if (req.path.startsWith('/api')) {
-      return res.status(404).json({ error: 'API endpoint not found' });
+      return next();
     }
-
-    // Serve index.html for all other routes (React Router will handle routing)
-    const indexPath = join(staticPath, 'index.html');
-    if (fs.existsSync(indexPath)) {
-      res.sendFile(indexPath);
-    } else {
-      res.status(503).send(`
-        <html>
-          <head><title>DHA Services - Building</title></head>
-          <body style="font-family: Arial; padding: 40px; background: #0a0a0a; color: white;">
-            <h1>🇿🇦 DHA Digital Services</h1>
-            <p>⚠️ Frontend is being built...</p>
-            <p>API is running at <a href="/api/health" style="color: #4CAF50;">/api/health</a></p>
-          </body>
-        </html>
-      `);
-    }
+    res.sendFile(join(clientBuildPath, 'index.html'));
   });
+
+  console.log('✅ Frontend build ready');
+  console.log('📱 Serving from dist/public');
 } else {
-  console.log('⚠️  Frontend not built - serving API-only mode');
-  console.log('💡 Run: ./build-client.sh or npm run build:client');
+  console.log('⚠️  Frontend not built - run build script first');
 
   // Serve helpful message for non-API routes
   app.get('*', (req, res) => {
@@ -191,6 +162,7 @@ if (fs.existsSync(staticPath)) {
     `);
   });
 }
+
 
 // Start server
 server.listen(PORT, HOST, () => {

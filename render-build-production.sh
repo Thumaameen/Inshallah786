@@ -1,37 +1,36 @@
+
 #!/bin/bash
 set -e
 
-echo "🚀 DHA Digital Services - PRODUCTION BUILD"
-echo "=========================================="
-echo "🇿🇦 Department of Home Affairs"
-echo ""
+echo "🚀 DHA Digital Services - PRODUCTION BUILD FOR RENDER"
+echo "===================================================="
 
-# Validate Node version
-NODE_VERSION=$(node -v)
-echo "📌 Node version: $NODE_VERSION"
+# Clean previous builds
+echo "🧹 Cleaning previous builds..."
+rm -rf dist client/dist node_modules/.cache
 
-# Clean install 
+# Install dependencies
 echo "📦 Installing dependencies..."
-npm ci --legacy-peer-deps || npm install --legacy-peer-deps
+npm ci --legacy-peer-deps --no-optional || npm install --legacy-peer-deps --no-optional
 
 # Build client
-echo "🎨 Building client application..."
+echo "🎨 Building client..."
 cd client
-npm install --legacy-peer-deps
+npm install --legacy-peer-deps --no-optional
 npm run build
 cd ..
 
 # Build server
-echo "⚙️ Building server application..."
-npm run build:server || echo "⚠️ TypeScript build completed with warnings"
+echo "⚙️ Building server..."
+npx tsc -p tsconfig.production.json --skipLibCheck || echo "⚠️ Build completed with warnings"
 
 # Copy client build to dist/public
-echo "📋 Copying client build..."
+echo "📋 Copying client to dist/public..."
 mkdir -p dist/public
 cp -r client/dist/* dist/public/
 
-# Validate build
-echo "✅ Validating production build..."
+# Verify critical files
+echo "✅ Verifying build..."
 if [ ! -f "dist/server/index-minimal.js" ]; then
   echo "❌ Server build failed"
   exit 1
@@ -42,14 +41,7 @@ if [ ! -f "dist/public/index.html" ]; then
   exit 1
 fi
 
-echo "✅ Production build complete and validated!"
-
-# Verify critical files
-echo ""
-echo "📋 Verifying critical files..."
-test -f "dist/server/index-minimal.js" && echo "✅ Server bundle exists"
-test -f "dist/public/index.html" && echo "✅ Client HTML exists"
-test -f "dist/public/assets/index.js" || test -d "dist/public/assets" && echo "✅ Client assets exist"
-
-echo ""
-echo "🎯 Build ready for production deployment!"
+echo "✅ Production build complete!"
+echo "📊 Build artifacts:"
+ls -lh dist/server/index-minimal.js
+ls -lh dist/public/index.html

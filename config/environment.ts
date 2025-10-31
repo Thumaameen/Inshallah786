@@ -6,7 +6,7 @@
 export const config = {
     // Server configuration
     NODE_ENV: process.env.NODE_ENV || 'production',
-    PORT: parseInt(process.env.PORT || '5000'),
+    PORT: parseInt(process.env.PORT || '10000'),
     HOST: process.env.HOST || '0.0.0.0',
     
     // Bypass and API settings
