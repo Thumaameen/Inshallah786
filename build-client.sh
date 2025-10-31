@@ -6,8 +6,9 @@ echo "======================================"
 
 cd client
 
-echo "📦 Installing client dependencies..."
-npm install --legacy-peer-deps --include=dev
+echo "📦 Installing client dependencies (including dev)..."
+rm -rf node_modules package-lock.json
+npm install --legacy-peer-deps
 
 echo "🔨 Building client..."
 npm run build
