@@ -23,20 +23,37 @@ const logEnvironmentState = (context: string) => {
   console.log(`  Timestamp: ${new Date().toISOString()}`);
 };
 
-// FAILSAFE: Force development mode detection with extensive logging
+// Environment detection with proper platform support
 const detectEnvironmentWithLogging = (context: string) => {
   logEnvironmentState(context);
 
-  // Failsafe 1: If running on Replit (development environment)
-  if (process.env.REPL_ID && !process.env.RAILWAY_ENVIRONMENT) {
+  // Check for Render deployment
+  const isRender = Boolean(process.env.RENDER || process.env.RENDER_SERVICE_ID);
+  
+  // Check for Railway deployment  
+  const isRailway = Boolean(process.env.RAILWAY_ENVIRONMENT);
+  
+  // Check for Replit
+  const isReplit = Boolean(process.env.REPL_ID);
+
+  // On production platforms (Render, Railway), respect NODE_ENV
+  if (isRender || isRailway) {
+    console.log(`🔧 [ENV DEBUG] Detected production platform (Render: ${isRender}, Railway: ${isRailway})`);
+    const env = process.env.NODE_ENV || 'production';
+    console.log(`🔧 [ENV DEBUG] Using environment: ${env}`);
+    return env;
+  }
+
+  // On Replit, force development mode
+  if (isReplit) {
     console.log(`🔧 [ENV DEBUG] Detected Replit environment - forcing development mode`);
     process.env.NODE_ENV = 'development';
     return 'development';
   }
 
-  // Failsafe 2: If NODE_ENV is not set, default to development
+  // Failsafe: If NODE_ENV is not set, default to development
   if (!process.env.NODE_ENV || process.env.NODE_ENV === '') {
-    console.log(`🔧 [ENV DEBUG] NODE_ENV not set - forcing development mode`);
+    console.log(`🔧 [ENV DEBUG] NODE_ENV not set - defaulting to development mode`);
     process.env.NODE_ENV = 'development';
     return 'development';
   }
