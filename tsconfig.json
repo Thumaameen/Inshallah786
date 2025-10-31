@@ -1,13 +1,15 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "module": "ESNext",
-    "lib": ["ES2020"],
+    "module": "CommonJS",
+    "lib": ["ES2020", "DOM"],
     "skipLibCheck": true,
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "esModuleInterop": true,
+    "types": ["node"],
+    "allowJs": true,
     "strict": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
@@ -38,11 +40,7 @@
   "exclude": [
     "node_modules",
     "dist",
-    "server/services",
     "server/workers",
-    "server/routes",
-    "server/middleware",
-    "server/utils",
     "server/seed-*.ts",
     "server/database-migration.ts",
     "server/startup-health-checks.ts"

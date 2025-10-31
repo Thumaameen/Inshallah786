@@ -83,5 +83,10 @@
     "drizzle-kit": "^0.31.6",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
-  }
+  },
+  "main": "test-keys.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
 }
