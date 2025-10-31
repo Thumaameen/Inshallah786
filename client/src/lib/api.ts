@@ -8,6 +8,22 @@ interface ApiResponse<T = any> {
   message?: string;
 }
 
+// Integration activation functions
+export async function activateAllIntegrations() {
+  const response = await fetch('/api/integrations/activate-all', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+  return response.json();
+}
+
+export async function getIntegrationStatus() {
+  const response = await fetch('/api/integrations/status');
+  return response.json();
+}
+
 class ApiClient {
   private baseUrl: string;
 

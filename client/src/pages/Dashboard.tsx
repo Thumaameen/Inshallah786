@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { SouthAfricanCoatOfArms, DHALogo } from "@/components/GovernmentAssets";
+import IntegrationActivator from "@/components/IntegrationActivator"; // Assuming this component exists and is imported
 
 export default function Dashboard() {
   const { user, logout } = useAuth();
@@ -127,7 +128,7 @@ export default function Dashboard() {
                 <p className="text-sm text-gray-500">Department of Home Affairs Platform</p>
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-4">
               <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
                 ✅ FULLY OPERATIONAL - 200% PERFORMANCE
@@ -186,6 +187,11 @@ export default function Dashboard() {
               </Card>
             </Link>
           ))}
+        </div>
+
+        {/* Integration Activator */}
+        <div className="container mx-auto p-6 space-y-8">
+          <IntegrationActivator />
         </div>
 
         {/* System Status */}
