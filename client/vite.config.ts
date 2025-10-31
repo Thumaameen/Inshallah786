@@ -1,24 +1,35 @@
 import { defineConfig, loadEnv, UserConfig, ConfigEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
   const env = loadEnv(mode, process.cwd(), '');
-  
+
   return {
     plugins: [react()],
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, 'src')
+        '@': path.resolve(__dirname, './src')
       }
+    },
+    optimizeDeps: {
+      include: ['react', 'react-dom'],
+      force: true
     },
     build: {
       outDir: 'dist',
+      emptyOutDir: true,
       sourcemap: mode === 'development',
       minify: mode === 'production' ? 'esbuild' : false,
       rollupOptions: {
         output: {
-          manualChunks: undefined, // Let Vite handle chunking automatically
+          manualChunks: {
+            'react-vendor': ['react', 'react-dom'],
+          },
         }
       }
     },
