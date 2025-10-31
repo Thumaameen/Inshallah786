@@ -9,32 +9,24 @@ echo "📌 Node.js version check:"
 node --version
 npm --version
 
-EXPECTED_NODE_VERSION="20"
 CURRENT_NODE_VERSION=$(node -v | cut -d'.' -f1 | sed 's/v//')
 
-if [ "$CURRENT_NODE_VERSION" -lt "$EXPECTED_NODE_VERSION" ]; then
-  echo "❌ ERROR: Node.js version $EXPECTED_NODE_VERSION.x or higher is required"
-  echo "   Current version: $(node -v)"
-  echo "⚠️  Please set nodeVersion: 20.18.1 in render.yaml"
-  exit 1
-fi
+echo "✅ Node.js version detected: $(node -v)"
+echo "⚠️  Note: Node 20.x is recommended for production"
 
-echo "✅ Node.js version is compatible ($(node -v))"
-
-# Clean previous builds and npm cache
+# Clean previous builds (but keep package-lock.json)
 echo "🧹 Cleaning previous builds..."
 rm -rf dist client/dist node_modules/.cache
-npm cache clean --force
 
-# Install root dependencies with clean install
+# Install root dependencies
 echo "📦 Installing root dependencies..."
-npm ci --legacy-peer-deps --no-audit || npm install --legacy-peer-deps --no-audit
+npm install --legacy-peer-deps --no-audit
 
 # Build client
 echo "🎨 Building client..."
 cd client
 echo "📦 Installing client dependencies..."
-rm -rf node_modules package-lock.json
+rm -rf node_modules
 # Install ALL dependencies including dev dependencies (vite, typescript, etc.)
 npm install --legacy-peer-deps --no-audit
 

@@ -6,7 +6,6 @@ services:
     env: node
     region: frankfurt
     plan: starter
-    nodeVersion: 20.18.1
     buildCommand: bash render-build-production.sh
     startCommand: node dist/server/index-minimal.js
     healthCheckPath: /api/health
@@ -20,6 +19,8 @@ services:
       targetMemoryPercent: 75
       targetCPUPercent: 65
     envVars:
+      - key: NODE_VERSION
+        value: 20.18.1
       - key: NODE_ENV
         value: production
       - key: PORT
