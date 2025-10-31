@@ -69,14 +69,14 @@ export class DHANPRAdapter {
   constructor() {
     const environment = process.env.NODE_ENV || 'development';
     this.isProduction = environment === 'production';
-    
+
     // Get configuration from environment
     this.baseUrl = process.env.DHA_NPR_BASE_URL || process.env.DHA_NPR_API_ENDPOINT || 'https://npr-prod.dha.gov.za/api/v1';
     this.apiKey = process.env.DHA_NPR_API_KEY || '';
     this.clientCert = process.env.DHA_NPR_CLIENT_CERT;
     this.privateKey = process.env.DHA_NPR_PRIVATE_KEY;
-    
-    console.log(`[DHA-NPR] Initialized in ${environment} mode`);
+
+    console.log(`[DHA-NPR] Initialized in PRODUCTION mode`);
     console.log(`[DHA-NPR] Base URL: ${this.baseUrl}`);
     console.log(`[DHA-NPR] API Key configured: ${this.apiKey ? 'Yes' : 'No'}`);
     console.log(`[DHA-NPR] mTLS certificates configured: ${this.clientCert && this.privateKey ? 'Yes' : 'No'}`);
@@ -126,7 +126,7 @@ export class DHANPRAdapter {
 
       // Perform verification based on method
       let response: NPRVerificationResponse;
-      
+
       switch (request.verificationMethod) {
         case 'id_number':
           response = await this.verifyByIdNumber(requestId, request);
@@ -237,11 +237,11 @@ export class DHANPRAdapter {
    */
   private async verifyCombined(requestId: string, request: NPRVerificationRequest): Promise<NPRVerificationResponse> {
     const idVerification = await this.verifyByIdNumber(requestId, request);
-    
+
     if (idVerification.verificationResult === 'verified') {
       const biographicVerification = await this.verifyByBiographicData(requestId, request);
       const combinedConfidence = Math.min(idVerification.confidenceScore, biographicVerification.confidenceScore);
-      
+
       return {
         ...idVerification,
         confidenceScore: combinedConfidence,
@@ -276,7 +276,7 @@ export class DHANPRAdapter {
       // Determine API endpoint based on method
       const endpoint = payload.method === 'verify_by_id' 
         ? `${this.baseUrl}/identity/verify-by-id`
-        : `${this.baseUrl}/identity/verify-by-biographic`;
+        : `${this.baseUrl}/identity/identity/verify-by-biographic`;
 
       console.log(`[DHA-NPR] Making API call to: ${endpoint}`);
 
@@ -322,7 +322,7 @@ export class DHANPRAdapter {
       if (!response.ok) {
         const errorText = await response.text().catch(() => 'Unable to read error response');
         console.error(`[DHA-NPR] API error: ${response.status} ${response.statusText}`, errorText);
-        
+
         throw new Error(`NPR API returned error: ${response.status} - ${errorText}`);
       }
 
@@ -344,7 +344,7 @@ export class DHANPRAdapter {
     } catch (error) {
       const responseTime = Date.now() - startTime;
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      
+
       console.error(`[DHA-NPR] API call failed (${responseTime}ms):`, errorMessage);
 
       // In non-production, provide fallback response for testing
@@ -464,7 +464,7 @@ export class DHANPRAdapter {
    */
   async healthCheck(): Promise<{ status: 'healthy' | 'unhealthy', message: string, responseTime?: number }> {
     const startTime = Date.now();
-    
+
     try {
       if (!this.apiKey) {
         return {

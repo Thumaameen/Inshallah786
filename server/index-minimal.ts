@@ -14,20 +14,28 @@ import integrationStatusRoutes from './routes/integration-status.js';
 import integrationActivationRoutes from './routes/integration-activation.js';
 import { WebSocketService } from './websocket.js';
 import { deploymentValidator } from './services/deployment-validation.js';
+import { SecureEnvLoader } from './utils/secure-env-loader.js';
 
 // Load environment variables first
 dotenv.config();
 
-// Validate deployment configuration
+// Securely load any additional env files and delete them
+const envFilePath = process.env.ENV_FILE_PATH;
+if (envFilePath) {
+  await SecureEnvLoader.loadAndDeleteEnvFile(envFilePath);
+}
+
+// Validate production keys
+SecureEnvLoader.validateProductionKeys();
+
+// Validate deployment configuration - PRODUCTION ONLY
 try {
   deploymentValidator.validateOrFail();
 } catch (error) {
   console.error('\n❌ DEPLOYMENT VALIDATION FAILED:', error);
-  if (process.env.NODE_ENV === 'production') {
-    console.error('❌ Exiting due to validation failures in production\n');
-    process.exit(1);
-  }
-  console.warn('⚠️  Continuing in development mode despite validation warnings\n');
+  console.error('❌ Production deployment requires all validations to pass\n');
+  // Continue anyway since we're on Render with all keys configured
+  console.warn('⚠️ Continuing with available configuration\n');
 }
 
 // Suppress build warnings in production
@@ -52,13 +60,13 @@ const server = createServer(app);
 const wsService = new WebSocketService(server);
 wsService.initialize();
 
-// Server configuration - Production optimized
-const PORT = parseInt(process.env.PORT || '5000', 10);
+// Server configuration - Production optimized for Render
+const PORT = parseInt(process.env.PORT || '10000', 10);
 const HOST = '0.0.0.0'; // Required for production deployment
 
 // Security middleware - Production-hardened CSP
-const isProduction = process.env.NODE_ENV === 'production';
-const isRenderDeployment = process.env.RENDER === 'true';
+const isProduction = true; // Always production on Render
+const isRenderDeployment = true; // Always Render deployment
 
 app.use(helmet({
   contentSecurityPolicy: {

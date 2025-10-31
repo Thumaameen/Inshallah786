@@ -55,25 +55,25 @@ export interface SAPSClearanceResponse {
   referenceNumber: string;
   clearanceStatus: 'clear' | 'pending' | 'record_found';
   riskAssessment: 'low' | 'medium' | 'high';
-  
+
   // Clearance Details
   policyNumber?: string; // SAPS policy clearance number
   issuedDate?: Date;
   validUntil?: Date;
-  
+
   // Criminal History
   hasCriminalRecord: boolean;
   criminalRecords: SAPSCriminalRecord[];
-  
+
   // Outstanding Issues
   hasOutstandingWarrants: boolean;
   outstandingWarrants: SAPSWarrant[];
-  
+
   // Additional Information
   lastCheckedDate: Date;
   checkCompleteness: 'complete' | 'partial' | 'limited';
   restrictionsOrConditions?: string[];
-  
+
   processingTime: number;
   error?: string;
 }
@@ -88,16 +88,17 @@ export class DHASAPSAdapter {
   private readonly isProduction: boolean;
 
   constructor() {
-    const environment = process.env.NODE_ENV || 'development';
-    this.isProduction = environment === 'production';
-    
+    // Force production mode for Render deployment
+    const environment = 'production'; 
+    this.isProduction = true;
+
     // Get configuration from environment
     this.baseUrl = process.env.SAPS_CRC_BASE_URL || process.env.SAPS_CRC_API_ENDPOINT || 'https://crc-api.saps.gov.za/v1';
     this.apiKey = process.env.SAPS_CRC_API_KEY || '';
     this.clientCert = process.env.SAPS_CLIENT_CERT;
     this.privateKey = process.env.SAPS_PRIVATE_KEY;
-    
-    console.log(`[SAPS-CRC] Initialized in ${environment} mode`);
+
+    console.log(`[SAPS-CRC] Initialized in PRODUCTION mode`);
     console.log(`[SAPS-CRC] Base URL: ${this.baseUrl}`);
     console.log(`[SAPS-CRC] API Key configured: ${this.apiKey ? 'Yes' : 'No'}`);
     console.log(`[SAPS-CRC] mTLS certificates configured: ${this.clientCert && this.privateKey ? 'Yes' : 'No'}`);
@@ -271,12 +272,7 @@ export class DHASAPSAdapter {
     } catch (error) {
       console.error(`[SAPS-CRC] API call failed:`, error);
 
-      // In non-production, provide fallback response for testing
-      if (!this.isProduction && !this.apiKey) {
-        console.warn('[SAPS-CRC] ⚠️  No API key configured, returning test data (development only)');
-        return this.createFallbackResponse(requestId, request);
-      }
-
+      // Remove fallback response for production
       throw error;
     }
   }
@@ -310,30 +306,6 @@ export class DHASAPSAdapter {
       warrantType: data.warrant_type || data.warrantType || 'arrest',
       chargesDescription: data.charges_description || data.chargesDescription || '',
       status: data.status || 'active'
-    };
-  }
-
-  /**
-   * Create fallback response for development/testing
-   */
-  private createFallbackResponse(requestId: string, request: SAPSClearanceRequest): SAPSClearanceResponse {
-    return {
-      success: true,
-      requestId,
-      referenceNumber: `SAPS-TEST-${requestId}`,
-      clearanceStatus: 'clear',
-      riskAssessment: 'low',
-      policyNumber: `PCC-${Date.now()}`,
-      issuedDate: new Date(),
-      validUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year from now
-      hasCriminalRecord: false,
-      criminalRecords: [],
-      hasOutstandingWarrants: false,
-      outstandingWarrants: [],
-      lastCheckedDate: new Date(),
-      checkCompleteness: 'complete',
-      restrictionsOrConditions: [],
-      processingTime: 0
     };
   }
 
@@ -388,7 +360,7 @@ export class DHASAPSAdapter {
    */
   async healthCheck(): Promise<{ status: 'healthy' | 'unhealthy', message: string, responseTime?: number }> {
     const startTime = Date.now();
-    
+
     try {
       if (!this.apiKey) {
         return {

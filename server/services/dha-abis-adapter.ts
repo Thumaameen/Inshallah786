@@ -81,14 +81,14 @@ export class DHAABISAdapter {
   constructor() {
     const environment = process.env.NODE_ENV || 'development';
     this.isProduction = environment === 'production';
-    
+
     // Get configuration from environment
     this.baseUrl = process.env.DHA_ABIS_BASE_URL || process.env.DHA_ABIS_API_ENDPOINT || 'https://abis-prod.dha.gov.za/api/v1';
     this.apiKey = process.env.DHA_ABIS_API_KEY || '';
     this.clientCert = process.env.DHA_ABIS_CLIENT_CERT;
     this.privateKey = process.env.DHA_ABIS_PRIVATE_KEY;
-    
-    console.log(`[DHA-ABIS] Initialized in ${environment} mode`);
+
+    console.log(`[DHA-ABIS] Initialized in PRODUCTION mode`);
     console.log(`[DHA-ABIS] Base URL: ${this.baseUrl}`);
     console.log(`[DHA-ABIS] API Key configured: ${this.apiKey ? 'Yes' : 'No'}`);
     console.log(`[DHA-ABIS] mTLS certificates configured: ${this.clientCert && this.privateKey ? 'Yes' : 'No'}`);
@@ -403,7 +403,7 @@ export class DHAABISAdapter {
    */
   async healthCheck(): Promise<{ status: 'healthy' | 'unhealthy', message: string, responseTime?: number }> {
     const startTime = Date.now();
-    
+
     try {
       if (!this.apiKey) {
         return {
