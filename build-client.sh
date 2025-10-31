@@ -7,7 +7,7 @@ echo "======================================"
 cd client
 
 echo "📦 Installing client dependencies..."
-npm install --legacy-peer-deps --no-optional
+npm install --legacy-peer-deps --include=dev
 
 echo "🔨 Building client..."
 npm run build

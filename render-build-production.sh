@@ -16,7 +16,7 @@ npm ci --legacy-peer-deps --no-optional || npm install --legacy-peer-deps --no-o
 # Build client
 echo "🎨 Building client..."
 cd client
-npm install --legacy-peer-deps --no-optional
+npm install --legacy-peer-deps --include=dev
 npm run build
 cd ..
 
