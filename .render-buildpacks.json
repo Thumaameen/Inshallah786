@@ -1,0 +1,13 @@
+
+{
+  "buildpacks": [
+    {
+      "url": "https://github.com/render-oss/heroku-buildpack-nodejs",
+      "version": "latest"
+    }
+  ],
+  "env": {
+    "NODE_VERSION": "20.18.1",
+    "NPM_CONFIG_PRODUCTION": "false"
+  }
+}
