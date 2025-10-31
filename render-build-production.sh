@@ -18,7 +18,7 @@ echo "🎨 Building client..."
 cd client
 echo "📦 Installing client dependencies..."
 rm -rf node_modules package-lock.json
-npm install --legacy-peer-deps --no-audit
+npm install --legacy-peer-deps --no-audit --include=dev
 echo "🔨 Running client build..."
 npm run build
 cd ..
