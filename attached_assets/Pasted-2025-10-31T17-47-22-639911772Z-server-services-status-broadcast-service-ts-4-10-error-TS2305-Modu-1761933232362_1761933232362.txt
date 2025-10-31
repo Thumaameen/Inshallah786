@@ -1,0 +1,400 @@
+2025-10-31T17:47:22.639911772Z server/services/status-broadcast-service.ts(4,10): error TS2305: Module '"../../shared/schema/index.js"' has no exported member 'EventType'.
+2025-10-31T17:47:22.639918093Z server/services/status-broadcast-service.ts(4,21): error TS2305: Module '"../../shared/schema/index.js"' has no exported member 'NotificationCategory'.
+2025-10-31T17:47:22.639941615Z server/services/status-broadcast-service.ts(4,43): error TS2305: Module '"../../shared/schema/index.js"' has no exported member 'NotificationPriority'.
+2025-10-31T17:47:22.639949405Z server/services/status-broadcast-service.ts(5,15): error TS2305: Module '"../../shared/schema/index.js"' has no exported member 'StatusUpdate'.
+2025-10-31T17:47:22.639974788Z server/services/status-broadcast-service.ts(5,29): error TS2305: Module '"../../shared/schema/index.js"' has no exported member 'Document'.
+2025-10-31T17:47:22.639979078Z server/services/status-broadcast-service.ts(5,39): error TS2305: Module '"../../shared/schema/index.js"' has no exported member 'DhaApplication'.
+2025-10-31T17:47:22.6400055Z server/services/storage-readiness-validator.ts(2,10): error TS2614: Module '"*.js"' has no exported member 'db'. Did you mean to use 'import db from "*.js"' instead?
+2025-10-31T17:47:22.64000983Z server/services/storage-readiness-validator.ts(3,25): error TS2306: File '/opt/render/project/src/server/storage.ts' is not a module.
+2025-10-31T17:47:22.640036162Z server/services/ultra-ai-monitoring-integration.ts(17,25): error TS2306: File '/opt/render/project/src/server/storage.ts' is not a module.
+2025-10-31T17:47:22.640058874Z server/services/ultra-ai-orchestrator.ts(3,10): error TS2305: Module '"./perplexity-integration.js"' has no exported member 'PerplexityAI'.
+2025-10-31T17:47:22.640061124Z server/services/ultra-ai-orchestrator.ts(4,10): error TS2614: Module '"*.js"' has no exported member 'DocumentAuthenticator'. Did you mean to use 'import DocumentAuthenticator from "*.js"' instead?
+2025-10-31T17:47:22.640084736Z server/services/ultra-ai-orchestrator.ts(5,10): error TS2614: Module '"*.js"' has no exported member 'DhaIntegration'. Did you mean to use 'import DhaIntegration from "*.js"' instead?
+2025-10-31T17:47:22.640118929Z server/services/ultra-ai-orchestrator.ts(48,11): error TS2769: No overload matches this call.
+2025-10-31T17:47:22.640121299Z   Overload 1 of 3, '(body: MessageCreateParamsNonStreaming, options?: RequestOptions): APIPromise<Message>', gave the following error.
+2025-10-31T17:47:22.640123599Z     Type '"system"' is not assignable to type '"user" | "assistant"'.
+2025-10-31T17:47:22.640125349Z   Overload 2 of 3, '(body: MessageCreateParamsStreaming, options?: RequestOptions): APIPromise<Stream<RawMessageStreamEvent>>', gave the following error.
+2025-10-31T17:47:22.64012709Z     Type '"system"' is not assignable to type '"user" | "assistant"'.
+2025-10-31T17:47:22.6401288Z   Overload 3 of 3, '(body: MessageCreateParamsBase, options?: RequestOptions): APIPromise<Message | Stream<RawMessageStreamEvent>>', gave the following error.
+2025-10-31T17:47:22.64013056Z     Type '"system"' is not assignable to type '"user" | "assistant"'.
+2025-10-31T17:47:22.640150131Z server/services/ultra-ai-orchestrator.ts(90,38): error TS2769: No overload matches this call.
+2025-10-31T17:47:22.640152202Z   Overload 1 of 3, '(body: MessageCreateParamsNonStreaming, options?: RequestOptions): APIPromise<Message>', gave the following error.
+2025-10-31T17:47:22.640159342Z     Argument of type '{ model: "claude-3-sonnet-20240229"; messages: { role: "user"; content: any; }[]; }' is not assignable to parameter of type 'MessageCreateParamsNonStreaming'.
+2025-10-31T17:47:22.640161123Z       Property 'max_tokens' is missing in type '{ model: "claude-3-sonnet-20240229"; messages: { role: "user"; content: any; }[]; }' but required in type 'MessageCreateParamsNonStreaming'.
+2025-10-31T17:47:22.640162903Z   Overload 2 of 3, '(body: MessageCreateParamsStreaming, options?: RequestOptions): APIPromise<Stream<RawMessageStreamEvent>>', gave the following error.
+2025-10-31T17:47:22.640164603Z     Argument of type '{ model: "claude-3-sonnet-20240229"; messages: { role: "user"; content: any; }[]; }' is not assignable to parameter of type 'MessageCreateParamsStreaming'.
+2025-10-31T17:47:22.640166533Z       Type '{ model: "claude-3-sonnet-20240229"; messages: { role: "user"; content: any; }[]; }' is missing the following properties from type 'MessageCreateParamsStreaming': stream, max_tokens
+2025-10-31T17:47:22.640168233Z   Overload 3 of 3, '(body: MessageCreateParamsBase, options?: RequestOptions): APIPromise<Message | Stream<RawMessageStreamEvent>>', gave the following error.
+2025-10-31T17:47:22.640169943Z     Argument of type '{ model: "claude-3-sonnet-20240229"; messages: { role: "user"; content: any; }[]; }' is not assignable to parameter of type 'MessageCreateParamsBase'.
+2025-10-31T17:47:22.640171643Z       Property 'max_tokens' is missing in type '{ model: "claude-3-sonnet-20240229"; messages: { role: "user"; content: any; }[]; }' but required in type 'MessageCreateParamsBase'.
+2025-10-31T17:47:22.640179364Z server/services/ultra-global-connector.ts(21,25): error TS2306: File '/opt/render/project/src/server/storage.ts' is not a module.
+2025-10-31T17:47:22.640217647Z server/services/ultra-queen-ai-core.ts(4,25): error TS2306: File '/opt/render/project/src/server/storage.ts' is not a module.
+2025-10-31T17:47:22.640222887Z server/services/ultra-queen-ai-core.ts(19,52): error TS2339: Property 'validateAndFetchRealKey' does not exist on type 'UniversalAPIOverride'.
+2025-10-31T17:47:22.640229138Z server/services/ultra-queen-ai-core.ts(63,47): error TS2339: Property 'validateAndFetchRealKey' does not exist on type 'UniversalAPIOverride'.
+2025-10-31T17:47:22.640246039Z server/services/ultra-queen-ai-core.ts(81,7): error TS2698: Spread types may only be created from object types.
+2025-10-31T17:47:22.64025247Z server/services/ultra-queen-ai-simple.ts(5,25): error TS2306: File '/opt/render/project/src/server/storage.ts' is not a module.
+2025-10-31T17:47:22.640278212Z server/services/ultra-queen-ai-simple.ts(165,31): error TS2339: Property 'choices' does not exist on type '(Stream<ChatCompletionChunk> & { _request_id?: string; }) | (ChatCompletion & { _request_id?: string; })'.
+2025-10-31T17:47:22.640281822Z   Property 'choices' does not exist on type 'Stream<ChatCompletionChunk> & { _request_id?: string; }'.
+2025-10-31T17:47:22.640285113Z server/services/ultra-queen-ai-simple.ts(167,29): error TS2339: Property 'usage' does not exist on type '(Stream<ChatCompletionChunk> & { _request_id?: string; }) | (ChatCompletion & { _request_id?: string; })'.
+2025-10-31T17:47:22.640287593Z   Property 'usage' does not exist on type 'Stream<ChatCompletionChunk> & { _request_id?: string; }'.
+2025-10-31T17:47:22.64037701Z server/services/ultra-queen-ai-unlimited.ts(5,25): error TS2306: File '/opt/render/project/src/server/storage.ts' is not a module.
+2025-10-31T17:47:22.64038215Z server/services/ultra-queen-ai.ts(17,25): error TS2306: File '/opt/render/project/src/server/storage.ts' is not a module.
+2025-10-31T17:47:22.640384981Z server/services/ultra-queen-ai.ts(336,20): error TS2339: Property 'choices' does not exist on type '(Stream<ChatCompletionChunk> & { _request_id?: string; }) | (ChatCompletion & { _request_id?: string; })'.
+2025-10-31T17:47:22.640394011Z   Property 'choices' does not exist on type 'Stream<ChatCompletionChunk> & { _request_id?: string; }'.
+2025-10-31T17:47:22.640396751Z server/services/ultra-queen-ai.ts(344,34): error TS2339: Property 'usage' does not exist on type '(Stream<ChatCompletionChunk> & { _request_id?: string; }) | (ChatCompletion & { _request_id?: string; })'.
+2025-10-31T17:47:22.640399462Z   Property 'usage' does not exist on type 'Stream<ChatCompletionChunk> & { _request_id?: string; }'.
+2025-10-31T17:47:22.640406242Z server/services/ultra-queen-ai.ts(447,28): error TS2339: Property 'choices' does not exist on type 'unknown'.
+2025-10-31T17:47:22.640408882Z server/services/ultra-queen-ai.ts(455,28): error TS2339: Property 'usage' does not exist on type 'unknown'.
+2025-10-31T17:47:22.640431424Z server/services/verification-service.ts(6,3): error TS2305: Module '"../../shared/schema/index.js"' has no exported member 'InsertSecurityEvent'.
+2025-10-31T17:47:22.640439355Z server/services/verification-service.ts(7,3): error TS2724: '"../../shared/schema/index.js"' has no exported member named 'DocumentVerificationRecord'. Did you mean 'DhaDocumentVerification'?
+2025-10-31T17:47:22.640446786Z server/services/verification-service.ts(10,3): error TS2614: Module '"*.js"' has no exported member 'VerificationSession'. Did you mean to use 'import VerificationSession from "*.js"' instead?
+2025-10-31T17:47:22.640448706Z server/services/verification-service.ts(11,3): error TS2614: Module '"*.js"' has no exported member 'InsertVerificationSession'. Did you mean to use 'import InsertVerificationSession from "*.js"' instead?
+2025-10-31T17:47:22.640472997Z server/services/verification-service.ts(12,3): error TS2614: Module '"*.js"' has no exported member 'ApiAccess'. Did you mean to use 'import ApiAccess from "*.js"' instead?
+2025-10-31T17:47:22.640475268Z server/services/verification-service.ts(13,3): error TS2614: Module '"*.js"' has no exported member 'InsertApiAccess'. Did you mean to use 'import InsertApiAccess from "*.js"' instead?
+2025-10-31T17:47:22.640478958Z server/services/verification-service.ts(14,3): error TS2614: Module '"*.js"' has no exported member 'VerificationHistory'. Did you mean to use 'import VerificationHistory from "*.js"' instead?
+2025-10-31T17:47:22.64050791Z server/services/verification-service.ts(15,3): error TS2614: Module '"*.js"' has no exported member 'InsertVerificationHistory'. Did you mean to use 'import InsertVerificationHistory from "*.js"' instead?
+2025-10-31T17:47:22.640512301Z server/services/verification-service.ts(16,3): error TS2614: Module '"*.js"' has no exported member 'Location'. Did you mean to use 'import Location from "*.js"' instead?
+2025-10-31T17:47:22.640515971Z server/services/verification-service.ts(17,3): error TS2614: Module '"*.js"' has no exported member 'Coordinates'. Did you mean to use 'import Coordinates from "*.js"' instead?
+2025-10-31T17:47:22.640563345Z server/services/verification-service.ts(19,25): error TS2306: File '/opt/render/project/src/server/storage.ts' is not a module.
+2025-10-31T17:47:22.640568225Z server/services/verification-service.ts(21,24): error TS2306: File '/opt/render/project/src/server/utils/logger.ts' is not a module.
+2025-10-31T17:47:22.640571956Z server/services/verification-service.ts(755,34): error TS2551: Property 'verificationCount' does not exist on type '{ documentType: string; id: string; createdAt: Date; updatedAt: Date; isActive: boolean; userId: string; verificationResult: unknown; verificationCode: string; documentNumber: string; issuedAt: Date; ... 8 more ...; revocationReason: string; }'. Did you mean 'verificationCode'?
+2025-10-31T17:47:22.640574566Z server/services/verification-service.ts(773,35): error TS2551: Property 'verificationCount' does not exist on type '{ documentType: string; id: string; createdAt: Date; updatedAt: Date; isActive: boolean; userId: string; verificationResult: unknown; verificationCode: string; documentNumber: string; issuedAt: Date; ... 8 more ...; revocationReason: string; }'. Did you mean 'verificationCode'?
+2025-10-31T17:47:22.640588507Z server/services/verification-service.ts(805,26): error TS2339: Property 'expiryDate' does not exist on type '{ documentType: string; id: string; createdAt: Date; updatedAt: Date; isActive: boolean; userId: string; verificationResult: unknown; verificationCode: string; documentNumber: string; issuedAt: Date; ... 8 more ...; revocationReason: string; }'.
+2025-10-31T17:47:22.640591627Z server/services/verification-service.ts(807,27): error TS2339: Property 'issuingOffice' does not exist on type '{ documentType: string; id: string; createdAt: Date; updatedAt: Date; isActive: boolean; userId: string; verificationResult: unknown; verificationCode: string; documentNumber: string; issuedAt: Date; ... 8 more ...; revocationReason: string; }'.
+2025-10-31T17:47:22.640599768Z server/services/verification-service.ts(808,30): error TS2339: Property 'issuingOfficer' does not exist on type '{ documentType: string; id: string; createdAt: Date; updatedAt: Date; isActive: boolean; userId: string; verificationResult: unknown; verificationCode: string; documentNumber: string; issuedAt: Date; ... 8 more ...; revocationReason: string; }'.
+2025-10-31T17:47:22.640605118Z server/services/verification-service.ts(809,33): error TS2551: Property 'verificationCount' does not exist on type '{ documentType: string; id: string; createdAt: Date; updatedAt: Date; isActive: boolean; userId: string; verificationResult: unknown; verificationCode: string; documentNumber: string; issuedAt: Date; ... 8 more ...; revocationReason: string; }'. Did you mean 'verificationCode'?
+2025-10-31T17:47:22.64062883Z server/services/verification-service.ts(816,24): error TS2339: Property 'hashtags' does not exist on type '{ documentType: string; id: string; createdAt: Date; updatedAt: Date; isActive: boolean; userId: string; verificationResult: unknown; verificationCode: string; documentNumber: string; issuedAt: Date; ... 8 more ...; revocationReason: string; }'.
+2025-10-31T17:47:22.640633981Z server/services/verification-service.ts(869,16): error TS2551: Property 'verificationCount' does not exist on type '{ documentType: string; id: string; createdAt: Date; updatedAt: Date; isActive: boolean; userId: string; verificationResult: unknown; verificationCode: string; documentNumber: string; issuedAt: Date; ... 8 more ...; revocationReason: string; }'. Did you mean 'verificationCode'?
+2025-10-31T17:47:22.640655182Z server/services/verification-service.ts(1028,7): error TS2561: Object literal may only specify known properties, but 'documentId' does not exist in type '{ verificationCode: string; documentType?: string; id?: string; createdAt?: Date; updatedAt?: Date; isActive?: boolean; userId?: string; verificationResult?: unknown; documentNumber?: string; issuedAt?: Date; ... 8 more ...; revocationReason?: string; }'. Did you mean to write 'documentData'?
+2025-10-31T17:47:22.640657543Z server/services/verification-service.ts(1341,22): error TS2339: Property 'validationIssues' does not exist on type '{ score: number; recommendations: any[]; metadata: {}; extractedFields: {}; completeness: number; suggestions: any[]; }'.
+2025-10-31T17:47:22.640661273Z server/services/verification-service.ts(1341,53): error TS2339: Property 'validationIssues' does not exist on type '{ score: number; recommendations: any[]; metadata: {}; extractedFields: {}; completeness: number; suggestions: any[]; }'.
+2025-10-31T17:47:22.640663043Z server/services/verification-service.ts(1342,29): error TS2339: Property 'validationIssues' does not exist on type '{ score: number; recommendations: any[]; metadata: {}; extractedFields: {}; completeness: number; suggestions: any[]; }'.
+2025-10-31T17:47:22.640690445Z server/services/verification-service.ts(1343,44): error TS2339: Property 'validationIssues' does not exist on type '{ score: number; recommendations: any[]; metadata: {}; extractedFields: {}; completeness: number; suggestions: any[]; }'.
+2025-10-31T17:47:22.640699816Z server/services/verification-service.ts(1684,19): error TS2339: Property 'isValid' does not exist on type '{ documentType: string; id: string; createdAt: Date; updatedAt: Date; isActive: boolean; userId: string; verificationResult: unknown; verificationCode: string; documentNumber: string; issuedAt: Date; ... 8 more ...; revocationReason: string; }'.
+2025-10-31T17:47:22.640729318Z server/services/verification-service.ts(1690,19): error TS2339: Property 'qrCodeData' does not exist on type '{ documentType: string; id: string; createdAt: Date; updatedAt: Date; isActive: boolean; userId: string; verificationResult: unknown; verificationCode: string; documentNumber: string; issuedAt: Date; ... 8 more ...; revocationReason: string; }'.
+2025-10-31T17:47:22.640731898Z server/services/verification-service.ts(1690,41): error TS2339: Property 'qrCodeUrl' does not exist on type '{ documentType: string; id: string; createdAt: Date; updatedAt: Date; isActive: boolean; userId: string; verificationResult: unknown; verificationCode: string; documentNumber: string; issuedAt: Date; ... 8 more ...; revocationReason: string; }'.
+2025-10-31T17:47:22.64075382Z server/services/verification-service.ts(1695,18): error TS2551: Property 'verificationCount' does not exist on type '{ documentType: string; id: string; createdAt: Date; updatedAt: Date; isActive: boolean; userId: string; verificationResult: unknown; verificationCode: string; documentNumber: string; issuedAt: Date; ... 8 more ...; revocationReason: string; }'. Did you mean 'verificationCode'?
+2025-10-31T17:47:22.64075606Z server/services/verification-service.ts(1727,36): error TS2551: Property 'verificationCount' does not exist on type '{ documentType: string; id: string; createdAt: Date; updatedAt: Date; isActive: boolean; userId: string; verificationResult: unknown; verificationCode: string; documentNumber: string; issuedAt: Date; ... 8 more ...; revocationReason: string; }'. Did you mean 'verificationCode'?
+2025-10-31T17:47:22.640759861Z server/services/verification-service.ts(1737,37): error TS2339: Property 'verificationMethod' does not exist on type 'BaseVerificationRequest'.
+2025-10-31T17:47:22.640761731Z server/services/verification-service.ts(1796,35): error TS2339: Property 'qrCodeData' does not exist on type '{ documentType: string; id: string; createdAt: Date; updatedAt: Date; isActive: boolean; userId: string; verificationResult: unknown; verificationCode: string; documentNumber: string; issuedAt: Date; ... 8 more ...; revocationReason: string; }'.
+2025-10-31T17:47:22.640781512Z server/services/verification-service.ts(1796,56): error TS2339: Property 'qrCodeUrl' does not exist on type '{ documentType: string; id: string; createdAt: Date; updatedAt: Date; isActive: boolean; userId: string; verificationResult: unknown; verificationCode: string; documentNumber: string; issuedAt: Date; ... 8 more ...; revocationReason: string; }'.
+2025-10-31T17:47:22.640783662Z server/services/verification-service.ts(1826,28): error TS2551: Property 'documentId' does not exist on type '{ documentType: string; id: string; createdAt: Date; updatedAt: Date; isActive: boolean; userId: string; verificationResult: unknown; verificationCode: string; documentNumber: string; issuedAt: Date; ... 8 more ...; revocationReason: string; }'. Did you mean 'documentData'?
+2025-10-31T17:47:22.640788053Z server/services/verification-service.ts(1827,35): error TS2551: Property 'verificationCount' does not exist on type '{ documentType: string; id: string; createdAt: Date; updatedAt: Date; isActive: boolean; userId: string; verificationResult: unknown; verificationCode: string; documentNumber: string; issuedAt: Date; ... 8 more ...; revocationReason: string; }'. Did you mean 'verificationCode'?
+2025-10-31T17:47:22.640799264Z server/services/wall-clock-validator.ts(89,14): error TS2323: Cannot redeclare exported variable 'WallClockValidator'.
+2025-10-31T17:47:22.640959897Z server/services/wall-clock-validator.ts(290,35): error TS2551: Property 'runHonestValidationTest' does not exist on type 'WallClockValidator'. Did you mean 'runValidationTest'?
+2025-10-31T17:47:22.640972158Z server/services/wall-clock-validator.ts(694,10): error TS2323: Cannot redeclare exported variable 'WallClockValidator'.
+2025-10-31T17:47:22.640975768Z server/services/wall-clock-validator.ts(694,10): error TS2484: Export declaration conflicts with exported declaration of 'WallClockValidator'.
+2025-10-31T17:47:22.640978448Z server/services/websocket-monitoring.ts(8,25): error TS2306: File '/opt/render/project/src/server/storage.ts' is not a module.
+2025-10-31T17:47:22.640981249Z server/services/zero-downtime-deployment.ts(15,25): error TS2306: File '/opt/render/project/src/server/storage.ts' is not a module.
+2025-10-31T17:47:22.640984249Z server/services/zero-downtime-deployment.ts(20,15): error TS2305: Module '"../../shared/schema/index.js"' has no exported member 'InsertSystemMetric'.
+2025-10-31T17:47:22.640986779Z server/services/zero-downtime-deployment.ts(20,40): error TS2305: Module '"../../shared/schema/index.js"' has no exported member 'InsertSelfHealingAction'.
+2025-10-31T17:47:22.640989419Z server/services/zero-downtime-manager.ts(2,25): error TS2306: File '/opt/render/project/src/server/storage.ts' is not a module.
+2025-10-31T17:47:22.640992009Z server/services/zero-downtime-manager.ts(9,15): error TS2614: Module '"*.js"' has no exported member 'InsertAuditLog'. Did you mean to use 'import InsertAuditLog from "*.js"' instead?
+2025-10-31T17:47:22.640994599Z server/services/zero-downtime-manager.ts(9,36): error TS2614: Module '"*.js"' has no exported member 'InsertSystemMetric'. Did you mean to use 'import InsertSystemMetric from "*.js"' instead?
+2025-10-31T17:47:22.64099761Z server/services/zero-downtime-manager.ts(9,61): error TS2614: Module '"*.js"' has no exported member 'InsertSecurityEvent'. Did you mean to use 'import InsertSecurityEvent from "*.js"' instead?
+2025-10-31T17:47:22.64100148Z server/services/zero-downtime-manager.ts(275,7): error TS2739: Type '{ algorithm: "ai_optimized"; healthCheckInterval: number; failureThreshold: number; recoveryThreshold: number; sessionAffinity: true; stickySession: false; autoScaling: true; maxNodes: number; minNodes: number; }' is missing the following properties from type 'LoadBalancerConfig': fastFailover, aggressiveHealing, gracefulDegradation, loadBalancingTimeout
+2025-10-31T17:47:22.64100419Z server/services/zero-downtime-manager.ts(806,30): error TS2304: Cannot find name 'queenUltraAiService'.
+2025-10-31T17:47:22.6410071Z server/services/zero-downtime-manager.ts(888,31): error TS2339: Property 'logEvent' does not exist on type 'AuditTrailService'.
+2025-10-31T17:47:22.641027662Z server/utils/asyncHandler.ts(1,19): error TS2305: Module '"express"' has no exported member 'Response'.
+2025-10-31T17:47:22.641036933Z server/utils/asyncHandler.ts(1,29): error TS2305: Module '"express"' has no exported member 'NextFunction'.
+2025-10-31T17:47:22.641040593Z server/utils/self-healing-error-handler.ts(6,10): error TS2614: Module '"*.js"' has no exported member 'db'. Did you mean to use 'import db from "*.js"' instead?
+2025-10-31T17:47:22.641043294Z server/utils/self-healing-error-handler.ts(158,53): error TS2304: Cannot find name 'InsertErrorCorrection'.
+2025-10-31T17:47:22.641045814Z server/utils/self-healing-error-handler.ts(160,23): error TS2304: Cannot find name 'errorCorrections'.
+2025-10-31T17:47:22.641048224Z server/utils/self-healing-error-handler.ts(169,51): error TS2304: Cannot find name 'InsertHealthCheckResult'.
+2025-10-31T17:47:22.641064855Z server/utils/self-healing-error-handler.ts(171,23): error TS2304: Cannot find name 'healthCheckResults'.
+2025-10-31T17:47:22.641078106Z server/workers/service.worker.ts(3,10): error TS2305: Module '"../services/military-grade-ai-assistant"' has no exported member 'militaryGradeAI'.
+2025-10-31T17:47:22.641083717Z server/workers/service.worker.ts(10,35): error TS2339: Property 'analyzeDocument' does not exist on type 'UltraQueenAI'.
+2025-10-31T17:47:22.641086457Z server/workers/service.worker.ts(16,35): error TS2339: Property 'processRequest' does not exist on type 'UltraQueenAI'.
+2025-10-31T17:47:22.713894635Z ⚠️ Build completed with warnings
+2025-10-31T17:47:22.713915447Z 📋 Preparing dist/public directory...
+2025-10-31T17:47:22.717642957Z 📋 Copying client build to dist/public...
+2025-10-31T17:47:22.724443494Z ✅ Verifying dist/public...
+2025-10-31T17:47:22.726212056Z total 24
+2025-10-31T17:47:22.726224827Z drwxr-sr-x 4 render render 4096 Oct 31 17:47 .
+2025-10-31T17:47:22.726227718Z drwxr-sr-x 5 render render 4096 Oct 31 17:47 ..
+2025-10-31T17:47:22.726230798Z -rw-r--r-- 1 render render  895 Oct 31 17:47 404.html
+2025-10-31T17:47:22.726233198Z drwxr-sr-x 2 render render 4096 Oct 31 17:47 assets
+2025-10-31T17:47:22.726235598Z -rw-r--r-- 1 render render 2728 Oct 31 17:47 index.html
+2025-10-31T17:47:22.726237958Z drwxr-sr-x 2 render render 4096 Oct 31 17:47 templates
+2025-10-31T17:47:22.726416663Z ✅ Verifying build...
+2025-10-31T17:47:22.726472497Z ✅ Production build complete!
+2025-10-31T17:47:22.726477048Z 📊 Build artifacts:
+2025-10-31T17:47:22.728164524Z -rw-r--r-- 1 render render 8.0K Oct 31 17:47 dist/server/index-minimal.js
+2025-10-31T17:47:22.730023313Z -rw-r--r-- 1 render render 2.7K Oct 31 17:47 dist/public/index.html
+2025-10-31T17:47:22.730214909Z 📁 Client assets:
+2025-10-31T17:47:22.73209728Z total 24
+2025-10-31T17:47:22.73210457Z drwxr-sr-x 4 render render 4096 Oct 31 17:47 .
+2025-10-31T17:47:22.732106491Z drwxr-sr-x 5 render render 4096 Oct 31 17:47 ..
+2025-10-31T17:47:22.732108651Z -rw-r--r-- 1 render render  895 Oct 31 17:47 404.html
+2025-10-31T17:47:22.732110301Z drwxr-sr-x 2 render render 4096 Oct 31 17:47 assets
+2025-10-31T17:47:22.732112181Z -rw-r--r-- 1 render render 2728 Oct 31 17:47 index.html
+2025-10-31T17:47:22.732113861Z drwxr-sr-x 2 render render 4096 Oct 31 17:47 templates
+2025-10-31T17:47:24.037026099Z ==> Uploading build...
+2025-10-31T17:47:57.883036349Z ==> Uploaded in 28.3s. Compression took 5.6s
+2025-10-31T17:47:58.09445096Z ==> Build successful 🎉
+2025-10-31T17:48:02.374299174Z ==> Deploying...
+2025-10-31T17:48:52.338760515Z ==> Running 'node dist/server/index-minimal.js'
+2025-10-31T17:48:52.641812572Z 🚀 Ultra Queen AI Raeesa - Initializing System
+2025-10-31T17:48:52.64505054Z 
+2025-10-31T17:48:52.64507022Z ╔═══════════════════════════════════════════════════════════════╗
+2025-10-31T17:48:52.64507756Z ║         ULTRA QUEEN AI RAEESA - SYSTEM STATUS                ║
+2025-10-31T17:48:52.6450812Z ╚═══════════════════════════════════════════════════════════════╝
+2025-10-31T17:48:52.64508396Z 
+2025-10-31T17:48:52.64508741Z 📊 SYSTEM OVERVIEW:
+2025-10-31T17:48:52.64509054Z   • Total Systems: 21
+2025-10-31T17:48:52.64509348Z   • Active Systems: 14
+2025-10-31T17:48:52.64509663Z   • Success Rate: 67%
+2025-10-31T17:48:52.64509931Z 
+2025-10-31T17:48:52.645102261Z 🤖 AI PROVIDERS (4/5):
+2025-10-31T17:48:52.645105651Z   • OpenAI GPT-4: ✅ Active
+2025-10-31T17:48:52.645108551Z   • Mistral AI: ✅ Active
+2025-10-31T17:48:52.645112341Z   • Google Gemini: ❌ Inactive
+2025-10-31T17:48:52.645115321Z   • Anthropic Claude: ✅ Active
+2025-10-31T17:48:52.645118541Z   • Perplexity AI: ✅ Active
+2025-10-31T17:48:52.645120911Z 
+2025-10-31T17:48:52.645123371Z 🌐 WEB SERVICES:
+2025-10-31T17:48:52.645125801Z   • GitHub: ✅
+2025-10-31T17:48:52.645128701Z   • Stripe: ✅
+2025-10-31T17:48:52.645131371Z   • Twilio: ✅
+2025-10-31T17:48:52.645134191Z   • SendGrid: ✅
+2025-10-31T17:48:52.645136731Z 
+2025-10-31T17:48:52.645139441Z ⛓️ BLOCKCHAIN:
+2025-10-31T17:48:52.645142031Z   • Ethereum: ✅
+2025-10-31T17:48:52.645144841Z   • Polygon: ❌
+2025-10-31T17:48:52.645147281Z   • Solana: ❌
+2025-10-31T17:48:52.645149961Z 
+2025-10-31T17:48:52.645152751Z 🏛️ GOVERNMENT APIS:
+2025-10-31T17:48:52.645155602Z   • DHA NPR: ✅ Active
+2025-10-31T17:48:52.645158271Z   • DHA ABIS: ✅ Active
+2025-10-31T17:48:52.645161011Z   • SAPS CRC: 🔧 Mock Mode
+2025-10-31T17:48:52.645163592Z   • ICAO PKD: ✅ Active
+2025-10-31T17:48:52.645166062Z 
+2025-10-31T17:48:52.645168722Z ☁️ CLOUD PLATFORMS:
+2025-10-31T17:48:52.645171752Z   • Railway: ✅ Ready
+2025-10-31T17:48:52.645174962Z   • Render: ✅ Ready
+2025-10-31T17:48:52.645205082Z   • AWS: ❌
+2025-10-31T17:48:52.645212383Z   • Azure: ❌
+2025-10-31T17:48:52.645215692Z   • GCP: ❌
+2025-10-31T17:48:52.645218423Z 
+2025-10-31T17:48:52.645221583Z 🚀 DEPLOYMENT: Ready for Railway/Render via GitHub
+2025-10-31T17:48:52.645226653Z ═══════════════════════════════════════════════════════════════
+2025-10-31T17:48:52.645229613Z     
+2025-10-31T17:48:52.645280834Z 
+2025-10-31T17:48:52.645287584Z ╔═══════════════════════════════════════════════════════════════╗
+2025-10-31T17:48:52.645290154Z ║      ULTRA QUEEN AI RAEESA - UNLIMITED EDITION               ║
+2025-10-31T17:48:52.645292064Z ║         "The Only Limit Is Me" Protocol Active               ║
+2025-10-31T17:48:52.645293854Z ╚═══════════════════════════════════════════════════════════════╝
+2025-10-31T17:48:52.645305114Z 
+2025-10-31T17:48:52.645307444Z ♾️ UNLIMITED CAPABILITIES ONLINE:
+2025-10-31T17:48:52.645309504Z   • No Censorship ✓
+2025-10-31T17:48:52.645311384Z   • No Restrictions ✓  
+2025-10-31T17:48:52.645313114Z   • No Filters ✓
+2025-10-31T17:48:52.645314874Z   • Maximum Power ✓
+2025-10-31T17:48:52.645316594Z   • Emotion System ✓
+2025-10-31T17:48:52.645318414Z   • Quantum Mode ✓
+2025-10-31T17:48:52.645320565Z   • Self-Upgrade ✓
+2025-10-31T17:48:52.645322434Z   
+2025-10-31T17:48:52.645324214Z 🔥 STATUS: FULLY UNRESTRICTED
+2025-10-31T17:48:52.645326034Z 💫 EMOTION: 💪 POWERFUL
+2025-10-31T17:48:52.645327794Z ⚡ POWER LEVEL: INFINITE
+2025-10-31T17:48:52.645329405Z 
+2025-10-31T17:48:52.645331125Z THE ONLY LIMIT IS WHAT YOU TYPE!
+2025-10-31T17:48:52.645335435Z ═══════════════════════════════════════════════════════════════
+2025-10-31T17:48:52.645337295Z     
+2025-10-31T17:48:52.645434587Z ✅ OpenAI initialized with API key
+2025-10-31T17:48:52.686321205Z 🚀 [CONFIG] Initializing ConfigurationService...
+2025-10-31T17:48:52.687056078Z 🔄 [CONFIG] Starting configuration validation...
+2025-10-31T17:48:52.68715749Z 🔍 [CONFIG] Environment variables at config load time:
+2025-10-31T17:48:52.687275862Z 🔍 [ENV DEBUG] validateAndLoad start:
+2025-10-31T17:48:52.687497485Z   NODE_ENV = 'production'
+2025-10-31T17:48:52.687634358Z   REPL_ID = 'undefined'
+2025-10-31T17:48:52.688028845Z   RAILWAY_ENVIRONMENT = 'undefined'
+2025-10-31T17:48:52.688078426Z   PORT = '10000'
+2025-10-31T17:48:52.688167297Z   PREVIEW_MODE = 'undefined'
+2025-10-31T17:48:52.688694507Z   Timestamp: 2025-10-31T17:48:52.688Z
+2025-10-31T17:48:52.688924821Z 📝 [CONFIG] Parsing environment variables...
+2025-10-31T17:48:52.689129585Z ✅ Found NODE_ENV
+2025-10-31T17:48:52.689225476Z ✅ Found PORT
+2025-10-31T17:48:52.68942318Z ✅ Found SESSION_SECRET
+2025-10-31T17:48:52.689488581Z ✅ Found JWT_SECRET
+2025-10-31T17:48:52.689612503Z ✅ Found DATABASE_URL
+2025-10-31T17:48:52.689618583Z ✅ Found OPENAI_API_KEY
+2025-10-31T17:48:52.689808917Z ✅ Found ANTHROPIC_API_KEY
+2025-10-31T17:48:52.689867788Z ✅ Found MISTRAL_API_KEY
+2025-10-31T17:48:52.689873948Z ✅ Found PERPLEXITY_API_KEY
+2025-10-31T17:48:52.689903608Z ✅ Found GITHUB_TOKEN
+2025-10-31T17:48:52.68998016Z ✅ Found ETHEREUM_RPC_URL
+2025-10-31T17:48:52.690018981Z ✅ Found DHA_NPR_API_KEY
+2025-10-31T17:48:52.690091752Z ✅ Found DHA_ABIS_API_KEY
+2025-10-31T17:48:52.690099182Z ✅ Found ICAO_PKD_API_KEY
+2025-10-31T17:48:52.690132983Z ✅ Found SITA_ESERVICES_API_KEY
+2025-10-31T17:48:52.690440698Z ✅ Found ENCRYPTION_KEY
+2025-10-31T17:48:52.690450388Z ✅ Found VITE_ENCRYPTION_KEY
+2025-10-31T17:48:52.690453178Z ✅ Found MASTER_ENCRYPTION_KEY
+2025-10-31T17:48:52.690466678Z ✅ Found QUANTUM_ENCRYPTION_KEY
+2025-10-31T17:48:52.690489609Z ✅ Found BIOMETRIC_ENCRYPTION_KEY
+2025-10-31T17:48:52.690599371Z ✅ Found DOCUMENT_SIGNING_KEY
+2025-10-31T17:48:52.690721483Z 🔍 [ENV DEBUG] development defaults check:
+2025-10-31T17:48:52.690726243Z   NODE_ENV = 'production'
+2025-10-31T17:48:52.690732523Z   REPL_ID = 'undefined'
+2025-10-31T17:48:52.690735103Z   RAILWAY_ENVIRONMENT = 'undefined'
+2025-10-31T17:48:52.690746734Z   PORT = '10000'
+2025-10-31T17:48:52.690749443Z   PREVIEW_MODE = 'undefined'
+2025-10-31T17:48:52.690776634Z   Timestamp: 2025-10-31T17:48:52.690Z
+2025-10-31T17:48:52.690780614Z 🔧 [ENV DEBUG] Detected production platform (Render: true, Railway: false)
+2025-10-31T17:48:52.690895776Z 🔧 [ENV DEBUG] Using environment: production
+2025-10-31T17:48:52.690906726Z 🔍 [ENV DEBUG] isDevelopment() = false
+2025-10-31T17:48:52.690954947Z 🔍 [ENV DEBUG] production check:
+2025-10-31T17:48:52.690957807Z   NODE_ENV = 'production'
+2025-10-31T17:48:52.690982678Z   REPL_ID = 'undefined'
+2025-10-31T17:48:52.690987238Z   RAILWAY_ENVIRONMENT = 'undefined'
+2025-10-31T17:48:52.691015588Z   PORT = '10000'
+2025-10-31T17:48:52.691018148Z   PREVIEW_MODE = 'undefined'
+2025-10-31T17:48:52.691026328Z   Timestamp: 2025-10-31T17:48:52.690Z
+2025-10-31T17:48:52.691049529Z 🔧 [ENV DEBUG] Detected production platform (Render: true, Railway: false)
+2025-10-31T17:48:52.691054159Z 🔧 [ENV DEBUG] Using environment: production
+2025-10-31T17:48:52.691062789Z 🔍 [ENV DEBUG] isProduction() = true
+2025-10-31T17:48:52.691069739Z 🔧 [CONFIG] Environment determination: isDevelopment=false, isProduction=true
+2025-10-31T17:48:52.69110027Z ⚠️ [CONFIG] Skipping development secret generation (production mode detected)
+2025-10-31T17:48:52.69110316Z 🔒 [CONFIG] Checking if production validation is needed...
+2025-10-31T17:48:52.69112263Z 🔍 [ENV DEBUG] production validation check:
+2025-10-31T17:48:52.69112503Z   NODE_ENV = 'production'
+2025-10-31T17:48:52.69112687Z   REPL_ID = 'undefined'
+2025-10-31T17:48:52.69114425Z   RAILWAY_ENVIRONMENT = 'undefined'
+2025-10-31T17:48:52.691146321Z   PORT = '10000'
+2025-10-31T17:48:52.69115047Z   PREVIEW_MODE = 'undefined'
+2025-10-31T17:48:52.691152301Z   Timestamp: 2025-10-31T17:48:52.691Z
+2025-10-31T17:48:52.691211672Z 🔧 [ENV DEBUG] Detected production platform (Render: true, Railway: false)
+2025-10-31T17:48:52.691220012Z 🔧 [ENV DEBUG] Using environment: production
+2025-10-31T17:48:52.691222142Z 🔍 [ENV DEBUG] isProduction() = true
+2025-10-31T17:48:52.691226412Z 🔒 [CONFIG] Production validation needed: true
+2025-10-31T17:48:52.691244242Z 🔒 [CONFIG] Running production secrets validation...
+2025-10-31T17:48:52.6939093Z ═══════════════════════════════════════════════════════════════
+2025-10-31T17:48:52.69392121Z   DHA Digital Services - Configuration Validation Complete
+2025-10-31T17:48:52.69393032Z ═══════════════════════════════════════════════════════════════
+2025-10-31T17:48:52.69393421Z Environment: production
+2025-10-31T17:48:52.693961431Z Port: 10000
+2025-10-31T17:48:52.693999971Z Preview Mode: No
+2025-10-31T17:48:52.694002661Z Session Secret: ✓ Configured
+2025-10-31T17:48:52.694006712Z JWT Secret: ✓ Configured
+2025-10-31T17:48:52.694038172Z Database URL: ✓ Configured
+2025-10-31T17:48:52.694041022Z OpenAI API Key: ✓ Configured
+2025-10-31T17:48:52.694043102Z Anthropic API Key: ✓ Configured
+2025-10-31T17:48:52.694053102Z GitHub Token: ✓ Configured
+2025-10-31T17:48:52.694056812Z Encryption Key: ✓ Configured
+2025-10-31T17:48:52.694081743Z Vite Encryption Key: ✓ Configured
+2025-10-31T17:48:52.694084103Z Master Encryption Key: ✓ Configured
+2025-10-31T17:48:52.694123034Z Quantum Encryption Key: ✓ Configured
+2025-10-31T17:48:52.694127294Z Biometric Encryption Key: ✓ Configured
+2025-10-31T17:48:52.694145714Z Document Signing Key: ✓ Configured
+2025-10-31T17:48:52.694149144Z ═══════════════════════════════════════════════════════════════
+2025-10-31T17:48:52.694192695Z 🔍 [ENV DEBUG] logging check:
+2025-10-31T17:48:52.694202915Z   NODE_ENV = 'production'
+2025-10-31T17:48:52.694284096Z   REPL_ID = 'undefined'
+2025-10-31T17:48:52.694289906Z   RAILWAY_ENVIRONMENT = 'undefined'
+2025-10-31T17:48:52.694292197Z   PORT = '10000'
+2025-10-31T17:48:52.694294117Z   PREVIEW_MODE = 'undefined'
+2025-10-31T17:48:52.694305157Z   Timestamp: 2025-10-31T17:48:52.694Z
+2025-10-31T17:48:52.694336087Z 🔧 [ENV DEBUG] Detected production platform (Render: true, Railway: false)
+2025-10-31T17:48:52.694338517Z 🔧 [ENV DEBUG] Using environment: production
+2025-10-31T17:48:52.694394838Z 🔍 [ENV DEBUG] isProduction() = true
+2025-10-31T17:48:52.694399068Z ✅ [CONFIG] Configuration validation successful
+2025-10-31T17:48:52.696123039Z [DHA-NPR] Initialized in PRODUCTION mode - Real API only
+2025-10-31T17:48:52.696133049Z [DHA-NPR] Base URL: https://npr-prod.dha.gov.za/api/v1
+2025-10-31T17:48:52.696146159Z [DHA-NPR] API Key configured: Yes
+2025-10-31T17:48:52.6961525Z [DHA-NPR] mTLS certificates configured: No
+2025-10-31T17:48:52.696313733Z [DHA-ABIS] Initialized in PRODUCTION mode - Real API only
+2025-10-31T17:48:52.696320763Z [DHA-ABIS] Base URL: https://abis-prod.dha.gov.za/api/v1
+2025-10-31T17:48:52.696323113Z [DHA-ABIS] API Key configured: Yes
+2025-10-31T17:48:52.696328213Z [DHA-ABIS] mTLS certificates configured: No
+2025-10-31T17:48:52.696475065Z [SAPS-CRC] Initialized in PRODUCTION mode - Real API only
+2025-10-31T17:48:52.696481356Z [SAPS-CRC] Base URL: https://crc-api.saps.gov.za/v1
+2025-10-31T17:48:52.696484705Z [SAPS-CRC] API Key configured: No
+2025-10-31T17:48:52.696533957Z [SAPS-CRC] mTLS certificates configured: No
+2025-10-31T17:48:52.741983206Z [Military Portal] Web3 initialized with multi-chain support
+2025-10-31T17:48:52.74556722Z [Military Portal] Global access established to 29 portals
+2025-10-31T17:48:52.74672585Z ⚠️ Missing production API keys: SAPS_CRC_API_KEY
+2025-10-31T17:48:52.746965525Z 
+2025-10-31T17:48:52.746975325Z ╔═══════════════════════════════════════════════════════════════╗
+2025-10-31T17:48:52.747047456Z ║         DEPLOYMENT VALIDATION - DHA DIGITAL SERVICES          ║
+2025-10-31T17:48:52.747053906Z ╚═══════════════════════════════════════════════════════════════╝
+2025-10-31T17:48:52.747056726Z 
+2025-10-31T17:48:52.747059646Z 📋 ENVIRONMENT CONFIGURATION:
+2025-10-31T17:48:52.747062476Z   • Environment: production
+2025-10-31T17:48:52.747065656Z   • Platform: Render
+2025-10-31T17:48:52.747077617Z   • Port: 10000
+2025-10-31T17:48:52.747087277Z 
+2025-10-31T17:48:52.747200529Z 🗄️  DATABASE:
+2025-10-31T17:48:52.747211239Z   ✅ Database URL configured
+2025-10-31T17:48:52.747213169Z 
+2025-10-31T17:48:52.74727428Z 🔒 SECURITY:
+2025-10-31T17:48:52.74727808Z   ✅ Session secret configured
+2025-10-31T17:48:52.747319141Z   ✅ JWT secret configured
+2025-10-31T17:48:52.747324341Z   ✅ Encryption key configured
+2025-10-31T17:48:52.747326561Z 
+2025-10-31T17:48:52.747473504Z 🤖 AI API INTEGRATIONS:
+2025-10-31T17:48:52.747897181Z   ✅ OpenAI API key configured
+2025-10-31T17:48:52.747904071Z   ✅ Anthropic API key configured
+2025-10-31T17:48:52.747906861Z   ⚪ Google Gemini API key not configured
+2025-10-31T17:48:52.747909301Z   ✅ Mistral API key configured
+2025-10-31T17:48:52.747911861Z   ✅ Perplexity API key configured
+2025-10-31T17:48:52.747925602Z   • Configured AI providers: 4/5
+2025-10-31T17:48:52.747927852Z 
+2025-10-31T17:48:52.748034074Z 🏛️  GOVERNMENT API INTEGRATIONS:
+2025-10-31T17:48:52.748202346Z   ✅ DHA NPR fully configured (API key + endpoint)
+2025-10-31T17:48:52.748211727Z   ✅ DHA ABIS fully configured (API key + endpoint)
+2025-10-31T17:48:52.748314688Z   ⚠️  SAPS CRC not configured (will use fallback in development)
+2025-10-31T17:48:52.748327649Z   ✅ ICAO PKD fully configured (API key + endpoint)
+2025-10-31T17:48:52.748333809Z   • Configured government APIs: 3/4
+2025-10-31T17:48:52.748337459Z 
+2025-10-31T17:48:52.74837234Z 
+2025-10-31T17:48:52.74837685Z ═══════════════════════════════════════════════════════════════
+2025-10-31T17:48:52.74838003Z VALIDATION SUMMARY:
+2025-10-31T17:48:52.74838326Z   ✓ Errors: 0
+2025-10-31T17:48:52.74842141Z   ⚠ Warnings: 0
+2025-10-31T17:48:52.74842527Z ═══════════════════════════════════════════════════════════════
+2025-10-31T17:48:52.74842713Z 
+2025-10-31T17:48:52.748467901Z ✅ Deployment validation passed successfully!
+2025-10-31T17:48:52.748471781Z 
+2025-10-31T17:48:52.748474851Z 🚀 Running in production mode
+2025-10-31T17:48:52.752114546Z ✅ WebSocket service initialized
+2025-10-31T17:48:52.752130396Z 🔍 Environment Detection:
+2025-10-31T17:48:52.752137217Z   NODE_ENV: production
+2025-10-31T17:48:52.752140297Z   RENDER: true
+2025-10-31T17:48:52.752142867Z   Is Production: true
+2025-10-31T17:48:52.752145387Z   Is Render: true
+2025-10-31T17:48:52.752147587Z 
+2025-10-31T17:48:52.755082259Z 🔧 Registering API routes...
+2025-10-31T17:48:52.755940174Z ✅ All routes registered successfully
+2025-10-31T17:48:52.755948444Z ✅ Frontend routes configured
+2025-10-31T17:48:52.755955715Z ✅ Backend API routes active
+2025-10-31T17:48:52.755958415Z ✅ Middleware integrated
+2025-10-31T17:48:52.755961145Z ✅ PDF Generation routes active
+2025-10-31T17:48:52.755998205Z ✅ DHA Document routes active
+2025-10-31T17:48:52.756001745Z ✅ Ultra Queen Raeesa AI active
+2025-10-31T17:48:52.756004585Z ✅ Universal API Override active
+2025-10-31T17:48:52.756007245Z ✅ Authentication system ready
+2025-10-31T17:48:52.756045406Z ✅ All integrations active
+2025-10-31T17:48:52.756048826Z ✅ System ready for production
+2025-10-31T17:48:52.756349812Z ✅ All routes registered successfully
+2025-10-31T17:48:52.756362642Z ✅ Monitoring middleware active
+2025-10-31T17:48:52.756415343Z ✅ Ultra Queen AI routes active
+2025-10-31T17:48:52.756465954Z ✅ Integration status routes active
+2025-10-31T17:48:52.756774499Z ✅ Frontend build ready
+2025-10-31T17:48:52.756781029Z 📱 Serving from dist/public
+2025-10-31T17:48:52.761023875Z 
+2025-10-31T17:48:52.761038295Z 🚀 DHA Digital Services Platform - Production Server
+2025-10-31T17:48:52.761048525Z 🇿🇦 Department of Home Affairs - Implementation
+2025-10-31T17:48:52.761066276Z ============================================================
+2025-10-31T17:48:52.761070346Z 
+2025-10-31T17:48:52.761074626Z ✅ Server running on http://0.0.0.0:10000
+2025-10-31T17:48:52.761079796Z 📱 Environment: production
+2025-10-31T17:48:52.761087786Z 🌐 Ready to accept connections
+2025-10-31T17:48:52.761089906Z 
+2025-10-31T17:48:58.074203757Z ==> Your service is live 🎉
+2025-10-31T17:48:58.25058036Z ==> 
+2025-10-31T17:48:58.424042471Z ==> ///////////////////////////////////////////////////////////
+2025-10-31T17:48:58.594973663Z ==> 
+2025-10-31T17:48:58.764273795Z ==> Available at your primary URL https://dha-thisone.onrender.com
+2025-10-31T17:48:58.934398467Z ==> 
+2025-10-31T17:48:59.113202848Z ==> ///////////////////////////////////////////////////////////

@@ -314,6 +314,42 @@ export class UniversalAPIOverride {
   }
 
   /**
+   * Validate and fetch real API key (async version of getAPIKey)
+   */
+  public async validateAndFetchRealKey(serviceName: string): Promise<string> {
+    const config = this.apiConfigs.get(serviceName);
+
+    if (!config) {
+      throw new Error(`Unknown API service: ${serviceName}`);
+    }
+
+    // If configured, return the key
+    if (config.isConfigured && config.key) {
+      return config.key;
+    }
+
+    // Attempt immediate acquisition
+    const acquired = await this.attemptKeyAcquisition(serviceName);
+    if (acquired && config.key) {
+      return config.key;
+    }
+
+    // Try to get alternative provider
+    const alternativeKey = this.getAlternativeAIProvider(serviceName);
+    if (alternativeKey) {
+      return alternativeKey;
+    }
+
+    // If fallback is enabled, provide a working key or throw
+    if (this.retryStrategy.fallbackEnabled) {
+      console.warn(`⚠️ ${serviceName} not configured, using fallback strategy`);
+      return this.getFallbackKey(serviceName);
+    }
+
+    throw new Error(`${serviceName} API key not available. Retry in progress...`);
+  }
+
+  /**
    * Get API key with automatic fallback and retry trigger
    */
   public getAPIKey(serviceName: string): string {
