@@ -29,14 +29,25 @@ if [ ! -f "client/dist/index.html" ]; then
   exit 1
 fi
 
+echo "✅ Client build verified"
+ls -la client/dist/
+
 # Build server
 echo "⚙️ Building server..."
 npx tsc -p tsconfig.production.json --skipLibCheck || echo "⚠️ Build completed with warnings"
 
-# Copy client build to dist/public
-echo "📋 Copying client to dist/public..."
+# Ensure dist/public directory exists
+echo "📋 Preparing dist/public directory..."
+rm -rf dist/public
 mkdir -p dist/public
+
+# Copy client build to dist/public
+echo "📋 Copying client build to dist/public..."
 cp -r client/dist/* dist/public/
+
+# Verify the copy
+echo "✅ Verifying dist/public..."
+ls -la dist/public/
 
 # Verify critical files
 echo "✅ Verifying build..."
