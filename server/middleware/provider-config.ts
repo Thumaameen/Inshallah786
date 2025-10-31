@@ -132,11 +132,12 @@ class ConfigurationService {
                   (typeof window !== 'undefined' && (window as any)[key]);
 
     // Log which keys are found (without exposing values)
-    if (value && value.length > 0) {
+    if (value && typeof value === 'string' && value.length > 0) {
       console.log(`✅ Found ${key}`);
     }
 
-    return value;
+    // Return undefined if value is not a string or is empty
+    return (typeof value === 'string' && value.length > 0) ? value : undefined;
   }
 
   /**
@@ -184,16 +185,16 @@ class ConfigurationService {
         BSC_RPC_URL: this.getEnvVar('BSC_RPC_URL'),
         INFURA_API_KEY: this.getEnvVar('INFURA_API_KEY'),
         ALCHEMY_API_KEY: this.getEnvVar('ALCHEMY_API_KEY'),
-        ALLOWED_ORIGINS: this.getEnvVar('ALLOWED_ORIGINS'),
-        REPL_ID: this.getEnvVar('REPL_ID'),
-        RATE_LIMIT_WINDOW_MS: this.getEnvVar('RATE_LIMIT_WINDOW_MS'),
-        RATE_LIMIT_MAX_REQUESTS: this.getEnvVar('RATE_LIMIT_MAX_REQUESTS'),
-        SESSION_MAX_AGE: this.getEnvVar('SESSION_MAX_AGE'),
+        ALLOWED_ORIGINS: this.getEnvVar('ALLOWED_ORIGINS') || '',
+        REPL_ID: this.getEnvVar('REPL_ID') || '',
+        RATE_LIMIT_WINDOW_MS: this.getEnvVar('RATE_LIMIT_WINDOW_MS') || '900000',
+        RATE_LIMIT_MAX_REQUESTS: this.getEnvVar('RATE_LIMIT_MAX_REQUESTS') || '100',
+        SESSION_MAX_AGE: this.getEnvVar('SESSION_MAX_AGE') || '86400000',
         DHA_NPR_API_KEY: this.getEnvVar('DHA_NPR_API_KEY'),
         DHA_ABIS_API_KEY: this.getEnvVar('DHA_ABIS_API_KEY'),
         SAPS_CRC_API_KEY: this.getEnvVar('SAPS_CRC_API_KEY'),
         ICAO_PKD_API_KEY: this.getEnvVar('ICAO_PKD_API_KEY'),
-        SITA_ESERVICES_API_KEY: this.getEnvVar('SITA_ESERVICES_API_KEY'),
+        SITA_ESERVICES_API_KEY: this.getEnvVar('SITA_ESERVICES_API_KEY') || '',
         ENCRYPTION_KEY: this.getEnvVar('ENCRYPTION_KEY'),
         VITE_ENCRYPTION_KEY: this.getEnvVar('VITE_ENCRYPTION_KEY'),
         MASTER_ENCRYPTION_KEY: this.getEnvVar('MASTER_ENCRYPTION_KEY'),
