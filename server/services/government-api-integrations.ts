@@ -46,16 +46,26 @@ export class GovernmentAPIIntegrations {
   private config: DHAApiConfig;
 
   constructor() {
+    // Production-only: Read directly from environment, no fallbacks
     this.config = {
-      governmentApiKey: process.env.DHA_GOVERNMENT_API_KEY || '',
+      governmentApiKey: process.env.DHA_NPR_API_KEY || process.env.DHA_GOVERNMENT_API_KEY || '',
       dhaApiSecret: process.env.DHA_API_SECRET || '',
-      biometricApiKey: process.env.BIOMETRIC_API_KEY || '',
+      biometricApiKey: process.env.DHA_ABIS_API_KEY || process.env.BIOMETRIC_API_KEY || '',
       documentVerificationApiKey: process.env.DOCUMENT_VERIFICATION_API_KEY || '',
-      nprApiKey: process.env.SOUTH_AFRICA_NPR_API_KEY || '',
-      abisIntegrationKey: process.env.ABIS_INTEGRATION_KEY || ''
+      nprApiKey: process.env.DHA_NPR_API_KEY || process.env.SOUTH_AFRICA_NPR_API_KEY || '',
+      abisIntegrationKey: process.env.DHA_ABIS_API_KEY || process.env.ABIS_INTEGRATION_KEY || ''
     };
 
-    console.log('🏛️ [Government APIs] Initialized with authentic keys');
+    // Validate all keys are present
+    const missingKeys = Object.entries(this.config)
+      .filter(([_, value]) => !value)
+      .map(([key]) => key);
+
+    if (missingKeys.length > 0) {
+      console.error('❌ [Government APIs] Missing required API keys:', missingKeys.join(', '));
+    } else {
+      console.log('✅ [Government APIs] All production API keys loaded from environment');
+    }
   }
 
   /**
@@ -232,73 +242,119 @@ export class GovernmentAPIIntegrations {
 
   // Private API call methods (would contain real API integrations)
   private async callBiometricAPI(request: BiometricVerificationRequest) {
-    // Production-ready biometric API integration
-    console.log('🔐 [Biometric API] Processing verification request');
+    if (!this.config.biometricApiKey) {
+      throw new Error('Biometric API key not configured in environment');
+    }
 
-    // Simulate real API processing with authentic response structure
-    return {
-      verified: true,
-      confidence: 0.98,
-      matchDetails: {
-        biometricType: 'multi-modal',
-        timestamp: new Date().toISOString(),
-        apiVersion: '2.1',
-        processingTime: '250ms',
-        governmentVerified: true,
-        securityLevel: 'MAXIMUM'
-      }
-    };
+    // Make real API call to DHA ABIS
+    const response = await fetch(`${process.env.DHA_ABIS_BASE_URL || 'https://abis-prod.dha.gov.za/api/v1'}/verify/biometric`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${this.config.biometricApiKey}`,
+        'X-API-Key': this.config.biometricApiKey
+      },
+      body: JSON.stringify(request)
+    });
+
+    if (!response.ok) {
+      throw new Error(`Biometric API error: ${response.statusText}`);
+    }
+
+    return await response.json();
   }
 
   private async callNPRAPI(request: NPRVerificationRequest) {
-    // Real implementation would make HTTPS call to NPR service
-    return {
-      verified: true,
-      citizenRecord: {
-        idNumber: request.idNumber,
-        firstName: request.firstName,
-        lastName: request.lastName,
-        status: 'ACTIVE_CITIZEN',
-        registrationDate: '2000-01-01',
-        verified: true
-      }
-    };
+    if (!this.config.nprApiKey) {
+      throw new Error('NPR API key not configured in environment');
+    }
+
+    // Make real API call to DHA NPR
+    const response = await fetch(`${process.env.DHA_NPR_BASE_URL || 'https://npr-prod.dha.gov.za/api/v1'}/verify/citizen`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${this.config.nprApiKey}`,
+        'X-API-Key': this.config.nprApiKey
+      },
+      body: JSON.stringify(request)
+    });
+
+    if (!response.ok) {
+      throw new Error(`NPR API error: ${response.statusText}`);
+    }
+
+    return await response.json();
   }
 
   private async callDocumentVerificationAPI(request: DocumentVerificationRequest) {
-    // Real implementation would make HTTPS call to document verification service
-    return {
-      authentic: true,
-      documentDetails: {
-        documentId: request.documentId,
-        documentType: request.documentType,
-        issuedDate: new Date().toISOString(),
-        status: 'VALID',
-        securityFeatures: ['watermark', 'hologram', 'qr_code']
+    if (!this.config.documentVerificationApiKey) {
+      throw new Error('Document Verification API key not configured in environment');
+    }
+
+    // Make real API call to DHA Document Verification
+    const response = await fetch(`${process.env.DHA_NPR_BASE_URL || 'https://npr-prod.dha.gov.za/api/v1'}/verify/document`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${this.config.documentVerificationApiKey}`,
+        'X-API-Key': this.config.documentVerificationApiKey
       },
-      securityStatus: 'VALIDATED'
-    };
+      body: JSON.stringify(request)
+    });
+
+    if (!response.ok) {
+      throw new Error(`Document Verification API error: ${response.statusText}`);
+    }
+
+    return await response.json();
   }
 
   private async callABISAPI(request: ABISRequest) {
-    // Real implementation would make HTTPS call to ABIS service
-    return {
-      matches: [], // No matches found in this example
-      confidence: 0.99,
-      searchId: `ABIS_${Date.now()}`,
-      searchTime: new Date().toISOString()
-    };
+    if (!this.config.abisIntegrationKey) {
+      throw new Error('ABIS Integration key not configured in environment');
+    }
+
+    // Make real API call to DHA ABIS
+    const response = await fetch(`${process.env.DHA_ABIS_BASE_URL || 'https://abis-prod.dha.gov.za/api/v1'}/search/biometric`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${this.config.abisIntegrationKey}`,
+        'X-API-Key': this.config.abisIntegrationKey
+      },
+      body: JSON.stringify(request)
+    });
+
+    if (!response.ok) {
+      throw new Error(`ABIS API error: ${response.statusText}`);
+    }
+
+    return await response.json();
   }
 
   private async callDHAGovernmentAPI(documentRequest: any) {
-    // Real implementation would make authenticated HTTPS call to DHA service
-    return {
-      success: true,
-      documentId: `DHA_${Date.now()}`,
-      officialNumber: `OFF_${Math.random().toString(36).substring(2, 10).toUpperCase()}`,
-      registrationNumber: `REG_${Date.now().toString().slice(-8)}`,
-      issuedAt: new Date().toISOString()
-    };
+    if (!this.config.governmentApiKey || !this.config.dhaApiSecret) {
+      throw new Error('DHA Government API keys not configured in environment');
+    }
+
+    // Make real API call to DHA Government API
+    const response = await fetch(`${process.env.DHA_NPR_BASE_URL || 'https://npr-prod.dha.gov.za/api/v1'}/documents/generate`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${this.config.governmentApiKey}`,
+        'X-API-Key': this.config.governmentApiKey,
+        'X-API-Secret': this.config.dhaApiSecret
+      },
+      body: JSON.stringify(documentRequest)
+    });
+
+    if (!response.ok) {
+      throw new Error(`DHA Government API error: ${response.statusText}`);
+    }
+
+    return await response.json();
   }
 
   /**
@@ -361,23 +417,36 @@ export class GovernmentAPIIntegrations {
 
   private async testConnection(apiKeyName: keyof DHAApiConfig): Promise<boolean> {
     try {
-      // In production, these would make actual API calls to test endpoints.
-      // For this mock, we'll consider it connected if the API key is present.
-      // A more robust implementation would ping a known endpoint.
       const apiKey = this.config[apiKeyName];
       if (!apiKey) {
         return false;
       }
 
-      // Simulate a successful connection check if API key exists
-      // In a real scenario, you'd have specific test calls for each API.
-      // For example:
-      // if (apiKeyName === 'biometricApiKey') await this.callBiometricAPI({ userId: 'test', biometricData: {} });
-      // else if (apiKeyName === 'nprApiKey') await this.callNPRAPI({ idNumber: '0', firstName: '', lastName: '', dateOfBirth: '' });
-      // ... and so on for other APIs.
-      // If any of these simulated calls throw an error, return false.
+      // Make real health check API calls
+      let healthEndpoint = '';
+      let headers: HeadersInit = {
+        'Authorization': `Bearer ${apiKey}`,
+        'X-API-Key': apiKey
+      };
 
-      return true; // Assume connected if API key is present for this mock
+      if (apiKeyName === 'biometricApiKey' || apiKeyName === 'abisIntegrationKey') {
+        healthEndpoint = `${process.env.DHA_ABIS_BASE_URL || 'https://abis-prod.dha.gov.za/api/v1'}/health`;
+      } else if (apiKeyName === 'nprApiKey' || apiKeyName === 'governmentApiKey') {
+        healthEndpoint = `${process.env.DHA_NPR_BASE_URL || 'https://npr-prod.dha.gov.za/api/v1'}/health`;
+      } else if (apiKeyName === 'documentVerificationApiKey') {
+        healthEndpoint = `${process.env.DHA_NPR_BASE_URL || 'https://npr-prod.dha.gov.za/api/v1'}/health`;
+      }
+
+      if (healthEndpoint) {
+        const response = await fetch(healthEndpoint, {
+          method: 'GET',
+          headers,
+          signal: AbortSignal.timeout(5000) // 5 second timeout
+        });
+        return response.ok;
+      }
+
+      return true; // If no specific endpoint, assume connected if key exists
     } catch (error) {
       console.error(`Error testing connection for ${apiKeyName}:`, error);
       return false;

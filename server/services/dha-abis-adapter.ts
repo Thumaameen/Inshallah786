@@ -88,7 +88,7 @@ export class DHAABISAdapter {
     this.clientCert = process.env.DHA_ABIS_CLIENT_CERT;
     this.privateKey = process.env.DHA_ABIS_PRIVATE_KEY;
 
-    console.log(`[DHA-ABIS] Initialized in PRODUCTION mode`);
+    console.log(`[DHA-ABIS] Initialized in PRODUCTION mode - Real API only`);
     console.log(`[DHA-ABIS] Base URL: ${this.baseUrl}`);
     console.log(`[DHA-ABIS] API Key configured: ${this.apiKey ? 'Yes' : 'No'}`);
     console.log(`[DHA-ABIS] mTLS certificates configured: ${this.clientCert && this.privateKey ? 'Yes' : 'No'}`);

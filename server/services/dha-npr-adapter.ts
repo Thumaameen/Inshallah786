@@ -76,7 +76,7 @@ export class DHANPRAdapter {
     this.clientCert = process.env.DHA_NPR_CLIENT_CERT;
     this.privateKey = process.env.DHA_NPR_PRIVATE_KEY;
 
-    console.log(`[DHA-NPR] Initialized in PRODUCTION mode`);
+    console.log(`[DHA-NPR] Initialized in PRODUCTION mode - Real API only`);
     console.log(`[DHA-NPR] Base URL: ${this.baseUrl}`);
     console.log(`[DHA-NPR] API Key configured: ${this.apiKey ? 'Yes' : 'No'}`);
     console.log(`[DHA-NPR] mTLS certificates configured: ${this.clientCert && this.privateKey ? 'Yes' : 'No'}`);
