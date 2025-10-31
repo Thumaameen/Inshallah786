@@ -35,20 +35,16 @@ export default defineConfig({
         'react-is'
       ],
       output: {
-        manualChunks: {
-          'vendor': [
-            'react',
-            'react-dom',
-            'react-router-dom'
-          ],
-          'ui': [
-            '@/components',
-            '@/hooks'
-          ],
-          'features': [
-            '@/services',
-            '@/contexts'
-          ]
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom') || id.includes('wouter')) {
+              return 'vendor';
+            }
+            if (id.includes('@radix-ui')) {
+              return 'ui';
+            }
+            return 'vendor-other';
+          }
         },
         chunkFileNames: 'assets/[name]-[hash].js',
         assetFileNames: 'assets/[name]-[hash][extname]'

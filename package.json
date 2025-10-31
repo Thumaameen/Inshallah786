@@ -27,8 +27,7 @@
     "cron": "node server/workers/scheduled-tasks.cjs",
     "validate": "node ai-validation-suite.cjs",
     "test:all": "npx tsx comprehensive-system-test.ts",
-    "test:render": "npx tsx test-render-deployment.ts",
-    "postinstall": "npm run build || true"
+    "test:render": "npx tsx test-render-deployment.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.67.0",
@@ -55,6 +54,7 @@
     "dotenv": "^16.3.1",
     "drizzle-orm": "^0.29.0",
     "esbuild": "^0.21.5",
+    "ethers": "^6.15.0",
     "express": "^4.21.2",
     "express-rate-limit": "^7.1.5",
     "express-session": "^1.18.2",
