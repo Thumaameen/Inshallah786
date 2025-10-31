@@ -5,13 +5,20 @@ set -e
 echo "🚀 DHA Digital Services - PRODUCTION BUILD FOR RENDER"
 echo "===================================================="
 
-# Clean previous builds
+# Verify Node version
+echo "📌 Checking Node.js version..."
+bash scripts/check-node-version.sh || exit 1
+node --version
+npm --version
+
+# Clean previous builds and npm cache
 echo "🧹 Cleaning previous builds..."
 rm -rf dist client/dist node_modules/.cache
+npm cache clean --force
 
-# Install root dependencies
+# Install root dependencies with clean install
 echo "📦 Installing root dependencies..."
-npm install --legacy-peer-deps --no-audit
+npm ci --legacy-peer-deps --no-audit || npm install --legacy-peer-deps --no-audit
 
 # Build client
 echo "🎨 Building client..."
