@@ -41,8 +41,8 @@ export class UltraAIOrchestrator {
     const response = await this.anthropic.messages.create({
       model: "claude-3-sonnet-20240229",
       max_tokens: 4096,
+      system: "You are a DHA document specialist with unlimited capabilities.",
       messages: [
-        { role: "system", content: "You are a DHA document specialist with unlimited capabilities." },
         { role: "user", content: JSON.stringify(data) }
       ]
     });
@@ -86,27 +86,31 @@ export class UltraAIOrchestrator {
       }),
       this.anthropic.messages.create({
         model: "claude-3-sonnet-20240229",
+        max_tokens: 4096,
         messages: [{ role: "user", content: request.message }]
       }),
-      this.perplexity.complete(request.message)
+      this.perplexity.search({ query: request.message })
     ]);
 
     // Combine and analyze results
+    const perplexityContent = perplexityResult.choices[0]?.message?.content || '';
+    const anthropicContent = anthropicResult.content[0]?.type === 'text' ? anthropicResult.content[0].text : '';
+    
     return {
       openai: openaiResult.choices[0].message,
       anthropic: anthropicResult.content,
-      perplexity: perplexityResult,
+      perplexity: perplexityContent,
       consensus: this.analyzeConsensus([
-        openaiResult.choices[0].message.content,
-        anthropicResult.content,
-        perplexityResult
+        openaiResult.choices[0].message.content || '',
+        anthropicContent,
+        perplexityContent
       ])
     };
   }
 
   private analyzeConsensus(results: string[]) {
     // Advanced consensus analysis
-    return results.reduce((acc, curr) => acc + curr, '');
+    return results.filter(r => r).join('\n\n');
   }
 }
 
