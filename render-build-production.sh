@@ -10,9 +10,16 @@ node --version
 npm --version
 
 CURRENT_NODE_VERSION=$(node -v | cut -d'.' -f1 | sed 's/v//')
+REQUIRED_VERSION=20
 
-echo "✅ Node.js version detected: $(node -v)"
-echo "⚠️  Note: Node 20.x is recommended for production"
+if [ "$CURRENT_NODE_VERSION" -ne "$REQUIRED_VERSION" ]; then
+  echo "❌ ERROR: Node.js v${REQUIRED_VERSION}.x is required for production"
+  echo "   Current version: $(node -v)"
+  echo "   Please update Render service settings to use Node ${REQUIRED_VERSION}.18.1"
+  exit 1
+fi
+
+echo "✅ Node.js version validated: $(node -v)"
 
 # Clean previous builds (but keep package-lock.json)
 echo "🧹 Cleaning previous builds..."

@@ -7,8 +7,11 @@
     "experimentalSpecifierResolution": "node"
   },
   "engines": {
-    "node": ">=20.0.0",
+    "node": "20.18.1",
     "npm": ">=9.0.0"
+  },
+  "volta": {
+    "node": "20.18.1"
   },
   "scripts": {
     "start": "NODE_ENV=production node dist/server/index-minimal.js",
