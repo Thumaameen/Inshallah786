@@ -95,7 +95,7 @@ services:
         sync: false
       - key: DEL_API_KEY
         sync: false
-      
+
       # Additional Security Keys
       - key: MASTER_ENCRYPTION_KEY
         generateValue: true
@@ -105,7 +105,7 @@ services:
         generateValue: true
       - key: VITE_ENCRYPTION_KEY
         generateValue: true
-      
+
       # Web3/Blockchain (Optional)
       - key: ETHEREUM_RPC_URL
         sync: false
@@ -113,7 +113,7 @@ services:
         sync: false
       - key: WEB3_PRIVATE_KEY
         sync: false
-      
+
       # External Services (Optional)
       - key: GITHUB_TOKEN
         sync: false

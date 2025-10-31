@@ -1,4 +1,3 @@
-
 #!/bin/bash
 set -e
 
@@ -7,9 +6,19 @@ echo "===================================================="
 
 # Verify Node version
 echo "📌 Checking Node.js version..."
-bash scripts/check-node-version.sh || exit 1
 node --version
 npm --version
+
+EXPECTED_NODE_VERSION="20"
+CURRENT_NODE_VERSION=$(node -v | cut -d'.' -f1 | sed 's/v//')
+
+if [ "$CURRENT_NODE_VERSION" != "$EXPECTED_NODE_VERSION" ]; then
+  echo "❌ ERROR: Node.js version $EXPECTED_NODE_VERSION.x is required"
+  echo "   Current version: $(node -v)"
+  exit 1
+fi
+
+echo "✅ Node.js version is compatible"
 
 # Clean previous builds and npm cache
 echo "🧹 Cleaning previous builds..."
