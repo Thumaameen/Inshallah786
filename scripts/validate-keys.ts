@@ -2,7 +2,6 @@ import { fetch } from 'cross-fetch';
 import crypto from 'crypto';
 import { promises as fs } from 'fs';
 import path from 'path';
-import dhaMonitor from './routes/dha-monitor.js';
 
 interface ServiceTest {
   name: string;
@@ -292,5 +291,3 @@ async function runValidation() {
 }
 
 runValidation().catch(console.error);
-
-app.use('/api/dha-monitor', dhaMonitor);
