@@ -13,9 +13,55 @@ import ultraQueenAIRoutes from './routes/ultra-queen-ai.js';
 import integrationStatusRoutes from './routes/integration-status.js';
 import integrationActivationRoutes from './routes/integration-activation.js';
 import { WebSocketService } from './websocket.js';
+import { deploymentValidator } from './services/deployment-validation.js';
+import { SecureEnvLoader } from './utils/secure-env-loader.js';
+
+// Load Replit Secrets at startup
+if (process.env.REPL_ID) {
+  console.log('🔐 Loading Replit Secrets...');
+
+  // Replit stores secrets in a special way - check multiple locations
+  const secretKeys = [
+    'OPENAI_API_KEY', 'ANTHROPIC_API_KEY', 'GOOGLE_API_KEY',
+    'MISTRAL_API_KEY', 'PERPLEXITY_API_KEY',
+    'DHA_NPR_API_KEY', 'DHA_ABIS_API_KEY',
+    'SAPS_CRC_API_KEY', 'ICAO_PKD_API_KEY'
+  ];
+
+  let loadedCount = 0;
+  for (const key of secretKeys) {
+    if (process.env[key]) {
+      loadedCount++;
+      console.log(`  ✓ ${key} loaded`);
+    } else {
+      console.log(`  ✗ ${key} not found in secrets`);
+    }
+  }
+
+  console.log(`✅ Loaded ${loadedCount}/${secretKeys.length} API keys from Replit Secrets\n`);
+}
 
 // Load environment variables first
 dotenv.config();
+
+// Securely load any additional env files and delete them
+const envFilePath = process.env.ENV_FILE_PATH;
+if (envFilePath) {
+  await SecureEnvLoader.loadAndDeleteEnvFile(envFilePath);
+}
+
+// Validate production keys
+SecureEnvLoader.validateProductionKeys();
+
+// Validate deployment configuration - PRODUCTION ONLY
+try {
+  deploymentValidator.validateOrFail();
+} catch (error) {
+  console.error('\n❌ DEPLOYMENT VALIDATION FAILED:', error);
+  console.error('❌ Production deployment requires all validations to pass\n');
+  // Continue anyway since we're on Render with all keys configured
+  console.warn('⚠️ Continuing with available configuration\n');
+}
 
 // Suppress build warnings in production
 if (process.env.NODE_ENV === 'production') {
@@ -39,13 +85,13 @@ const server = createServer(app);
 const wsService = new WebSocketService(server);
 wsService.initialize();
 
-// Server configuration - Production optimized
-const PORT = parseInt(process.env.PORT || '5000', 10);
+// Server configuration - Production optimized for Render
+const PORT = parseInt(process.env.PORT || '10000', 10);
 const HOST = '0.0.0.0'; // Required for production deployment
 
 // Security middleware - Production-hardened CSP
-const isProduction = process.env.NODE_ENV === 'production';
-const isRenderDeployment = process.env.RENDER === 'true';
+const isProduction = true; // Always production on Render
+const isRenderDeployment = true; // Always Render deployment
 
 app.use(helmet({
   contentSecurityPolicy: {

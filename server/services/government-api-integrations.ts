@@ -68,18 +68,13 @@ export class GovernmentAPIIntegrations {
     error?: string;
   }> {
     if (!this.config.biometricApiKey) {
-      console.warn('⚠️ [Biometric API] No API key provided, using secure fallback');
-      return {
-        verified: true,
-        confidence: 0.95,
-        matchDetails: { fallbackMode: true, timestamp: new Date().toISOString() }
-      };
+      throw new Error('Biometric API key not configured - production requires real credentials');
     }
 
     try {
       // Real biometric API call would go here
       const response = await this.callBiometricAPI(request);
-      
+
       await storage.createSecurityEvent({
         type: 'BIOMETRIC_VERIFICATION',
         description: `Biometric verification for user ${request.userId}: ${response.verified ? 'SUCCESS' : 'FAILED'}`,
@@ -107,23 +102,13 @@ export class GovernmentAPIIntegrations {
     error?: string;
   }> {
     if (!this.config.nprApiKey) {
-      console.warn('⚠️ [NPR API] No API key provided, using secure fallback');
-      return {
-        verified: true,
-        citizenRecord: {
-          idNumber: request.idNumber,
-          firstName: request.firstName,
-          lastName: request.lastName,
-          verified: true,
-          fallbackMode: true
-        }
-      };
+      throw new Error('NPR API key not configured - production requires real credentials');
     }
 
     try {
       // Real NPR API call would go here
       const response = await this.callNPRAPI(request);
-      
+
       await storage.createSecurityEvent({
         type: 'NPR_VERIFICATION',
         description: `NPR verification for ID ${request.idNumber}: ${response.verified ? 'VERIFIED' : 'NOT_FOUND'}`,
@@ -150,23 +135,13 @@ export class GovernmentAPIIntegrations {
     error?: string;
   }> {
     if (!this.config.documentVerificationApiKey) {
-      console.warn('⚠️ [Document Verification API] No API key provided, using secure fallback');
-      return {
-        authentic: true,
-        documentDetails: {
-          documentId: request.documentId,
-          documentType: request.documentType,
-          verified: true,
-          fallbackMode: true
-        },
-        securityStatus: 'VALIDATED'
-      };
+      throw new Error('Document Verification API key not configured - production requires real credentials');
     }
 
     try {
       // Real document verification API call would go here
       const response = await this.callDocumentVerificationAPI(request);
-      
+
       await storage.createSecurityEvent({
         type: 'DOCUMENT_VERIFICATION',
         description: `Document verification for ${request.documentId}: ${response.authentic ? 'AUTHENTIC' : 'INVALID'}`,
@@ -193,18 +168,13 @@ export class GovernmentAPIIntegrations {
     error?: string;
   }> {
     if (!this.config.abisIntegrationKey) {
-      console.warn('⚠️ [ABIS API] No API key provided, using secure fallback');
-      return {
-        matches: [],
-        confidence: 0.95,
-        searchId: `FALLBACK_${Date.now()}`,
-      };
+      throw new Error('ABIS Integration key not configured - production requires real credentials');
     }
 
     try {
       // Real ABIS API call would go here
       const response = await this.callABISAPI(request);
-      
+
       await storage.createSecurityEvent({
         type: 'ABIS_SEARCH',
         description: `ABIS search performed: ${response.matches.length} matches found`,
@@ -234,19 +204,13 @@ export class GovernmentAPIIntegrations {
     error?: string;
   }> {
     if (!this.config.governmentApiKey || !this.config.dhaApiSecret) {
-      console.warn('⚠️ [DHA Government API] No API keys provided, using secure fallback');
-      return {
-        success: true,
-        documentId: `DHA_${Date.now()}`,
-        officialNumber: `OFF_${Math.random().toString(36).substring(2, 10).toUpperCase()}`,
-        registrationNumber: `REG_${Date.now().toString().slice(-8)}`
-      };
+      throw new Error('DHA Government API keys not configured - production requires real credentials');
     }
 
     try {
       // Real DHA API call would go here
       const response = await this.callDHAGovernmentAPI(documentRequest);
-      
+
       await storage.createSecurityEvent({
         type: 'OFFICIAL_DOCUMENT_GENERATED',
         description: `Official document generated via DHA API: ${response.documentId}`,
@@ -267,7 +231,7 @@ export class GovernmentAPIIntegrations {
   private async callBiometricAPI(request: BiometricVerificationRequest) {
     // Production-ready biometric API integration
     console.log('🔐 [Biometric API] Processing verification request');
-    
+
     // Simulate real API processing with authentic response structure
     return {
       verified: true,
