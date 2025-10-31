@@ -12,14 +12,14 @@ npm --version
 EXPECTED_NODE_VERSION="20"
 CURRENT_NODE_VERSION=$(node -v | cut -d'.' -f1 | sed 's/v//')
 
-if [ "$CURRENT_NODE_VERSION" != "$EXPECTED_NODE_VERSION" ]; then
-  echo "❌ ERROR: Node.js version $EXPECTED_NODE_VERSION.x is required"
+if [ "$CURRENT_NODE_VERSION" -lt "$EXPECTED_NODE_VERSION" ]; then
+  echo "❌ ERROR: Node.js version $EXPECTED_NODE_VERSION.x or higher is required"
   echo "   Current version: $(node -v)"
-  echo "⚠️  Please set nodeVersion: \"20.18.1\" in render.yaml"
+  echo "⚠️  Please set nodeVersion: 20.18.1 in render.yaml"
   exit 1
 fi
 
-echo "✅ Node.js version is compatible (v20.x)"
+echo "✅ Node.js version is compatible ($(node -v))"
 
 # Clean previous builds and npm cache
 echo "🧹 Cleaning previous builds..."
