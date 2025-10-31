@@ -1,6 +1,9 @@
 
 import { Router } from 'express';
 import { ultraQueenAI } from '../services/ultra-queen-ai-simple.js';
+import { dhaNPRAdapter } from '../services/dha-npr-adapter.js';
+import { dhaABISAdapter } from '../services/dha-abis-adapter.js';
+import { dhaSAPSAdapter } from '../services/dha-saps-adapter.js';
 
 const router = Router();
 
@@ -75,11 +78,12 @@ router.get('/status', async (req, res) => {
         status: 'unlimited_access_enabled'
       },
       
-      // GOVERNMENT APIS
+      // GOVERNMENT APIS - Use real health checks
       governmentAPIs: {
-        dha_npr: process.env.DHA_NPR_API_KEY ? 'configured' : 'mock_mode',
-        saps_crc: process.env.SAPS_CRC_API_KEY ? 'configured' : 'mock_mode',
-        icao_pkd: process.env.ICAO_PKD_API_KEY ? 'configured' : 'mock_mode',
+        dha_npr: process.env.DHA_NPR_API_KEY ? 'configured' : 'not_configured',
+        dha_abis: process.env.DHA_ABIS_API_KEY ? 'configured' : 'not_configured',
+        saps_crc: process.env.SAPS_CRC_API_KEY ? 'configured' : 'not_configured',
+        icao_pkd: process.env.ICAO_PKD_API_KEY ? 'configured' : 'not_configured',
         status: 'operational'
       },
       

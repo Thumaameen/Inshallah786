@@ -11,7 +11,7 @@ export const config = {
     
     // Bypass and API settings
     BYPASS_TOKEN: process.env.BYPASS_TOKEN || 'universal-bypass-token-prod',
-    UNIVERSAL_BYPASS: true,
+    UNIVERSAL_BYPASS: process.env.UNIVERSAL_BYPASS === 'true', // SECURITY: Only enable via environment variable
     API_VERSION: '1.0.0',
     VERIFICATION_LEVEL: 'production',
     

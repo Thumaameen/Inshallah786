@@ -13,9 +13,22 @@ import ultraQueenAIRoutes from './routes/ultra-queen-ai.js';
 import integrationStatusRoutes from './routes/integration-status.js';
 import integrationActivationRoutes from './routes/integration-activation.js';
 import { WebSocketService } from './websocket.js';
+import { deploymentValidator } from './services/deployment-validation.js';
 
 // Load environment variables first
 dotenv.config();
+
+// Validate deployment configuration
+try {
+  deploymentValidator.validateOrFail();
+} catch (error) {
+  console.error('\n❌ DEPLOYMENT VALIDATION FAILED:', error);
+  if (process.env.NODE_ENV === 'production') {
+    console.error('❌ Exiting due to validation failures in production\n');
+    process.exit(1);
+  }
+  console.warn('⚠️  Continuing in development mode despite validation warnings\n');
+}
 
 // Suppress build warnings in production
 if (process.env.NODE_ENV === 'production') {
