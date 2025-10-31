@@ -11,6 +11,7 @@ import { registerRoutes } from './routes-simple.js';
 import fs from 'fs';
 import ultraQueenAIRoutes from './routes/ultra-queen-ai.js';
 import integrationStatusRoutes from './routes/integration-status.js';
+import integrationActivationRoutes from './routes/integration-activation.js';
 
 // Load environment variables first
 dotenv.config();
@@ -92,6 +93,7 @@ app.use('/api/monitor', monitoringRoutes); // Add monitoring endpoints
 // Ultra Queen AI Routes
 app.use('/api/ultra-queen-ai', ultraQueenAIRoutes);
 app.use('/api/integrations', integrationStatusRoutes);
+app.use('/api/integrations', integrationActivationRoutes);
 
 console.log('✅ All routes registered successfully');
 console.log('✅ Monitoring middleware active');

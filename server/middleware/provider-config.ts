@@ -154,20 +154,20 @@ class ConfigurationService {
         SESSION_SECRET: this.getEnvVar('SESSION_SECRET'),
         JWT_SECRET: this.getEnvVar('JWT_SECRET'),
         DATABASE_URL: this.getEnvVar('DATABASE_URL'),
-        
+
         // 5 AI AGENTS - API KEYS
         OPENAI_API_KEY: this.getEnvVar('OPENAI_API_KEY'),
         ANTHROPIC_API_KEY: this.getEnvVar('ANTHROPIC_API_KEY'),
         GOOGLE_API_KEY: this.getEnvVar('GOOGLE_API_KEY') || this.getEnvVar('GEMINI_API_KEY'),
         MISTRAL_API_KEY: this.getEnvVar('MISTRAL_API_KEY'),
         PERPLEXITY_API_KEY: this.getEnvVar('PERPLEXITY_API_KEY'),
-        
+
         // WEB2 INTEGRATIONS
         GITHUB_TOKEN: this.getEnvVar('GITHUB_TOKEN'),
         AWS_ACCESS_KEY_ID: this.getEnvVar('AWS_ACCESS_KEY_ID'),
         GOOGLE_CLOUD_API_KEY: this.getEnvVar('GOOGLE_CLOUD_API_KEY'),
         AZURE_API_KEY: this.getEnvVar('AZURE_API_KEY'),
-        
+
         // WEB3 INTEGRATIONS
         ETHEREUM_RPC_URL: this.getEnvVar('ETHEREUM_RPC_URL'),
         POLYGON_RPC_URL: this.getEnvVar('POLYGON_RPC_URL'),
@@ -468,6 +468,140 @@ class ConfigurationService {
   }
 }
 
+// Initialize all API providers from environment
+const initializeProviders = () => {
+  return {
+    // AI Providers
+    openai: {
+      apiKey: process.env.OPENAI_API_KEY,
+      orgId: process.env.OPENAI_ORG_ID,
+      enabled: !!process.env.OPENAI_API_KEY
+    },
+    anthropic: {
+      apiKey: process.env.ANTHROPIC_API_KEY,
+      enabled: !!process.env.ANTHROPIC_API_KEY
+    },
+    mistral: {
+      apiKey: process.env.MISTRAL_API_KEY,
+      enabled: !!process.env.MISTRAL_API_KEY
+    },
+    google: {
+      apiKey: process.env.GOOGLE_AI_API_KEY, // Changed from GOOGLE_API_KEY to GOOGLE_AI_API_KEY
+      enabled: !!process.env.GOOGLE_AI_API_KEY
+    },
+    perplexity: {
+      apiKey: process.env.PERPLEXITY_API_KEY,
+      enabled: !!process.env.PERPLEXITY_API_KEY
+    },
+    xai: {
+      apiKey: process.env.XAI_API_KEY,
+      enabled: !!process.env.XAI_API_KEY
+    },
+
+    // Web Services
+    github: {
+      token: process.env.GITHUB_TOKEN || process.env.GITHUB_PAT,
+      enabled: !!(process.env.GITHUB_TOKEN || process.env.GITHUB_PAT)
+    },
+    stripe: {
+      enabled: false // Add when configured
+    },
+    twilio: {
+      enabled: false // Add when configured
+    },
+    sendgrid: {
+      enabled: false // Add when configured
+    },
+
+    // Blockchain
+    ethereum: {
+      rpcUrl: process.env.ETHEREUM_RPC_URL,
+      enabled: !!process.env.ETHEREUM_RPC_URL
+    },
+    polygon: {
+      rpcUrl: process.env.POLYGON_RPC_ENDPOINT,
+      enabled: !!process.env.POLYGON_RPC_ENDPOINT
+    },
+    solana: {
+      enabled: false // Add when configured
+    },
+    web3auth: {
+      clientId: process.env.WEB3AUTH_CLIENT_ID,
+      clientSecret: process.env.WEB3AUTH_CLIENT_SECRET,
+      enabled: !!process.env.WEB3AUTH_CLIENT_ID
+    },
+
+    // Government APIs
+    dha: {
+      npr: {
+        apiKey: process.env.DHA_NPR_API_KEY,
+        baseUrl: process.env.DHA_NPR_BASE_URL,
+        enabled: !!process.env.DHA_NPR_API_KEY
+      },
+      abis: {
+        apiKey: process.env.DHA_ABIS_API_KEY,
+        baseUrl: process.env.DHA_ABIS_BASE_URL,
+        enabled: !!process.env.DHA_ABIS_API_KEY
+      },
+      main: {
+        apiKey: process.env.DHA_API_KEY,
+        token: process.env.DHA_TOKEN,
+        enabled: !!process.env.DHA_API_KEY
+      }
+    },
+    saps: {
+      apiKey: process.env.SAPS_CRC_API_KEY,
+      baseUrl: process.env.SAPS_CRC_BASE_URL,
+      enabled: !!process.env.SAPS_CRC_API_KEY
+    },
+    icao: {
+      apiKey: process.env.ICAO_PKD_API_KEY,
+      baseUrl: process.env.ICAO_PKD_BASE_URL,
+      enabled: !!process.env.ICAO_PKD_API_KEY
+    },
+    sita: {
+      apiKey: process.env.SITA_ESERVICES_API_KEY,
+      baseUrl: process.env.SITA_ESERVICES_BASE_URL,
+      enabled: !!process.env.SITA_ESERVICES_API_KEY
+    },
+    arya: {
+      apiKey: process.env.ARYA_API_KEY,
+      baseUrl: process.env.ARYA_BASE,
+      enabled: !!process.env.ARYA_API_KEY
+    },
+
+    // Cloud & Database
+    supabase: {
+      url: process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL,
+      anonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+      serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY,
+      jwtSecret: process.env.SUPABASE_JWT_SECRET,
+      enabled: !!process.env.SUPABASE_URL
+    },
+    postgres: {
+      url: process.env.POSTGRES_URL || process.env.DATABASE_URL,
+      enabled: !!(process.env.POSTGRES_URL || process.env.DATABASE_URL)
+    },
+    workato: {
+      accountId: process.env.WORKATO_ACCOUNT_ID,
+      apiToken: process.env.WORKATO_API_TOKEN,
+      enabled: !!process.env.WORKATO_API_TOKEN
+    }
+  };
+};
+
+export function getConfig() {
+  const service = getConfigService();
+  const config = service.getConfig();
+  const providers = initializeProviders();
+  const JWT_SECRET = process.env.JWT_SECRET || 'defaultDevSecret'; // Fallback for development
+  return {
+    providers,
+    JWT_SECRET,
+    ...config,
+  };
+}
+
 // Singleton instance holders
 let configServiceInstance: ConfigurationService | null = null;
 
@@ -487,8 +621,16 @@ export const getConfigService = (): ConfigurationService => {
   return configServiceInstance;
 };
 
-export const getConfig = () => {
-  return getConfigService().getConfig();
+// Exporting a function that calls getConfigService to get the service instance
+// and then returns the config and providers
+export const getAllConfig = () => {
+  const service = getConfigService();
+  const config = service.getConfig();
+  const providers = initializeProviders();
+  return {
+    ...config,
+    providers,
+  };
 };
 
 // Note: Removed immediate initialization exports to prevent module-level validation
