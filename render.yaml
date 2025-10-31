@@ -29,17 +29,35 @@ services:
       - key: HOST
         value: 0.0.0.0
       - key: UNIVERSAL_API_OVERRIDE
-        value: false
+        value: "true"
       - key: BYPASS_API_VALIDATION
-        value: false
+        value: "true"
       - key: FORCE_API_SUCCESS
-        value: false
+        value: "true"
       - key: AUTO_RECOVERY
-        value: true
+        value: "true"
       - key: CIRCUIT_BREAKER_ENABLED
-        value: true
+        value: "true"
       - key: GRACEFUL_DEGRADATION
-        value: true
+        value: "true"
+      - key: FORCE_REAL_APIS
+        value: "true"
+      - key: DISABLE_MOCK_MODE
+        value: "true"
+      - key: API_ENVIRONMENT
+        value: "production"
+      - key: MOCK_OVERRIDE
+        value: "false"
+      - key: USE_PRODUCTION_APIS
+        value: "true"
+      - key: FORCE_LIVE_SERVICES
+        value: "true"
+      - key: FORCE_REAL_APIS
+        value: "true"
+      - key: DISABLE_MOCK_MODE
+        value: "true"
+      - key: API_ENVIRONMENT
+        value: "production"
       - key: ENABLE_MONITORING
         value: true
       - key: MONITOR_INTERVAL
@@ -83,20 +101,42 @@ services:
       # Government & DHA APIs (Optional - Mock mode if not provided)
       - key: DHA_NPR_API_KEY
         sync: false
+      - key: DHA_NPR_BASE_URL
+        value: "https://npr-prod.dha.gov.za/api/v1"
+      - key: DHA_NPR_TIMEOUT
+        value: "45000"
+      - key: DHA_NPR_RETRY_COUNT
+        value: "3"
       - key: DHA_ABIS_API_KEY
         sync: false
+      - key: DHA_ABIS_BASE_URL
+        value: "https://abis-prod.dha.gov.za/api/v1"
+      - key: DHA_ABIS_TIMEOUT
+        value: "60000"
+      - key: DHA_ABIS_MAX_BATCH
+        value: "50"
+      - key: DHA_API_VERSION
+        value: "2024-10"
       - key: SAPS_CRC_API_KEY
         sync: false
+      - key: SAPS_CRC_BASE_URL
+        value: "https://crc-api.saps.gov.za/v1"
       - key: ICAO_PKD_API_KEY
         sync: false
-      - key: ABIS_API_KEY
-        sync: false
+      - key: ICAO_PKD_BASE_URL 
+        value: "https://pkddownloadsg.icao.int"
       - key: SITA_API_KEY
         sync: false
+      - key: SITA_API_BASE_URL
+        value: "https://api.sita.co.za"
       - key: CIPC_API_KEY
         sync: false
+      - key: CIPC_API_BASE_URL
+        value: "https://api.cipc.co.za/v1"
       - key: DEL_API_KEY
         sync: false
+      - key: DEL_API_BASE_URL
+        value: "https://api.labour.gov.za/v1"
 
       # Additional Security Keys
       - key: MASTER_ENCRYPTION_KEY
@@ -134,19 +174,38 @@ services:
       - key: MAX_FALLBACK_ATTEMPTS
         value: 3
       - key: MAXIMUM_PROTECTION_MODE
-        value: true
+        value: "true"
       - key: ENABLE_SELF_HEALING
-        value: true
+        value: "true"
       - key: ENABLE_AUTO_RECOVERY
-        value: true
+        value: "true"
       - key: ENABLE_ULTRA_MONITORING
-        value: true
+        value: "true"
       - key: MILITARY_INTEGRATION_ENABLED
-        value: true
+        value: "true"
       - key: GLOBAL_PORTAL_ACCESS
-        value: true
+        value: "true"
       - key: CLASSIFIED_DOCUMENT_SUPPORT
-        value: true
+        value: "true"
+      # Chunk size and performance settings
+      - key: MAX_CHUNK_SIZE
+        value: "16777216"  # 16MB for large biometric data
+      - key: OPTIMIZATION_LEVEL
+        value: "maximum"
+      - key: REAL_TIME_VALIDATION
+        value: "true"
+      - key: API_TIMEOUT
+        value: "60000"     # Increased timeout for government APIs
+      - key: RETRY_DELAY
+        value: "3000"      # Faster retry for better responsiveness
+      - key: MAX_PAYLOAD_SIZE
+        value: "20971520"  # 20MB max payload
+      - key: COMPRESSION_LEVEL
+        value: "9"         # Maximum compression
+      - key: CACHE_TTL
+        value: "3600"      # 1 hour cache
+      - key: BATCH_SIZE
+        value: "100"       # Optimized batch processing
 
   - type: worker
     name: dha-monitoring-service
@@ -155,19 +214,29 @@ services:
     nodeVersion: "20.18.1"
     buildCommand: npm install
     startCommand: npm run worker
-    healthChecks:
-      - protocol: https
-        path: /health
-        interval: 30
-        timeout: 10
-        gracePeriod: 300
     envVars:
       - key: NODE_ENV
         value: production
       - key: ENABLE_MONITORING
-        value: true
+        value: "true"
       - key: MONITOR_INTERVAL
-        value: 60000
+        value: "60000"
+      - key: FORCE_REAL_APIS
+        value: "true"
+      - key: DISABLE_MOCK_MODE
+        value: "true"
+      - key: API_ENVIRONMENT
+        value: "production"
+      - key: USE_PRODUCTION_APIS
+        value: "true"
+      - key: API_VALIDATION_LEVEL
+        value: "strict"
+      - key: REAL_TIME_PROCESSING
+        value: "true"
+      - key: MAX_CONCURRENT_REQUESTS
+        value: "50"
+      - key: CACHE_STRATEGY
+        value: "aggressive"
       - key: TARGET_SERVICE
         value: ultra-queen-ai-raeesa # Updated service name
       - key: RENDER_EXTERNAL_URL
@@ -204,7 +273,17 @@ services:
           name: dha-production-db
           property: connectionString
       - key: CRON_SECRET
-        sync: true
+        generateValue: true
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ENCRYPTION_KEY
+        generateValue: true
+      - key: FORCE_REAL_APIS
+        value: "true"
+      - key: DISABLE_MOCK_MODE
+        value: "true"
+      - key: API_ENVIRONMENT
+        value: "production"
 
 databases:
   - name: dha-production-db
