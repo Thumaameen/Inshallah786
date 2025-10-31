@@ -11,15 +11,14 @@ rm -rf dist client/dist node_modules/.cache
 
 # Install root dependencies
 echo "📦 Installing root dependencies..."
-npm ci --legacy-peer-deps || npm install --legacy-peer-deps
+npm install --legacy-peer-deps --no-audit
 
 # Build client
 echo "🎨 Building client..."
 cd client
 echo "📦 Installing client dependencies..."
 rm -rf node_modules package-lock.json
-npm cache clean --force
-npm install --legacy-peer-deps
+npm install --legacy-peer-deps --no-audit
 echo "🔨 Running client build..."
 npm run build
 cd ..
