@@ -35,9 +35,17 @@ echo "🎨 Building client..."
 cd client
 echo "📦 Installing client dependencies..."
 rm -rf node_modules package-lock.json
-npm install --legacy-peer-deps --no-audit --include=dev
+# Install ALL dependencies including dev dependencies (vite, typescript, etc.)
+npm install --legacy-peer-deps --no-audit
+
+# Verify vite is installed
+if ! npx vite --version > /dev/null 2>&1; then
+  echo "❌ Vite not found, installing explicitly..."
+  npm install --save-dev vite@latest @vitejs/plugin-react@latest
+fi
+
 echo "🔨 Running client build..."
-npm run build
+NODE_ENV=production npm run build
 cd ..
 
 # Verify client build
