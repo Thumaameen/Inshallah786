@@ -374,11 +374,11 @@ export default function DhaDocuments() {
 
   const handleGenerateDocument = async (doc: DocumentData) => {
     setCreatingApplicants(prev => ({ ...prev, [doc.id]: true }));
-    
+
     try {
       // First create the applicant
       const applicantResult = await createApplicantMutation.mutateAsync(doc.applicantData);
-      
+
       if (applicantResult.success && applicantResult.applicant) {
         // Then generate the document
         const documentData = {
@@ -390,7 +390,7 @@ export default function DhaDocuments() {
           notes: doc.description,
           ...doc.additionalData
         };
-        
+
         await generateDocumentMutation.mutateAsync(documentData);
       } else {
         toast({
@@ -466,7 +466,7 @@ export default function DhaDocuments() {
           {documents.map((doc) => {
             const isGenerated = !!generatedDocuments[doc.id];
             const isLoading = isGenerating(doc.id);
-            
+
             return (
               <Card 
                 key={doc.id} 
