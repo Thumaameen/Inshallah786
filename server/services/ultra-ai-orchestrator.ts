@@ -112,6 +112,56 @@ export class UltraAIOrchestrator {
     // Advanced consensus analysis
     return results.filter(r => r).join('\n\n');
   }
+
+  async processDocument(data: any) {
+    const startTime = Date.now();
+    
+    try {
+      // Process with all AI providers in parallel
+      const [aiAnalysis, securityCheck, contentValidation] = await Promise.all([
+        this.processWithAllAI({ message: JSON.stringify(data) }),
+        this.verifyAuthenticity(data),
+        this.dhaService.validateDocumentContent(data)
+      ]);
+
+      const processingTime = Date.now() - startTime;
+
+      return {
+        success: true,
+        confidence: this.calculateConfidence(aiAnalysis, securityCheck, contentValidation),
+        processingTime,
+        results: {
+          aiAnalysis,
+          securityVerification: securityCheck,
+          contentValidation
+        }
+      };
+    } catch (error) {
+      console.error('[Ultra AI] Document processing failed:', error);
+      throw new Error(`Document processing failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
+
+  private calculateConfidence(aiAnalysis: any, securityCheck: any, contentValidation: any): number {
+    let confidence = 0;
+    
+    // AI consensus confidence (0-40%)
+    if (aiAnalysis.consensus) {
+      confidence += 40;
+    }
+
+    // Security verification confidence (0-40%)
+    if (securityCheck.isAuthentic) {
+      confidence += 40;
+    }
+
+    // Content validation confidence (0-20%)
+    if (contentValidation.isValid) {
+      confidence += 20;
+    }
+
+    return confidence;
+  }
 }
 
 export const ultraAI = new UltraAIOrchestrator();

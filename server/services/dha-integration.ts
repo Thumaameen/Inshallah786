@@ -6,6 +6,7 @@ export interface DhaIntegrationConfig {
 export class DhaIntegration {
   private apiKey: string;
   private environment: string;
+  validateDocumentContent: any;
 
   constructor(config: DhaIntegrationConfig) {
     this.apiKey = config.apiKey || '';
