@@ -257,14 +257,14 @@ export default function SystemMonitoring() {
               <CardContent>
                 <div className="space-y-3">
                   <div className="flex justify-between text-sm">
-                    <span>Used: {formatBytes(systemHealth.memory.used)}</span>
-                    <span>Total: {formatBytes(systemHealth.memory.total)}</span>
+                    <span>Used: {formatBytes(systemHealth?.memory?.used || 0)}</span>
+                    <span>Total: {formatBytes(systemHealth?.memory?.total || 0)}</span>
                   </div>
-                  <Progress value={systemHealth.memory.percentage} className="w-full" />
+                  <Progress value={systemHealth?.memory?.percentage || 0} className="w-full" />
                   <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>{systemHealth.memory.percentage.toFixed(1)}% utilized</span>
-                    <span className={systemHealth.memory.percentage > 80 ? "text-red-600" : "text-green-600"}>
-                      {systemHealth.memory.percentage > 80 ? "High Usage" : "Normal"}
+                    <span>{(systemHealth?.memory?.percentage || 0).toFixed(1)}% utilized</span>
+                    <span className={(systemHealth?.memory?.percentage || 0) > 80 ? "text-red-600" : "text-green-600"}>
+                      {(systemHealth?.memory?.percentage || 0) > 80 ? "High Usage" : "Normal"}
                     </span>
                   </div>
                 </div>
@@ -283,13 +283,13 @@ export default function SystemMonitoring() {
                 <div className="space-y-3">
                   <div className="flex justify-between text-sm">
                     <span>CPU Load</span>
-                    <span>{systemHealth.cpu.percentage.toFixed(1)}%</span>
+                    <span>{(systemHealth?.cpu?.percentage || 0).toFixed(1)}%</span>
                   </div>
-                  <Progress value={systemHealth.cpu.percentage} className="w-full" />
+                  <Progress value={systemHealth?.cpu?.percentage || 0} className="w-full" />
                   <div className="flex justify-between text-xs text-muted-foreground">
                     <span>Current utilization</span>
-                    <span className={systemHealth.cpu.percentage > 80 ? "text-red-600" : "text-green-600"}>
-                      {systemHealth.cpu.percentage > 80 ? "High Load" : "Normal"}
+                    <span className={(systemHealth?.cpu?.percentage || 0) > 80 ? "text-red-600" : "text-green-600"}>
+                      {(systemHealth?.cpu?.percentage || 0) > 80 ? "High Load" : "Normal"}
                     </span>
                   </div>
                 </div>

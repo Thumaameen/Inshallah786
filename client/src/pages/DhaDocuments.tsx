@@ -497,7 +497,7 @@ export default function DhaDocuments() {
                       <div className="flex justify-between">
                         <span>Type:</span>
                         <span className="font-medium text-gray-800">
-                          {doc.documentType.replace(/_/g, ' ').toUpperCase()}
+                          {(doc.documentType || '').replace(/_/g, ' ').toUpperCase()}
                         </span>
                       </div>
                       {doc.permitCategory && (
