@@ -59,7 +59,7 @@ export default function UltraQueenDashboard() {
   const checkSystemStatus = async () => {
     try {
       const response = await fetch('/api/ultra-dashboard/status');
-      
+
       if (response.ok) {
         const data = await response.json();
         setFullStatus(data.status);
@@ -83,7 +83,7 @@ export default function UltraQueenDashboard() {
       title: 'Blockchain Connection',
       description: `Testing ${network} connection...`,
     });
-    
+
     try {
       const response = await fetch('/api/ultra-dashboard/test-blockchain', {
         method: 'POST',
@@ -92,7 +92,7 @@ export default function UltraQueenDashboard() {
         },
         body: JSON.stringify({ network })
       });
-      
+
       if (response.ok) {
         const data = await response.json();
         toast({
@@ -116,7 +116,7 @@ export default function UltraQueenDashboard() {
       title: 'Government API Test',
       description: `Testing ${api} connection...`,
     });
-    
+
     try {
       const response = await fetch('/api/ultra-dashboard/test-government-api', {
         method: 'POST',
@@ -125,7 +125,7 @@ export default function UltraQueenDashboard() {
         },
         body: JSON.stringify({ api })
       });
-      
+
       if (response.ok) {
         const data = await response.json();
         toast({

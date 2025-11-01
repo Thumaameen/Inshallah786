@@ -150,9 +150,10 @@ export class DeploymentValidator {
     const aiProviders = [
       { name: 'OpenAI', envVar: 'OPENAI_API_KEY' },
       { name: 'Anthropic', envVar: 'ANTHROPIC_API_KEY' },
-      { name: 'Google Gemini', envVar: 'GOOGLE_API_KEY' },
+      { name: 'Google Gemini', envVar: 'GOOGLE_AI_API_KEY' },
       { name: 'Mistral', envVar: 'MISTRAL_API_KEY' },
-      { name: 'Perplexity', envVar: 'PERPLEXITY_API_KEY' }
+      { name: 'Perplexity', envVar: 'PERPLEXITY_API_KEY' },
+      { name: 'XAI', envVar: 'XAI_API_KEY' }
     ];
 
     let configuredCount = 0;
@@ -174,7 +175,7 @@ export class DeploymentValidator {
   }
 
   /**
-   * Validate government API integrations - FAIL HARD in production if missing
+   * Validate government API integrations
    */
   private validateGovernmentAPIs(errors: string[], warnings: string[]): void {
     console.log('🏛️  GOVERNMENT API INTEGRATIONS:');
@@ -183,7 +184,9 @@ export class DeploymentValidator {
       { name: 'DHA NPR', key: 'DHA_NPR_API_KEY', endpoint: 'DHA_NPR_BASE_URL' },
       { name: 'DHA ABIS', key: 'DHA_ABIS_API_KEY', endpoint: 'DHA_ABIS_BASE_URL' },
       { name: 'SAPS CRC', key: 'SAPS_CRC_API_KEY', endpoint: 'SAPS_CRC_BASE_URL' },
-      { name: 'ICAO PKD', key: 'ICAO_PKD_API_KEY', endpoint: 'ICAO_PKD_BASE_URL' }
+      { name: 'ICAO PKD', key: 'ICAO_PKD_API_KEY', endpoint: 'ICAO_PKD_BASE_URL' },
+      { name: 'HANIS', key: 'HANIS_API_KEY', endpoint: 'HANIS_SECRET_KEY' },
+      { name: 'SITA', key: 'SITA_API_KEY', endpoint: 'SITA_ESERVICES_API_KEY' }
     ];
 
     let configuredCount = 0;

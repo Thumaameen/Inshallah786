@@ -186,7 +186,7 @@ export function DocumentPreview({ documentType, data, referenceNumber }: Documen
             {/* Document Title */}
             <div className="text-center mb-8">
               <h3 className="text-xl font-bold uppercase tracking-wider">
-                {documentType.replace(/_/g, ' ')}
+                {documentType?.replace(/_/g, ' ') || 'Document'}
               </h3>
               <div className="mt-2 text-sm text-gray-600">
                 Reference: {reference}

@@ -231,18 +231,25 @@ ${this.getSecurityFeatures(request.documentType).map(feature => `║  ✓ ${feat
 
   private getSecurityFeatures(documentType: string): string[] {
     const baseFeatures = [
-      'Digital watermark',
-      'Verification QR code',
-      'Anti-fraud hologram',
-      'Secure paper',
-      'Official seal'
+      'Digital watermark with embedded DHA seal',
+      'Real-time verification QR code linked to NPR database',
+      'Anti-fraud hologram with government authentication',
+      'Security paper with UV reactive fibers',
+      'Official DHA embossed seal',
+      'Microprinting with serial numbers',
+      'Color-shifting ink on critical data',
+      'Tamper-evident laminate',
+      'Blockchain verification hash',
+      'ICAO compliant security features'
     ];
 
     switch (documentType) {
       case DHA_DOCUMENT_TYPES.SMART_ID_CARD:
-        return [...baseFeatures, 'Biometric chip', 'Laser engraving', 'Polycarbonate material'];
+        return [...baseFeatures, 'Biometric chip ISO 14443', 'Laser engraving', 'Polycarbonate substrate', 'Contactless RFID', 'Ghost image'];
       case DHA_DOCUMENT_TYPES.SOUTH_AFRICAN_PASSPORT:
-        return [...baseFeatures, 'Machine readable zone', 'Biometric data page', 'RFID chip'];
+        return [...baseFeatures, 'Machine readable zone MRZ', 'Biometric data page', 'RFID chip BAC protected', 'Kinegram', 'Optically variable ink'];
+      case DHA_DOCUMENT_TYPES.PERMANENT_RESIDENCE_PERMIT:
+        return [...baseFeatures, 'Guilloche patterns', 'Security thread', 'Latent image', 'ABIS biometric link', 'Real-time NPR verification'];
       default:
         return baseFeatures;
     }

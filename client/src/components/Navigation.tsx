@@ -8,13 +8,14 @@ import { Menu, Shield, User, FileText, Users, Globe, Phone, Clock, HelpCircle, L
 import { SouthAfricanCoatOfArms, DHALogo, SecurityClassificationBanner } from "@/components/GovernmentAssets";
 import { useAuth } from "@/contexts/AuthContext";
 import { useWebSocket } from "@/hooks/useWebSocket";
+import { Sparkles, Brain } from "lucide-react";
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const [location] = useLocation();
   const [currentTime, setCurrentTime] = useState(new Date());
   const { user, token, logout } = useAuth();
-  
+
   // WebSocket connection for real-time status
   const { isConnected, error } = useWebSocket({
     token: token, // Pass the auth token for authentication
@@ -61,10 +62,10 @@ export default function Navigation() {
               <div className="hidden lg:flex items-center space-x-3 ml-6 pl-6 border-l border-white/20">
                 <Clock className="h-4 w-4 text-white/70" />
                 <span className="text-sm text-white/70">
-                  {currentTime.toLocaleDateString('en-ZA', { 
-                    weekday: 'short', 
-                    day: 'numeric', 
-                    month: 'short' 
+                  {currentTime.toLocaleDateString('en-ZA', {
+                    weekday: 'short',
+                    day: 'numeric',
+                    month: 'short'
                   })}
                 </span>
                 {isOfficeHours() ? (
@@ -106,7 +107,7 @@ export default function Navigation() {
                   <Phone className="h-4 w-4" />
                   <span className="text-xs">0800 60 11 90</span>
                 </Button>
-                
+
                 <Button
                   variant="ghost"
                   size="sm"
@@ -115,12 +116,12 @@ export default function Navigation() {
                 >
                   <HelpCircle className="h-4 w-4" />
                 </Button>
-                
+
                 <Badge className="dha-badge" data-testid="security-level-badge">
                   <span>🏛️</span>
                   <span className="ml-1">Government Portal</span>
                 </Badge>
-                
+
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button
@@ -145,7 +146,7 @@ export default function Navigation() {
                       <Settings className="h-4 w-4" />
                       <span>Settings</span>
                     </DropdownMenuItem>
-                    <DropdownMenuItem 
+                    <DropdownMenuItem
                       className="flex items-center space-x-2 text-destructive"
                       onClick={logout}
                       data-testid="button-logout"
@@ -205,21 +206,21 @@ export default function Navigation() {
                       <span className="ml-1">Official</span>
                     </Badge>
                   </div>
-                  
+
                   <div className="flex items-center space-x-2">
                     <span className={`status-indicator ${isConnected ? 'status-online' : 'status-warning'}`}></span>
                     <span className="text-sm text-muted-foreground">
                       Government Services {isConnected ? 'Online' : (error ? 'Connection Error' : 'Connecting...')}
                     </span>
                   </div>
-                  
+
                   <div className="mt-4 text-xs text-muted-foreground">
                     <div className="flex items-center space-x-1">
                       <Phone className="h-3 w-3" />
                       <span>Helpline: 0800 60 11 90</span>
                     </div>
                   </div>
-                  
+
                   {user && (
                     <div className="mt-4 p-3 bg-muted/30 rounded-lg">
                       <div className="flex items-center justify-between">
@@ -241,6 +242,20 @@ export default function Navigation() {
                     </div>
                   )}
                 </div>
+              </div>
+              <div className="flex flex-col space-y-2 mt-4">
+                <Button variant="ghost" asChild className="w-full justify-start">
+                  <Link href="/ultra-queen">
+                    <Sparkles className="mr-2 h-4 w-4" />
+                    Ultra Queen Dashboard
+                  </Link>
+                </Button>
+                <Button variant="ghost" asChild className="w-full justify-start">
+                  <Link href="/ultra-queen-ai">
+                    <Brain className="mr-2 h-4 w-4" />
+                    Ultra Queen AI Assistant
+                  </Link>
+                </Button>
               </div>
             </SheetContent>
           </Sheet>
