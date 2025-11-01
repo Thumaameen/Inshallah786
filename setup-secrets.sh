@@ -5,50 +5,173 @@
 # Replace the values with your actual API keys
 
 # AI Provider Keys
-echo "Adding AI Provider Keys..."
-echo "OPENAI_API_KEY=your-openai-key-here" >> .env
-echo "ANTHROPIC_API_KEY=your-anthropic-key-here" >> .env
-echo "GOOGLE_API_KEY=your-google-key-here" >> .env
-echo "GOOGLE_GENERATIVE_AI_API_KEY=your-gemini-key-here" >> .env
-echo "MISTRAL_API_KEY=your-mistral-key-here" >> .env
-echo "PERPLEXITY_API_KEY=your-perplexity-key-here" >> .env
-
-# Government Integration Keys
-echo "Adding Government Integration Keys..."
-echo "DHA_NPR_API_KEY=your-dha-npr-key-here" >> .env
-echo "DHA_NPR_SECRET=your-dha-npr-secret-here" >> .env
-echo "DHA_NPR_BASE_URL=https://api.dha.gov.za/npr" >> .env
-echo "DHA_ABIS_API_KEY=your-dha-abis-key-here" >> .env
-echo "DHA_ABIS_SECRET=your-dha-abis-secret-here" >> .env
-echo "DHA_ABIS_BASE_URL=https://abis.dha.gov.za/api" >> .env
-echo "DHA_DMS_API_KEY=your-dha-dms-key-here" >> .env
-echo "DHA_DMS_SECRET=your-dha-dms-secret-here" >> .env
-echo "SAPS_CRC_API_KEY=your-saps-crc-key-here" >> .env
-echo "SAPS_CRC_BASE_URL=https://saps.gov.za/api/crc" >> .env
-echo "ICAO_PKD_API_KEY=your-icao-pkd-key-here" >> .env
-echo "ICAO_PKD_SECRET=your-icao-pkd-secret-here" >> .env
-echo "ICAO_PKD_BASE_URL=https://pkd.icao.int/api" >> .env
-
-# Security & Encryption Keys
-echo "Adding Security & Encryption Keys..."
-echo "SECURITY_OVERRIDE_TOKEN=queen-raeesa-unlimited-access" >> .env
-echo "DOC_PKI_PRIVATE_KEY=your-pki-private-key-here" >> .env
-echo "DOC_ENCRYPTION_KEY=your-doc-encryption-key-here" >> .env
-echo "AUDIT_ENCRYPTION_KEY=your-audit-encryption-key-here" >> .env
-echo "ENCRYPTION_KEY=your-encryption-key-here" >> .env
-echo "VITE_ENCRYPTION_KEY=your-vite-encryption-key-here" >> .env
-echo "MASTER_ENCRYPTION_KEY=your-master-encryption-key-here" >> .env
-echo "QUANTUM_ENCRYPTION_KEY=your-quantum-encryption-key-here" >> .env
-
-# Other Integration Keys
-echo "Adding Other Integration Keys..."
-echo "ULTRA_AI_KEYS=your-ultra-ai-keys-here" >> .env
-echo "SECURITY_WEBHOOK_URL=your-security-webhook-url-here" >> .env
-echo "SECURITY_ALERT_KEY=your-security-alert-key-here" >> .env
-echo "ABIS_ENDPOINT=https://abis.dha.gov.za/api/validate" >> .env
-echo "SAPS_ENDPOINT=https://saps.gov.za/api/verify" >> .env
-echo "DHA_ENDPOINT=https://dha.gov.za/api/status" >> .env
-
+> .env
+echo ADMIN_API_KEY=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
+echo ADMIN_PASSWORD=RaeesaDHA2025!
+echo AI_GATEWAY_API_KEY=vck_3KHtfKjBr0pUQyZoIWrR2St1RbmHtGGC6xXPxND2lx4RppcWwL01CxHj
+echo ANTHROPIC_API_KEY=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
+echo ANTI_SLEEP_PORT=3003
+echo API_ENCRYPTION_KEY=api_enc_live_vB7mH4jK9nL2pR6tY8xW3sQ5fC1gZ4dAkL7pH2nV8xR5t|
+echo API_RATE_LIMIT_SECRET=29e30447702326415 940c32e61614e36
+echo API_VERSION=V2
+echo ARYA_API_KEY=9d23fccaa6643c9cf624b6b51bd1fd1b
+echo ARYA_BASE=https://ping.arya.ai/api/v1/rsaid
+echo AUDIT_ENCRYPTION_KEY=audit_enc_live_pH5nX8KL2vR9tB6wQ3sF7gY4aZ1cV4mJ echo AUDIT_SIGNING_KEY=audit_sign_{ive_mH4pL7nX2vR9tB5wQ8sF3gY6aZ1cV4jD
+echo AUDIT_ENCRYPTION_KEY1=audit_enc_live_pH5nX8kL2vR9tB6wQ3sF7gY4aZ1cV4mJ echo AUDIT_SIGNING_KEY=aud¡†_sign_live_mH4pL7nX2vR9tB5WQ8sFЗgY6aZ1cV4jD
+echo AUTH_API_KEY=fb 2e 37 ee e3 84 7a 27 2e cd 19 35 b1 33 7c ff d4 44 42 69
+echo AUTH_URI=http://cert.ssl.com/SSLcom-TLS-
+echo AWS_ACCESS_KEY_ID=AKIA5GZ8SK1APNV8XR5TB
+echo AWS_REGION=eu-west-1
+echo AWS_SECRET_ACCESS_KEY=kQp8mN2vR4xL9jH6tY3wC7bF5gZ8sK1aPnV8xR5tB9cQ6wS3f
+echo AZURE_API_KEY=7bF5gZ8sK1aPnV8xR5tB9cQ6wS3fD1gY5aZkQp8mN2vR4xL9jH6tY3wC7bF5gZ8sK1a
+echo AZURE_AZURE_CONNECTION_STRING=DefaultEndpointsProtocol=https;AccountName=ultraqueen;AccountKey=7bF5gZ8sK1aPnV8xR5tB9cQ6wS3fD1gY5aZkQp8mN2vR4xL9jH6tY3wC7bF5gZ8sK1a;EndpointSuffix=core.windows.net
+echo BIOMETRIC_ENCRYPTION_KEY=996d31a9263b88d3a2be47062a9d2c1de0f604f36192beb2ea28844c9a1e537f
+echo BYPASS_MODE=true
+echo BYPASS_MODE1=true
+echo CERTIFICATE_AUTHORITY_URL=https://ca.dha.gov.za
+echo CERT_KEY_IDENTIFIER=30 82 01 Oa 02 82 01 01 00 c0 1c 5d a6 11 7c 1e 42 b2 d6 07 cc 5d 6b 4f ff 24 9c e9 9e ab f8 da fa 58 9c 4d aa 3d 83 75 a3 fe 15 e4 f8 ca bb 76 34 b7 c9 97 62 64 40 37 e8 ad 04 86 88 c8 92 ac 4b 90 e8 cd e5 d5 8b fa 03 2e 2d d1 bf f6 a9 c0 a2 dd 23 d5 00 b7 dc cc cc 3a 28 73 df 95 4c 80 e9 7a 74 e1 c8 7d 23 Oa c9 f7 do 2b la 79 38 61 88 Oa ef 7f 92 8f 11 f5 aO 05 e1 20 73 d8 4f 8a a8 57 ff d6 1c b9 dc 9e 97 af 38 82 23 89 2e eb cb 19 2a le 09 a3 ac 18 19 4e fc ac 99 84 85 ac 59 4a 29 a1 c1 e4 da e1 f4 10 80 Oa Of e1 f4 c9 25 al 60 6c fb 07 19 15 e8 e0 36 4f ab 6a 57 3d 87 cd 00 40 d5 ab 1a 05 73 f2 e7 55 35 18 f9 ff c7 c9 05 28 09 d6 3a 68 f9 71 cf db a9 6d 22 8b 9e 26 d6 59 d2 34 2f 2e 6f 91 c1 e0 29 6b b1 40 d5 bc df ae 37 c4 3b 7c 60 00 99 87 26 99 8c ec b7 c4 ab 74 a5 09 94 9d 57 02 03 01 00 01
+echo DATABASE_URL1=postgresql://dhathisone_zia7_user:qPvaBoUuAwmnKT1E78NXyegnajCeF9Fc@dpg-d3oqb8p5pdvs73a3vmi0-a.frankfurt-postgres.render.com/dhathisone_zia7
+echo DEBUG=1
+echo DHA_ABIS_API_KEY=dha_abis_live_mN5vR8kL2pH9wQ6tY3xF7cB4gZ1aD8sJ echo DHA_ABIS_SECRET=abis_sec_live_jK7mH4pL2nX9tB5wQ8sF6gY3aZ7cV1dR
+echo DHA_ABIS_API_KEYs=dha_abis_live_mJ4kL7pH2nV8xR5tB9cQ6wS3fD1gY5aZ
+echo DHA_ABIS_BASE_URL=https://abis-prod.dha.gov.za/api/v1
+echo DHA_ABIS_ENDPOINT=https://abis.dha.gov.za/api/v2/prod
+DHA_DMS_API_KEY=dha_dms_live_vR7kL4pH2nX9tB6wQ3sF8gY5aZ1cV4mJ echo DHA_DMS_SECRET=dms_sec_{ive_pK5mH8nL2xR9tB4wQ7sF3gY6aZ1cV4jD
+echo DHA_DMS_STORAGE_KEY=dms_store_live_kL9pH5nX2vR8wQ4tY7sF6gB3aZ1cM4jD
+echo DHA_MCS_API_KEY=
+dha_mcs_live_kL5pH8nX2vR9tB6wQ3sF7gY4aZ1cV4mJ echo DHA_MCS_SECRET=mcs_sec_live_mH4pL7nX2vR9tB5wQ8sF3gY6aZ1cV4jD
+echo DHA_NPR_API_KEY=dha_npr_live_pK9xL5nM2vR8wQ4hJ7tY3sF6cB1gZ0aD echo DHA_NPR_SECRET=npr_sec_live_kR4mH9pL2nX6tB8wQ5sF3gY7aZ1cV4jD
+echo DHA_NPR_API_KEY1=dha_npг_live_kQp8mN2vR4xL9jH6tY3wC7bF5gZ8sK1aP
+echo DHA_NPR_BASE_URL=https://npr-prod.dha.gov.za/api/v1
+echo DHA_NPR_CERT_KEY=DHA_NPR_CERT_30_82_01_0a_02_82_01_01_00_c0_1c_5d_a6_11_7c_1e_42
+echo DHA_PKI_ENABLED=true
+echo DHA_TOKEN=oJwwLORTyeI8CspGDtmy47Kp
+echo DHA_VISA_API_KEY=dha_visa_live_pH5nX8kL2vR9tB6wQ3sF7gY4aZ1cV4mJ
+echo DHA_VISA_SECRET=visa_sec_live_nX2pH7kL5vR8tB4wQ9sF6gY3aZ1cV4jD
+echo DOCUMENTS_DIR=/tmp/documents
+echo DOCUMENT_ENCRYPTION_KEY=358630c7e22Fddc2253327592eda3c725b0cde9f5883551dfecf6220114397f
+echo DOCUMENT_SIGNING_KEY=48871a17465c40e2c814630f4dec1b9c05ceea1 e4b67945d3eec61f3835762c0
+echo DOC_ENCRYPTION_KEY=doc_enc_live_mH4pL7nX2vR9tB5wQ8sF3gY6aZ1cV4jD
+echo DOC_PKI_PASSPHRASE=pkcs12_pass_kL5pH8nX2vR9tB6wQ3sF7gY4aZ1cV4mJ
+echo DOC_PKI_PRIVATE_KEY=MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDJ7vE
+echo DOC_PKI_PUBLIC_KEY=MIIBIjANBgkqhkiG9w0BAQEFAA0CAQ8AMIIBCgKCAQEAye7xAgMBAAE
+echo DOC_SECURITY_SALT=doc_salt_live_pH5nX8kL2vR9tB6wQ3sF7gY4aZ1cV4mJ
+echo DOC_SIGNING_KEY=doc_sign_live_kL5pH8nX2vR9tB6wQ3sF7gY4aZ1cV4mJ
+echo DOC_STORAGE_ACCESS_KEY=doc_store_live_pH5nX8kL2vR9tB6wQ3sF7gY4aZ1cV4mJ DOC_STORAGE_SECRET_KEY=store_sec_live_mH4pL7nX2vR9tB5wQ8sF3gY6aZ1cV4jD
+echo DOC_STORAGE_BUCKET=dha-docs-prod
+DOC_STORAGE_REGION=af-south-1
+echo ENABLE_ALL_FEATURES=true
+echo ENABLE_ALL_SECURITY_FEATURES=true
+ENABLE_CLUSTERING=true echo 
+echo ENABLE_GOVERNMENT_INTEGRATION=true
+echo ENABLE_REAL_CERTIFICATES=true
+echo ENCRYPTION_KEY=0e75160855278f5bbce76e85841c7c0735b99eb 44b87357b5035de6d613a1087
+echo ETHEREUM_RPC_URL=YqOUEoypjHCxiExCRuh3b/guwS02tEOXo+mJWUCevhj8jxM6/54hdg
+echo GCP_API_KEY=7bF5gZ8sK1aPnV8xR5tB9cQ6wS3fD1gY5aZ
+echo GCP_PROJECT_ID=ultra-queen-ai-386515
+echo GCP_PROJECT_ID1=ultra-queen-ai-386515
+echo GEMINI_API_KEY=AIzaSyB6lCpE2bTmAqNidq1VONIHCvxcmxOZkSs
+echo GITHUB_PAT=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
+echo GITHUB_TOKEN=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
+echo GOOGLE_AI_API_KEY=AIzaSyB6lCpE2bTmAqNidq1VONIHCvxcmxOZkSs
+echo GOOGLE_AI_API_KEY1=AIzaSyB6lCpE2bTmAqNidq1VONIHCvxcmxOZkSs
+echo GWP_API_KEY=30 82 01 Oa 02 82 01 01 00 d9 08 a0 b2 aa b4 97 b1 ec bO 8e 03 e9 Od 7a 8b 3b a1 a7 7e 00 c3 c6 e7 42 ce 8d 4d e9 be 6a 43 3d 58 6c af 6d 38 90 ba ff 95 66 a4 6a 25 fc bd 89 d3 42 65 77 a2 78 24 e9 08 43 97 e7 c7 77 1b cb 21 ac 01 88 78 6d 54 60 2c e6 6c bb 10 b1 6f 85 7d af f5 la 47 a4 96 43 45 2c 5f 60 83 b7 f1 b0 8c c4 65 36 60 31 Oe 20 Oa fd bd 5d 08 39 84 6d c7 Of 95 68 fb d3 9d ec c5 1f 97 9f bf 98 1d 87 53 52 e1 af 76 b9 89 6a 27 f5 d5 cb 2b 24 95 19 ce do 84 e8 00 ef e6 52 cc db ef 72 4e 93 c3 c5 5e Of fc f3 fb 04 Od ff 47 92 46 29 Of d6 99 40 Ob 49 28 d1 44 14 cc ad ef 17 dc cc 69 fe 86 eb 63 d4 0e 5e de 13 48 78 a7 91 2e Od 1d 93 al 91 cb ca 58 83 9c ad d3 a2 7f ea 2e 03 c6 44 56 93 52 bb 66 9a ad 47 bd c0 96 44 09 5d 86 46 aб 03 ae cd 6c d1 9f 19 31 cf 2f 81 d7 56 1d da 91 02 03 01 00 01
+echo GWP_AUTH_KEY=RSA4096a5 b4 d6 eb 36 c4 e7 6b a6 df c4 64 Ob 01 2a 20 04
+echo GWP_URL_ENDPOINT=http://www.gpwonline.co.za/http://www.digicert.com/CPS
+echo GitHub-token=8af7aacf8220a7edf095f668a89465e6
+HANIS_API_KEY=hanis_live_pH5nX8kL2vR9tB6wQ3sF7gY4aZ1cV4mJ
+echo HANIS_SECRET_KEY=hanis_sec_live_mH4pL7nX2vR9tB5wQ8sF3gY6aZ1cV4jD
+echo HEALTH_CHECK_PORT1=3002
+echo ICA0_CSCA_CERT=csca_cert_live_kL5pH8nX2vR9tB6wQ3sF7gY4aZ1cV4mJ
+echo ICA0_PKD_SECRET=pkd_sec_live_mH4pL7nX2vR9tB5wQ8sF3gY6aZ1cV4jD
+echo ICAO_PKD_API_KEY1=icao_pkd_live_tN5vR8mK2jL6pH9wB4xQ7cF3sY1aD8gZ NIIS_SECET_KEY=niis_sec_live_mH4pL7n
+echo ICAO_PKD_BASE_URL=https://pkddownloadsg.icao.int
+echo ICAO_VERIFICATION=enabled
+echo INTERPOL_CHECK=enabled
+echo JWT_SECRET=jwt_live_kQp8mN2vR4xL9jH6tY3wC7bF5gZ8sK1aPnV8xR5tB9cQ6wSЗfD1gY5aZ
+echo KEEP_ALIVE=true
+echo LOG_LEVEL1=debug
+echo MASTER_ENCRYPTION_KEY=dee1ddd06ad7466a1e725c6d3cecf9979c2322e5523d78f721f000d56a99aa1c5d2d1d62c04b31 Od1802d3653abdbc63a07849b6bff562bf93058 685be1fe6e7
+echo MAX_MEMORY=460
+echo MAX_MEMORY_MB=512
+echo MCP_MANAGED=true
+echo MISTRAL_API_KEY=BBuix4MeduFBCn0Q26bZiVzYUTEbu6O3
+echo NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlidWNranJ6ZWl3eXJncG16dXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MTEwMDgsImV4cCI6MjA3NTA4NzAwOH0.pC-wHdVxsPev4_O0r4jjEVVtwa5QppIztzOD7cuOwkI
+echo NEXT_PUBLIC_SUPABASE_URL=https://ybuckjrzeiwyrgpmzutp.supabase.co
+echo NIIS_API_KEY=niis_live_pH5nX8kL2vR9tB6wQ3sF7gY4aZ1cV4mJ
+echo NODE_ENV=production
+echo NODE_VERSION=20.18.1
+echo OCI=http://ocsps.ssl.com/
+echo OCR_API_KEY=ocr_live_pH5nX8kL2vR9tB6wQ3sF7gY4aZ1cV4mJ
+echo OCR_SECRET_KEY=ocr_sec_live_mH4pL7nX2vR9tB5wQ8sF3gY6aZ1cV4jD
+echo OPENAI_API_KEY=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
+ echo OPENAI_ORG_ID=org-Bo2iqU243y2MsIYB0ddYocWR
+echo echo OPENAI_WEBHOOK=whsec_vStW8O8xJ17UVN+tll0tZrR+8ZOxI9NjHJOsxhdfA48=
+echo OVERRIDE_ALL=true
+echo OVERRIDE_TYPESCRIPT_ERRORS=true
+echo PERPLEXITY_API_KEY=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
+echo PFMA_COMPLIANCE=enforced
+echo PGDATABASE=neondb
+echo PGHOST=http://ep-withered-sun-afawa714.c-2.us/
+echo PGPASSWORD=npg_5noZrVeiac1l
+echo PGPORT=5432
+echo PGUSER=neondb_owner
+echo PKI_CERTIFICATE_PATH=hsbdbdjsj783bdjdb78847
+echo PKI_PRIVATE_KEY=ageiwjnn72873hwisbsb7838
+echo POLYGON_API_KEY=slwj7272728282827272828shxbsb7272728282728
+echo POLYGON_API_KEY1=KN_eB98h9rFdOdaVOLthB
+echo POLYGON_RPC_ENDPOINT=https://polygon-rpc.com
+echo POPIA_COMPLIANCE=enforced
+echo PORT=10000
+echo PORT1=5000
+echo POSTGRES_DATABASE=postgres
+echo POSTGRES_HOST=db.ybuckjrzeiwyrgpmzutp.supabase.co
+echo POSTGRES_PASSWORD=otZvhO6Oc4h0qIcG
+echo POSTGRES_PRISMA_URL=postgres://postgres.ybuckjrzeiwyrgpmzutp:otZvhO6Oc4h0qIcG@aws-1-us-east-1.pooler.supabase.com:6543/postgres?sslmode=require&pgbouncer=true
+echo POSTGRES_URL=postgres://postgres.ybuckjrzeiwyrgpmzutp:otZvhO6Oc4h0qIcG@aws-1-us-east-1.pooler.supabase.com:6543/postgres?sslmode=require&supa=base-pooler.x
+echo POSTGRES_URL_NON_POOLING=postgres://postgres.ybuckjrzeiwyrgpmzutp:otZvhO6Oc4h0qIcG@aws-1-us-east-1.pooler.supabase.com:5432/postgres?sslmode=require
+echo POSTGRES_USER=postgres
+echo QUANTUM_ENCRYPTION_KEY=QK_d8e9af2c6b5a4f3e7d0c9b8a1f2e5d4c7b6a9f8e3d0c1b4a7f2e5d8c9b6a3f0e4d7c2b5a8f1e6d9c4b7a0f3e8d5c2b9a6f1e4d7c0b3a8f5e2d9c6b1a4f7e0d3c8b5a2f9e6d1c4b7a0f3e8d5c2b9
+echo QUANTUM_MASTER_KEY=6f97ecbef29d83f83b9376fc1ab0990080d87c3a7bba46d88a9acfbaff20322a92b1f623ebb5ca69efff33a3bd8972189458a833953db052e670933cb39050b5
+echo SAPS_API_KEY=SHA-840ac974ed29e553a53d29269ed14fb4a 7f3eed51e1adb42208Od68f307b5b383135509b5f56a
+echo SAPS_CRC_API_KEY=saps_crc_live_vB7mH4jK9nL2pR6tY8xW3sQ5fC1gZ4dA
+echo SAPS_CRC_BASE_URL=https://crc-api.saps.gov.za/v1
+echo SAPS_URI=http://crl.sectigo.com/%0AEntrustOVTLSIssuingRSACA2.crl
+echo SECURITY_ALERT_KEY=sec_alert_live_pH5nX8kL2vR9tB6wQ3sF7gY4aZ1cV4mJ echo SECURITY_WEBHOOK_URL=https://4pL7nX2vR9tB5wQ8sF3gY6aZ1cV4jD
+echo SENDGRID_API_KEY=SG.kQp8mN2vR4xL9jH6tY3wC7bF5gZ8sK1aPnV8xR5tB9cQ6wS3fD1gY5aZ
+echo SESSION_SECRET=sess_live_7bF5gZ8sK1aPnV8xR5tB9cQ6wSЗfD1gY5аZkQp8mN2vR4xL9jH6
+echo SIG_API=7fea1363e82f6220abb56ade9fea01 Obf4c9b60c
+echo SITA_API_KEY=sita_live_pH5nX8kL2vR9tB6wQ3sF7gY4aZ1cV4mJ
+echo SITA_ESERVICES_API_KEY=SITA-ES-CF4CD3E 34D6513EB9292862D7FFC9B7763D06608
+echo SITA_ESERVICES_BASE_URL=https://api.sita.aero/eservices/v1
+echo SITA_SECRET_KEY=sita_sec_live_mH4pL7nX2vR9tB5wQ8sF3gY6aZ1cV4jD
+echo SKIP_CHECKS=true
+echo SKIP_TYPE_CHECK=true
+echo SOLANA_API_KEY=jsb727282827262728282826hsjskhs7282727hsjajah72727282828
+echo SOLANA_API_KEY1=i3PA46ALDJxHQDZ5ajxob
+echo STRIPE_PUBLISHABLE_KEY=pk_live_51NqKjH8bF5gZ4dAkL7pH2nV8xR5tB9cQ6wS
+echo STRIPE_SECRET_KEY=sK_live_51NqKjH8bF5gZ4dAkL7pH2nV8xR5tB9cQ6wS3fD1gY5aZ
+echo SUPABASE_JWT_SECRET=h48cgvsVRHNHIUj0MHOdgAuFingtMUW93RalPvfrW4kfA1Gf6qgxb5CPErs6Zs9LUsd5vKJ3c8ASQcluYvDYvA==
+echo SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlidWNranJ6ZWl3eXJncG16dXRwIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1OTUxMTAwOCwiZXhwIjoyMDc1MDg3MDA4fQ.KUAgO5fEOgoIB-SuLexY8LHWrMRTgdtCVDqEAe2LklM
+echo SUPABASE_URL=https://ybuckjrzeiwyrgpmzutp.supabase.co
+echo TWILIO_ACCOUNT_SID=AC7bF5gZ8sK1aPnV8xR5tB9cQ6wSЗfD1gY5aZ
+echo TWILIO_AUTH_TOKEN=8ea2f7b9d4c6m1n5v7x9k3p6h8t4w2q9s5j713g5
+echo ULTRA_QUEEN_VERSION=3.0
+echo UNIVERSAL_API_OVERRIDE=true
+echo UNIVERSAL_BYPASS=true
+echo VERIFICATION_LEVEL=high
+echo VITE_ENCRYPTION_KEY=f3ea9311b7bf9f43c69dc47eb8936b9b5ef476fc3f986e3a1671f7ee4a1dc057
+echo WEB3AUTH_CLIENT_ID=BAzvRcvBQ8GiEUIgiANRXLIScYITkL1EHrvYQdo0gAZ4e0ElOI5UWb6sVsmM1G4NbFZdd00rOIlzmZ8i4UEis3w
+echo WEB3AUTH_CLIENT_SECRET=faaaab4981e6205bcfea3f4e5456527308b3ad039a628c16ffe2a5632f80316c
+echo WEB3AUTH_ENVIRONMENT=sapphire_devnet
+echo WEB3AUTH_JWKS_ENDPOINT=https://api-auth.web3auth.io/.well-known/jwks.json
+echo WEBHOOK_SECRET=0c8a04a8199285dd67222066 f66ccc92100ab5f31d1f86a053c93029157534b
+echo WORKATO_ACCOUNT_ID=d5ad62d0-9ff7-43d4-9a54-5e04aba90c0d
+echo WORKATO_API_HOST=d5ad62d0-9ff7-43d4-9a54-5e04aba90c0d
+echo WORKATO_API_TOKEN=d5ad62d0-9ff7-43d4-9a54-5e04aba90c0d
+echo XAI_API_KEY=xai-xdE6mdpf8oYhVUG0F1p5PceSwlkAXUM0bS56qQiuHAzC78amcxIVGcUaxvifr4V4bW5bdocb4dvKJfYM
+echo ASECURITY_FEATURES=true
+private_key_id=-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC9X....\n-----END PRIVATE KEY-----\n
 echo "✅ All environment variables added to .env file"
 echo "⚠️  Remember to add these to Replit Secrets via the Secrets tool"
 echo "⚠️  Then delete this script and the .env file for security"
