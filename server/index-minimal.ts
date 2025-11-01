@@ -100,12 +100,11 @@ const HOST = '0.0.0.0'; // Required for production deployment
 const isProduction = process.env.NODE_ENV === 'production' || process.env.RENDER === 'true';
 const isRenderDeployment = !!process.env.RENDER || !!process.env.RENDER_SERVICE_ID;
 
-console.log(`🔍 Environment Detection:
-  NODE_ENV: ${process.env.NODE_ENV}
-  RENDER: ${process.env.RENDER}
-  Is Production: ${isProduction}
-  Is Render: ${isRenderDeployment}
-`);
+console.log('🔍 Environment Detection:');
+console.log(`  NODE_ENV: ${process.env.NODE_ENV}`);
+console.log(`  RENDER: ${process.env.RENDER}`);
+console.log(`  Is Production: ${isProduction}`);
+console.log(`  Is Render: ${isRenderDeployment}`);
 
 app.use(helmet({
   contentSecurityPolicy: {
