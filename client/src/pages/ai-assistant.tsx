@@ -112,7 +112,7 @@ export default function AIAssistantPage() {
   const [processingStatus, setProcessingStatus] = useState<string>('');
   const [isStreaming, setIsStreaming] = useState(false);
   const [streamingMessage, setStreamingMessage] = useState('');
-  
+
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -157,19 +157,19 @@ I'm Ra'is al Khadir (رئيس خضر) - your dedicated AI guide who appears exac
     mutationFn: async ({ message, conversationId, language }: { message: string; conversationId?: string; language?: string }) => {
       setIsStreaming(true);
       setStreamingMessage('');
-      
+
       // FIXED: Get authentication token for API request
       const token = localStorage.getItem('authToken');
       const headers: HeadersInit = {
         'Content-Type': 'application/json',
         'Accept': 'text/event-stream' // CRITICAL: Request streaming response
       };
-      
+
       // FIXED: Include authentication header if token exists
       if (token) {
         headers.Authorization = `Bearer ${token}`;
       }
-      
+
       const response = await fetch('/api/ai/chat', {
         method: 'POST',
         headers,
@@ -193,7 +193,7 @@ I'm Ra'is al Khadir (رئيس خضر) - your dedicated AI guide who appears exac
           console.error('Failed to parse error response:', e);
           errorData = { error: 'Failed to parse server response' };
         }
-        
+
         // Handle authentication errors explicitly
         if (response.status === 401) {
           toast({
@@ -208,11 +208,11 @@ I'm Ra'is al Khadir (رئيس خضر) - your dedicated AI guide who appears exac
           window.location.href = `/login?redirect=${encodeURIComponent(currentPath)}`;
           return;
         }
-        
+
         // FIXED: Handle bad request errors (400) explicitly with better error messages
         if (response.status === 400) {
           console.error('Bad Request Error:', errorData);
-          
+
           // Provide helpful message based on the error
           const errorMessage = errorData.error || errorData.message || "Invalid request data";
           const helpfulMessage: ChatMessage = {
@@ -222,7 +222,7 @@ I'm Ra'is al Khadir (رئيس خضر) - your dedicated AI guide who appears exac
             timestamp: new Date(),
             suggestions: ['Try a simpler question', 'Check login status', 'Refresh the page']
           };
-          
+
           setMessages(prev => [...prev, helpfulMessage]);
           toast({
             title: "Request Issue",
@@ -233,7 +233,7 @@ I'm Ra'is al Khadir (رئيس خضر) - your dedicated AI guide who appears exac
           setIsStreaming(false);
           return { content: '', metadata: null }; // Return empty response to prevent further errors
         }
-        
+
         if (response.status === 503 || (errorData.error && errorData.error.includes('API'))) {
           // Handle missing API key gracefully
           const helpMessage: ChatMessage = {
@@ -256,21 +256,21 @@ I'm Ra'is al Khadir (رئيس خضر) - your dedicated AI guide who appears exac
       const decoder = new TextDecoder();
       let fullContent = '';
       let metadata = null;
-      
+
       if (reader) {
         try {
           while (true) {
             const { done, value } = await reader.read();
             if (done) break;
-            
+
             const chunk = decoder.decode(value);
             const lines = chunk.split('\n');
-            
+
             for (const line of lines) {
               if (line.startsWith('data: ')) {
                 try {
                   const data = JSON.parse(line.slice(6));
-                  
+
                   if (data.type === 'chunk' && data.content) {
                     fullContent += data.content;
                     setStreamingMessage(prev => prev + data.content);
@@ -289,7 +289,7 @@ I'm Ra'is al Khadir (رئيس خضر) - your dedicated AI guide who appears exac
           reader.releaseLock();
         }
       }
-      
+
       // FIXED: Ensure we always return a valid response object
       return { 
         content: fullContent || '', 
@@ -323,7 +323,7 @@ I'm Ra'is al Khadir (رئيس خضر) - your dedicated AI guide who appears exac
         actionItems: data.metadata?.actionItems || [],
         metadata: data.metadata
       };
-      
+
       setMessages(prev => [...prev, assistantMessage]);
       setIsLoading(false);
       setIsStreaming(false);
@@ -331,7 +331,7 @@ I'm Ra'is al Khadir (رئيس خضر) - your dedicated AI guide who appears exac
     },
     onError: (error: any) => {
       console.error('Error sending message:', error);
-      
+
       // Check if it's an API key issue and provide helpful response
       if (error.message?.includes('API') || error.message?.includes('503') || error.message?.includes('Failed to send')) {
         const fallbackMessage: ChatMessage = {
@@ -361,7 +361,7 @@ I'm Ra'is al Khadir (رئيس خضر) - your dedicated AI guide who appears exac
       if (!selectedDocumentType) {
         throw new Error('Please select a document type before uploading');
       }
-      
+
       const formData = new FormData();
       formData.append('document', file);
       formData.append('targetFormType', `${selectedDocumentType}_application`);
@@ -371,7 +371,7 @@ I'm Ra'is al Khadir (رئيس خضر) - your dedicated AI guide who appears exac
       // FIXED: Get authentication token for document upload
       const token = localStorage.getItem('authToken');
       const headers: HeadersInit = {};
-      
+
       // FIXED: Include authentication header if token exists
       if (token) {
         headers.Authorization = `Bearer ${token}`;
@@ -398,9 +398,9 @@ I'm Ra'is al Khadir (رئيس خضر) - your dedicated AI guide who appears exac
         confidence: data.confidence || 85,
         documentId: data.documentId
       });
-      
+
       setProcessingStatus('completed');
-      
+
       const successMessage: ChatMessage = {
         id: Date.now().toString(),
         role: 'assistant',
@@ -425,9 +425,9 @@ Would you like me to help you with form completion or answer any questions about
         suggestions: ['Auto-fill passport form', 'Verify extracted data', 'Explain missing requirements'],
         actionItems: ['Review extracted data', 'Complete form fields']
       };
-      
+
       setMessages(prev => [...prev, successMessage]);
-      
+
       toast({
         title: "Document Processed",
         description: "Your document has been successfully processed with OCR extraction.",
@@ -457,10 +457,11 @@ Would you like me to help you with form completion or answer any questions about
     setIsLoading(true);
     setInputMessage('');
 
-    sendMessage.mutate({ 
-      message: inputMessage, // FIXED: Send clean message, language is handled by parameter
+    // Use the corrected sendMessage mutation
+    sendMessage.mutate({
+      message: inputMessage,
       conversationId: 'main-session',
-      language: selectedLanguage // FIXED: Send language as separate parameter
+      language: selectedLanguage
     });
   };
 
@@ -561,7 +562,7 @@ Would you like me to help you with form completion or answer any questions about
                     </option>
                   ))}
                 </select>
-                
+
                 {selectedDocumentType && (
                   <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-md">
                     <p className="text-sm font-medium text-blue-900 dark:text-blue-100">
@@ -611,13 +612,13 @@ Would you like me to help you with form completion or answer any questions about
                   <Camera className="h-4 w-4 mr-2" />
                   Upload Document
                 </Button>
-                
+
                 {uploadedFile && (
                   <div className="text-sm text-gray-600 dark:text-gray-400">
                     📄 {uploadedFile.name}
                   </div>
                 )}
-                
+
                 {processingStatus && (
                   <div className="mt-2">
                     {processingStatus === 'processing' && (
@@ -668,9 +669,9 @@ Would you like me to help you with form completion or answer any questions about
                   Powered by GPT-4 Turbo with government document expertise
                 </CardDescription>
               </CardHeader>
-              
+
               <Separator />
-              
+
               {/* Messages Area */}
               <ScrollArea className="flex-1 p-4">
                 <div className="space-y-4" data-testid="chat-messages-container">
@@ -695,7 +696,7 @@ Would you like me to help you with form completion or answer any questions about
                               {message.timestamp.toLocaleTimeString()}
                             </div>
                           </div>
-                          
+
                           {/* Suggestions */}
                           {message.suggestions && message.suggestions.length > 0 && (
                             <div className="mt-2 flex flex-wrap gap-1">
@@ -713,7 +714,7 @@ Would you like me to help you with form completion or answer any questions about
                               ))}
                             </div>
                           )}
-                          
+
                           {/* Action Items */}
                           {message.actionItems && message.actionItems.length > 0 && (
                             <div className="mt-2">
@@ -729,7 +730,7 @@ Would you like me to help you with form completion or answer any questions about
                       </div>
                     </div>
                   ))}
-                  
+
                   {(isLoading || isStreaming) && (
                     <div className="flex justify-start">
                       <div className="flex gap-3">
@@ -758,9 +759,9 @@ Would you like me to help you with form completion or answer any questions about
                 </div>
                 <div ref={messagesEndRef} />
               </ScrollArea>
-              
+
               <Separator />
-              
+
               {/* Input Area */}
               <div className="p-4 flex-shrink-0">
                 <div className="flex gap-2">

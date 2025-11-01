@@ -1,6 +1,6 @@
 /**
  * AI Assistant Routes - Advanced Multi-Language Chat System
- * 
+ *
  * This module provides comprehensive AI assistant endpoints with:
  * - Voice interaction capabilities (STT/TTS)
  * - Real-time validation and form assistance
@@ -35,14 +35,22 @@ const router = express.Router();
 const aiAssistant = new AIAssistantService();
 const militaryGradeAI = new MilitaryGradeAIAssistant();
 
-// Initialize real AI clients
-const openai = process.env.OPENAI_API_KEY ? new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
+// Initialize real AI clients - auto-detect from Render environment
+const openaiKey = process.env.OPENAI_API_KEY;
+const anthropicKey = process.env.ANTHROPIC_API_KEY;
+
+const openai = openaiKey ? new OpenAI({
+  apiKey: openaiKey
 }) : null;
 
-const anthropic = process.env.ANTHROPIC_API_KEY ? new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY
+const anthropic = anthropicKey ? new Anthropic({
+  apiKey: anthropicKey
 }) : null;
+
+console.log('🔑 [AI Assistant] API Keys Status:', {
+  openai: openaiKey ? '✅ Configured' : '❌ Missing',
+  anthropic: anthropicKey ? '✅ Configured' : '❌ Missing'
+});
 
 // Real AI chat endpoint
 router.post('/chat', requireAuth, async (req, res) => {
@@ -67,8 +75,8 @@ router.post('/chat', requireAuth, async (req, res) => {
         const messages = [
           {
             role: 'system',
-            content: `You are an AI assistant for the Department of Home Affairs (DHA) Digital Services Platform. 
-            Help users with document generation, government processes, and general inquiries. 
+            content: `You are an AI assistant for the Department of Home Affairs (DHA) Digital Services Platform.
+            Help users with document generation, government processes, and general inquiries.
             Be professional, helpful, and accurate. If you cannot help with something, explain why clearly.`
           },
           ...conversationHistory.slice(-10), // Keep last 10 messages for context
@@ -107,8 +115,8 @@ router.post('/chat', requireAuth, async (req, res) => {
           model: 'claude-3-sonnet-20240229',
           max_tokens: 1000,
           temperature: 0.7,
-          system: `You are an AI assistant for the Department of Home Affairs (DHA) Digital Services Platform. 
-          Help users with document generation, government processes, and general inquiries. 
+          system: `You are an AI assistant for the Department of Home Affairs (DHA) Digital Services Platform.
+          Help users with document generation, government processes, and general inquiries.
           Be professional, helpful, and accurate.`,
           messages: [
             ...conversationHistory.slice(-10),
@@ -275,7 +283,7 @@ router.get('/health', aiRateLimit, asyncHandler(async (req, res) => {
     const anthropic = new Anthropic({
       apiKey: process.env.ANTHROPIC_API_KEY || config.anthropicApiKey
     });
-    
+
     const healthTestResponse = await anthropic.messages.create({
       model: "claude-3-5-sonnet-20241022",
       max_tokens: 1, // Minimal token usage to reduce cost
@@ -284,9 +292,9 @@ router.get('/health', aiRateLimit, asyncHandler(async (req, res) => {
         content: "OK"
       }]
     });
-    
+
     const isHealthy = healthTestResponse.content && healthTestResponse.content.length > 0;
-    
+
     res.json({
       status: isHealthy ? "healthy" : "degraded",
       aiModelActive: isHealthy,
@@ -314,17 +322,17 @@ router.post('/admin/chat', requireAuth, requireRole(['admin']), aiRateLimit, asy
   try {
     const { message, conversationId } = req.body;
     const userId = (req as any).user.id;
-    
+
     // Security: Server-side admin verification (ignore client flags)
     const isAdmin = (req as any).user.role === 'admin';
-    
+
     if (!isAdmin) {
       return res.status(403).json({
         success: false,
         error: "AI Assistant access restricted to administrators only"
       });
     }
-    
+
     // Use enhanced AI assistant with admin mode enabled (hardcoded server-side)
     const response = await aiAssistant.generateResponse(
       message,
@@ -338,7 +346,7 @@ router.post('/admin/chat', requireAuth, requireRole(['admin']), aiRateLimit, asy
         language: 'en'
       }
     );
-    
+
     res.json({
       success: response.success,
       content: response.content,
@@ -346,7 +354,7 @@ router.post('/admin/chat', requireAuth, requireRole(['admin']), aiRateLimit, asy
       metadata: response.metadata,
       timestamp: new Date().toISOString()
     });
-    
+
   } catch (error) {
     console.error('Admin AI chat error:', error);
     res.status(500).json({
@@ -363,19 +371,19 @@ router.post('/chat', requireAuth, aiRateLimit, asyncHandler(async (req, res) => 
   try {
     const { message, conversationId, includeContext = true, language = 'en' } = req.body;
     const userId = (req as any).user.id;
-    
+
     // Enforce consent for AI processing (POPIA compliance)
     const consentStatus = await consentMiddleware.getConsentStatus(userId);
     if (!consentStatus.aiProcessing) {
       return res.status(403).json({
         success: false,
         error: "AI processing consent required",
-        code: "CONSENT_REQUIRED", 
+        code: "CONSENT_REQUIRED",
         message: "You must provide consent for AI processing to use this feature",
         compliance: "POPIA_COMPLIANCE_REQUIRED"
       });
     }
-    
+
     // Regular users get standard AI with consent requirements
     const response = await aiAssistant.generateResponse(
       message,
@@ -388,7 +396,7 @@ router.post('/chat', requireAuth, aiRateLimit, asyncHandler(async (req, res) => 
         adminMode: false           // Never enabled for regular users
       }
     );
-    
+
     res.json({
       success: response.success,
       content: response.content,
@@ -396,7 +404,7 @@ router.post('/chat', requireAuth, aiRateLimit, asyncHandler(async (req, res) => 
       actionItems: response.actionItems,
       timestamp: new Date().toISOString()
     });
-    
+
   } catch (error) {
     console.error('User AI chat error:', error);
     res.status(500).json({
@@ -413,7 +421,7 @@ router.post('/military', requireAuth, requireRole(['admin']), aiRateLimit, async
   try {
     const { message, conversationId } = req.body;
     const userId = (req as any).user.id;
-    
+
     const response = await militaryGradeAI.processCommand({
       message,
       commandType: 'GENERAL_QUERY' as any,
@@ -430,7 +438,7 @@ router.post('/military', requireAuth, requireRole(['admin']), aiRateLimit, async
       },
       conversationId: conversationId || 'military-chat'
     });
-    
+
     res.json({
       success: response.success,
       content: response.content,
@@ -438,7 +446,7 @@ router.post('/military', requireAuth, requireRole(['admin']), aiRateLimit, async
       auditEntry: response.auditEntry,
       timestamp: new Date().toISOString()
     });
-    
+
   } catch (error) {
     console.error('Military AI chat error:', error);
     res.status(500).json({
@@ -919,7 +927,7 @@ router.post('/passport/extract', requireAuth, upload.single('passportImage'), as
     let autoFillData = {};
     if (enableAutoFill) {
       autoFillData = {
-        // Form field mapping for document generation page
+        // Form field mapping for all DHA document types
         childFullName: passportData.fullName,
         fullName: passportData.fullName,
         surname: passportData.surname,
@@ -944,14 +952,11 @@ router.post('/passport/extract', requireAuth, upload.single('passportImage'), as
         validFrom: passportData.validFrom,
         validUntil: passportData.validUntil,
 
-        // Visa specific fields
-        holderFullName: passportData.fullName,
-        holderNationality: passportData.nationality,
-        holderPassportNumber: passportData.passportNumber,
-        countryOfIssue: 'South Africa',
-        portOfEntry: passportData.portOfEntry,
+        // Birth certificate fields
+        motherFullName: result.extractedFields.mother_name?.value || '',
+        fatherFullName: result.extractedFields.father_name?.value || '',
 
-        // ID card fields
+        // Address and contact
         address: result.extractedFields.address?.value || '',
         idNumber: result.extractedFields.id_number?.value || ''
       };

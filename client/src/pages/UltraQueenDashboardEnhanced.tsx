@@ -49,7 +49,7 @@ export default function UltraQueenDashboardEnhanced() {
   const generateDocument = async (docType: string) => {
     toast({
       title: 'Generating Document',
-      description: `Creating ${docType.replace(/_/g, ' ')}...`,
+      description: `Creating ${(docType || '').replace(/_/g, ' ')}...`,
     });
 
     try {
@@ -74,7 +74,7 @@ export default function UltraQueenDashboardEnhanced() {
         const data = await response.json();
         toast({
           title: '✅ Document Generated Successfully',
-          description: `${data.documentType.replace(/_/g, ' ')} is ready for download`,
+          description: `${(data.documentType || '').replace(/_/g, ' ')} is ready for download`,
         });
 
         // Download the document

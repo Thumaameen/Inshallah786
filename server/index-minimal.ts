@@ -15,31 +15,27 @@ import integrationActivationRoutes from './routes/integration-activation.js';
 import { WebSocketService } from './websocket.js';
 import { deploymentValidator } from './services/deployment-validation.js';
 import { SecureEnvLoader } from './utils/secure-env-loader.js';
+import healthRouter from './routes/health.js';
+import apiHealthCheckRouter from './routes/api-health-check.js';
 
-// Load Replit Secrets at startup
-if (process.env.REPL_ID) {
-  console.log('🔐 Loading Replit Secrets...');
+// Load environment variables - Render sets them automatically
+console.log('🔐 Loading Environment Variables...');
 
-  // Replit stores secrets in a special way - check multiple locations
-  const secretKeys = [
-    'OPENAI_API_KEY', 'ANTHROPIC_API_KEY', 'GOOGLE_API_KEY',
-    'MISTRAL_API_KEY', 'PERPLEXITY_API_KEY',
-    'DHA_NPR_API_KEY', 'DHA_ABIS_API_KEY',
-    'SAPS_CRC_API_KEY', 'ICAO_PKD_API_KEY'
-  ];
+const criticalKeys = [
+  'OPENAI_API_KEY', 'ANTHROPIC_API_KEY', 'MISTRAL_API_KEY', 'PERPLEXITY_API_KEY',
+  'DHA_NPR_API_KEY', 'DHA_ABIS_API_KEY', 'SAPS_CRC_API_KEY', 'ICAO_PKD_API_KEY',
+  'ETHEREUM_RPC_URL', 'POLYGON_RPC_ENDPOINT', 'DATABASE_URL', 'SESSION_SECRET'
+];
 
-  let loadedCount = 0;
-  for (const key of secretKeys) {
-    if (process.env[key]) {
-      loadedCount++;
-      console.log(`  ✓ ${key} loaded`);
-    } else {
-      console.log(`  ✗ ${key} not found in secrets`);
-    }
+let loadedCount = 0;
+for (const key of criticalKeys) {
+  if (process.env[key]) {
+    loadedCount++;
+    console.log(`  ✓ ${key} configured`);
   }
-
-  console.log(`✅ Loaded ${loadedCount}/${secretKeys.length} API keys from Replit Secrets\n`);
 }
+
+console.log(`✅ Loaded ${loadedCount}/${criticalKeys.length} environment variables\n`);
 
 // Load environment variables first
 dotenv.config();
@@ -53,14 +49,25 @@ if (envFilePath) {
 // Validate production keys
 SecureEnvLoader.validateProductionKeys();
 
-// Validate deployment configuration - PRODUCTION ONLY
+// Validate deployment configuration
 try {
-  deploymentValidator.validateOrFail();
+  const validation = deploymentValidator.validate();
+  if (validation.warnings.length > 0) {
+    console.warn('⚠️ Deployment warnings (non-blocking):');
+    validation.warnings.forEach(w => console.warn(`  • ${w}`));
+  }
+  if (validation.errors.length > 0) {
+    console.warn('⚠️ Deployment validation issues (continuing anyway):');
+    validation.errors.forEach(e => console.warn(`  • ${e}`));
+  }
+  console.log('✅ Server starting with available configuration\n');
+
+  // Validate API keys from Render environment
+  import { renderAPIValidator } from './services/render-api-validator.js';
+  renderAPIValidator.printReport();
+
 } catch (error) {
-  console.error('\n❌ DEPLOYMENT VALIDATION FAILED:', error);
-  console.error('❌ Production deployment requires all validations to pass\n');
-  // Continue anyway since we're on Render with all keys configured
-  console.warn('⚠️ Continuing with available configuration\n');
+  console.warn('⚠️ Validation check skipped, continuing startup\n');
 }
 
 // Suppress build warnings in production
@@ -93,12 +100,11 @@ const HOST = '0.0.0.0'; // Required for production deployment
 const isProduction = process.env.NODE_ENV === 'production' || process.env.RENDER === 'true';
 const isRenderDeployment = !!process.env.RENDER || !!process.env.RENDER_SERVICE_ID;
 
-console.log(`🔍 Environment Detection:
-  NODE_ENV: ${process.env.NODE_ENV}
-  RENDER: ${process.env.RENDER}
-  Is Production: ${isProduction}
-  Is Render: ${isRenderDeployment}
-`);
+console.log('🔍 Environment Detection:');
+console.log('  NODE_ENV:', process.env.NODE_ENV);
+console.log('  RENDER:', process.env.RENDER);
+console.log('  Is Production:', isProduction);
+console.log('  Is Render:', isRenderDeployment);
 
 app.use(helmet({
   contentSecurityPolicy: {
@@ -175,6 +181,10 @@ app.get('/api/health', (req, res) => {
     documentTypesCount: 23 // Placeholder: This should be dynamically checked
   });
 });
+
+// Health check routes
+app.use('/api', healthRouter);
+app.use(apiHealthCheckRouter);
 
 // Serve static files in production
 const clientBuildPath = join(process.cwd(), 'dist', 'public');

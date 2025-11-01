@@ -7,6 +7,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Crown, Shield, FileText, Database, Cpu, Zap, CheckCircle, XCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { Progress } from '@/components/ui/progress';
 
 interface APIStatus {
   biometric: boolean;
@@ -25,6 +26,14 @@ interface QueenCapabilities {
   completeUserAuthority: boolean;
 }
 
+// Define a more comprehensive SystemMetrics interface if needed, including memory
+interface SystemMetrics {
+  cpu: { used: number };
+  memory: { used: number };
+  disk: { used: number };
+  network: { sent: number; received: number };
+}
+
 export default function QueenDashboard() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -41,6 +50,24 @@ export default function QueenDashboard() {
   const { data: capabilities, isLoading: capabilitiesLoading } = useQuery<QueenCapabilities>({
     queryKey: ['/api/queen-capabilities']
   });
+
+  // Mock System Metrics for demonstration (replace with actual data fetching)
+  const [systemMetrics, setSystemMetrics] = useState<SystemMetrics | undefined>(undefined);
+
+  useEffect(() => {
+    // Simulate fetching system metrics
+    const interval = setInterval(() => {
+      setSystemMetrics({
+        cpu: { used: Math.floor(Math.random() * 100) },
+        memory: { used: Math.floor(Math.random() * 100) },
+        disk: { used: Math.floor(Math.random() * 100) },
+        network: { sent: Math.floor(Math.random() * 1000), received: Math.floor(Math.random() * 1000) },
+      });
+    }, 5000); // Update every 5 seconds
+
+    return () => clearInterval(interval); // Cleanup interval on component unmount
+  }, []);
+
 
   // Test Queen Ultra AI
   const queenTestMutation = useMutation({
@@ -115,7 +142,7 @@ export default function QueenDashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-green-900 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
-        
+
         {/* Header */}
         <div className="text-center space-y-4">
           <div className="flex items-center justify-center gap-3">
@@ -124,7 +151,7 @@ export default function QueenDashboard() {
             <Crown className="h-12 w-12 text-yellow-400" />
           </div>
           <p className="text-xl text-blue-200">🔱 Ra'is al Khadir - Complete DHA Digital Services with Authentic API Integrations 🔱</p>
-          
+
           {/* Live Status Banner */}
           <Alert className="bg-green-900/50 border-green-500">
             <Zap className="h-4 w-4" />
@@ -145,7 +172,7 @@ export default function QueenDashboard() {
           {/* Dashboard Tab */}
           <TabsContent value="dashboard" className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              
+
               {/* Queen Capabilities */}
               <Card className="bg-black/20 border-yellow-500" data-testid="card-capabilities">
                 <CardHeader>
@@ -237,26 +264,26 @@ export default function QueenDashboard() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                
+
                 {/* Bot Selection */}
                 <div className="space-y-2">
                   <label className="text-white font-medium">Choose AI Bot Type:</label>
                   <div className="flex gap-2">
-                    <Button 
+                    <Button
                       variant={selectedBot === 'assistant' ? 'default' : 'outline'}
                       onClick={() => setSelectedBot('assistant')}
                       data-testid="button-select-assistant"
                     >
                       🧠 Assistant
                     </Button>
-                    <Button 
+                    <Button
                       variant={selectedBot === 'agent' ? 'default' : 'outline'}
                       onClick={() => setSelectedBot('agent')}
                       data-testid="button-select-agent"
                     >
                       🔧 Agent
                     </Button>
-                    <Button 
+                    <Button
                       variant={selectedBot === 'security_bot' ? 'default' : 'outline'}
                       onClick={() => setSelectedBot('security_bot')}
                       data-testid="button-select-security"
@@ -279,7 +306,7 @@ export default function QueenDashboard() {
                   />
                 </div>
 
-                <Button 
+                <Button
                   onClick={() => queenTestMutation.mutate({ message: userMessage, botType: selectedBot })}
                   disabled={queenTestMutation.isPending || !userMessage.trim()}
                   className="w-full bg-purple-600 hover:bg-purple-700"
@@ -348,7 +375,7 @@ export default function QueenDashboard() {
                   </div>
                 </div>
 
-                <Button 
+                <Button
                   onClick={() => documentTestMutation.mutate()}
                   disabled={documentTestMutation.isPending}
                   className="w-full bg-orange-600 hover:bg-orange-700"
@@ -374,7 +401,7 @@ export default function QueenDashboard() {
           {/* APIs Tab */}
           <TabsContent value="apis" className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              
+
               {/* OpenAI Status */}
               <Card className="bg-black/20 border-green-500" data-testid="card-openai-status">
                 <CardHeader>
@@ -415,6 +442,58 @@ export default function QueenDashboard() {
                 </CardContent>
               </Card>
             </div>
+            {/* System Metrics Card */}
+            <Card className="bg-black/20 border-teal-500" data-testid="card-system-metrics">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-teal-400">
+                  <Cpu className="h-5 w-5" />
+                  System Metrics
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3 text-white">
+                {systemMetrics ? (
+                  <>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>CPU Usage</span>
+                        <span>{systemMetrics?.cpu?.used || 0}%</span>
+                      </div>
+                      <Progress value={systemMetrics?.cpu?.used || 0} className="h-2" />
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>Memory Usage</span>
+                        <span>{systemMetrics?.memory?.used || 0}%</span>
+                      </div>
+                      <Progress value={systemMetrics?.memory?.used || 0} className="h-2" />
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>Disk Usage</span>
+                        <span>{systemMetrics?.disk?.used || 0}%</span>
+                      </div>
+                      <Progress value={systemMetrics?.disk?.used || 0} className="h-2" />
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>Network Sent</span>
+                        <span>{systemMetrics?.network?.sent || 0} KB/s</span>
+                      </div>
+                      <Progress value={systemMetrics?.network?.sent || 0} className="h-2" />
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>Network Received</span>
+                        <span>{systemMetrics?.network?.received || 0} KB/s</span>
+                      </div>
+                      <Progress value={systemMetrics?.network?.received || 0} className="h-2" />
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-gray-400">Loading system metrics...</div>
+                )}
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </div>

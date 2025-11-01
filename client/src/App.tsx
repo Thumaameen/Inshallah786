@@ -1,4 +1,4 @@
-import { Switch, Route } from "wouter";
+import { Switch, Route, Router } from "wouter"; // Assuming Router is imported from wouter
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Suspense, lazy, useState, useEffect } from "react";
 import { queryClient } from "./lib/queryClient";
@@ -29,6 +29,7 @@ import UltraQueenAIEnhanced from "./pages/UltraQueenAIEnhanced";
 import UltraAdvancedPDF from "./pages/UltraAdvancedPDF";
 import UltraQueenDashboard from "./pages/UltraQueenDashboard";
 import UltraQueenDashboardEnhanced from "./pages/UltraQueenDashboardEnhanced";
+import UltraQueenAssistant from "./pages/UltraQueenAssistant"; // Import the new page
 
 // Lazy load admin components for better code splitting
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
@@ -65,6 +66,12 @@ function AppContent() {
 
   // Initialize Ultra AI Interface and Download Notifications
   useEffect(() => {
+    // Ensure mobile viewport is set correctly
+    const viewport = document.querySelector('meta[name="viewport"]');
+    if (viewport) {
+      viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+    }
+
     // Placeholder for initializeUltraAI() - actual implementation would go here
     const initializeUltraAI = () => {
       console.log("Initializing Ultra AI...");
@@ -107,6 +114,8 @@ function AppContent() {
             <Route path="/dha802" component={DHA802Generator} />
             {/* Debug route removed for production */}
             <Route path="/system-status" component={SystemStatus} />
+            {/* Ultra Queen Assistant route */}
+            <Route path="/ultra-queen-assistant" component={UltraQueenAssistant} />
 
             {/* Admin Routes - Direct Access */}
             <Route path="/admin/dashboard">

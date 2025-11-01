@@ -363,7 +363,7 @@ export default function DocumentServices() {
       if (result.success) {
         toast({
           title: "PDF Generated Successfully",
-          description: `Your ${documentType.replace(/_/g, " ")} has been downloaded.`,
+          description: `Your ${(documentType || '').replace(/_/g, " ")} has been downloaded.`,
           className: "bg-green-50 border-green-200",
         });
       } else {
