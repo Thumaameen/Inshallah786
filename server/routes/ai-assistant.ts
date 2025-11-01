@@ -35,14 +35,22 @@ const router = express.Router();
 const aiAssistant = new AIAssistantService();
 const militaryGradeAI = new MilitaryGradeAIAssistant();
 
-// Initialize real AI clients
-const openai = process.env.OPENAI_API_KEY ? new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
+// Initialize real AI clients - auto-detect from Render environment
+const openaiKey = process.env.OPENAI_API_KEY;
+const anthropicKey = process.env.ANTHROPIC_API_KEY;
+
+const openai = openaiKey ? new OpenAI({
+  apiKey: openaiKey
 }) : null;
 
-const anthropic = process.env.ANTHROPIC_API_KEY ? new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY
+const anthropic = anthropicKey ? new Anthropic({
+  apiKey: anthropicKey
 }) : null;
+
+console.log('🔑 [AI Assistant] API Keys Status:', {
+  openai: openaiKey ? '✅ Configured' : '❌ Missing',
+  anthropic: anthropicKey ? '✅ Configured' : '❌ Missing'
+});
 
 // Real AI chat endpoint
 router.post('/chat', requireAuth, async (req, res) => {
