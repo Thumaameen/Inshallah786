@@ -31,6 +31,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.67.0",
     "@esbuild/linux-x64": "^0.25.11",
+    "@solana/web3.js": "^1.98.4",
     "@types/better-sqlite3": "^7.6.8",
     "@types/compression": "^1.7.2",
     "@types/cors": "^2.8.13",
@@ -60,6 +61,7 @@
     "helmet": "^7.1.0",
     "jsbarcode": "^3.12.1",
     "jsonwebtoken": "^9.0.2",
+    "lucide-react": "^0.552.0",
     "multer": "^2.0.2",
     "node-cron": "^3.0.3",
     "node-fetch": "^3.3.2",
@@ -77,6 +79,8 @@
   },
   "devDependencies": {
     "@types/node": "^24.9.2",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
     "drizzle-kit": "^0.31.6",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"

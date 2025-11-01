@@ -4,9 +4,9 @@
  * with dynamic forms, preview mode, and exact design specifications
  */
 
-import { useState, useEffect, ComponentType, ChangeEvent } from "react";
+import React, { useState, ComponentType } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { queryClient, apiRequest } from "@/lib/queryClient";
+import { apiRequest } from "@/lib/queryClient";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -14,32 +14,21 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import {
-  FileText, Download, Eye, Shield, CheckCircle, QrCode, Calendar, User, Hash,
-  Baby, Heart, Plane, Skull, Briefcase, CreditCard, UserCheck, Search,
+  FileText, Download, Eye, Shield, CheckCircle, User, Hash,
+  Baby, Heart, Plane, Skull, Briefcase, CreditCard, UserCheck, 
   Building2, Scan, Clock, AlertTriangle, FileCheck, Camera, Upload,
-  Users, Globe, Lock, ShieldCheck, Fingerprint, Award, Stamp,
-  BookOpen, MapPin, Phone, Mail, Home, Star, Plus, Minus, Info,
-  ExternalLink, Zap, Target, Settings, HelpCircle
-} from "lucide-react";
+  Users, Globe, Lock, ShieldCheck, Award, 
+  BookOpen, Home, Star, 
+  Target, Settings} from "lucide-react";
 
 import {
-  documentGenerationRequestSchema,
   documentTypeSchemas,
-  type DocumentGenerationRequest,
-  type SmartIdCardData,
-  type IdentityDocumentBookData,
-  type SouthAfricanPassportData
-} from "../shared/schema";
+  type DocumentGenerationRequest} from "../shared/schema";
+import { validateDocumentData, handleDocumentError } from "@/utils/error-handler";
 
 // Document type definitions
 interface DocumentTypeInfo {
@@ -127,7 +116,17 @@ interface TemplatesResponse {
   message: string;
 }
 
+import ErrorBoundary from '@/components/error-boundary';
+
 export default function UnifiedDocumentGenerationPage() {
+  return (
+    <ErrorBoundary>
+      <UnifiedDocumentGenerationContent />
+    </ErrorBoundary>
+  );
+}
+
+function UnifiedDocumentGenerationContent() {
   const { toast } = useToast();
 
   // Fetch document templates from API
@@ -342,28 +341,53 @@ export default function UnifiedDocumentGenerationPage() {
 
       // Generate document
       if (downloadMode) {
-        // Direct download
-        const response = await fetch('/api/documents/generate?download=true', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          },
-          body: JSON.stringify(documentData)
-        });
+        try {
+          const validation = validateDocumentData(documentData, selectedDocumentType);
+          if (!validation.isValid) {
+            toast({
+              title: "Validation Error", 
+              description: validation.errors.join('\n'),
+              variant: "destructive"
+            });
+            return;
+          }
 
-        if (response.ok) {
+          const response = await fetch('/api/documents/generate?download=true', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify(documentData)
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            handleDocumentError(errorData);
+            return;
+          }
+
           const blob = await response.blob();
-          const url = window.URL.createObjectURL(blob);
-          const link = document.createElement('a');
-          link.href = url;
-          link.download = `${selectedDocumentType}_${Date.now()}.pdf`;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          window.URL.revokeObjectURL(url);
-        } else {
-          throw new Error('Download failed');
+          const downloadUrl = window.URL.createObjectURL(blob);
+          const downloadLink = document.createElement('a');
+          downloadLink.href = downloadUrl;
+          downloadLink.download = `${selectedDocumentType}_${Date.now()}.pdf`;
+          document.body.appendChild(downloadLink);
+          downloadLink.click();
+          document.body.removeChild(downloadLink);
+          window.URL.revokeObjectURL(downloadUrl);
+          
+          toast({
+            title: "Document Downloaded",
+            description: "Your document has been downloaded successfully.",
+          });
+        } catch (error) {
+          console.error('Download failed:', error);
+          toast({
+            title: "Download Failed",
+            description: error instanceof Error ? error.message : "Failed to download document",
+            variant: "destructive"
+          });
         }
       } else {
         // Generate with metadata
@@ -463,7 +487,8 @@ export default function UnifiedDocumentGenerationPage() {
             {Object.entries(getCategories()).filter(([key, category]) => key && key !== "" && key.trim() !== "" && category?.name).map(([key, category]) => {
               const count = getDocumentsByCategory(key).length;
               const implemented = getDocumentsByCategory(key).filter(d => d.isImplemented).length;
-              const IconComponent = getCategoryIconComponent(category.icon);
+                            const categoryTyped = category as { icon: string; color: string; name: string };
+              const IconComponent = getCategoryIconComponent(categoryTyped.icon);
               return (
                 <Card key={key} className="p-4">
                   <div className="flex items-center gap-3">
