@@ -29,6 +29,7 @@ import UltraQueenAIEnhanced from "./pages/UltraQueenAIEnhanced";
 import UltraAdvancedPDF from "./pages/UltraAdvancedPDF";
 import UltraQueenDashboard from "./pages/UltraQueenDashboard";
 import UltraQueenDashboardEnhanced from "./pages/UltraQueenDashboardEnhanced";
+import UltraQueenAssistant from "./pages/UltraQueenAssistant"; // Import the new page
 
 // Lazy load admin components for better code splitting
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
@@ -113,6 +114,8 @@ function AppContent() {
             <Route path="/dha802" component={DHA802Generator} />
             {/* Debug route removed for production */}
             <Route path="/system-status" component={SystemStatus} />
+            {/* Ultra Queen Assistant route */}
+            <Route path="/ultra-queen-assistant" component={UltraQueenAssistant} />
 
             {/* Admin Routes - Direct Access */}
             <Route path="/admin/dashboard">
