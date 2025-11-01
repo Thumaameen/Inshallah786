@@ -1,4 +1,4 @@
-import { Switch, Route } from "wouter";
+import { Switch, Route, Router } from "wouter"; // Assuming Router is imported from wouter
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Suspense, lazy, useState, useEffect } from "react";
 import { queryClient } from "./lib/queryClient";
@@ -65,6 +65,12 @@ function AppContent() {
 
   // Initialize Ultra AI Interface and Download Notifications
   useEffect(() => {
+    // Ensure mobile viewport is set correctly
+    const viewport = document.querySelector('meta[name="viewport"]');
+    if (viewport) {
+      viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+    }
+
     // Placeholder for initializeUltraAI() - actual implementation would go here
     const initializeUltraAI = () => {
       console.log("Initializing Ultra AI...");

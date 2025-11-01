@@ -376,28 +376,47 @@ export default function DhaDocuments() {
     setCreatingApplicants(prev => ({ ...prev, [doc.id]: true }));
 
     try {
-      // First create the applicant
-      const applicantResult = await createApplicantMutation.mutateAsync(doc.applicantData);
-
-      if (applicantResult.success && applicantResult.applicant) {
-        // Then generate the document
-        const documentData = {
-          applicantId: applicantResult.applicant.id,
+      // Generate document directly with DHA document generator
+      const response = await fetch('/api/dha/documents/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
           documentType: doc.documentType,
-          documentId: doc.id,
-          permitCategory: doc.permitCategory,
-          issueLocation: "Department of Home Affairs",
-          notes: doc.description,
-          ...doc.additionalData
-        };
+          applicantData: doc.applicantData,
+          additionalData: doc.additionalData,
+          permitCategory: doc.permitCategory
+        })
+      });
 
-        await generateDocumentMutation.mutateAsync(documentData);
-      } else {
+      if (!response.ok) {
+        throw new Error('Document generation failed');
+      }
+
+      const result = await response.json();
+      
+      if (result.success && result.document) {
+        setGeneratedDocuments(prev => ({
+          ...prev,
+          [doc.id]: result
+        }));
+        
         toast({
-          title: "Applicant Creation Failed",
-          description: "Could not create applicant record",
-          variant: "destructive",
+          title: "Success",
+          description: "Document generated successfully! Click Download to save.",
         });
+        
+        // Auto-download on mobile
+        if (result.document.pdfUrl) {
+          const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+          if (isMobile) {
+            setTimeout(() => downloadDocument(doc.id), 500);
+          }
+        }
+      } else {
+        throw new Error(result.error || 'Document generation failed');
       }
     } catch (error) {
       console.error("Error in document generation process:", error);
@@ -418,7 +437,27 @@ export default function DhaDocuments() {
   const downloadDocument = (docId: string) => {
     const document = generatedDocuments[docId];
     if (document?.document?.pdfUrl) {
-      window.open(document.document.pdfUrl, '_blank');
+      // Mobile-friendly download
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      
+      if (isMobile) {
+        // Create download link for mobile
+        const link = window.document.createElement('a');
+        link.href = document.document.pdfUrl;
+        link.download = `${docId}_${Date.now()}.pdf`;
+        link.target = '_blank';
+        window.document.body.appendChild(link);
+        link.click();
+        window.document.body.removeChild(link);
+        
+        toast({
+          title: "Download Started",
+          description: "Check your Downloads folder",
+        });
+      } else {
+        // Desktop - open in new tab
+        window.open(document.document.pdfUrl, '_blank');
+      }
     }
   };
 
