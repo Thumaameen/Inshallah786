@@ -65,9 +65,27 @@ fi
 echo "✅ Client build verified"
 ls -la client/dist/
 
+# Fix ES module imports
+echo "🔧 Fixing ES module imports..."
+node scripts/fix-esm-imports.js
+
 # Build server
 echo "⚙️ Building server..."
-npx tsc -p tsconfig.production.json --skipLibCheck || echo "⚠️ Build completed with warnings"
+npx tsc -p tsconfig.production.json --skipLibCheck
+
+# Verify critical files exist after build
+echo "🔍 Verifying compiled files..."
+if [ ! -f "dist/server/services/api-key-manager.js" ]; then
+  echo "❌ ERROR: api-key-manager.js not found after build"
+  exit 1
+fi
+
+if [ ! -f "dist/server/services/integration-manager.js" ]; then
+  echo "❌ ERROR: integration-manager.js not found after build"
+  exit 1
+fi
+
+echo "✅ Server build verified"
 
 # Ensure dist/public directory exists
 echo "📋 Preparing dist/public directory..."

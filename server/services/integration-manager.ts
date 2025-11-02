@@ -1,4 +1,4 @@
-import { apiKeyManager } from './api-key-manager';
+import { apiKeyManager } from './api-key-manager.js';
 import { EventEmitter } from 'events';
 
 interface IntegrationStatus {
@@ -38,7 +38,7 @@ class IntegrationManager extends EventEmitter {
         for (const integration of this.REQUIRED_INTEGRATIONS) {
             await this.checkIntegration(integration);
         }
-        
+
         // Set up periodic checks
         setInterval(() => this.checkAllIntegrations(), 5 * 60 * 1000); // Every 5 minutes
     }
