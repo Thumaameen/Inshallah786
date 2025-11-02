@@ -287,7 +287,7 @@ export class WallClockValidator extends EventEmitter {
       for (const test of this.validationTests) {
         console.log(`[HonestWallClockValidator] Running realistic test: ${test.name} (${test.targetFrequency} Hz)`);
 
-        const result = await this.runHonestValidationTest(test);
+        const result = await this.  runValidationTest(test);
         this.testResults.set(test.name, result);
 
         // Log test result with honest assessment
@@ -691,5 +691,5 @@ interface SystemBaseline {
   measurementOverhead: number;
 }
 
-export { WallClockValidator };
+// Export is already handled by the class declaration
 export type { ValidationResult, SystemBaseline };
