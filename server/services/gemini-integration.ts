@@ -5,7 +5,15 @@ import * as fs from "fs";
 import { GoogleGenAI, Modality } from "@google/genai";
 
 // The newest Gemini model series is "gemini-2.5-flash" or "gemini-2.5-pro"
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
+const getGeminiApiKey = () => {
+  return process.env.GEMINI_API_KEY || 
+         process.env.GOOGLE_AI_API_KEY || 
+         process.env.GOOGLE_GEMINI_API_KEY || 
+         process.env.GOOGLE_API_KEY || 
+         "";
+};
+
+const ai = new GoogleGenAI({ apiKey: getGeminiApiKey() });
 
 export interface GeminiAnalysis {
   content: string;
@@ -25,9 +33,11 @@ export class GeminiService {
   private apiKey: string;
 
   constructor() {
-    this.apiKey = process.env.GEMINI_API_KEY || '';
+    this.apiKey = getGeminiApiKey();
     if (!this.apiKey) {
       console.error('[Gemini] API key not found in environment variables');
+    } else {
+      console.log('[Gemini] ✅ API key configured successfully');
     }
   }
 

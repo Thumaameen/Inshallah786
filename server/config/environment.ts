@@ -153,15 +153,31 @@ export function validateProductionEnvironment(): void {
   let configuredKeys = 0;
   const allKeys = Object.keys(environment);
   
+  // Critical service validation
+  const criticalServices = {
+    'Gemini AI': process.env.GEMINI_API_KEY || process.env.GOOGLE_AI_API_KEY,
+    'Polygon RPC': process.env.POLYGON_RPC_ENDPOINT || process.env.POLYGON_API_KEY,
+    'Solana RPC': process.env.SOLANA_RPC_URL || process.env.SOLANA_API_KEY,
+    'SAPS CRC': process.env.SAPS_CRC_API_KEY || process.env.SAPS_API_KEY
+  };
+  
+  console.log('\n🔍 [CONFIG] Critical Service Status:');
+  for (const [service, key] of Object.entries(criticalServices)) {
+    if (key) {
+      console.log(`  ✅ ${service} - Configured`);
+    } else {
+      console.log(`  ⚠️  ${service} - Not configured (may use fallback)`);
+    }
+  }
+  
   for (const key of allKeys) {
     const value = environment[key as keyof typeof environment];
     if (typeof value === 'string' && value.length > 0 && (key.includes('KEY') || key.includes('TOKEN') || key.includes('SECRET'))) {
       configuredKeys++;
-      console.log(`  ✅ ${key} configured`);
     }
   }
   
-  console.log(`✅ [CONFIG] ${configuredKeys} API keys configured from Replit Secrets`);
+  console.log(`\n✅ [CONFIG] ${configuredKeys} API keys configured from environment`);
   console.log('✅ [CONFIG] Production mode: USE_MOCK_DATA=false, FORCE_REAL_APIS=true');
   console.log('✅ [CONFIG] All integrations enabled: BYPASS_MODE=true');
   console.log('✅ [CONFIG] System rate: 100%');
