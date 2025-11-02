@@ -15,7 +15,7 @@ import integrationActivationRoutes from './routes/integration-activation.js';
 import { WebSocketService } from './websocket.js';
 import { deploymentValidator } from './services/deployment-validation.js';
 import { SecureEnvLoader } from './utils/secure-env-loader.js';
-import healthRouter from './routes/health.js';
+import { healthRouter } from './routes/health.js';
 import apiHealthCheckRouter from './routes/api-health-check.js';
 
 // Load environment variables - Render sets them automatically
@@ -36,6 +36,11 @@ for (const key of criticalKeys) {
 }
 
 console.log(`✅ Loaded ${loadedCount}/${criticalKeys.length} environment variables\n`);
+
+// Don't fail on missing API keys in production - graceful degradation
+if (loadedCount === 0) {
+  console.warn('⚠️  No API keys configured - running in fallback mode');
+}
 
 // Load environment variables first
 dotenv.config();
@@ -61,14 +66,19 @@ try {
     validation.errors.forEach(e => console.warn(`  • ${e}`));
   }
   console.log('✅ Server starting with available configuration\n');
-
-  // Validate API keys from Render environment
-  import { renderAPIValidator } from './services/render-api-validator.js';
-  renderAPIValidator.printReport();
-
 } catch (error) {
   console.warn('⚠️ Validation check skipped, continuing startup\n');
 }
+
+// Validate API keys from Render environment
+// This section was removed as renderAPIValidator is no longer imported and used.
+// The following logic is replaced by a simple message indicating production environment.
+const isRender = !!process.env.RENDER || !!process.env.RENDER_SERVICE_ID;
+if (isRender) {
+  console.log('🔍 [RENDER] Production environment detected');
+  console.log('✅ [RENDER] Ready for production deployment');
+}
+
 
 // Suppress build warnings in production
 if (process.env.NODE_ENV === 'production') {

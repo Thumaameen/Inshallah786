@@ -123,7 +123,7 @@ services:
         value: "https://crc-api.saps.gov.za/v1"
       - key: ICAO_PKD_API_KEY
         sync: false
-      - key: ICAO_PKD_BASE_URL 
+      - key: ICAO_PKD_BASE_URL
         value: "https://pkddownloadsg.icao.int"
       - key: SITA_API_KEY
         sync: false
@@ -211,9 +211,10 @@ services:
     name: dha-monitoring-service
     env: node
     plan: starter
+    region: frankfurt
     nodeVersion: "20.18.1"
-    buildCommand: npm install
-    startCommand: npm run worker
+    buildCommand: npm install --legacy-peer-deps
+    startCommand: node server/workers/monitoring-worker.cjs
     envVars:
       - key: NODE_ENV
         value: production
@@ -263,8 +264,8 @@ services:
     plan: starter
     nodeVersion: "20.18.1"
     schedule: "*/15 * * * *"
-    buildCommand: npm install
-    startCommand: npm run cron
+    buildCommand: npm install --legacy-peer-deps
+    startCommand: node server/workers/scheduled-tasks.cjs
     envVars:
       - key: NODE_ENV
         value: production

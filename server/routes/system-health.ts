@@ -1,4 +1,3 @@
-
 import { Router } from 'express';
 import { getConfigService } from '../middleware/provider-config.js';
 
@@ -7,7 +6,7 @@ const router = Router();
 // Comprehensive system health check
 router.get('/health/comprehensive', async (req, res) => {
   const startTime = Date.now();
-  
+
   try {
     const healthData = {
       status: 'healthy',
@@ -37,7 +36,7 @@ router.get('/health/comprehensive', async (req, res) => {
     // Determine overall status
     const failedServices = Object.entries(healthData.services)
       .filter(([_, status]) => status !== 'healthy').length;
-    
+
     if (failedServices > 0) {
       healthData.status = failedServices > 3 ? 'critical' : 'degraded';
     }
@@ -105,7 +104,7 @@ function checkSecrets() {
     'ENCRYPTION_KEY',
     'DOCUMENT_SIGNING_KEY'
   ];
-  
+
   return requiredSecrets.every(secret => process.env[secret]);
 }
 

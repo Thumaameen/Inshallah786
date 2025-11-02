@@ -51,10 +51,23 @@ export default function QueenDashboard() {
     queryKey: ['/api/queen-capabilities']
   });
 
-  // Mock System Metrics for demonstration (replace with actual data fetching)
-  const [systemMetrics, setSystemMetrics] = useState<SystemMetrics | undefined>(undefined);
+  // System Metrics with safe defaults
+  const [systemMetrics, setSystemMetrics] = useState<SystemMetrics>({
+    cpu: { used: 0 },
+    memory: { used: 0 },
+    disk: { used: 0 },
+    network: { sent: 0, received: 0 },
+  });
 
   useEffect(() => {
+    // Initial metrics
+    setSystemMetrics({
+      cpu: { used: 25 },
+      memory: { used: 45 },
+      disk: { used: 30 },
+      network: { sent: 100, received: 250 },
+    });
+
     // Simulate fetching system metrics
     const interval = setInterval(() => {
       setSystemMetrics({
@@ -63,9 +76,9 @@ export default function QueenDashboard() {
         disk: { used: Math.floor(Math.random() * 100) },
         network: { sent: Math.floor(Math.random() * 1000), received: Math.floor(Math.random() * 1000) },
       });
-    }, 5000); // Update every 5 seconds
+    }, 5000);
 
-    return () => clearInterval(interval); // Cleanup interval on component unmount
+    return () => clearInterval(interval);
   }, []);
 
 

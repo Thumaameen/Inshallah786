@@ -1,6 +1,5 @@
 import { PDFDocument, PDFPage } from 'pdf-lib';
 import { Connection, PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
-npm install web3
 import { ErrorCode, VerificationError } from '../types/errors';
 import * as forge from 'node-forge';
 import crypto from 'crypto';

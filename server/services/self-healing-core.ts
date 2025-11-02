@@ -4,11 +4,22 @@
  */
 
 import { EventEmitter } from 'events';
-import { db, getConnectionStatus } from '../db.js';
+import { sql } from 'drizzle-orm';
+import { db } from '../db/index.js';
 import { storage } from '../storage.js';
 import { type InsertSystemMetric, type InsertSecurityEvent, type InsertAuditLog, type InsertSelfHealingAction } from '../../shared/schema/index.js';
 import { enhancedSecurityResponseService } from './enhanced-security-response.js';
 import { enhancedErrorCorrectionService } from './enhanced-error-correction.js';
+
+// Simple connection status check
+async function getConnectionStatus() {
+  try {
+    await db.execute(sql`SELECT 1`);
+    return { connected: true };
+  } catch (error) {
+    return { connected: false };
+  }
+}
 
 // Core Self-Healing Service
 class CoreSelfHealingService extends EventEmitter {

@@ -34,14 +34,15 @@ class BackgroundWorker extends EventEmitter {
     startWorkers(): void {
         // Check if port binding is disabled
         const disablePortBinding = process.env.DISABLE_PORT_BINDING === 'true';
-        
+
         if (typedCluster.isPrimary) {
             console.log(`Primary process ${process.pid} is running`);
             if (disablePortBinding) {
-                console.log('Port binding disabled for worker processes');
+                console.log('⚠️ Port binding disabled - worker will run without forking');
+                return; // Don't fork workers if port binding is disabled
             }
 
-            // Fork workers
+            // Fork workers only if port binding is enabled
             for (let i = 0; i < numCPUs; i++) {
                 this.createWorker();
             }
@@ -66,11 +67,11 @@ class BackgroundWorker extends EventEmitter {
             const worker = cluster.fork();
             if (worker.process.pid) {
                 this.workers.set(worker.process.pid, worker);
-                
+
                 worker.on('message', (msg: WorkerMessage) => {
                     this.emit('workerMessage', msg);
                 });
-    
+
                 worker.on('error', (error: Error) => {
                     console.error('Worker error:', error);
                     if (worker.process.pid) {
