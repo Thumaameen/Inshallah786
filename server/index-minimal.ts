@@ -15,8 +15,9 @@ import integrationActivationRoutes from './routes/integration-activation.js';
 import { WebSocketService } from './websocket.js';
 import { deploymentValidator } from './services/deployment-validation.js';
 import { SecureEnvLoader } from './utils/secure-env-loader.js';
-import healthRouter from './routes/health.js';
+import { healthRouter } from './routes/health.js';
 import apiHealthCheckRouter from './routes/api-health-check.js';
+import { renderAPIValidator } from './services/render-api-validator.js';
 
 // Load environment variables - Render sets them automatically
 console.log('🔐 Loading Environment Variables...');
@@ -61,13 +62,15 @@ try {
     validation.errors.forEach(e => console.warn(`  • ${e}`));
   }
   console.log('✅ Server starting with available configuration\n');
-
-  // Validate API keys from Render environment
-  import { renderAPIValidator } from './services/render-api-validator.js';
-  renderAPIValidator.printReport();
-
 } catch (error) {
   console.warn('⚠️ Validation check skipped, continuing startup\n');
+}
+
+// Validate API keys from Render environment
+try {
+  renderAPIValidator.printReport();
+} catch (error) {
+  console.warn('⚠️ API key validation skipped\n');
 }
 
 // Suppress build warnings in production

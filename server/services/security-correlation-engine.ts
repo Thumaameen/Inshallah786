@@ -1,7 +1,10 @@
 import { storage } from "../storage.js";
 import { auditTrailService } from "./audit-trail-service.js";
-import { type InsertSecurityIncident, type InsertSecurityRule } from '../../shared/schema/index.js';
+import { type InsertSecurityIncident, type InsertSecurityEvent } from '../../shared/schema/index.js';
 import { EventEmitter } from "events";
+
+// Type alias for security rules (using security events for now)
+type InsertSecurityRule = InsertSecurityEvent;
 
 export interface SecurityPattern {
   id: string;

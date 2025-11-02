@@ -1,5 +1,12 @@
+import dotenv from 'dotenv';
+import { environment } from './environment.js';
+
 // Load environment variables first
 dotenv.config();
+
+// Export environment configuration
+export const config = environment;
+export default config;
 
 // Check environment - RENDER PRODUCTION ONLY
 const isRender = Boolean(process.env.RENDER || process.env.RENDER_SERVICE_ID);
