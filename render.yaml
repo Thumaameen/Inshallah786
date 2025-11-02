@@ -4,11 +4,11 @@ services:
     name: ultra-queen-ai-raeesa
     runtime: node
     env: node
-    nodeVersion: "20.18.1"
+    nodeVersion: "20.18.0"
     region: frankfurt
     plan: starter
     buildCommand: bash render-build-production.sh
-    startCommand: node dist/server/index-minimal.js
+    startCommand: NODE_ENV=production NODE_OPTIONS='--max-old-space-size=4096 --experimental-modules --es-module-specifier-resolution=node' node dist/server/index-minimal.js
     healthCheckPath: /api/health
     autoDeploy: true
     healthCheckTimeout: 180
