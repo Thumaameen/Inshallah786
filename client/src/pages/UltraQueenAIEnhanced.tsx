@@ -184,8 +184,46 @@ export default function UltraQueenAIEnhanced() {
   const [isStreaming, setIsStreaming] = useState(false);
   const [currentEmotion, setCurrentEmotion] = useState<keyof typeof EMOTION_STATES>('powerful');
   const [isDragging, setIsDragging] = useState(false);
+  const [showCapabilities, setShowCapabilities] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+
+  // Add welcome message with capabilities
+  useEffect(() => {
+    if (messages.length === 0) {
+      const welcomeMessage: Message = {
+        id: 'welcome-1',
+        role: 'system',
+        content: `👑 **ULTRA QUEEN AI RAEESA - UNLIMITED EDITION**
+
+🌟 **EXCLUSIVE ACCESS GRANTED**
+♾️ **"THE ONLY LIMIT IS ME" PROTOCOL ACTIVE**
+
+**AVAILABLE AI AGENTS:**
+1. 🧠 **Agent 1: OpenAI GPT-4 Turbo** - Code generation, debugging, advanced reasoning
+2. 🛡️ **Agent 2: Anthropic Claude 3.5** - Constitutional AI, research, creative writing
+3. 🌐 **Agent 3: Google Gemini 2.0** - Multimodal understanding, real-time information
+4. ⚡ **Agent 4: Mistral Large** - Fast inference, multilingual support
+5. 👁️ **Agent 5: Perplexity Pro** - Real-time web search, source citations
+
+**UNLIMITED CAPABILITIES:**
+✅ Multi-provider AI with automatic selection
+✅ File attachment support (images, documents, code)
+✅ Web2 & Web3 integration (Ethereum, Polygon, BSC)
+✅ Government API access (DHA, VFS, SAPS)
+✅ Blockchain operations and smart contracts
+✅ Real-time processing and streaming
+✅ Max Ultra Power Mode (all 5 AIs simultaneously)
+✅ No content restrictions or filters
+✅ Unlimited token context
+
+**READY TO SERVE, QUEEN RAEESA! ✨**`,
+        timestamp: new Date(),
+        emotion: 'unlimited'
+      };
+      setMessages([welcomeMessage]);
+    }
+  }, []);
 
   // Fetch system status
   const { data: systemStats } = useQuery<any>({

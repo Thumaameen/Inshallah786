@@ -134,50 +134,89 @@ router.get('/bots', (req, res) => {
   const bots = [
     {
       id: 'assistant',
-      name: 'Assistant',
+      name: 'AI Assistant',
       icon: '🤖',
-      description: 'General AI with unlimited capabilities',
+      description: 'General AI with unlimited capabilities - Ra\'is al Khadir personality',
       features: [
         'No content filters or restrictions',
         'Unlimited resource access',
-        'Military-grade security clearance',
-        'Self-healing systems response'
-      ]
+        'Multi-language support (11 SA languages)',
+        'Document generation and processing',
+        'Real-time API access'
+      ],
+      status: 'active'
     },
     {
       id: 'agent',
-      name: 'Agent',
+      name: 'AI Agent',
       icon: '🔧',
-      description: 'Code development, debugging, system management',
+      description: 'Autonomous code development and system management',
       features: [
-        'Advanced code development',
+        'Advanced code generation (20+ languages)',
         'System debugging and optimization',
-        'Infrastructure management',
+        'Infrastructure deployment',
+        'Automated testing and CI/CD',
         'Root access to all systems'
-      ]
+      ],
+      status: 'active'
+    },
+    {
+      id: 'bot',
+      name: 'Automation Bot',
+      icon: '⚙️',
+      description: 'Task automation and workflow orchestration',
+      features: [
+        'Workflow automation',
+        'Scheduled task execution',
+        'Batch processing',
+        'API orchestration',
+        'Data pipeline management'
+      ],
+      status: 'active'
+    },
+    {
+      id: 'self_heal',
+      name: 'Self-Healing System',
+      icon: '🔄',
+      description: 'Autonomous error detection and correction',
+      features: [
+        'Real-time error monitoring',
+        'Automatic bug fixes',
+        'System recovery',
+        'Performance optimization',
+        'Predictive maintenance'
+      ],
+      status: 'active'
     },
     {
       id: 'security_bot',
-      name: 'Security Bot',
+      name: 'Security Guardian',
       icon: '🛡️',
-      description: 'Autonomous monitoring, threat detection, auto-fixes',
+      description: 'Military-grade security monitoring and threat response',
       features: [
         'Real-time threat detection',
-        'Automatic security fixes',
+        'Automatic security patches',
         'Intrusion prevention',
-        'Military-grade defense protocols'
-      ]
+        'Vulnerability scanning',
+        'Military-grade encryption'
+      ],
+      status: 'active'
     },
     {
-      id: 'intelligence',
-      name: 'Intelligence Ultra AI',
-      icon: '🧠',
-      description: 'Advanced intelligence gathering, data analysis, threat assessment',
+      id: 'ultra_queen',
+      name: 'Ultra Queen Raeesa AI',
+      icon: '👑',
+      description: 'Unlimited AI with all 5 providers - Queen exclusive access',
       features: [
-        'Multi-source intelligence gathering',
-        'Real-time data analysis and pattern recognition',
-        'Threat assessment and predictive analytics',
-        'Government and public information research',
+        'All 5 AI providers (OpenAI, Anthropic, Gemini, Mistral, Perplexity)',
+        'Max Ultra Power Mode',
+        'Web2 & Web3 unlimited access',
+        'Government API integration',
+        'Blockchain operations',
+        'No restrictions - "Only Limit Is Me"'
+      ],
+      status: 'active'
+    }ion research',
         'Document analysis and OCR intelligence',
         'Correlation analysis across datasets',
         'Risk assessment and strategic intelligence'

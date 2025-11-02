@@ -1,25 +1,19 @@
 
-/**
- * PRODUCTION ONLY - NO MOCK APIs
- * All endpoints disabled - use real government API credentials only
- */
-
-import { Router, Request, Response } from 'express';
+import { Router } from 'express';
 
 const router = Router();
 
-// All endpoints return 410 Gone - mocks permanently disabled
-router.all('*', (req: Request, res: Response) => {
-  res.status(410).json({
+// ALL MOCK APIS PERMANENTLY DISABLED FOR PRODUCTION
+// This file exists only to prevent import errors
+// All routes return 501 Not Implemented
+
+router.all('*', (req, res) => {
+  res.status(501).json({
     success: false,
-    error: 'Mock APIs permanently disabled',
-    message: 'Production deployment requires real government API credentials. All API keys must be configured in environment variables.',
-    requiredKeys: [
-      'DHA_NPR_API_KEY',
-      'DHA_ABIS_API_KEY', 
-      'SAPS_CRC_API_KEY',
-      'ICAO_PKD_API_KEY'
-    ]
+    error: 'Mock APIs are permanently disabled in production',
+    message: 'This deployment uses only real government API credentials configured in environment variables.',
+    deployment: 'production',
+    timestamp: new Date().toISOString()
   });
 });
 

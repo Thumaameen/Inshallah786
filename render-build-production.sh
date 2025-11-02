@@ -1,10 +1,15 @@
 #!/bin/bash
 set -e
 
+# Suppress sourcemap warnings
+export NODE_OPTIONS="--no-warnings"
+
 echo "🚀 DHA Digital Services - PRODUCTION BUILD FOR RENDER"
 echo "===================================================="
 
-# CRITICAL: Force Node 20.18.1
+# CRITICAL: Force production environment
+export NODE_ENV=production
+export RENDER=true
 export NODE_VERSION=20.18.1
 export NPM_CONFIG_PRODUCTION=false
 
@@ -89,7 +94,20 @@ if [ ! -f "dist/public/index.html" ]; then
   exit 1
 fi
 
-echo "✅ Production build complete!"
+echo "✅ Build Complete!"
+echo "📦 Validating build output..."
+
+# Ensure critical files exist
+if [ ! -f "dist/server/index-minimal.js" ]; then
+  echo "❌ ERROR: Server entry point not found!"
+  exit 1
+fi
+
+if [ ! -d "dist/public" ]; then
+  echo "⚠️  WARNING: Public directory not found, creating empty directory"
+  mkdir -p dist/public
+fi
+
 echo "📊 Build artifacts:"
 ls -lh dist/server/index-minimal.js
 ls -lh dist/public/index.html

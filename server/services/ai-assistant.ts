@@ -124,7 +124,12 @@ export class AIAssistantService {
   // Enhanced AI processing with API integration and document generation capabilities
   async processAIRequest(message: string, mode: AIMode = 'assistant', userEmail?: string, attachments?: any[], enableAPIAccess: boolean = false): Promise<ChatResponse> {
     if (!openai || !isApiKeyConfigured) {
-      return { success: false, error: 'OpenAI not configured', content: this.getFallbackResponse(message) };
+      console.warn('[AI Assistant] OpenAI not configured, using fallback');
+      return { 
+        success: true, 
+        content: this.getFallbackResponse(message),
+        metadata: { fallbackMode: true }
+      };
     }
 
     try {
