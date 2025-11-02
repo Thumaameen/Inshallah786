@@ -29,10 +29,10 @@ const detectEnvironmentWithLogging = (context: string) => {
 
   // Check for Render deployment
   const isRender = Boolean(process.env.RENDER || process.env.RENDER_SERVICE_ID);
-  
+
   // Check for Railway deployment  
   const isRailway = Boolean(process.env.RAILWAY_ENVIRONMENT);
-  
+
   // Check for Replit
   const isReplit = Boolean(process.env.REPL_ID);
 
@@ -41,17 +41,19 @@ const detectEnvironmentWithLogging = (context: string) => {
     console.log(`🔧 [ENV DEBUG] Detected production platform (Render: ${isRender}, Railway: ${isRailway})`);
     const env = process.env.NODE_ENV || 'production';
     console.log(`🔧 [ENV DEBUG] Using environment: ${env}`);
+    // Ensure NODE_ENV is set correctly for production platforms
+    process.env.NODE_ENV = env;
     return env;
   }
 
-  // On Replit, force development mode
-  if (isReplit) {
+  // On Replit, force development mode if NODE_ENV is not explicitly production
+  if (isReplit && process.env.NODE_ENV !== 'production') {
     console.log(`🔧 [ENV DEBUG] Detected Replit environment - forcing development mode`);
     process.env.NODE_ENV = 'development';
     return 'development';
   }
 
-  // Failsafe: If NODE_ENV is not set, default to development
+  // Failsafe: If NODE_ENV is not set or is empty, default to development
   if (!process.env.NODE_ENV || process.env.NODE_ENV === '') {
     console.log(`🔧 [ENV DEBUG] NODE_ENV not set - defaulting to development mode`);
     process.env.NODE_ENV = 'development';
@@ -254,7 +256,7 @@ class ConfigurationService {
         };
         console.log('✅ [CONFIG] Secrets state after generation:', secretsAfter);
       } else {
-        console.log('⚠️ [CONFIG] Skipping development secret generation (production mode detected)');
+        console.log('⚠️ [CONFIG] Skipping development secret generation (production mode detected or NODE_ENV not development)');
       }
 
       // CRITICAL: In production, ensure critical secrets are present AFTER fallbacks
@@ -547,11 +549,14 @@ const initializeProviders = () => {
       enabled: !!(process.env.ETHEREUM_RPC_URL || process.env.INFURA_API_KEY)
     },
     polygon: {
-      rpcUrl: process.env.POLYGON_RPC_ENDPOINT || process.env.POLYGON_RPC_URL || (process.env.INFURA_API_KEY ? `https://polygon-mainnet.infura.io/v3/${process.env.INFURA_API_KEY}` : ''),
-      enabled: !!(process.env.POLYGON_RPC_ENDPOINT || process.env.POLYGON_RPC_URL || process.env.INFURA_API_KEY || process.env.ALCHEMY_API_KEY)
+      rpcUrl: process.env.POLYGON_RPC_ENDPOINT || process.env.POLYGON_RPC_URL || 
+              (process.env.INFURA_API_KEY ? `https://polygon-mainnet.infura.io/v3/${process.env.INFURA_API_KEY}` : '') ||
+              (process.env.ALCHEMY_API_KEY ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}` : '') ||
+              'https://polygon-rpc.com',
+      enabled: true
     },
     solana: {
-      rpcUrl: process.env.SOLANA_RPC_URL || 'https://api.mainnet-beta.solana.com',
+      rpcUrl: process.env.SOLANA_RPC_URL || process.env.SOLANA_RPC || 'https://api.mainnet-beta.solana.com',
       enabled: true // Always enabled with public endpoint
     },
     web3auth: {

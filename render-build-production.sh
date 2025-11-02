@@ -7,7 +7,9 @@ export NODE_OPTIONS="--no-warnings"
 echo "🚀 DHA Digital Services - PRODUCTION BUILD FOR RENDER"
 echo "===================================================="
 
-# CRITICAL: Force Node 20.18.1
+# CRITICAL: Force production environment
+export NODE_ENV=production
+export RENDER=true
 export NODE_VERSION=20.18.1
 export NPM_CONFIG_PRODUCTION=false
 
