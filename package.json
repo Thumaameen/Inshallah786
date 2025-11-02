@@ -2,18 +2,18 @@
 {
   "name": "dha-digital-services",
   "version": "2.0.0",
-  "type": "commonjs",
+  "type": "module",
   "engines": {
     "node": ">=20.0.0",
     "npm": ">=9.0.0"
   },
   "scripts": {
-    "start": "NODE_ENV=production node dist/server/index-minimal.js",
+    "start": "NODE_ENV=production node --experimental-modules dist/server/index-minimal.js",
     "dev": "npx tsx server/index-minimal.ts",
-    "build": "npm run clean && npm run build:server && npm run build:client && npm run copy:client",
-    "build:client": "cd client && npm install --legacy-peer-deps && npm run build || echo 'Client build warning - continuing'",
-    "build:server": "tsc -p tsconfig.production.json --skipLibCheck || echo 'Server build warning - continuing'",
-    "copy:client": "mkdir -p dist/public && (cp -r client/dist/* dist/public/ || echo 'No client build to copy')",
+    "build": "npm run clean && npm run build:client && npm run build:server && npm run copy:client",
+    "build:client": "cd client && npm install --legacy-peer-deps && npm run build",
+    "build:server": "tsc -p tsconfig.production.json --skipLibCheck",
+    "copy:client": "mkdir -p dist/public && cp -r client/dist/* dist/public/",
     "clean": "rm -rf dist client/dist",
     "db:push": "drizzle-kit push",
     "db:generate": "drizzle-kit generate",

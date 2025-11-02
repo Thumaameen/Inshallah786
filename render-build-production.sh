@@ -7,11 +7,12 @@ export NODE_OPTIONS="--no-warnings"
 echo "🚀 DHA Digital Services - PRODUCTION BUILD FOR RENDER"
 echo "===================================================="
 
-# CRITICAL: Force production environment
+# CRITICAL: Force production environment and enable ESM
 export NODE_ENV=production
 export RENDER=true
 export NODE_VERSION=20.18.1
 export NPM_CONFIG_PRODUCTION=false
+export NODE_OPTIONS="--experimental-modules --es-module-specifier-resolution=node"
 
 # Verify Node version
 echo "📌 Node.js version check:"
@@ -44,15 +45,19 @@ echo "🎨 Building client..."
 cd client
 echo "📦 Installing client dependencies..."
 rm -rf node_modules
-# Install ALL dependencies including dev dependencies (vite, typescript, etc.)
-npm install --legacy-peer-deps --no-audit --ignore-scripts || true
-npm rebuild --legacy-peer-deps || true
+<<<<<<< HEAD
+# Install ALL dependencies including dev dependencies
+npm ci --legacy-peer-deps --no-audit
 
-# Verify vite is installed
-if ! npx vite --version > /dev/null 2>&1; then
-  echo "❌ Vite not found, installing explicitly..."
-  npm install --save-dev vite@latest @vitejs/plugin-react@latest --legacy-peer-deps
-fi
+# Ensure all critical build dependencies are installed
+npm install --save-dev vite@latest @vitejs/plugin-react@latest typescript@latest @types/node @types/react @types/react-dom
+=======
+# Install ALL dependencies including dev dependencies
+npm ci --legacy-peer-deps --no-audit
+
+# Ensure all critical build dependencies are installed
+npm install --save-dev vite@latest @vitejs/plugin-react@latest typescript@latest @types/node @types/react @types/react-dom
+>>>>>>> 0a66fab (hk)
 
 echo "🔨 Running client build..."
 NODE_ENV=production npm run build || echo "⚠️ Client build completed with warnings"
