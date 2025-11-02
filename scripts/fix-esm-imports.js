@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-#!/usr/bin/env node
 /**
  * Fix ES Module imports to include .js extensions
  * Required for Node.js ES modules to resolve correctly
