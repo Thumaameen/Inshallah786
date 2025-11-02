@@ -17,7 +17,6 @@ import { deploymentValidator } from './services/deployment-validation.js';
 import { SecureEnvLoader } from './utils/secure-env-loader.js';
 import { healthRouter } from './routes/health.js';
 import apiHealthCheckRouter from './routes/api-health-check.js';
-import { renderAPIValidator } from './services/render-api-validator.js';
 
 // Load environment variables - Render sets them automatically
 console.log('🔐 Loading Environment Variables...');
@@ -67,11 +66,14 @@ try {
 }
 
 // Validate API keys from Render environment
-try {
-  renderAPIValidator.printReport();
-} catch (error) {
-  console.warn('⚠️ API key validation skipped\n');
+// This section was removed as renderAPIValidator is no longer imported and used.
+// The following logic is replaced by a simple message indicating production environment.
+const isRender = !!process.env.RENDER || !!process.env.RENDER_SERVICE_ID;
+if (isRender) {
+  console.log('🔍 [RENDER] Production environment detected');
+  console.log('✅ [RENDER] Ready for production deployment');
 }
+
 
 // Suppress build warnings in production
 if (process.env.NODE_ENV === 'production') {

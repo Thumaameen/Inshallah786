@@ -120,12 +120,13 @@ export const environment = {
 
 // Production mode detection - works for both Replit and Render
 export function isDevelopment(): boolean {
-  const isRender = !!process.env.RENDER;
+  const isRender = !!process.env.RENDER || !!process.env.RENDER_SERVICE_ID;
   const isRailway = !!process.env.RAILWAY_ENVIRONMENT;
   const isReplit = !!process.env.REPL_ID;
   
   // Force production mode on Render and Railway
   if (isRender || isRailway) {
+    process.env.NODE_ENV = 'production'; // Ensure NODE_ENV is set
     return false; // Not development
   }
   

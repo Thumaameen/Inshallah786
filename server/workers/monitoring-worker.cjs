@@ -71,3 +71,95 @@ if (require.main === module) {
 }
 
 module.exports = MonitoringWorker;
+```javascript
+#!/usr/bin/env node
+
+/**
+ * Background Monitoring Worker for Render
+ * Performs health checks and monitoring tasks
+ */
+
+const HEALTH_CHECK_INTERVAL = parseInt(process.env.MONITOR_INTERVAL || '60000', 10);
+const SERVICE_URL = process.env.RENDER_EXTERNAL_URL || 'http://localhost:10000';
+
+class MonitoringWorker {
+    constructor() {
+        this.isRunning = false;
+        this.healthCheckCount = 0;
+    }
+
+    async start() {
+        console.log('🔍 Monitoring Worker Started');
+        console.log(`   Service URL: ${SERVICE_URL}`);
+        console.log(`   Check Interval: ${HEALTH_CHECK_INTERVAL}ms`);
+        
+        this.isRunning = true;
+        
+        // Run initial health check
+        await this.performHealthCheck();
+        
+        // Schedule recurring health checks
+        this.scheduleHealthChecks();
+        
+        // Handle graceful shutdown
+        process.on('SIGTERM', () => this.shutdown());
+        process.on('SIGINT', () => this.shutdown());
+    }
+
+    scheduleHealthChecks() {
+        this.intervalId = setInterval(async () => {
+            if (this.isRunning) {
+                await this.performHealthCheck();
+            }
+        }, HEALTH_CHECK_INTERVAL);
+    }
+
+    async performHealthCheck() {
+        this.healthCheckCount++;
+        
+        try {
+            const https = require('https');
+            const http = require('http');
+            const url = new URL(`${SERVICE_URL}/api/health`);
+            const protocol = url.protocol === 'https:' ? https : http;
+            
+            const response = await new Promise((resolve, reject) => {
+                const req = protocol.get(url, (res) => {
+                    let data = '';
+                    res.on('data', (chunk) => data += chunk);
+                    res.on('end', () => resolve({ status: res.statusCode, data }));
+                });
+                req.on('error', reject);
+                req.setTimeout(5000, () => {
+                    req.destroy();
+                    reject(new Error('Health check timeout'));
+                });
+            });
+
+            if (response.status === 200) {
+                console.log(`✅ Health check passed (#${this.healthCheckCount})`);
+            } else {
+                console.warn(`⚠️  Health check warning (#${this.healthCheckCount}): Status ${response.status}`);
+            }
+        } catch (error) {
+            console.error(`❌ Health check failed (#${this.healthCheckCount}):`, error.message);
+        }
+    }
+
+    shutdown() {
+        console.log('🛑 Shutting down monitoring worker...');
+        this.isRunning = false;
+        if (this.intervalId) {
+            clearInterval(this.intervalId);
+        }
+        process.exit(0);
+    }
+}
+
+// Start the worker
+const worker = new MonitoringWorker();
+worker.start().catch(error => {
+    console.error('Fatal error in monitoring worker:', error);
+    process.exit(1);
+});
+```
