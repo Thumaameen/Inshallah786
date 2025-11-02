@@ -1,0 +1,50 @@
+2025-11-02T12:54:12.874139986Z ❌ DEPLOYMENT VALIDATION FAILED:
+2025-11-02T12:54:12.874226928Z 
+2025-11-02T12:54:12.874259878Z   • DATABASE_URL is required in production
+2025-11-02T12:54:12.87548729Z 
+2025-11-02T12:54:12.87549476Z ❌ DEPLOYMENT VALIDATION FAILED: Error: Deployment validation failed with 1 error(s):
+2025-11-02T12:54:12.87549696Z   • DATABASE_URL is required in production
+2025-11-02T12:54:12.8754994Z     at DeploymentValidator.validateOrFail (file:///opt/render/project/src/dist/server/services/deployment-validation.js:163:19)
+2025-11-02T12:54:12.87550256Z     at file:///opt/render/project/src/dist/server/index-minimal.js:45:25
+2025-11-02T12:54:12.87550475Z     at ModuleJob.run (node:internal/modules/esm/module_job:234:25)
+2025-11-02T12:54:12.87550659Z     at async ModuleLoader.import (node:internal/modules/esm/loader:473:24)
+2025-11-02T12:54:12.87550867Z     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:122:5)
+2025-11-02T12:54:12.87551075Z ❌ Production deployment requires all validations to pass
+2025-11-02T12:54:12.87551241Z 
+2025-11-02T12:54:12.8755182Z 🚀 Running in production mode
+2025-11-02T12:54:12.87551906Z ⚠️ Continuing with available configuration
+2025-11-02T12:54:12.875526591Z 
+2025-11-02T12:54:12.878273489Z ✅ WebSocket service initialized
+2025-11-02T12:54:12.878282269Z 🔍 Environment Detection:
+2025-11-02T12:54:12.878284829Z   NODE_ENV: production
+2025-11-02T12:54:12.878287079Z   RENDER: true
+2025-11-02T12:54:12.878289389Z   Is Production: true
+2025-11-02T12:54:12.878291909Z   Is Render: true
+2025-11-02T12:54:12.878293989Z 
+2025-11-02T12:54:12.88064019Z 🔧 Registering API routes...
+2025-11-02T12:54:12.881247481Z ✅ All routes registered successfully
+2025-11-02T12:54:12.881257701Z ✅ Frontend routes configured
+2025-11-02T12:54:12.881264771Z ✅ Backend API routes active
+2025-11-02T12:54:12.881267161Z ✅ Middleware integrated
+2025-11-02T12:54:12.881286152Z ✅ PDF Generation routes active
+2025-11-02T12:54:12.881293072Z ✅ DHA Document routes active
+2025-11-02T12:54:12.881301042Z ✅ Ultra Queen Raeesa AI active
+2025-11-02T12:54:12.881304332Z ✅ Universal API Override active
+2025-11-02T12:54:12.881321522Z ✅ Authentication system ready
+2025-11-02T12:54:12.881324692Z ✅ All integrations active
+2025-11-02T12:54:12.881328132Z ✅ System ready for production
+2025-11-02T12:54:12.881452555Z ✅ All routes registered successfully
+2025-11-02T12:54:12.881457075Z ✅ Monitoring middleware active
+2025-11-02T12:54:12.881459445Z ✅ Ultra Queen AI routes active
+2025-11-02T12:54:12.881461725Z ✅ Integration status routes active
+2025-11-02T12:54:12.881735169Z ✅ Frontend build ready
+2025-11-02T12:54:12.88173898Z 📱 Serving from dist/public
+2025-11-02T12:54:12.885036888Z 
+2025-11-02T12:54:12.885049318Z 🚀 DHA Digital Services Platform - Production Server
+2025-11-02T12:54:12.885062098Z 🇿🇦 Department of Home Affairs - Implementation
+2025-11-02T12:54:12.885068238Z ============================================================
+2025-11-02T12:54:12.885070958Z 
+2025-11-02T12:54:12.885074588Z ✅ Server running on http://0.0.0.0:10000
+2025-11-02T12:54:12.885082848Z 📱 Environment: production
+2025-11-02T12:54:12.885086379Z 🌐 Ready to accept connections
+2025-11-02T12:54:12.885088868Z 

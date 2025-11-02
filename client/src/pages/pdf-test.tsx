@@ -593,10 +593,21 @@ export default function PDFTestPage() {
       }
       
       const blob = await response.blob();
+      
+      // Validate blob before creating URL
+      if (!blob || blob.size === 0) {
+        throw new Error('Received empty PDF file');
+      }
+      
+      // Validate content type is PDF
+      if (blob.type && !blob.type.includes('pdf') && !blob.type.includes('octet-stream')) {
+        console.warn(`Unexpected content type: ${blob.type}`);
+      }
+      
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${documentType}-${Date.now()}.pdf`;
+      a.download = `${(documentType || 'document').replace('-', ' ')}-${Date.now()}.pdf`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
@@ -604,7 +615,7 @@ export default function PDFTestPage() {
       
       toast({
         title: "PDF Generated",
-        description: `Your ${documentType.replace('-', ' ')} PDF has been generated and downloaded.`,
+        description: `Your ${(documentType || 'document').replace('-', ' ')} PDF has been generated and downloaded.`,
       });
       
     } catch (error) {

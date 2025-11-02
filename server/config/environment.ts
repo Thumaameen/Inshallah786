@@ -17,7 +17,8 @@ export const environment: Record<string, string | number | boolean> = {
   
   // Core Application Settings
   NODE_ENV: process.env.NODE_ENV || 'production',
-  PORT: parseInt(process.env.PORT || '10000', 10),
+  // Use port 5000 for Replit, 10000 for Render deployment
+  PORT: process.env.REPL_ID ? 5000 : parseInt(process.env.PORT || '10000', 10),
   HOST: process.env.HOST || '0.0.0.0',
   
   // Database Configuration

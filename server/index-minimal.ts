@@ -109,7 +109,8 @@ const wsService = new WebSocketService(server);
 wsService.initialize();
 
 // Server configuration - Production optimized for Render
-const PORT = parseInt(process.env.PORT || '10000', 10);
+// Use port 5000 for Replit (required for webview), 10000 for Render deployment
+const PORT = process.env.REPL_ID ? 5000 : parseInt(process.env.PORT || '10000', 10);
 const HOST = '0.0.0.0'; // Required for production deployment
 
 // Security middleware - Production-hardened CSP
