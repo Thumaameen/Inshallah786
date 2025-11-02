@@ -13,8 +13,8 @@
 import { EventEmitter } from 'events';
 import { performance } from 'perf_hooks';
 import { storage } from '../storage.js';
-import { railwayHealthCheckSystem } from './railway-health-check-system.js';
-import { railwayAutoScalingService } from './railway-auto-scaling-service.js';
+import railwayHealthCheckSystem from './railway-health-check-system.js';
+import railwayAutoScalingService from './railway-auto-scaling-service.js';
 import { circuitBreakerSystem } from './circuit-breaker-system.js';
 import { selfHealingService } from './self-healing-service.js';
 import { type InsertSystemMetric, type InsertSelfHealingAction } from '../../shared/schema/index.js';

@@ -1,4 +1,4 @@
-import { WebSocket, Server as WebSocketServer } from 'ws';
+import WebSocket, { Server as WebSocketServer } from 'ws';
 import { EventEmitter } from 'events';
 
 export class WebSocketService extends EventEmitter {

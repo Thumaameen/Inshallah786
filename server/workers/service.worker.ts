@@ -1,6 +1,6 @@
 import { parentPort, workerData } from 'worker_threads';
-import { ultraQueenAI } from '../services/ultra-queen-ai';
-import { militaryGradeAI } from '../services/military-grade-ai-assistant';
+import { ultraQueenAI } from '../services/ultra-queen-ai.js';
+import { militaryGradeAI } from '../services/military-grade-ai-assistant.js';
 
 // Process tasks in the background
 async function processTask(task: any) {
@@ -35,7 +35,7 @@ if (parentPort) {
     } catch (error) {
       parentPort?.postMessage({ 
         success: false, 
-        error: error.message 
+        error: error instanceof Error ? error.message : String(error) 
       });
     }
   });
