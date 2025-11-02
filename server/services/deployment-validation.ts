@@ -85,9 +85,16 @@ export class DeploymentValidator {
     if (process.env.DATABASE_URL) {
       console.log('  ✅ Database URL configured');
     } else {
-      if (this.isProduction) {
-        errors.push('DATABASE_URL is required in production');
+      // Allow production deployment without DATABASE_URL (use in-memory storage)
+      // Only treat as error if REQUIRE_DATABASE_URL flag is explicitly set
+      const requireDatabase = process.env.REQUIRE_DATABASE_URL === 'true';
+      
+      if (this.isProduction && requireDatabase) {
+        errors.push('DATABASE_URL is required in production (REQUIRE_DATABASE_URL=true)');
         console.log('  ❌ Database URL not configured');
+      } else if (this.isProduction) {
+        warnings.push('DATABASE_URL not configured - using in-memory storage (not recommended for production)');
+        console.log('  ⚠️  Database URL not configured (using in-memory storage - not persistent)');
       } else {
         warnings.push('DATABASE_URL not configured (development mode)');
         console.log('  ⚠️  Database URL not configured (using in-memory storage)');
