@@ -7,7 +7,7 @@ import { dirname, join } from 'path';
 import path from 'path';
 import { createServer } from 'http';
 import dotenv from 'dotenv';
-import { registerRoutes } from './routes-simple.js';
+import { registerRoutes } from './routes-simple';
 import fs from 'fs';
 import ultraQueenAIRoutes from './routes/ultra-queen-ai.js';
 import integrationStatusRoutes from './routes/integration-status.js';

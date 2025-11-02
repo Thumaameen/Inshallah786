@@ -78,9 +78,10 @@ echo "⚙️ Building server..."
 export TSC_COMPILE_ON_ERROR=true
 npx tsc -p tsconfig.production.json || echo "⚠️ Build completed with type warnings"
 
-# Fix ES Module imports - only add .js to relative imports without .js extension
+# Fix ES Module imports - add .js only to imports that don't already have it
 echo "🔧 Fixing ES module imports..."
-find dist -type f -name "*.js" -exec sed -i "s|\(from\s\+['\"]\..*\)\(['\"];\)|\1.js\2|g; s|\.js\.js|.js|g" {} +
+find dist -type f -name "*.js" -exec sed -i -E "s|from (['\"])(\./[^'\"]+)(['\"])|from \1\2.js\3|g" {} +
+find dist -type f -name "*.js" -exec sed -i -E "s|\.js\.js|.js|g" {} +
 
 # Verify build
 echo "🔍 Verifying build..."
