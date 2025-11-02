@@ -15,6 +15,16 @@ export class PDFService {
 
   // Helper function to trigger file download
   private downloadFile(blob: Blob, filename: string): void {
+    // Validate blob before attempting download
+    if (!blob || blob.size === 0) {
+      throw new Error('Cannot download empty or invalid file');
+    }
+    
+    // Validate filename
+    if (!filename || filename.trim() === '') {
+      filename = `document_${Date.now()}.pdf`;
+    }
+    
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
@@ -27,13 +37,33 @@ export class PDFService {
 
   // Helper function to convert base64 to blob
   private base64ToBlob(base64: string, contentType: string = "application/pdf"): Blob {
-    const byteCharacters = atob(base64);
-    const byteNumbers = new Array(byteCharacters.length);
-    for (let i = 0; i < byteCharacters.length; i++) {
-      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    // Validate base64 string
+    if (!base64 || typeof base64 !== 'string' || base64.trim() === '') {
+      throw new Error('Invalid base64 data provided');
     }
-    const byteArray = new Uint8Array(byteNumbers);
-    return new Blob([byteArray], { type: contentType });
+    
+    // Remove data URL prefix if present
+    const base64Data = base64.includes(',') ? base64.split(',')[1] : base64;
+    
+    try {
+      const byteCharacters = atob(base64Data);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: contentType });
+      
+      // Validate created blob
+      if (blob.size === 0) {
+        throw new Error('Generated PDF is empty');
+      }
+      
+      return blob;
+    } catch (error) {
+      console.error('Error converting base64 to blob:', error);
+      throw new Error('Failed to process PDF data');
+    }
   }
 
   // Generate work permit PDF
