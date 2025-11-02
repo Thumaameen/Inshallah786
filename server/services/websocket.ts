@@ -1,9 +1,9 @@
-import WebSocket, { Server as WebSocketServer } from 'ws';
+import WebSocket from 'ws';
 import { EventEmitter } from 'events';
 
 export class WebSocketService extends EventEmitter {
   private static instance: WebSocketService;
-  private wss: WebSocketServer | null = null;
+  private wss: WebSocket.Server | null = null;
   private clients: Set<WebSocket> = new Set();
   private connectedUsers: Map<string, WebSocket> = new Map();
 
@@ -19,7 +19,7 @@ export class WebSocketService extends EventEmitter {
   }
 
   initialize(server: any): void {
-    this.wss = new WebSocketServer({ server });
+    this.wss = new WebSocket.Server({ server });
     this.setupWebSocketServer();
   }
 

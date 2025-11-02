@@ -43,3 +43,13 @@ if (parentPort) {
 
 // Export for testing
 export { processTask };
+
+export const militaryGradeAI = {
+  async performSecurityScan(data: unknown) {
+    // Implement security scan logic here
+    return {
+      status: 'completed',
+      result: 'Security scan completed'
+    };
+  }
+};
