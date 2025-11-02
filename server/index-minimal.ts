@@ -183,8 +183,8 @@ registerRoutes(app);
 // Add monitoring middleware and routes (non-intrusive)
 import { monitoringMiddleware } from './monitoring/monitoring-middleware';
 import { monitoringRoutes } from './monitoring/monitoring-routes';
-app.use(monitoringMiddleware); // Add monitoring without affecting existing routes
-app.use('/api/monitor', monitoringRoutes); // Add monitoring endpoints
+app.use(monitoringMiddleware);
+app.use('/api/monitor', monitoringRoutes);
 
 // Ultra Queen AI Routes
 app.use('/api/ultra-queen-ai', ultraQueenAIRoutes);
