@@ -514,8 +514,8 @@ const initializeProviders = () => {
       enabled: !!process.env.MISTRAL_API_KEY
     },
     google: {
-      apiKey: process.env.GOOGLE_AI_API_KEY, // Changed from GOOGLE_API_KEY to GOOGLE_AI_API_KEY
-      enabled: !!process.env.GOOGLE_AI_API_KEY
+      apiKey: process.env.GOOGLE_AI_API_KEY || process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY || process.env.GOOGLE_GEMINI_API_KEY,
+      enabled: !!(process.env.GOOGLE_AI_API_KEY || process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY || process.env.GOOGLE_GEMINI_API_KEY)
     },
     perplexity: {
       apiKey: process.env.PERPLEXITY_API_KEY,
@@ -543,15 +543,16 @@ const initializeProviders = () => {
 
     // Blockchain
     ethereum: {
-      rpcUrl: process.env.ETHEREUM_RPC_URL,
-      enabled: !!process.env.ETHEREUM_RPC_URL
+      rpcUrl: process.env.ETHEREUM_RPC_URL || (process.env.INFURA_API_KEY ? `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}` : ''),
+      enabled: !!(process.env.ETHEREUM_RPC_URL || process.env.INFURA_API_KEY)
     },
     polygon: {
-      rpcUrl: process.env.POLYGON_RPC_ENDPOINT,
-      enabled: !!process.env.POLYGON_RPC_ENDPOINT
+      rpcUrl: process.env.POLYGON_RPC_ENDPOINT || process.env.POLYGON_RPC_URL || (process.env.INFURA_API_KEY ? `https://polygon-mainnet.infura.io/v3/${process.env.INFURA_API_KEY}` : ''),
+      enabled: !!(process.env.POLYGON_RPC_ENDPOINT || process.env.POLYGON_RPC_URL || process.env.INFURA_API_KEY || process.env.ALCHEMY_API_KEY)
     },
     solana: {
-      enabled: false // Add when configured
+      rpcUrl: process.env.SOLANA_RPC_URL || 'https://api.mainnet-beta.solana.com',
+      enabled: true // Always enabled with public endpoint
     },
     web3auth: {
       clientId: process.env.WEB3AUTH_CLIENT_ID,
