@@ -13,11 +13,9 @@
 import { EventEmitter } from 'events';
 import { performance } from 'perf_hooks';
 import { storage } from '../storage.js';
-import { railwayHealthCheckSystem } from './railway-health-check-system.js';
-import { railwayAutoScalingService } from './railway-auto-scaling-service.js';
 import { circuitBreakerSystem } from './circuit-breaker-system.js';
 import { selfHealingService } from './self-healing-service.js';
-import { type InsertSystemMetric, type InsertSelfHealingAction } from '../../shared/schema/index.js';
+import type { InsertSystemMetric, InsertSelfHealingAction } from '../../shared/schema/index.js';
 
 interface DeploymentConfig {
   strategy: 'rolling' | 'blue_green' | 'canary';
@@ -415,20 +413,21 @@ export class ZeroDowntimeDeployment extends EventEmitter {
   ): Promise<void> {
     console.log('🔍 Verifying system health before deployment...');
     
-    const healthStatus = await railwayHealthCheckSystem.performComprehensiveHealthCheck();
-    
-    if (healthStatus.overall_status === 'critical') {
-      throw new Error('System health is critical - deployment aborted');
+    try {
+      // Basic health check
+      const response = await fetch(`http://localhost:${process.env.PORT || 10000}/api/health`);
+      
+      if (!response.ok) {
+        throw new Error(`Health check failed with status: ${response.status}`);
+      }
+      
+      deployment.healthyReplicas = 1;
+      deployment.totalReplicas = 1;
+      
+      console.log('✅ Health verification passed');
+    } catch (error) {
+      throw new Error(`Health check failed: ${error instanceof Error ? error.message : String(error)}`);
     }
-    
-    if (healthStatus.summary.critical_services > 0) {
-      throw new Error(`${healthStatus.summary.critical_services} critical services detected - deployment aborted`);
-    }
-    
-    deployment.healthyReplicas = healthStatus.summary.healthy_services;
-    deployment.totalReplicas = healthStatus.summary.total_services;
-    
-    console.log(`✅ Health verification passed: ${deployment.healthyReplicas}/${deployment.totalReplicas} services healthy`);
   }
 
   /**
@@ -474,29 +473,7 @@ export class ZeroDowntimeDeployment extends EventEmitter {
     deployment: DeploymentStatus,
     config: DeploymentConfig
   ): Promise<void> {
-    console.log(`📋 Monitoring Railway deployment status (${config.strategy} strategy)...`);
-    
-    // Document Railway's actual deployment process
-    const deploymentLimitations = [
-      'Railway deployments are triggered by git pushes, not API calls',
-      'Zero-downtime rolling updates are handled automatically by Railway',
-      'Manual deployment control must be done through Railway dashboard',
-      'This service can only monitor deployment health, not control deployments'
-    ];
-    
-    console.log('🚨 Railway Deployment Limitations:');
-    deploymentLimitations.forEach(limitation => console.log(`   - ${limitation}`));
-    
-    // Import Railway API client for real status monitoring
-    const { railwayAPI } = await import('../config/railway-api');
-    
-    // Get actual Railway deployment status
-    const railwayStatus = await railwayAPI.getDeploymentStatus();
-    
-    console.log(`📊 Railway Status: ${railwayStatus.status}`);
-    if (railwayStatus.limitations) {
-      railwayStatus.limitations.forEach(limitation => console.log(`   ⚠️ ${limitation}`));
-    }
+    console.log(`📋 Monitoring deployment status (${config.strategy} strategy)...`);
     
     // Monitor system health during deployment window
     const monitoringPhases = [
@@ -510,19 +487,18 @@ export class ZeroDowntimeDeployment extends EventEmitter {
       const phaseName = monitoringPhases[i];
       console.log(`  🔍 ${phaseName}...`);
       
-      // Perform real health checks instead of simulated deployment
-      const healthStatus = await railwayHealthCheckSystem.performComprehensiveHealthCheck();
-      
-      if (healthStatus.overall_status === 'critical') {
-        throw new Error(`Health check failed during ${phaseName}: ${JSON.stringify(healthStatus.summary)}`);
+      // Basic health check
+      const response = await fetch(`http://localhost:${process.env.PORT || 10000}/api/health`);
+      if (!response.ok) {
+        throw new Error(`Health check failed during ${phaseName}: ${response.status}`);
       }
       
-      // Update deployment progress based on health checks
+      // Update deployment progress
       deployment.progress = Math.round(((i + 1) / monitoringPhases.length) * 80);
-      deployment.healthyReplicas = healthStatus.summary.healthy_services;
-      deployment.totalReplicas = healthStatus.summary.total_services;
+      deployment.healthyReplicas = 1;
+      deployment.totalReplicas = 1;
       
-      console.log(`  ✅ ${phaseName} completed - ${deployment.healthyReplicas}/${deployment.totalReplicas} services healthy`);
+      console.log(`  ✅ ${phaseName} completed - service healthy`);
     }
     
     // Log deployment monitoring completion
@@ -530,12 +506,11 @@ export class ZeroDowntimeDeployment extends EventEmitter {
       type: 'reactive',
       category: 'deployment',
       severity: 'low', 
-      description: 'Railway deployment monitoring completed',
-      target: 'railway_deployment',
+      description: 'Deployment monitoring completed',
+      target: 'deployment',
       action: 'Health monitoring during deployment window',
       trigger: {
         strategy: config.strategy,
-        railway_status: railwayStatus.status,
         health_summary: { healthyReplicas: deployment.healthyReplicas, totalReplicas: deployment.totalReplicas }
       },
       status: 'completed',
@@ -721,17 +696,21 @@ export class ZeroDowntimeDeployment extends EventEmitter {
   /**
    * Test database connectivity
    */
-  private async testDatabaseConnectivity(): Promise<any> {
+  private async testDatabaseConnectivity(): Promise<{ 
+    database_connected: boolean;
+    query_successful: boolean;
+    connection_test: boolean;
+  }> {
     try {
-      // Perform a simple database query to verify connectivity
-      const users = await storage.getUsers();
+      // Test database with a simple ping
+      await storage.get('health-check');
       return { 
         database_connected: true, 
         query_successful: true,
-        users_count: users?.length || 0
+        connection_test: true
       };
     } catch (error) {
-      throw new Error(`Database connectivity test failed: ${error}`);
+      throw new Error(`Database connectivity test failed: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -804,16 +783,16 @@ export class ZeroDowntimeDeployment extends EventEmitter {
     try {
       switch (check.name) {
         case 'system_health':
-          const healthStatus = await railwayHealthCheckSystem.getOverallHealthStatus();
-          check.result = { status: healthStatus.status };
-          if (healthStatus.status === 'critical') {
+          const response = await fetch(`http://localhost:${process.env.PORT || 10000}/api/health`);
+          check.result = { status: response.ok ? 'healthy' : 'critical' };
+          if (!response.ok) {
             throw new Error('System health is critical');
           }
           break;
           
         case 'database_connectivity':
           // Test database connectivity
-          await storage.getUsers();
+          await storage.get('health-check');
           check.result = { connected: true };
           break;
           
@@ -970,8 +949,8 @@ export class ZeroDowntimeDeployment extends EventEmitter {
       // Log progress
       await this.logSystemMetric({
         metricType: 'deployment_progress',
-        value: this.currentDeployment.progress,
-        unit: 'percentage'
+        metricValue: this.currentDeployment.progress,
+        source: 'deployment-system'
       });
       
     } catch (error) {
@@ -1134,16 +1113,22 @@ export class ZeroDowntimeDeployment extends EventEmitter {
     }
   }
 
-  private async logSystemMetric(metric: Omit<InsertSystemMetric, 'id' | 'timestamp'>): Promise<void> {
+  private async logSystemMetric(metric: {
+    metricType: string;
+    metricValue: number;
+    source: string;
+  }): Promise<void> {
     try {
-      // TODO: Implement storage method when available
-      // await storage.insertSystemMetric({
-      //   ...metric,
-      //   timestamp: new Date()
-      // });
-      console.log('📊 System metric:', metric.metricType, metric.value);
+      // Log metric to console
+      console.log('📊 System metric:', metric.metricType, metric.metricValue);
+      
+      // Store metric
+      await storage.set(`metric:${Date.now()}`, {
+        ...metric,
+        timestamp: new Date()
+      });
     } catch (error) {
-      console.warn('⚠️ Failed to log system metric:', error);
+      console.warn('⚠️ Failed to log system metric:', error instanceof Error ? error.message : String(error));
     }
   }
 }
