@@ -123,7 +123,7 @@ services:
         value: "https://crc-api.saps.gov.za/v1"
       - key: ICAO_PKD_API_KEY
         sync: false
-      - key: ICAO_PKD_BASE_URL 
+      - key: ICAO_PKD_BASE_URL
         value: "https://pkddownloadsg.icao.int"
       - key: SITA_API_KEY
         sync: false

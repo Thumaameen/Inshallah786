@@ -37,6 +37,11 @@ for (const key of criticalKeys) {
 
 console.log(`✅ Loaded ${loadedCount}/${criticalKeys.length} environment variables\n`);
 
+// Don't fail on missing API keys in production - graceful degradation
+if (loadedCount === 0) {
+  console.warn('⚠️  No API keys configured - running in fallback mode');
+}
+
 // Load environment variables first
 dotenv.config();
 

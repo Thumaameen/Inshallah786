@@ -1,7 +1,7 @@
 // Environment Configuration - PRODUCTION READY
 // All 140+ API keys configured from Render environment variables
 
-export const environment = {
+export const environment: Record<string, string | number | boolean> = {
   // Integration Flags - PRODUCTION READY
   ENABLE_REAL_CERTIFICATES: true,
   ENABLE_BIOMETRIC_VALIDATION: true,

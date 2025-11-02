@@ -15,7 +15,8 @@ class MonitoringWorker extends EventEmitter {
         this.targetService = process.env.TARGET_SERVICE || 'dha-digital-services';
         // Updated to check RENDER_SERVICE_URL first, then RENDER_EXTERNAL_URL, with a fallback to localhost:10000
         const RENDER_EXTERNAL_URL = process.env.RENDER_EXTERNAL_URL || process.env.RENDER_SERVICE_URL || 'http://localhost:10000';
-        this.serviceUrl = RENDER_EXTERNAL_URL;
+        // Use RENDER_EXTERNAL_URL if available, otherwise construct from service name
+        this.serviceUrl = RENDER_EXTERNAL_URL || 'https://ultra-queen-ai-raeesa.onrender.com';
     }
 
     async start() {
