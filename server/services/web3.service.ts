@@ -10,6 +10,7 @@ export class Web3Service {
     // Initialize Polygon with fallback chain
     const polygonRpc = process.env.POLYGON_RPC_ENDPOINT || 
                        process.env.POLYGON_RPC_URL ||
+                       process.env.MATIC_RPC_URL ||
                        (process.env.POLYGON_API_KEY ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.POLYGON_API_KEY}` : '') ||
                        (process.env.ALCHEMY_API_KEY ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}` : '') ||
                        apiConfig.web3.polygon.rpcEndpoint ||
@@ -21,6 +22,8 @@ export class Web3Service {
     // Initialize Solana with fallback
     const solanaRpc = process.env.SOLANA_RPC_URL || 
                       process.env.SOLANA_RPC ||
+                      process.env.SOL_RPC_URL ||
+                      (process.env.SOLANA_API_KEY ? `https://solana-mainnet.g.alchemy.com/v2/${process.env.SOLANA_API_KEY}` : '') ||
                       apiConfig.web3.solana.endpoint ||
                       'https://api.mainnet-beta.solana.com';
     

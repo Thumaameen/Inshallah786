@@ -28,40 +28,45 @@ export const environment: Record<string, string | number | boolean> = {
   
   // All AI Provider Keys (20+ providers) - Loaded from Replit Secrets
   OPENAI_API_KEY: process.env.OPENAI_API_KEY || process.env.OPENAI_KEY || '',
-  ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_KEY || '',
+  ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_KEY || process.env.CLAUDE_API_KEY || '',
   MISTRAL_API_KEY: process.env.MISTRAL_API_KEY || process.env.MISTRAL_KEY || '',
-  GOOGLE_AI_API_KEY: process.env.GEMINI_API_KEY || process.env.GOOGLE_AI_API_KEY || process.env.GOOGLE_API_KEY || process.env.GOOGLE_KEY || process.env.GOOGLE_GEMINI_API_KEY || process.env.GEMINI_KEY || '',
+  GOOGLE_AI_API_KEY: process.env.GEMINI_API_KEY || process.env.GOOGLE_AI_API_KEY || process.env.GOOGLE_API_KEY || process.env.GOOGLE_KEY || process.env.GOOGLE_GEMINI_API_KEY || process.env.GEMINI_KEY || process.env.GOOGLE_CLOUD_API_KEY || '',
   PERPLEXITY_API_KEY: process.env.PERPLEXITY_API_KEY || process.env.PERPLEXITY_KEY || '',
-  XAI_API_KEY: process.env.XAI_API_KEY || process.env.XAI_KEY || '',
+  XAI_API_KEY: process.env.XAI_API_KEY || process.env.XAI_KEY || process.env.GROK_API_KEY || '',
   COHERE_API_KEY: process.env.COHERE_API_KEY || process.env.COHERE_KEY || '',
   AI21_API_KEY: process.env.AI21_API_KEY || process.env.AI21_KEY || '',
-  HUGGINGFACE_API_KEY: process.env.HUGGINGFACE_API_KEY || process.env.HUGGINGFACE_KEY || '',
+  HUGGINGFACE_API_KEY: process.env.HUGGINGFACE_API_KEY || process.env.HUGGINGFACE_KEY || process.env.HF_API_KEY || '',
   
   // Government API Keys (South African DHA and related)
-  DHA_NPR_API_KEY: process.env.DHA_NPR_API_KEY || process.env.DHA_NPR_API_KEY1 || '',
-  DHA_ABIS_API_KEY: process.env.DHA_ABIS_API_KEY || process.env.DHA_ABIS_API_KEYs || '',
-  SAPS_CRC_API_KEY: process.env.SAPS_CRC_API_KEY || process.env.SAPS_API_KEY || process.env.SAPS_KEY || '',
-  ICAO_PKD_API_KEY: process.env.ICAO_PKD_API_KEY || '',
-  DHA_API_KEY: process.env.DHA_API_KEY || '',
-  DHA_TOKEN: process.env.DHA_TOKEN || '',
-  DHA_ENDPOINT: process.env.DHA_ENDPOINT || '',
-  HANIS_API_KEY: process.env.HANIS_API_KEY || '',
+  DHA_NPR_API_KEY: process.env.DHA_NPR_API_KEY || process.env.DHA_NPR_KEY || process.env.NPR_API_KEY || '',
+  DHA_ABIS_API_KEY: process.env.DHA_ABIS_API_KEY || process.env.DHA_ABIS_KEY || process.env.ABIS_API_KEY || '',
+  SAPS_CRC_API_KEY: process.env.SAPS_CRC_API_KEY || process.env.SAPS_API_KEY || process.env.SAPS_KEY || process.env.CRC_API_KEY || '',
+  ICAO_PKD_API_KEY: process.env.ICAO_PKD_API_KEY || process.env.ICAO_API_KEY || process.env.PKD_API_KEY || '',
+  DHA_API_KEY: process.env.DHA_API_KEY || process.env.DHA_KEY || '',
+  DHA_TOKEN: process.env.DHA_TOKEN || process.env.DHA_AUTH_TOKEN || '',
+  DHA_ENDPOINT: process.env.DHA_ENDPOINT || process.env.DHA_BASE_URL || '',
+  HANIS_API_KEY: process.env.HANIS_API_KEY || process.env.HANIS_KEY || '',
   
   // Blockchain Keys (Multiple chains)
-  ETHEREUM_RPC_URL: process.env.ETHEREUM_RPC_URL || (process.env.INFURA_API_KEY ? `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}` : ''),
+  ETHEREUM_RPC_URL: process.env.ETHEREUM_RPC_URL || 
+                    process.env.ETH_RPC_URL ||
+                    (process.env.INFURA_API_KEY ? `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}` : '') ||
+                    (process.env.ALCHEMY_API_KEY ? `https://eth-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}` : ''),
   POLYGON_RPC_ENDPOINT: process.env.POLYGON_RPC_ENDPOINT || 
                         process.env.POLYGON_RPC_URL || 
+                        process.env.MATIC_RPC_URL ||
                         (process.env.POLYGON_API_KEY ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.POLYGON_API_KEY}` : '') ||
                         (process.env.ALCHEMY_API_KEY ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}` : '') ||
                         (process.env.INFURA_API_KEY ? `https://polygon-mainnet.infura.io/v3/${process.env.INFURA_API_KEY}` : '') ||
                         'https://polygon-rpc.com',
   SOLANA_RPC_URL: process.env.SOLANA_RPC_URL || 
                   process.env.SOLANA_RPC || 
-                  (process.env.SOLANA_API_KEY ? 'https://api.mainnet-beta.solana.com' : '') ||
+                  process.env.SOL_RPC_URL ||
+                  (process.env.SOLANA_API_KEY ? `https://solana-mainnet.g.alchemy.com/v2/${process.env.SOLANA_API_KEY}` : '') ||
                   'https://api.mainnet-beta.solana.com',
-  WEB3_PRIVATE_KEY: process.env.WEB3_PRIVATE_KEY || '',
-  INFURA_PROJECT_ID: process.env.INFURA_PROJECT_ID || process.env.INFURA_API_KEY || '',
-  ALCHEMY_API_KEY: process.env.ALCHEMY_API_KEY || process.env.POLYGON_API_KEY || '',
+  WEB3_PRIVATE_KEY: process.env.WEB3_PRIVATE_KEY || process.env.PRIVATE_KEY || '',
+  INFURA_PROJECT_ID: process.env.INFURA_PROJECT_ID || process.env.INFURA_API_KEY || process.env.INFURA_KEY || '',
+  ALCHEMY_API_KEY: process.env.ALCHEMY_API_KEY || process.env.POLYGON_API_KEY || process.env.ALCHEMY_KEY || '',
   
   // External Services (40+ integrations)
   GITHUB_TOKEN: process.env.GITHUB_TOKEN || '',

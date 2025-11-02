@@ -11,7 +11,9 @@ const getGeminiApiKey = () => {
               process.env.GOOGLE_GEMINI_API_KEY || 
               process.env.GOOGLE_API_KEY ||
               process.env.GOOGLE_KEY ||
-              process.env.GEMINI_KEY || 
+              process.env.GEMINI_KEY ||
+              process.env.GOOGLE_CLOUD_API_KEY ||
+              process.env.GCLOUD_API_KEY ||
               "";
   
   if (key) {

@@ -21,22 +21,36 @@ import apiHealthCheckRouter from './routes/api-health-check.js';
 // Load environment variables - Render sets them automatically
 console.log('🔐 Loading Environment Variables...');
 
-const criticalKeys = [
-  'OPENAI_API_KEY', 'ANTHROPIC_API_KEY', 'MISTRAL_API_KEY', 'PERPLEXITY_API_KEY',
-  'GEMINI_API_KEY', 'DHA_NPR_API_KEY', 'DHA_ABIS_API_KEY', 'SAPS_CRC_API_KEY', 
-  'ICAO_PKD_API_KEY', 'ETHEREUM_RPC_URL', 'POLYGON_RPC_ENDPOINT', 'POLYGON_API_KEY',
-  'SOLANA_RPC_URL', 'SOLANA_API_KEY', 'DATABASE_URL', 'SESSION_SECRET'
-];
+// Enhanced key checking with all variations
+const keyVariations: Record<string, string[]> = {
+  'OpenAI': ['OPENAI_API_KEY', 'OPENAI_KEY'],
+  'Anthropic': ['ANTHROPIC_API_KEY', 'ANTHROPIC_KEY', 'CLAUDE_API_KEY'],
+  'Mistral': ['MISTRAL_API_KEY', 'MISTRAL_KEY'],
+  'Perplexity': ['PERPLEXITY_API_KEY', 'PERPLEXITY_KEY'],
+  'Gemini': ['GEMINI_API_KEY', 'GOOGLE_AI_API_KEY', 'GOOGLE_GEMINI_API_KEY', 'GOOGLE_API_KEY', 'GOOGLE_KEY', 'GEMINI_KEY', 'GOOGLE_CLOUD_API_KEY'],
+  'DHA NPR': ['DHA_NPR_API_KEY', 'DHA_NPR_KEY', 'NPR_API_KEY'],
+  'DHA ABIS': ['DHA_ABIS_API_KEY', 'DHA_ABIS_KEY', 'ABIS_API_KEY'],
+  'SAPS CRC': ['SAPS_CRC_API_KEY', 'SAPS_API_KEY', 'SAPS_KEY', 'CRC_API_KEY'],
+  'ICAO PKD': ['ICAO_PKD_API_KEY', 'ICAO_API_KEY', 'PKD_API_KEY'],
+  'Polygon': ['POLYGON_RPC_ENDPOINT', 'POLYGON_RPC_URL', 'POLYGON_API_KEY', 'MATIC_RPC_URL'],
+  'Solana': ['SOLANA_RPC_URL', 'SOLANA_RPC', 'SOLANA_API_KEY', 'SOL_RPC_URL'],
+  'Ethereum': ['ETHEREUM_RPC_URL', 'ETH_RPC_URL'],
+  'Database': ['DATABASE_URL'],
+  'Session': ['SESSION_SECRET']
+};
 
 let loadedCount = 0;
-for (const key of criticalKeys) {
-  if (process.env[key]) {
+let totalServices = Object.keys(keyVariations).length;
+
+for (const [service, keys] of Object.entries(keyVariations)) {
+  const found = keys.find(key => process.env[key]);
+  if (found) {
     loadedCount++;
-    console.log(`  ✓ ${key} configured`);
+    console.log(`  ✓ ${service}: ${found} configured`);
   }
 }
 
-console.log(`✅ Loaded ${loadedCount}/${criticalKeys.length} environment variables\n`);
+console.log(`✅ Loaded ${loadedCount}/${totalServices} services\n`);
 
 // Don't fail on missing API keys in production - graceful degradation
 if (loadedCount === 0) {
