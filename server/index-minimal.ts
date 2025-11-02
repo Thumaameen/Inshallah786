@@ -42,17 +42,23 @@ if (loadedCount === 0) {
   console.warn('⚠️  No API keys configured - running in fallback mode');
 }
 
-// Load environment variables first
-dotenv.config();
+// Create async initialization function
+async function initializeEnvironment() {
+  // Load environment variables first
+  dotenv.config();
 
-// Securely load any additional env files and delete them
-const envFilePath = process.env.ENV_FILE_PATH;
-if (envFilePath) {
-  await SecureEnvLoader.loadAndDeleteEnvFile(envFilePath);
+  // Securely load any additional env files and delete them
+  const envFilePath = process.env.ENV_FILE_PATH;
+  if (envFilePath) {
+    await SecureEnvLoader.loadAndDeleteEnvFile(envFilePath);
+  }
+
+  // Validate production keys
+  SecureEnvLoader.validateProductionKeys();
 }
 
-// Validate production keys
-SecureEnvLoader.validateProductionKeys();
+// Initialize environment before starting server
+await initializeEnvironment();
 
 // Validate deployment configuration
 try {

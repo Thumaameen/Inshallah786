@@ -213,14 +213,13 @@ router.get('/bots', (req, res) => {
         'Web2 & Web3 unlimited access',
         'Government API integration',
         'Blockchain operations',
-        'No restrictions - "Only Limit Is Me"'
-      ],
-      status: 'active'
-    }ion research',
+        'No restrictions - "Only Limit Is Me"',
+        'Advanced information research',
         'Document analysis and OCR intelligence',
         'Correlation analysis across datasets',
         'Risk assessment and strategic intelligence'
-      ]
+      ],
+      status: 'active'
     },
     {
       id: 'command',
