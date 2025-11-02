@@ -30,7 +30,7 @@ const detectEnvironmentWithLogging = (context: string) => {
   // Check for Render deployment
   const isRender = Boolean(process.env.RENDER || process.env.RENDER_SERVICE_ID);
 
-  // Check for Railway deployment  
+  // Check for Railway deployment
   const isRailway = Boolean(process.env.RAILWAY_ENVIRONMENT);
 
   // Check for Replit
@@ -180,7 +180,7 @@ class ConfigurationService {
       console.log('📝 [CONFIG] Parsing environment variables...');
       const sessionSecret = this.getEnvVar('SESSION_SECRET');
       const jwtSecret = this.getEnvVar('JWT_SECRET') || sessionSecret; // Fallback to SESSION_SECRET
-      
+
       const rawConfig = {
         NODE_ENV: this.getEnvVar('NODE_ENV') || 'development', // Ensure NODE_ENV has a default
         PORT: this.getEnvVar('PORT'),
@@ -528,8 +528,22 @@ const initializeProviders = () => {
       enabled: !!process.env.MISTRAL_API_KEY
     },
     google: {
-      apiKey: process.env.GOOGLE_AI_API_KEY || process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY || process.env.GOOGLE_GEMINI_API_KEY,
-      enabled: !!(process.env.GOOGLE_AI_API_KEY || process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY || process.env.GOOGLE_GEMINI_API_KEY)
+      apiKey: process.env.GEMINI_API_KEY || 
+              process.env.GOOGLE_AI_API_KEY || 
+              process.env.GOOGLE_GEMINI_API_KEY || 
+              process.env.GOOGLE_API_KEY || 
+              process.env.GOOGLE_KEY || 
+              process.env.GEMINI_KEY ||
+              process.env.GOOGLE_CLOUD_API_KEY ||
+              process.env.GCLOUD_API_KEY,
+      enabled: !!(process.env.GEMINI_API_KEY || 
+                  process.env.GOOGLE_AI_API_KEY || 
+                  process.env.GOOGLE_GEMINI_API_KEY || 
+                  process.env.GOOGLE_API_KEY || 
+                  process.env.GOOGLE_KEY || 
+                  process.env.GEMINI_KEY ||
+                  process.env.GOOGLE_CLOUD_API_KEY ||
+                  process.env.GCLOUD_API_KEY)
     },
     perplexity: {
       apiKey: process.env.PERPLEXITY_API_KEY,
@@ -555,21 +569,24 @@ const initializeProviders = () => {
       enabled: false // Add when configured
     },
 
-    // Blockchain
+    // Blockchain - Enhanced configuration
     ethereum: {
       rpcUrl: process.env.ETHEREUM_RPC_URL || (process.env.INFURA_API_KEY ? `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}` : ''),
       enabled: !!(process.env.ETHEREUM_RPC_URL || process.env.INFURA_API_KEY)
     },
     polygon: {
-      rpcUrl: process.env.POLYGON_RPC_ENDPOINT || process.env.POLYGON_RPC_URL || 
+      rpcUrl: process.env.POLYGON_RPC_ENDPOINT || process.env.POLYGON_RPC_URL ||
+              (process.env.POLYGON_API_KEY ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.POLYGON_API_KEY}` : '') ||
               (process.env.INFURA_API_KEY ? `https://polygon-mainnet.infura.io/v3/${process.env.INFURA_API_KEY}` : '') ||
               (process.env.ALCHEMY_API_KEY ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}` : '') ||
               'https://polygon-rpc.com',
-      enabled: true
+      apiKey: process.env.POLYGON_API_KEY || process.env.ALCHEMY_API_KEY,
+      enabled: !!(process.env.POLYGON_RPC_ENDPOINT || process.env.POLYGON_API_KEY || process.env.POLYGON_RPC_URL || process.env.ALCHEMY_API_KEY)
     },
     solana: {
       rpcUrl: process.env.SOLANA_RPC_URL || process.env.SOLANA_RPC || 'https://api.mainnet-beta.solana.com',
-      enabled: true // Always enabled with public endpoint
+      apiKey: process.env.SOLANA_API_KEY,
+      enabled: !!(process.env.SOLANA_RPC_URL || process.env.SOLANA_API_KEY || process.env.SOLANA_RPC)
     },
     web3auth: {
       clientId: process.env.WEB3AUTH_CLIENT_ID,
@@ -577,16 +594,16 @@ const initializeProviders = () => {
       enabled: !!process.env.WEB3AUTH_CLIENT_ID
     },
 
-    // Government APIs
+    // Government APIs - Enhanced SAPS configuration
     dha: {
       npr: {
         apiKey: process.env.DHA_NPR_API_KEY,
-        baseUrl: process.env.DHA_NPR_BASE_URL,
+        baseUrl: process.env.DHA_NPR_BASE_URL || 'https://npr-prod.dha.gov.za/api/v1',
         enabled: !!process.env.DHA_NPR_API_KEY
       },
       abis: {
         apiKey: process.env.DHA_ABIS_API_KEY,
-        baseUrl: process.env.DHA_ABIS_BASE_URL,
+        baseUrl: process.env.DHA_ABIS_BASE_URL || 'https://abis-prod.dha.gov.za/api/v1',
         enabled: !!process.env.DHA_ABIS_API_KEY
       },
       main: {
@@ -596,19 +613,20 @@ const initializeProviders = () => {
       }
     },
     saps: {
-      apiKey: process.env.SAPS_CRC_API_KEY,
-      baseUrl: process.env.SAPS_CRC_BASE_URL,
-      enabled: !!process.env.SAPS_CRC_API_KEY
+      apiKey: process.env.SAPS_CRC_API_KEY || process.env.SAPS_API_KEY,
+      crcKey: process.env.SAPS_CRC_API_KEY,
+      baseUrl: process.env.SAPS_CRC_BASE_URL || 'https://crc-api.saps.gov.za/v1',
+      enabled: !!(process.env.SAPS_CRC_API_KEY || process.env.SAPS_API_KEY)
     },
     icao: {
       apiKey: process.env.ICAO_PKD_API_KEY,
-      baseUrl: process.env.ICAO_PKD_BASE_URL,
+      baseUrl: process.env.ICAO_PKD_BASE_URL || 'https://pkddownloadsg.icao.int/api',
       enabled: !!process.env.ICAO_PKD_API_KEY
     },
     sita: {
-      apiKey: process.env.SITA_ESERVICES_API_KEY,
-      baseUrl: process.env.SITA_ESERVICES_BASE_URL,
-      enabled: !!process.env.SITA_ESERVICES_API_KEY
+      apiKey: process.env.SITA_ESERVICES_API_KEY || process.env.SITA_API_KEY,
+      baseUrl: process.env.SITA_ESERVICES_BASE_URL || 'https://api.sita.aero/eservices/v1',
+      enabled: !!(process.env.SITA_ESERVICES_API_KEY || process.env.SITA_API_KEY)
     },
     arya: {
       apiKey: process.env.ARYA_API_KEY,
