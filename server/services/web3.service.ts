@@ -7,14 +7,25 @@ export class Web3Service {
   private solanaConnection: Connection;
 
   constructor() {
-    // Initialize Polygon
-    this.polygonWeb3 = new Web3(apiConfig.web3.polygon.rpcEndpoint);
+    // Initialize Polygon with fallback chain
+    const polygonRpc = process.env.POLYGON_RPC_ENDPOINT || 
+                       process.env.POLYGON_RPC_URL ||
+                       (process.env.POLYGON_API_KEY ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.POLYGON_API_KEY}` : '') ||
+                       (process.env.ALCHEMY_API_KEY ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}` : '') ||
+                       apiConfig.web3.polygon.rpcEndpoint ||
+                       'https://polygon-rpc.com';
     
-    // Initialize Solana
-    this.solanaConnection = new Connection(
-      apiConfig.web3.solana.endpoint,
-      'confirmed'
-    );
+    console.log(`[Polygon] Initializing with RPC: ${polygonRpc.substring(0, 50)}...`);
+    this.polygonWeb3 = new Web3(polygonRpc);
+    
+    // Initialize Solana with fallback
+    const solanaRpc = process.env.SOLANA_RPC_URL || 
+                      process.env.SOLANA_RPC ||
+                      apiConfig.web3.solana.endpoint ||
+                      'https://api.mainnet-beta.solana.com';
+    
+    console.log(`[Solana] Initializing with RPC: ${solanaRpc}`);
+    this.solanaConnection = new Connection(solanaRpc, 'confirmed');
   }
 
   async verifyDocumentOnChain(documentHash: string) {

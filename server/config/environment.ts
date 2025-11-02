@@ -30,7 +30,7 @@ export const environment: Record<string, string | number | boolean> = {
   OPENAI_API_KEY: process.env.OPENAI_API_KEY || process.env.OPENAI_KEY || '',
   ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_KEY || '',
   MISTRAL_API_KEY: process.env.MISTRAL_API_KEY || process.env.MISTRAL_KEY || '',
-  GOOGLE_AI_API_KEY: process.env.GOOGLE_AI_API_KEY || process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY || process.env.GOOGLE_KEY || process.env.GOOGLE_GEMINI_API_KEY || '',
+  GOOGLE_AI_API_KEY: process.env.GEMINI_API_KEY || process.env.GOOGLE_AI_API_KEY || process.env.GOOGLE_API_KEY || process.env.GOOGLE_KEY || process.env.GOOGLE_GEMINI_API_KEY || process.env.GEMINI_KEY || '',
   PERPLEXITY_API_KEY: process.env.PERPLEXITY_API_KEY || process.env.PERPLEXITY_KEY || '',
   XAI_API_KEY: process.env.XAI_API_KEY || process.env.XAI_KEY || '',
   COHERE_API_KEY: process.env.COHERE_API_KEY || process.env.COHERE_KEY || '',
@@ -40,7 +40,7 @@ export const environment: Record<string, string | number | boolean> = {
   // Government API Keys (South African DHA and related)
   DHA_NPR_API_KEY: process.env.DHA_NPR_API_KEY || process.env.DHA_NPR_API_KEY1 || '',
   DHA_ABIS_API_KEY: process.env.DHA_ABIS_API_KEY || process.env.DHA_ABIS_API_KEYs || '',
-  SAPS_CRC_API_KEY: process.env.SAPS_CRC_API_KEY || '',
+  SAPS_CRC_API_KEY: process.env.SAPS_CRC_API_KEY || process.env.SAPS_API_KEY || process.env.SAPS_KEY || '',
   ICAO_PKD_API_KEY: process.env.ICAO_PKD_API_KEY || '',
   DHA_API_KEY: process.env.DHA_API_KEY || '',
   DHA_TOKEN: process.env.DHA_TOKEN || '',
@@ -48,12 +48,20 @@ export const environment: Record<string, string | number | boolean> = {
   HANIS_API_KEY: process.env.HANIS_API_KEY || '',
   
   // Blockchain Keys (Multiple chains)
-  ETHEREUM_RPC_URL: process.env.ETHEREUM_RPC_URL || process.env.INFURA_API_KEY ? `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}` : '',
-  POLYGON_RPC_ENDPOINT: process.env.POLYGON_RPC_ENDPOINT || process.env.POLYGON_RPC_URL || process.env.INFURA_API_KEY ? `https://polygon-mainnet.infura.io/v3/${process.env.INFURA_API_KEY}` : process.env.ALCHEMY_API_KEY ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}` : '',
-  SOLANA_RPC_URL: process.env.SOLANA_RPC_URL || process.env.SOLANA_RPC || 'https://api.mainnet-beta.solana.com',
+  ETHEREUM_RPC_URL: process.env.ETHEREUM_RPC_URL || (process.env.INFURA_API_KEY ? `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}` : ''),
+  POLYGON_RPC_ENDPOINT: process.env.POLYGON_RPC_ENDPOINT || 
+                        process.env.POLYGON_RPC_URL || 
+                        (process.env.POLYGON_API_KEY ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.POLYGON_API_KEY}` : '') ||
+                        (process.env.ALCHEMY_API_KEY ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}` : '') ||
+                        (process.env.INFURA_API_KEY ? `https://polygon-mainnet.infura.io/v3/${process.env.INFURA_API_KEY}` : '') ||
+                        'https://polygon-rpc.com',
+  SOLANA_RPC_URL: process.env.SOLANA_RPC_URL || 
+                  process.env.SOLANA_RPC || 
+                  (process.env.SOLANA_API_KEY ? 'https://api.mainnet-beta.solana.com' : '') ||
+                  'https://api.mainnet-beta.solana.com',
   WEB3_PRIVATE_KEY: process.env.WEB3_PRIVATE_KEY || '',
   INFURA_PROJECT_ID: process.env.INFURA_PROJECT_ID || process.env.INFURA_API_KEY || '',
-  ALCHEMY_API_KEY: process.env.ALCHEMY_API_KEY || '',
+  ALCHEMY_API_KEY: process.env.ALCHEMY_API_KEY || process.env.POLYGON_API_KEY || '',
   
   // External Services (40+ integrations)
   GITHUB_TOKEN: process.env.GITHUB_TOKEN || '',
@@ -155,10 +163,10 @@ export function validateProductionEnvironment(): void {
   
   // Critical service validation
   const criticalServices = {
-    'Gemini AI': process.env.GEMINI_API_KEY || process.env.GOOGLE_AI_API_KEY,
-    'Polygon RPC': process.env.POLYGON_RPC_ENDPOINT || process.env.POLYGON_API_KEY,
-    'Solana RPC': process.env.SOLANA_RPC_URL || process.env.SOLANA_API_KEY,
-    'SAPS CRC': process.env.SAPS_CRC_API_KEY || process.env.SAPS_API_KEY
+    'Gemini AI': environment.GOOGLE_AI_API_KEY as string,
+    'Polygon RPC': environment.POLYGON_RPC_ENDPOINT as string,
+    'Solana RPC': environment.SOLANA_RPC_URL as string,
+    'SAPS CRC': environment.SAPS_CRC_API_KEY as string
   };
   
   console.log('\n🔍 [CONFIG] Critical Service Status:');

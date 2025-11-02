@@ -528,8 +528,8 @@ const initializeProviders = () => {
       enabled: !!process.env.MISTRAL_API_KEY
     },
     google: {
-      apiKey: process.env.GEMINI_API_KEY || process.env.GOOGLE_AI_API_KEY || process.env.GOOGLE_API_KEY || process.env.GOOGLE_GEMINI_API_KEY,
-      enabled: !!(process.env.GEMINI_API_KEY || process.env.GOOGLE_AI_API_KEY || process.env.GOOGLE_API_KEY || process.env.GOOGLE_GEMINI_API_KEY)
+      apiKey: process.env.GEMINI_API_KEY || process.env.GOOGLE_AI_API_KEY || process.env.GOOGLE_GEMINI_API_KEY || process.env.GOOGLE_API_KEY || process.env.GOOGLE_KEY || process.env.GEMINI_KEY,
+      enabled: !!(process.env.GEMINI_API_KEY || process.env.GOOGLE_AI_API_KEY || process.env.GOOGLE_GEMINI_API_KEY || process.env.GOOGLE_API_KEY || process.env.GOOGLE_KEY || process.env.GEMINI_KEY)
     },
     perplexity: {
       apiKey: process.env.PERPLEXITY_API_KEY,

@@ -6,11 +6,21 @@ import { GoogleGenAI, Modality } from "@google/genai";
 
 // The newest Gemini model series is "gemini-2.5-flash" or "gemini-2.5-pro"
 const getGeminiApiKey = () => {
-  return process.env.GEMINI_API_KEY || 
-         process.env.GOOGLE_AI_API_KEY || 
-         process.env.GOOGLE_GEMINI_API_KEY || 
-         process.env.GOOGLE_API_KEY || 
-         "";
+  const key = process.env.GEMINI_API_KEY || 
+              process.env.GOOGLE_AI_API_KEY || 
+              process.env.GOOGLE_GEMINI_API_KEY || 
+              process.env.GOOGLE_API_KEY ||
+              process.env.GOOGLE_KEY ||
+              process.env.GEMINI_KEY || 
+              "";
+  
+  if (key) {
+    console.log('[Gemini] ✅ API key found and configured');
+  } else {
+    console.warn('[Gemini] ⚠️ API key not found - service will be inactive');
+  }
+  
+  return key;
 };
 
 const ai = new GoogleGenAI({ apiKey: getGeminiApiKey() });
