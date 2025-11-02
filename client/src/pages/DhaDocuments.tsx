@@ -78,7 +78,7 @@ export default function DhaDocuments() {
     },
     {
       id: "anna-permit",
-      title: "Permanent Residence Permit", 
+      title: "Permanent Residence Permit",
       description: "Anna Munaf - Pakistani National",
       icon: CreditCard,
       color: "bg-green-500",
@@ -136,7 +136,7 @@ export default function DhaDocuments() {
         fullName: "Tasleen Mohsin",
         passportNumber: "TM9876543",
         dateOfBirth: "1995-04-18",
-        nationality: "Pakistani", 
+        nationality: "Pakistani",
         gender: "F",
         address: "321 Beyers Naude Drive, Randburg, Gauteng, 2194",
         contactNumber: "+27666789012",
@@ -259,7 +259,7 @@ export default function DhaDocuments() {
         fullName: "Ayesha Patel",
         idNumber: "8808190234085",
         dateOfBirth: "1988-08-19",
-        nationality: "South African", 
+        nationality: "South African",
         gender: "F",
         address: "12 Long Street, Cape Town City Centre, 8001",
         contactNumber: "+27721234567",
@@ -396,18 +396,18 @@ export default function DhaDocuments() {
       }
 
       const result = await response.json();
-      
+
       if (result.success && result.document) {
         setGeneratedDocuments(prev => ({
           ...prev,
           [doc.id]: result
         }));
-        
+
         toast({
           title: "Success",
           description: "Document generated successfully! Click Download to save.",
         });
-        
+
         // Auto-download on mobile
         if (result.document.pdfUrl) {
           const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
@@ -439,7 +439,7 @@ export default function DhaDocuments() {
     if (document?.document?.pdfUrl) {
       // Mobile-friendly download
       const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      
+
       if (isMobile) {
         // Create download link for mobile
         const link = window.document.createElement('a');
@@ -449,7 +449,7 @@ export default function DhaDocuments() {
         window.document.body.appendChild(link);
         link.click();
         window.document.body.removeChild(link);
-        
+
         toast({
           title: "Download Started",
           description: "Check your Downloads folder",
@@ -507,8 +507,8 @@ export default function DhaDocuments() {
             const isLoading = isGenerating(doc.id);
 
             return (
-              <Card 
-                key={doc.id} 
+              <Card
+                key={doc.id}
                 className="hover:shadow-xl transition-all duration-200 border-2 hover:border-green-400"
                 data-testid={`card-document-${doc.id}`}
               >
@@ -553,7 +553,7 @@ export default function DhaDocuments() {
 
                     {/* Action Buttons */}
                     {!isGenerated ? (
-                      <Button 
+                      <Button
                         className="w-full bg-green-600 hover:bg-green-700"
                         onClick={() => handleGenerateDocument(doc)}
                         disabled={isLoading}
@@ -573,7 +573,7 @@ export default function DhaDocuments() {
                       </Button>
                     ) : (
                       <div className="space-y-2">
-                        <Button 
+                        <Button
                           className="w-full bg-blue-600 hover:bg-blue-700"
                           onClick={() => downloadDocument(doc.id)}
                           data-testid={`button-download-${doc.id}`}
