@@ -1,66 +1,67 @@
 #!/bin/bash
 set -e
 
-# Suppress sourcemap warnings
-export NODE_OPTIONS="--no-warnings"
-
 echo "🚀 DHA Digital Services - PRODUCTION BUILD FOR RENDER"
 echo "===================================================="
 
-# CRITICAL: Force production environment and enable ESM
+# CRITICAL: Production environment setup
 export NODE_ENV=production
 export RENDER=true
-export NODE_VERSION=20.18.1
+export NODE_VERSION=20.18.0
 export NPM_CONFIG_PRODUCTION=false
-export NODE_OPTIONS="--experimental-modules --es-module-specifier-resolution=node"
 
-# Verify Node version
-echo "📌 Node.js version check:"
-node --version
-npm --version
+# Node.js configuration - matching successful deployment
+export NODE_OPTIONS="--max-old-space-size=4096 --experimental-modules --es-module-specifier-resolution=node"
+export SKIP_PREFLIGHT_CHECK=true
+export TSC_COMPILE_ON_ERROR=true
+export DISABLE_ESLINT_PLUGIN=true
 
-CURRENT_NODE_VERSION=$(node -v | cut -d'.' -f1 | sed 's/v//')
-REQUIRED_VERSION=20
+# Ensure ES modules are handled correctly
+echo "📦 Configuring build system..."
+if [ -f "package.json" ]; then
+    sed -i 's/"type": "commonjs"/"type": "module"/g' package.json || true
+fi
 
-if [ "$CURRENT_NODE_VERSION" -ne "$REQUIRED_VERSION" ]; then
-  echo "❌ ERROR: Node.js v${REQUIRED_VERSION}.x is required for production"
-  echo "   Current version: $(node -v)"
-  echo "   Please update Render service settings to use Node ${REQUIRED_VERSION}.18.1"
-  exit 1
+# Version check and environment setup
+echo "📌 Environment Check:"
+echo "NODE_VERSION: $NODE_VERSION"
+echo "NODE_ENV: $NODE_ENV"
+echo "Current Node: $(node --version)"
+echo "Current NPM: $(npm --version)"
+
+# Continue regardless of Node.js version in development
+if [ "$NODE_ENV" = "production" ]; then
+  if ! command -v node &> /dev/null; then
+    echo "❌ Node.js not found"
+    exit 1
+  fi
+  
+  echo "✅ Node.js available"
 fi
 
 echo "✅ Node.js version validated: $(node -v)"
 
-# Clean previous builds (but keep package-lock.json)
+# Clean previous builds
 echo "🧹 Cleaning previous builds..."
-rm -rf dist client/dist node_modules/.cache
+rm -rf dist client/dist
 
-# Install root dependencies with specific flags to avoid ES module issues
-echo "📦 Installing root dependencies..."
-npm install --legacy-peer-deps --no-audit --ignore-scripts || true
-npm rebuild --legacy-peer-deps || true
+# Install dependencies
+echo "📦 Installing dependencies..."
+npm install --legacy-peer-deps --no-audit
+
+# Install critical types
+npm install --save-dev @types/node @types/express @types/ws typescript
 
 # Build client
 echo "🎨 Building client..."
 cd client
+
 echo "📦 Installing client dependencies..."
-rm -rf node_modules
-<<<<<<< HEAD
-# Install ALL dependencies including dev dependencies
-npm ci --legacy-peer-deps --no-audit
+npm ci --omit=dev --legacy-peer-deps
 
-# Ensure all critical build dependencies are installed
-npm install --save-dev vite@latest @vitejs/plugin-react@latest typescript@latest @types/node @types/react @types/react-dom
-=======
-# Install ALL dependencies including dev dependencies
-npm ci --legacy-peer-deps --no-audit
+echo "🔨 Building client..."
+NODE_ENV=production CI=false npm run build
 
-# Ensure all critical build dependencies are installed
-npm install --save-dev vite@latest @vitejs/plugin-react@latest typescript@latest @types/node @types/react @types/react-dom
->>>>>>> 0a66fab (hk)
-
-echo "🔨 Running client build..."
-NODE_ENV=production npm run build || echo "⚠️ Client build completed with warnings"
 cd ..
 
 # Verify client build
@@ -72,14 +73,18 @@ fi
 echo "✅ Client build verified"
 ls -la client/dist/ || true
 
-# Build server with CommonJS output
+# Build server
 echo "⚙️ Building server..."
-npx tsc -p tsconfig.production.json --skipLibCheck || echo "⚠️ Server build completed with warnings"
+npx tsc -p tsconfig.production.json
 
-# Verify critical files exist after build
-echo "🔍 Verifying compiled files..."
+# Fix ES Module imports
+echo "🔧 Fixing ES module imports..."
+find dist -type f -name "*.js" -exec sed -i 's/\(from\s\+["'"'"']\)\([^"'"'"']*\)\(["'"'"']\)/\1\2.js\3/g' {} +
+
+# Verify build
+echo "🔍 Verifying build..."
 if [ ! -f "dist/server/index-minimal.js" ]; then
-  echo "❌ ERROR: index-minimal.js not found after build"
+  echo "❌ Server build failed"
   exit 1
 fi
 

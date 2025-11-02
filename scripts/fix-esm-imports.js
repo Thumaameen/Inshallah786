@@ -1,4 +1,3 @@
-
 #!/usr/bin/env node
 
 /**
@@ -12,6 +11,36 @@ const path = require('path');
 function fixImportsInFile(filePath) {
   let content = fs.readFileSync(filePath, 'utf8');
   let modified = false;
+  
+  // Fix relative imports without extension
+  content = content.replace(
+    /from ['"]([^'"]*[^.][^'"]*)['"]/g,
+    (match, importPath) => {
+      if (importPath.startsWith('.')) {
+        modified = true;
+        return `from '${importPath}.js'`;
+      }
+      return match;
+    }
+  );
+
+  // Fix export types
+  content = content.replace(
+    /export type {([^}]*)}/g,
+    (match, types) => {
+      modified = true;
+      return `export { ${types.split(',').map(t => `type ${t.trim()}`).join(', ')} }`;
+    }
+  );
+
+  // Fix import types
+  content = content.replace(
+    /import type {([^}]*)}/g,
+    (match, types) => {
+      modified = true;
+      return `import { type ${types.split(',').map(t => t.trim()).join(', type ')} }`;
+    }
+  );
 
   // Fix relative imports missing .js extension
   const relativeImportRegex = /(from\s+['"]\.\.?\/[^'"]+)(?<!\.js)(['"])/g;
@@ -59,3 +88,8 @@ function walkDirectory(dir) {
 console.log('🔧 Fixing ES Module imports...');
 const fixedCount = walkDirectory('server');
 console.log(`\n✅ Fixed ${fixedCount} files`);
+
+// Node.js options
+process.execArgv.push('--max-old-space-size=4096');
+process.execArgv.push('--experimental-modules');
+process.execArgv.push('--es-module-specifier-resolution=node');
