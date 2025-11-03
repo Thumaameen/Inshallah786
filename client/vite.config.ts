@@ -42,8 +42,14 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
           manualChunks: {
             'react-vendor': ['react', 'react-dom'],
           },
+        },
+        onwarn(warning, warn) {
+          // Suppress certain warnings
+          if (warning.code === 'MODULE_LEVEL_DIRECTIVE') return;
+          warn(warning);
         }
-      }
+      },
+      chunkSizeWarningLimit: 1000,
     },
     server: {
       host: '0.0.0.0',
