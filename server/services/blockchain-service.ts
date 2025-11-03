@@ -1,5 +1,8 @@
 // Blockchain Service with Real RPC Connections
 export class BlockchainService {
+  addDocument(arg0: { documentType: any; documentNumber: any; issuedAt: string; verificationResults: { identity: any; biometrics: { verified: boolean; }; passport: { valid: boolean; }; permit: any; }; }) {
+      throw new Error('Method not implemented.');
+  }
   private ethereumRPC: string | null;
   private polygonRPC: string | null;
   private solanaRPC: string | null;
