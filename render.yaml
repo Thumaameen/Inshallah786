@@ -214,7 +214,7 @@ services:
     env: node
     plan: starter
     region: frankfurt
-    nodeVersion: "20.18.1"
+    nodeVersion: "20.10.0"
     buildCommand: npm ci --legacy-peer-deps --production=false
     startCommand: node dist/workers/monitoring-worker.js
     envVars:
