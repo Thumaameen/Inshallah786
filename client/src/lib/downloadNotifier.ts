@@ -1,15 +1,26 @@
 
 export function notifyDownload(fileName: string, fileType: string) {
+  // Detect mobile device
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  
   // Show toast notification
   const event = new CustomEvent('download-notification', {
     detail: {
       fileName,
       fileType,
       timestamp: new Date().toISOString(),
-      location: 'Browser Downloads folder'
+      location: isMobile ? 'Your device Downloads folder' : 'Browser Downloads folder',
+      isMobile
     }
   });
   window.dispatchEvent(event);
+  
+  // Mobile-specific alert
+  if (isMobile) {
+    setTimeout(() => {
+      alert(`📱 Download Ready!\n\nFile: ${fileName}\n\nYour document will open in a new tab. Tap and hold the document to save it to your iPhone/Android Downloads folder.`);
+    }, 500);
+  }
   
   // Console log for clarity
   console.log(`
@@ -18,7 +29,8 @@ export function notifyDownload(fileName: string, fileType: string) {
 ╠════════════════════════════════════════════════════════╣
 ║ File: ${fileName.padEnd(44)} ║
 ║ Type: ${fileType.padEnd(44)} ║
-║ Location: Browser Downloads folder                    ║
+║ Device: ${(isMobile ? 'Mobile' : 'Desktop').padEnd(44)} ║
+║ Location: ${(isMobile ? 'Device Downloads' : 'Browser Downloads').padEnd(33)} ║
 ║ Time: ${new Date().toLocaleTimeString().padEnd(44)} ║
 ╚════════════════════════════════════════════════════════╝
   `);

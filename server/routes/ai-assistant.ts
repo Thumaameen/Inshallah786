@@ -210,7 +210,7 @@ router.get('/health', async (req, res) => {
     try {
       await openai.models.list();
       health.openai = { available: true, status: 'healthy' };
-    } catch (error) {
+    } catch (error: any) {
       health.openai = { available: false, status: 'error', error: error.message };
     }
   }
@@ -225,7 +225,7 @@ router.get('/health', async (req, res) => {
         messages: [{ role: 'user', content: 'Hi' }]
       });
       health.anthropic = { available: true, status: 'healthy' };
-    } catch (error) {
+    } catch (error: any) {
       health.anthropic = { available: false, status: 'error', error: error.message };
     }
   }
@@ -238,6 +238,26 @@ router.get('/health', async (req, res) => {
     services: health,
     timestamp: new Date().toISOString()
   });
+});
+
+// Fallback chat endpoint for when AI fails
+router.post('/chat/fallback', async (req, res) => {
+  try {
+    const { message } = req.body;
+    
+    // Return helpful fallback response
+    res.json({
+      success: true,
+      response: `I'm here to help with DHA services. Your query: "${message}"\n\nI can assist with:\n- Document generation\n- Birth certificates\n- Passports\n- ID documents\n- Visa applications\n\nPlease try your question again or contact support.`,
+      provider: 'fallback',
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Service temporarily unavailable'
+    });
+  }
 });
 
 // *** END EDITED CODE ***

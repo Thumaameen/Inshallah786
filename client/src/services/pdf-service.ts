@@ -26,13 +26,39 @@ export class PDFService {
     }
     
     const url = window.URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
+    
+    // Mobile-friendly download
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+      // For mobile: open in new tab so user can save
+      const newWindow = window.open(url, '_blank');
+      if (!newWindow) {
+        // Fallback: try direct download
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = filename;
+        link.target = '_blank';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+      // Show user notification
+      alert(`Your document "${filename}" will open in a new tab. Tap and hold to save it to your device.`);
+    } else {
+      // Desktop: direct download
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+    
+    // Cleanup after delay
+    setTimeout(() => {
+      window.URL.revokeObjectURL(url);
+    }, 1000);
   }
 
   // Helper function to convert base64 to blob
