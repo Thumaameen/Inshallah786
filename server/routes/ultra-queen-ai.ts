@@ -77,6 +77,14 @@ router.get('/status', async (req: Request, res: Response) => {
 // Query AI providers with document generation support + Web2/Web3 unlimited access
 router.post('/query', async (req: Request, res: Response) => {
   try {
+    // Validate input
+    if (!req.body.prompt || typeof req.body.prompt !== 'string') {
+      return res.status(400).json({
+        success: false,
+        error: 'Prompt is required'
+      });
+    }
+
     const validatedData = aiQuerySchema.parse(req.body);
 
     console.log('🔥 [Ultra Queen AI] Processing request:', validatedData.prompt.substring(0, 100));

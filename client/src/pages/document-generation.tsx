@@ -7,6 +7,7 @@
 import React, { useState, ComponentType } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
+import { useDownloadNotifications } from "@/hooks/use-download-notifications";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -128,6 +129,7 @@ export default function UnifiedDocumentGenerationPage() {
 
 function UnifiedDocumentGenerationContent() {
   const { toast } = useToast();
+  useDownloadNotifications(); // Add download notifications
 
   // Fetch document templates from API
   const {
@@ -218,12 +220,12 @@ function UnifiedDocumentGenerationContent() {
     }
   });
 
-  // OCR extraction mutation for passport auto-fill
+  // OCR extraction mutation for passport auto-fill with auto-generation
   const extractPassportDataMutation = useMutation({
     mutationFn: async (file: File) => {
       const formData = new FormData();
       formData.append('passportImage', file);
-      formData.append('targetFormType', 'unified_document');
+      formData.append('targetFormType', selectedDocumentType || 'passport_application');
       formData.append('enableAutoFill', 'true');
 
       const response = await fetch('/api/ai/passport/extract', {
@@ -288,21 +290,60 @@ function UnifiedDocumentGenerationContent() {
     }
 
     setFormData(updatedFormData);
+    
+    // Show success message with option to auto-generate
+    toast({
+      title: "Passport Data Extracted",
+      description: `Extracted data with ${Math.round(ocrData.confidenceScore || 0)}% confidence. Form fields have been auto-filled.`,
+      className: "border-green-500 bg-green-50"
+    });
+    
+    // If user wants immediate generation, trigger it
+    if (selectedDocumentType) {
+      setTimeout(() => {
+        const shouldGenerate = window.confirm(
+          `Generate ${selectedDocumentType} document now with extracted data?\n\nYou can review and edit the auto-filled fields first if needed.`
+        );
+        if (shouldGenerate) {
+          handleGenerateDocument(false);
+        }
+      }, 1000);
+    }
   };
 
-  // Handle passport file upload
+  // Handle passport file upload with iOS optimization
   const handlePassportUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      if (!file.type.startsWith('image/')) {
+      // Support both images and PDFs
+      if (!file.type.startsWith('image/') && file.type !== 'application/pdf') {
         toast({
           title: "Invalid File",
-          description: "Please upload an image file (JPEG, PNG)",
+          description: "Please upload an image (JPEG, PNG) or PDF file",
           variant: "destructive"
         });
         return;
       }
+      
+      // Check file size (max 10MB for mobile optimization)
+      if (file.size > 10 * 1024 * 1024) {
+        toast({
+          title: "File Too Large",
+          description: "Please upload a file smaller than 10MB",
+          variant: "destructive"
+        });
+        return;
+      }
+      
       setPassportFile(file);
+      
+      // Show processing toast
+      toast({
+        title: "Processing Passport",
+        description: "Extracting data from uploaded document...",
+        className: "border-blue-500 bg-blue-50"
+      });
+      
       extractPassportDataMutation.mutate(file);
     }
   };

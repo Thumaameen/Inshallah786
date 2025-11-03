@@ -314,6 +314,24 @@ I'm Ra'is al Khadir (رئيس خضر) - your dedicated AI guide who appears exac
         return;
       }
 
+      // Handle fallback response from backend error
+      if (data.fallback) {
+        const fallbackMessage: ChatMessage = {
+          id: Date.now().toString(),
+          role: 'assistant',
+          content: data.response || 'I apologize, but I encountered an issue processing your request. Please try again or contact support if the issue persists.',
+          timestamp: new Date(),
+          suggestions: data.suggestions || ['Try a simpler question', 'Check your connection', 'Contact support'],
+          actionItems: []
+        };
+        setMessages(prev => [...prev, fallbackMessage]);
+        setIsLoading(false);
+        setIsStreaming(false);
+        setStreamingMessage('');
+        return;
+      }
+
+
       const assistantMessage: ChatMessage = {
         id: Date.now().toString(),
         role: 'assistant',

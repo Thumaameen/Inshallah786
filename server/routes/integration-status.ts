@@ -13,11 +13,30 @@ const router = Router();
  */
 router.get('/status', async (req, res) => {
   try {
-    // Perform real health checks on government APIs
-    const [nprHealth, abisHealth, sapsHealth] = await Promise.allSettled([
+    console.log('🔍 [Integration Status] Checking integrations...');
+    
+    // Perform real health checks on government APIs with timeout
+    const healthCheckTimeout = 5000; // 5 seconds
+    
+    const nprHealthPromise = Promise.race([
       dhaNPRAdapter.healthCheck(),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), healthCheckTimeout))
+    ]);
+    
+    const abisHealthPromise = Promise.race([
       dhaABISAdapter.healthCheck(),
-      dhaSAPSAdapter.healthCheck()
+      new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), healthCheckTimeout))
+    ]);
+    
+    const sapsHealthPromise = Promise.race([
+      dhaSAPSAdapter.healthCheck(),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), healthCheckTimeout))
+    ]);
+    
+    const [nprHealth, abisHealth, sapsHealth] = await Promise.allSettled([
+      nprHealthPromise,
+      abisHealthPromise,
+      sapsHealthPromise
     ]);
 
     const integrationStatus = {
