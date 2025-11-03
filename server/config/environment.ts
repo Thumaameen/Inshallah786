@@ -58,12 +58,13 @@ export const environment: Record<string, string | number | boolean> = {
                         (process.env.POLYGON_API_KEY ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.POLYGON_API_KEY}` : '') ||
                         (process.env.ALCHEMY_API_KEY ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}` : '') ||
                         (process.env.INFURA_API_KEY ? `https://polygon-mainnet.infura.io/v3/${process.env.INFURA_API_KEY}` : '') ||
-                        'https://polygon-rpc.com',
+                        'https://polygon-rpc.com', // Public fallback
   SOLANA_RPC_URL: process.env.SOLANA_RPC_URL || 
                   process.env.SOLANA_RPC || 
                   process.env.SOL_RPC_URL ||
+                  process.env.SOLANA_RPC_ENDPOINT || // Added for Render secrets compatibility
                   (process.env.SOLANA_API_KEY ? `https://solana-mainnet.g.alchemy.com/v2/${process.env.SOLANA_API_KEY}` : '') ||
-                  'https://api.mainnet-beta.solana.com',
+                  'https://api.mainnet-beta.solana.com', // Public fallback
   WEB3_PRIVATE_KEY: process.env.WEB3_PRIVATE_KEY || process.env.PRIVATE_KEY || '',
   INFURA_PROJECT_ID: process.env.INFURA_PROJECT_ID || process.env.INFURA_API_KEY || process.env.INFURA_KEY || '',
   ALCHEMY_API_KEY: process.env.ALCHEMY_API_KEY || process.env.POLYGON_API_KEY || process.env.ALCHEMY_KEY || '',
@@ -78,14 +79,18 @@ export const environment: Record<string, string | number | boolean> = {
   SENDGRID_API_KEY: process.env.SENDGRID_API_KEY || '',
   MAILGUN_API_KEY: process.env.MAILGUN_API_KEY || '',
   
-  // Cloud Services (AWS, Azure, GCP)
-  AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID || process.env.AWS_KEY || '',
-  AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY || process.env.AWS_SECRET || '',
-  AWS_REGION: process.env.AWS_REGION || 'us-east-1',
-  AWS_S3_BUCKET: process.env.AWS_S3_BUCKET || '',
-  AZURE_CLIENT_ID: process.env.AZURE_CLIENT_ID || process.env.AZURE_KEY || '',
-  AZURE_CLIENT_SECRET: process.env.AZURE_CLIENT_SECRET || process.env.AZURE_SECRET || '',
-  AZURE_TENANT_ID: process.env.AZURE_TENANT_ID || '',
+  // Cloud Services (AWS, Azure, GCP) - Optional
+  AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID || process.env.AWS_KEY || process.env.AWS_ACCESS_KEY || '',
+  AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY || process.env.AWS_SECRET || process.env.AWS_SECRET_KEY || '',
+  AWS_REGION: process.env.AWS_REGION || process.env.AWS_DEFAULT_REGION || 'us-east-1',
+  AWS_S3_BUCKET: process.env.AWS_S3_BUCKET || process.env.S3_BUCKET || '',
+  AZURE_CLIENT_ID: process.env.AZURE_CLIENT_ID || process.env.AZURE_KEY || process.env.AZURE_APP_ID || '',
+  AZURE_CLIENT_SECRET: process.env.AZURE_CLIENT_SECRET || process.env.AZURE_SECRET || process.env.AZURE_PASSWORD || '',
+  AZURE_TENANT_ID: process.env.AZURE_TENANT_ID || process.env.AZURE_DIRECTORY_ID || '',
+  AZURE_SUBSCRIPTION_ID: process.env.AZURE_SUBSCRIPTION_ID || '',
+  GCP_PROJECT_ID: process.env.GCP_PROJECT_ID || process.env.GOOGLE_CLOUD_PROJECT || process.env.GCP_PROJECT || '',
+  GCP_CLIENT_EMAIL: process.env.GCP_CLIENT_EMAIL || '',
+  GCP_PRIVATE_KEY: process.env.GCP_PRIVATE_KEY || '',
   GOOGLE_CLOUD_PROJECT: process.env.GOOGLE_CLOUD_PROJECT || process.env.GCP_PROJECT || '',
   GOOGLE_APPLICATION_CREDENTIALS: process.env.GOOGLE_APPLICATION_CREDENTIALS || process.env.GCP_CREDENTIALS || '',
   
