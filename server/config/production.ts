@@ -32,11 +32,29 @@ export interface ProductionConfig {
     biometricSecurity: boolean;
     web3Integration: boolean;
   };
+  server: {
+    port: number;
+    host: string;
+  };
+  database: {
+    url: string;
+    maxConnections: number;
+    ssl: boolean | { rejectUnauthorized: boolean };
+  };
 }
 
 export const productionConfig: ProductionConfig = {
   environment: 'production',
-  
+  server: {
+    port: parseInt(process.env.PORT || '10000'),
+    host: '0.0.0.0',
+  },
+  database: {
+    url: process.env.DATABASE_URL || 'postgresql://user:password@localhost:5432/dha_digital_services',
+    maxConnections: 20,
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+  },
+
   security: {
     corsOrigin: [
       'https://*.replit.app',
@@ -266,7 +284,7 @@ export const productionSecurity = {
 export const replitDeploymentConfig = {
   name: 'dha-digital-services',
   description: 'Queen Raeesa DHA Digital Services Platform - Production Ready',
-  
+
   environment: {
     NODE_ENV: 'production',
     PORT: '5000',
@@ -275,7 +293,7 @@ export const replitDeploymentConfig = {
 
   buildCommand: 'npm run build',
   startCommand: 'npm run start',
-  
+
   features: {
     autoscale: true,
     customDomain: true,

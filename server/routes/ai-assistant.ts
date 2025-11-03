@@ -52,8 +52,8 @@ console.log('🔑 [AI Assistant] API Keys Status:', {
   anthropic: anthropicKey ? '✅ Configured' : '❌ Missing'
 });
 
-// Real AI chat endpoint
-router.post('/chat', requireAuth, async (req, res) => {
+// Real AI chat endpoint - PRODUCTION READY
+router.post('/chat', async (req, res) => {
   try {
     const { message, provider = 'auto', conversationHistory = [] } = req.body;
 
@@ -63,6 +63,8 @@ router.post('/chat', requireAuth, async (req, res) => {
         error: 'Message is required and must be a string'
       });
     }
+
+    console.log('🤖 [AI Chat] Processing message:', message.substring(0, 100));
 
     let response = null;
     let usedProvider = null;
