@@ -7,7 +7,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { EnhancedErrorCorrectionService } from '../services/enhanced-error-correction.js';
 import { storage } from '../storage.js';
-import { getConnectionStatus } from '../db.js';
+import { checkDatabaseConnection } from '../db/connection.js'; // Corrected import
 
 // Initialize Enhanced Error Correction Service using singleton pattern
 const errorCorrectionService = EnhancedErrorCorrectionService.getInstance();
@@ -18,7 +18,7 @@ interface ErrorDetails {
   code?: string;
   component: string;
   severity: 'low' | 'medium' | 'high' | 'critical';
-  type: 'memory_leak' | 'database_connection' | 'network_failure' | 'service_crash' | 
+  type: 'memory_leak' | 'database_connection' | 'network_failure' | 'service_crash' |
         'file_system_error' | 'performance_degradation' | 'timeout' | 'resource_exhaustion';
 }
 
@@ -26,22 +26,22 @@ interface ErrorDetails {
  * Global Express Error Handler with Enhanced Error Correction Integration
  */
 export async function enhancedErrorHandler(
-  error: any, 
-  req: Request, 
-  res: Response, 
+  error: any,
+  req: Request,
+  res: Response,
   next: NextFunction
 ): Promise<void> {
   const startTime = Date.now();
-  
+
   try {
     console.error(`🚨 Error caught by Enhanced Error Handler: ${error.message}`);
-    
+
     // Analyze error and determine type and severity
     const errorDetails = analyzeError(error, req);
-    
+
     // Log the error for audit purposes
     await logErrorEvent(error, req, errorDetails);
-    
+
     // CRITICAL: Trigger Enhanced Error Correction Service for automatic remediation
     try {
       const correctionResult = await errorCorrectionService.correctError({
@@ -59,54 +59,54 @@ export async function enhancedErrorHandler(
         },
         stackTrace: error.stack
       });
-      
+
       const responseTime = Date.now() - startTime;
       console.log(`✅ Error correction attempted in ${responseTime}ms: ${correctionResult.action}`);
-      
+
       // If correction was successful and indicates restart needed, log it
       if (correctionResult.success && correctionResult.needsRestart) {
         console.warn(`⚠️ Error correction successful but service restart recommended: ${errorDetails.component}`);
       }
-      
+
     } catch (correctionError) {
       console.error('❌ Enhanced Error Correction failed:', correctionError);
     }
-    
+
     // Handle specific error types
     if (error.name === 'DatabaseConnectionError' || error.code === 'ECONNREFUSED') {
       return sendErrorResponse(res, 503, 'Service temporarily unavailable', 'DATABASE_ERROR');
     }
-    
+
     if (error.name === 'ValidationError') {
       return sendErrorResponse(res, 400, 'Invalid request data', 'VALIDATION_ERROR');
     }
-    
+
     if (error.name === 'AuthenticationError' || error.code === 'UNAUTHORIZED') {
       return sendErrorResponse(res, 401, 'Authentication required', 'AUTH_ERROR');
     }
-    
+
     if (error.name === 'ForbiddenError' || error.code === 'FORBIDDEN') {
       return sendErrorResponse(res, 403, 'Access denied', 'PERMISSION_ERROR');
     }
-    
+
     if (error.name === 'NotFoundError') {
       return sendErrorResponse(res, 404, 'Resource not found', 'NOT_FOUND');
     }
-    
+
     if (error.name === 'TimeoutError' || error.code === 'TIMEOUT') {
       return sendErrorResponse(res, 408, 'Request timeout', 'TIMEOUT_ERROR');
     }
-    
+
     if (error.name === 'RateLimitError' || error.code === 'TOO_MANY_REQUESTS') {
       return sendErrorResponse(res, 429, 'Too many requests', 'RATE_LIMIT_ERROR');
     }
-    
+
     // Default to internal server error
     sendErrorResponse(res, 500, 'Internal server error', 'INTERNAL_ERROR');
-    
+
   } catch (handlerError) {
     console.error('❌ Critical error in error handler itself:', handlerError);
-    
+
     // Fallback error response if handler fails
     res.status(500).json({
       success: false,
@@ -124,7 +124,7 @@ export async function enhancedErrorHandler(
 function analyzeError(error: any, req: Request): ErrorDetails {
   const path = req.path;
   const message = error.message || 'Unknown error';
-  
+
   // Determine component based on error location and request path
   let component = 'general';
   if (path.startsWith('/api/auth')) component = 'authentication';
@@ -133,7 +133,7 @@ function analyzeError(error: any, req: Request): ErrorDetails {
   else if (path.startsWith('/api/ai')) component = 'ai_services';
   else if (path.includes('database') || error.code === 'ECONNREFUSED') component = 'database';
   else if (path.includes('storage') || error.code === 'ENOENT') component = 'file_system';
-  
+
   // Determine error type
   let type: ErrorDetails['type'] = 'service_crash';
   if (error.name === 'DatabaseConnectionError' || error.code === 'ECONNREFUSED') {
@@ -151,7 +151,7 @@ function analyzeError(error: any, req: Request): ErrorDetails {
   } else if (message.includes('resource') || error.code === 'EMFILE') {
     type = 'resource_exhaustion';
   }
-  
+
   // Determine severity
   let severity: ErrorDetails['severity'] = 'medium';
   if (error.code === 'ECONNREFUSED' || type === 'database_connection') {
@@ -163,7 +163,7 @@ function analyzeError(error: any, req: Request): ErrorDetails {
   } else if (type === 'file_system_error') {
     severity = 'low';
   }
-  
+
   return {
     message,
     stack: error.stack,
@@ -214,20 +214,20 @@ async function logErrorEvent(error: any, req: Request, details: ErrorDetails): P
  * Send standardized error response
  */
 function sendErrorResponse(
-  res: Response, 
-  statusCode: number, 
-  message: string, 
+  res: Response,
+  statusCode: number,
+  message: string,
   code: string
 ): void {
   const isDevelopment = process.env.NODE_ENV === 'development';
-  
+
   res.status(statusCode).json({
     success: false,
     error: message,
     code,
     timestamp: new Date().toISOString(),
     requestId: generateRequestId(),
-    ...(isDevelopment && { 
+    ...(isDevelopment && {
       environment: 'development',
       debugging: 'Enhanced error correction attempted'
     })
@@ -260,7 +260,7 @@ export function setupGlobalErrorHandlers(): void {
   // Handle uncaught exceptions
   process.on('uncaughtException', async (error: Error) => {
     console.error('🚨 CRITICAL: Uncaught Exception detected:', error.message);
-    
+
     try {
       await errorCorrectionService.correctError({
         type: 'service_crash',
@@ -276,7 +276,7 @@ export function setupGlobalErrorHandlers(): void {
     } catch (correctionError) {
       console.error('❌ Failed to correct uncaught exception:', correctionError);
     }
-    
+
     // Don't exit in development for debugging
     if (process.env.NODE_ENV === 'production') {
       console.error('💀 Exiting process due to uncaught exception');
@@ -285,11 +285,11 @@ export function setupGlobalErrorHandlers(): void {
       console.warn('⚠️ Uncaught exception in development - process continuing');
     }
   });
-  
+
   // Handle unhandled promise rejections
   process.on('unhandledRejection', async (reason: any, promise: Promise<any>) => {
     console.error('🚨 CRITICAL: Unhandled Promise Rejection:', reason);
-    
+
     try {
       await errorCorrectionService.correctError({
         type: 'service_crash',
@@ -306,10 +306,10 @@ export function setupGlobalErrorHandlers(): void {
     } catch (correctionError) {
       console.error('❌ Failed to correct unhandled rejection:', correctionError);
     }
-    
+
     // Log but don't exit for unhandled rejections
     console.warn('⚠️ Unhandled promise rejection handled by error correction system');
   });
-  
+
   console.log('✅ Global error handlers initialized with Enhanced Error Correction');
 }

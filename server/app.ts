@@ -1,6 +1,7 @@
-import express from 'express';
+import express, { type Request, type Response, type NextFunction } from 'express';
 import helmet from 'helmet';
 import compression from 'compression';
+import cors from 'cors';
 import { errorSelfHealing } from './services/error-self-healing.service';
 import { enhancedAIService } from './services/enhanced-ai.service';
 
@@ -9,6 +10,9 @@ const app = express();
 // Enhanced Security
 app.use(helmet());
 app.use(compression());
+
+// CORS middleware
+app.use(cors());
 
 // Increased payload size
 app.use(express.json({ limit: process.env.MAX_PAYLOAD_SIZE || '20mb' }));
