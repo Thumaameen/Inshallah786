@@ -3,11 +3,11 @@
   "version": "2.0.0",
   "type": "module",
   "scripts": {
-    "build": "NODE_ENV=production vite build",
+    "build": "NODE_ENV=production CI=false tsc && vite build",
     "dev": "vite",
     "preview": "vite preview",
     "install:deps": "npm install --include=dev",
-    "build:production": "cross-env NODE_ENV=production vite build",
+    "build:production": "cross-env NODE_ENV=production CI=false tsc && vite build",
     "test:production": "vitest run",
     "verify": "node ../verify-build.sh",
     "type-check": "tsc --noEmit"
@@ -65,6 +65,8 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@babel/core": "^7.28.5",
+    "@babel/plugin-transform-react-jsx": "^7.27.1",
     "@tailwindcss/typography": "0.5.10",
     "@types/node": "^20.19.24",
     "@types/react": "^18.3.26",

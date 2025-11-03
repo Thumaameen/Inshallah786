@@ -22,6 +22,7 @@ export interface DocumentData {
 
 export class DocumentGenerator {
   private static instance: DocumentGenerator;
+    verifyDocument: any;
 
   static getInstance(): DocumentGenerator {
     if (!DocumentGenerator.instance) {

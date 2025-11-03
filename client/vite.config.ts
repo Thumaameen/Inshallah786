@@ -10,15 +10,27 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
   const env = loadEnv(mode, process.cwd(), '');
 
   return {
-    plugins: [react()],
+    plugins: [
+      react({
+        babel: {
+          plugins: ['@babel/plugin-transform-react-jsx']
+        }
+      })
+    ],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src')
-      }
+      },
+      extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json']
     },
     optimizeDeps: {
       include: ['react', 'react-dom'],
       force: true
+    },
+    esbuild: {
+      jsx: 'automatic',
+      jsxInject: `import React from 'react'`,
+      loader: 'tsx'
     },
     build: {
       outDir: 'dist',
