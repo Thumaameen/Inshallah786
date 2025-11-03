@@ -22,6 +22,11 @@ if (env.DATABASE_URL && typeof env.DATABASE_URL === 'string' && env.DATABASE_URL
     });
     
     console.log('✅ Database connection pool initialized');
+    console.log('📊 Database configuration:');
+    console.log('   - Max connections: 20');
+    console.log('   - Idle timeout: 30s');
+    console.log('   - Connection timeout: 2s');
+    console.log('   - SSL enabled:', env.NODE_ENV === 'production' ? 'Yes' : 'No');
   } catch (error) {
     console.error('⚠️  Database initialization error:', error);
     console.log('📝 Application will continue without database');

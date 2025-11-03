@@ -153,6 +153,12 @@ services:
         sync: true
       - key: POLYGON_RPC_URL
         sync: true
+      - key: POLYGON_RPC_ENDPOINT
+        sync: true
+      - key: SOLANA_RPC_URL
+        sync: true
+      - key: SOLANA_RPC_ENDPOINT
+        sync: true
       - key: WEB3_PRIVATE_KEY
         sync: true
 

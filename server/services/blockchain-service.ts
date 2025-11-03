@@ -23,9 +23,14 @@ export class BlockchainService {
     const solanaRpc = process.env.SOLANA_RPC_URL || 
                       process.env.SOLANA_RPC ||
                       process.env.SOL_RPC_URL ||
+                      process.env.SOLANA_RPC_ENDPOINT || // Added for Render compatibility
                       (process.env.SOLANA_API_KEY ? `https://solana-mainnet.g.alchemy.com/v2/${process.env.SOLANA_API_KEY}` : '') ||
                       'https://api.mainnet-beta.solana.com'; // Public fallback
     this.solanaRPC = this.validateRPCUrl(solanaRpc, 'Solana') || 'https://api.mainnet-beta.solana.com';
+    
+    // Log the actual URLs being used (without exposing API keys)
+    console.log('[Blockchain] Polygon RPC:', this.polygonRPC.includes('alchemy') ? 'Alchemy (configured)' : this.polygonRPC.includes('infura') ? 'Infura (configured)' : this.polygonRPC);
+    console.log('[Blockchain] Solana RPC:', this.solanaRPC.includes('alchemy') ? 'Alchemy (configured)' : this.solanaRPC);
     
     // Zora has a public RPC, so it can be used without configuration
     this.zoraRPC = 'https://rpc.zora.energy';
