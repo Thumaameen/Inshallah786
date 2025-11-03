@@ -1,0 +1,227 @@
+# Exported from Render on 2025-11-03T09:20:07Z
+version: "1"
+projects:
+- name: Raipie
+  environments:
+  - name: Production
+    services:
+    - type: worker
+      name: Dha-Thisone
+      runtime: node
+      repo: https://github.com/Thumaameen/Inshallah786
+      plan: pro
+      envVars:
+      - key: XAI_API_KEY
+        sync: false
+      - key: WORKATO_API_TOKEN
+        sync: false
+      - key: WORKATO_API_HOST
+        sync: false
+      - key: WORKATO_ACCOUNT_ID
+        sync: false
+      - key: WEBHOOK_SECRET
+        sync: false
+      - key: WEB3AUTH_JWKS_ENDPOINT
+        sync: false
+      - key: WEB3AUTH_ENVIRONMENT
+        sync: false
+      - key: WEB3AUTH_CLIENT_SECRET
+        sync: false
+      - key: WEB3AUTH_CLIENT_ID
+        sync: false
+      - key: VITE_ENCRYPTION_KEY
+        sync: false
+      - key: VERIFICATION_LEVEL
+        sync: false
+      - key: UNIVERSAL_BYPASS
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: SUPABASE_JWT_SECRET
+        sync: false
+      - key: SKIP_TYPE_CHECK
+        sync: false
+      - key: SKIP_CHECKS
+        sync: false
+      - key: SITA_ESERVICES_BASE_URL
+        sync: false
+      - key: SITA_ESERVICES_API_KEY
+        sync: false
+      - key: SIG_API
+        sync: false
+      - key: SESSION_SECRET
+        sync: false
+      - key: SAPS_URI
+        sync: false
+      - key: SAPS_CRC_BASE_URL
+        sync: false
+      - key: SAPS_CRC_API_KEYSAPS
+        sync: false
+      - key: SAPS_CRC_API_KEY
+        sync: false
+      - key: SAPS_API_KEY
+        sync: false
+      - key: QUANTUM_MASTER_KEY
+        sync: false
+      - key: POSTGRES_USER
+        sync: false
+      - key: POSTGRES_URL_NON_POOLING
+        sync: false
+      - key: POSTGRES_URL
+        sync: false
+      - key: POSTGRES_PRISMA_URL
+        sync: false
+      - key: POSTGRES_PASSWORD
+        sync: false
+      - key: POSTGRES_HOST
+        sync: false
+      - key: POSTGRES_DATABASE
+        sync: false
+      - key: PORT1
+        sync: false
+      - key: PORT
+        sync: false
+      - key: POLYGON_RPC_ENDPOINT
+        sync: false
+      - key: PGUSER
+        sync: false
+      - key: PGPORT
+        sync: false
+      - key: PGPASSWORD
+        sync: false
+      - key: PGHOST
+        sync: false
+      - key: PGDATABASE
+        sync: false
+      - key: PERPLEXITY_API_KEY
+        sync: false
+      - key: OVERRIDE_TYPESCRIPT_ERRORS
+        sync: false
+      - key: OVERRIDE_ALL
+        sync: false
+      - key: OPENAI_WEBHOOK
+        sync: false
+      - key: OPENAI_ORG_ID
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OCI
+        sync: false
+      - key: NODE_ENV
+        sync: false
+      - key: NEXT_PUBLIC_SUPABASE_URL
+        sync: false
+      - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
+        sync: false
+      - key: MISTRAL_API_KEY
+        sync: false
+      - key: MCP_MANAGED
+        sync: false
+      - key: MAX_MEMORY_MB
+        sync: false
+      - key: MAX_MEMORY
+        sync: false
+      - key: MASTER_ENCRYPTION_KEY
+        sync: false
+      - key: LOG_LEVEL1
+        sync: false
+      - key: KEEP_ALIVE
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: ICAO_PKD_BASE_URL
+        sync: false
+      - key: ICAO_PKD_API_KEY
+        sync: false
+      - key: HEALTH_CHECK_PORT1
+        sync: false
+      - key: HEALTH_CHECK_PORT
+        sync: false
+      - key: GitHub-token
+        sync: false
+      - key: GWP_URL_ENDPOINT
+        sync: false
+      - key: GWP_AUTH_KEY
+        sync: false
+      - key: GWP_API_KEY
+        sync: false
+      - key: GOOGLE_AI_API_KEY
+        sync: false
+      - key: GITHUB_TOKEN
+        sync: false
+      - key: GITHUB_PAT
+        sync: false
+      - key: FORCE_SUCCESS
+        sync: false
+      - key: FORCE_START
+        sync: false
+      - key: FORCE_REAL_APIS
+        sync: false
+      - key: FORCE_BYPASS_VALIDATION
+        sync: false
+      - key: ETHEREUM_RPC_URL
+        sync: false
+      - key: ENCRYPTION_KEY
+        sync: false
+      - key: ENABLE_CLUSTERING
+        sync: false
+      - key: DOCUMENT_SIGNING_KEY
+        sync: false
+      - key: DOCUMENT_ENCRYPTION_KEY
+        sync: false
+      - key: DOCUMENTS_DIR
+        sync: false
+      - key: DHA_TOKEN
+        sync: false
+      - key: DHA_NPR_BASE_URL
+        sync: false
+      - key: DHA_NPR_API_KEY
+        sync: false
+      - key: DHA_API_KEY
+        sync: false
+      - key: DHA_ABIS_BASE_URL
+        sync: false
+      - key: DHA_ABIS_API_KEY
+        sync: false
+      - key: DEBUG
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: CERT_KEY_IDENTIFIER
+        sync: false
+      - key: CERT_API_KEY
+        sync: false
+      - key: BYPASS_MODE1
+        sync: false
+      - key: BYPASS_MODE
+        sync: false
+      - key: BIOMETRIC_ENCRYPTION_KEY
+        sync: false
+      - key: AUTH_URI
+        sync: false
+      - key: AUTH_API_KEY
+        sync: false
+      - key: ARYA_BASE
+        sync: false
+      - key: ARYA_API_KEY
+        sync: false
+      - key: API_VERSION
+        sync: false
+      - key: API_RATE_LIMIT_SECRET
+        sync: false
+      - key: ANTI_SLEEP_PORT
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: AI_GATEWAY_API_KEY
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: ADMIN_API_KEY
+        sync: false
+      region: frankfurt
+      buildCommand: chmod +x render-build-production.sh &&./render-build-production.sh
+      startCommand: node dist/server/index.js
+      autoDeployTrigger: checksPass
