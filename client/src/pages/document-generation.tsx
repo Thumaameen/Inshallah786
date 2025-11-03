@@ -7,6 +7,7 @@
 import React, { useState, ComponentType } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
+import { useDownloadNotifications } from "@/hooks/use-download-notifications";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -128,6 +129,7 @@ export default function UnifiedDocumentGenerationPage() {
 
 function UnifiedDocumentGenerationContent() {
   const { toast } = useToast();
+  useDownloadNotifications(); // Add download notifications
 
   // Fetch document templates from API
   const {

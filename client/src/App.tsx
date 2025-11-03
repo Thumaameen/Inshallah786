@@ -42,7 +42,7 @@ const AIAnalytics = lazy(() => import("./pages/admin/AIAnalytics"));
 const AdminAIChat = lazy(() => import("./pages/admin/AIChat"));
 
 
-const GovernmentOperations = lazy(() => 
+const GovernmentOperations = lazy(() =>
   import("./pages/admin/GovernmentOperations").then(module => ({ default: module.GovernmentOperations }))
 );
 const MonitoringDashboard = lazy(() => import("./pages/MonitoringDashboard"));

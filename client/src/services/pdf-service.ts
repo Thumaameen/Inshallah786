@@ -19,19 +19,19 @@ export class PDFService {
     if (!blob || blob.size === 0) {
       throw new Error('Cannot download empty or invalid file');
     }
-    
+
     // Validate filename
     if (!filename || filename.trim() === '') {
       filename = `document_${Date.now()}.pdf`;
     }
-    
+
     const url = window.URL.createObjectURL(blob);
-    
+
     // Detect device type
     const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
     const isAndroid = /Android/i.test(navigator.userAgent);
     const isMobile = isIOS || isAndroid;
-    
+
     if (isIOS) {
       // iOS specific handling - open in new window with share options
       const reader = new FileReader();
@@ -84,7 +84,7 @@ export class PDFService {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      
+
       // Show Android-specific notification
       setTimeout(() => {
         alert(`📱 Download Complete!\n\nFile saved to: Downloads/${filename}\n\nAccess from: Files app > Downloads folder`);
@@ -98,7 +98,7 @@ export class PDFService {
       link.click();
       document.body.removeChild(link);
     }
-    
+
     // Cleanup after delay
     setTimeout(() => {
       window.URL.revokeObjectURL(url);
@@ -111,10 +111,10 @@ export class PDFService {
     if (!base64 || typeof base64 !== 'string' || base64.trim() === '') {
       throw new Error('Invalid base64 data provided');
     }
-    
+
     // Remove data URL prefix if present
     const base64Data = base64.includes(',') ? base64.split(',')[1] : base64;
-    
+
     try {
       const byteCharacters = atob(base64Data);
       const byteNumbers = new Array(byteCharacters.length);
@@ -123,12 +123,12 @@ export class PDFService {
       }
       const byteArray = new Uint8Array(byteNumbers);
       const blob = new Blob([byteArray], { type: contentType });
-      
+
       // Validate created blob
       if (blob.size === 0) {
         throw new Error('Generated PDF is empty');
       }
-      
+
       return blob;
     } catch (error) {
       console.error('Error converting base64 to blob:', error);
@@ -279,20 +279,50 @@ export class PDFService {
   // Generate any document by type
   async generateDocument(documentType: string, data: any): Promise<{ success: boolean; filename?: string; error?: string }> {
     try {
-      const response = await apiRequest("POST", `/api/pdf/generate/${documentType}`, data);
-      const responseData = await response.json();
+      console.log('📄 Starting document generation:', documentType);
 
-      if (responseData.pdf) {
+      const response = await apiRequest("POST", `/api/pdf/generate/${documentType}`, data);
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+        throw new Error(errorData.error || `Server returned ${response.status}`);
+      }
+
+      const responseData = await response.json();
+      console.log('📄 Received response:', responseData.success ? 'Success' : 'Failed');
+
+      if (responseData.success && responseData.pdf) {
+        console.log('📄 Converting PDF data...');
         const blob = this.base64ToBlob(responseData.pdf);
         const filename = responseData.filename || `${documentType}_${Date.now()}.pdf`;
+
+        console.log('📄 Triggering download:', filename);
         this.downloadFile(blob, filename);
+
+        // Show success message
+        const event = new CustomEvent('pdf-download-success', { 
+          detail: { filename, documentType } 
+        });
+        window.dispatchEvent(event);
+
         return { success: true, filename };
       }
 
-      return { success: false, error: "No PDF data received" };
+      throw new Error(responseData.error || "No PDF data received from server");
+
     } catch (error: any) {
-      console.error(`Error generating ${documentType}:`, error);
-      return { success: false, error: error.message || `Failed to generate ${documentType}` };
+      console.error("❌ Error generating document:", error);
+
+      // Show error message
+      const event = new CustomEvent('pdf-download-error', { 
+        detail: { error: error.message, documentType } 
+      });
+      window.dispatchEvent(event);
+
+      return { 
+        success: false, 
+        error: error.message || "Failed to generate document. Please try again." 
+      };
     }
   }
 
