@@ -210,3 +210,44 @@ export type InsertErrorLog = typeof errorLogs.$inferInsert;
 
 export type Incident = typeof incidents.$inferSelect;
 export type InsertIncident = typeof incidents.$inferInsert;
+
+// Notification types
+export type EventType = 'document_generated' | 'verification_complete' | 'security_alert' | 'system_update';
+
+export interface NotificationEvent {
+  id: string;
+  userId: string;
+  eventType: EventType;
+  message: string;
+  read: boolean;
+  createdAt: Date;
+}
+
+export interface InsertNotificationEvent extends Omit<NotificationEvent, 'id' | 'createdAt'> {}
+
+export interface UserNotificationPreferences {
+  userId: string;
+  email: boolean;
+  push: boolean;
+  sms: boolean;
+}
+
+export interface StatusUpdate {
+  id: string;
+  status: string;
+  message: string;
+  timestamp: Date;
+}
+
+export interface InsertStatusUpdate extends Omit<StatusUpdate, 'id' | 'timestamp'> {}
+
+// Audit types
+export enum AuditAction {
+  CREATE = 'create',
+  READ = 'read',
+  UPDATE = 'update',
+  DELETE = 'delete',
+  LOGIN = 'login',
+  LOGOUT = 'logout',
+  SECURITY_EVENT = 'security_event'
+}

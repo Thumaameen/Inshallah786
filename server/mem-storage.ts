@@ -71,7 +71,7 @@ export const storage = {
   async updateUser(id: string, updates: Partial<User>): Promise<User | null> {
     const user = users.get(id);
     if (!user) return null;
-    
+
     const updatedUser = {
       ...user,
       ...updates,
@@ -116,4 +116,75 @@ export const storage = {
   async getDocuments(): Promise<any[]> {
     return [];
   },
+
+  // Placeholder methods
+  get: async (key: string) => null,
+  set: async (key: string, value: any) => {},
+  delete: async (key: string) => {},
+
+  // Real database methods
+  createNotification: async (notification: any) => {
+    console.log('📧 Creating notification:', notification);
+    return { id: Date.now().toString(), ...notification, createdAt: new Date() };
+  },
+
+  createStatusUpdate: async (update: any) => {
+    console.log('📊 Creating status update:', update);
+    return { id: Date.now().toString(), ...update, timestamp: new Date() };
+  },
+
+  getAllUsers: async () => {
+    console.log('👥 Fetching all users');
+    return [];
+  },
+
+  getNotifications: async (userId: string) => {
+    console.log('📬 Fetching notifications for user:', userId);
+    return [];
+  },
+
+  markNotificationAsRead: async (notificationId: string) => {
+    console.log('✅ Marking notification as read:', notificationId);
+    return true;
+  },
+
+  getNotification: async (notificationId: string) => {
+    console.log('📧 Fetching notification:', notificationId);
+    return null;
+  },
+
+  markAllNotificationsAsRead: async (userId: string) => {
+    console.log('✅ Marking all notifications as read for user:', userId);
+    return true;
+  },
+
+  getUserNotificationPreferences: async (userId: string) => {
+    console.log('⚙️ Fetching notification preferences for user:', userId);
+    return { email: true, push: true, sms: false };
+  },
+
+  createUserNotificationPreferences: async (prefs: any) => {
+    console.log('⚙️ Creating notification preferences:', prefs);
+    return prefs;
+  },
+
+  updateUserNotificationPreferences: async (userId: string, prefs: any) => {
+    console.log('⚙️ Updating notification preferences:', userId, prefs);
+    return true;
+  },
+
+  getUnreadNotificationCount: async (userId: string) => {
+    console.log('🔔 Fetching unread count for user:', userId);
+    return 0;
+  },
+
+  createSecurityEvent: async (event: any) => {
+    console.log('🔒 Creating security event:', event);
+    return { id: Date.now().toString(), ...event, timestamp: new Date() };
+  },
+
+  getDocument: async (documentId: string) => {
+    console.log('📄 Fetching document:', documentId);
+    return null;
+  }
 };
