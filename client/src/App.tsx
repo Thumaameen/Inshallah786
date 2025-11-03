@@ -30,6 +30,7 @@ import UltraAdvancedPDF from "./pages/UltraAdvancedPDF";
 import UltraQueenDashboard from "./pages/UltraQueenDashboard";
 import UltraQueenDashboardEnhanced from "./pages/UltraQueenDashboardEnhanced";
 import UltraQueenAssistant from "./pages/UltraQueenAssistant"; // Import the new page
+import EnhancedAIInterface from "@/pages/EnhancedAIInterface"; // Import the new page
 import { FirstTimeUserTutorial } from "./components/FirstTimeUserTutorial";
 
 // Lazy load admin components for better code splitting
@@ -42,7 +43,7 @@ const AIAnalytics = lazy(() => import("./pages/admin/AIAnalytics"));
 const AdminAIChat = lazy(() => import("./pages/admin/AIChat"));
 
 
-const GovernmentOperations = lazy(() => 
+const GovernmentOperations = lazy(() =>
   import("./pages/admin/GovernmentOperations").then(module => ({ default: module.GovernmentOperations }))
 );
 const MonitoringDashboard = lazy(() => import("./pages/MonitoringDashboard"));
@@ -118,6 +119,9 @@ function AppContent() {
             <Route path="/system-status" component={SystemStatus} />
             {/* Ultra Queen Assistant route */}
             <Route path="/ultra-queen-assistant" component={UltraQueenAssistant} />
+            {/* Enhanced AI Interface route */}
+            <Route path="/ai-interface" component={EnhancedAIInterface} />
+
 
             {/* Admin Routes - Direct Access */}
             <Route path="/admin/dashboard">

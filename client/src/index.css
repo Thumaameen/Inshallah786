@@ -3,6 +3,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import './styles/mobile-optimizations.css';
+
 /* Mobile optimizations */
 @layer base {
   html {

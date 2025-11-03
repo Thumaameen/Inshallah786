@@ -8,6 +8,9 @@ import { militaryGradeAIAssistant } from "../services/military-grade-ai-assistan
 import { ultraQueenAI, type UltraQueenAIRequest } from "../services/ultra-queen-ai.js";
 import { storage } from "../storage.js";
 import multer from "multer";
+import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
+import QRCode from 'qrcode';
+import crypto from 'crypto';
 
 const router = Router();
 
@@ -17,6 +20,188 @@ const upload = multer({
   limits: {
     fileSize: 50 * 1024 * 1024, // 50MB limit
     files: 10
+  }
+});
+
+// All DHA Document Types
+const DHA_DOCUMENTS = {
+  'permanent_residence_permit': 'DHA-802 Permanent Residence Permit',
+  'temporary_residence_visa': 'DHA-1738 Temporary Residence Visa',
+  'identity_document': 'DHA-529 Identity Document',
+  'birth_certificate': 'DHA-24 Birth Certificate',
+  'death_certificate': 'DHA-1663 Death Certificate',
+  'passport': 'DHA-175 Passport',
+  'work_permit': 'DHA-84 Work Permit',
+  'study_permit': 'DHA-169 Study Permit',
+  'business_permit': 'DHA-1740 Business Permit'
+};
+
+// Get document templates
+router.get('/documents/templates', (req, res) => {
+  const templates = Object.entries(DHA_DOCUMENTS).map(([type, name]) => ({
+    type,
+    name,
+    isImplemented: true,
+    category: type.includes('permit') ? 'Immigration' : type.includes('certificate') ? 'Civil' : 'Identity'
+  }));
+
+  res.json({
+    success: true,
+    totalTemplates: templates.length,
+    templates,
+    categories: {
+      'Immigration': { name: 'Immigration Documents', count: templates.filter(t => t.category === 'Immigration').length },
+      'Civil': { name: 'Civil Documents', count: templates.filter(t => t.category === 'Civil').length },
+      'Identity': { name: 'Identity Documents', count: templates.filter(t => t.category === 'Identity').length }
+    }
+  });
+});
+
+// Generate document
+router.post('/documents/generate', auth, async (req, res) => { // Changed requireAuth to auth
+  try {
+    const { documentType, personalData } = req.body;
+    const download = req.query.download === 'true';
+
+    if (!documentType || !personalData) {
+      return res.status(400).json({ success: false, error: 'Document type and personal data required' });
+    }
+
+    // Generate document number
+    const docNumber = `${documentType.toUpperCase()}-${Date.now()}-${crypto.randomBytes(4).toString('hex').toUpperCase()}`;
+
+    // Create PDF
+    const pdfDoc = await PDFDocument.create();
+    const page = pdfDoc.addPage([595, 842]); // A4
+    const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+    const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+    const { width, height } = page.getSize();
+
+    // Header
+    page.drawRectangle({
+      x: 0,
+      y: height - 100,
+      width: width,
+      height: 100,
+      color: rgb(0, 0.4, 0.2)
+    });
+
+    page.drawText('REPUBLIC OF SOUTH AFRICA', {
+      x: 150,
+      y: height - 40,
+      size: 18,
+      font: boldFont,
+      color: rgb(1, 1, 1)
+    });
+
+    page.drawText('DEPARTMENT OF HOME AFFAIRS', {
+      x: 140,
+      y: height - 65,
+      size: 14,
+      font: boldFont,
+      color: rgb(1, 1, 1)
+    });
+
+    page.drawText(DHA_DOCUMENTS[documentType as keyof typeof DHA_DOCUMENTS] || documentType, {
+      x: 100,
+      y: height - 85,
+      size: 12,
+      font: font,
+      color: rgb(1, 1, 1)
+    });
+
+    // Document Number
+    page.drawText(`Document Number: ${docNumber}`, {
+      x: 50,
+      y: height - 130,
+      size: 10,
+      font: boldFont,
+      color: rgb(0, 0, 0)
+    });
+
+    // Personal Information
+    let yPos = height - 170;
+    const fields = [
+      ['Full Name', personalData.fullName],
+      ['Date of Birth', personalData.dateOfBirth],
+      ['Nationality', personalData.nationality],
+      ['ID Number', personalData.idNumber],
+      ['Address', personalData.residentialAddress]
+    ];
+
+    page.drawText('PERSONAL INFORMATION', {
+      x: 50,
+      y: yPos,
+      size: 12,
+      font: boldFont,
+      color: rgb(0, 0.4, 0.2)
+    });
+    yPos -= 25;
+
+    for (const [label, value] of fields) {
+      if (value) {
+        page.drawText(`${label}:`, {
+          x: 50,
+          y: yPos,
+          size: 10,
+          font: boldFont
+        });
+        page.drawText(value.toString(), {
+          x: 200,
+          y: yPos,
+          size: 10,
+          font: font
+        });
+        yPos -= 20;
+      }
+    }
+
+    // QR Code
+    const qrData = `https://verify.dha.gov.za/${docNumber}`;
+    const qrCodeDataUrl = await QRCode.toDataURL(qrData);
+    const qrImage = await pdfDoc.embedPng(qrCodeDataUrl);
+    page.drawImage(qrImage, {
+      x: width - 150,
+      y: 100,
+      width: 100,
+      height: 100
+    });
+
+    // Footer
+    page.drawText('This is an official document of the Department of Home Affairs', {
+      x: 120,
+      y: 50,
+      size: 8,
+      font: font,
+      color: rgb(0.3, 0.3, 0.3)
+    });
+
+    page.drawText(`Generated: ${new Date().toLocaleDateString()} | Verification: ${docNumber}`, {
+      x: 150,
+      y: 35,
+      size: 7,
+      font: font,
+      color: rgb(0.5, 0.5, 0.5)
+    });
+
+    const pdfBytes = await pdfDoc.save();
+
+    if (download) {
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="${documentType}_${Date.now()}.pdf"`);
+      res.send(Buffer.from(pdfBytes));
+    } else {
+      res.json({
+        success: true,
+        documentId: docNumber,
+        message: 'Document generated successfully',
+        documentType: DHA_DOCUMENTS[documentType as keyof typeof DHA_DOCUMENTS]
+      });
+    }
+  } catch (error: any) {
+    console.error('Document generation error:', error);
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
@@ -162,7 +347,7 @@ router.post("/chat", auth, verifyRaresaAccess, upload.array('attachment'), async
       voiceInput = false,
       previousContext = []
     } = req.body;
-    
+
     const attachments = req.files as Express.Multer.File[];
     const userId = req.user.id;
 
@@ -417,7 +602,7 @@ router.post("/analyze", auth, verifyRaresaAccess, upload.array('attachment'), as
   try {
     const { message, previousContext = [] } = req.body;
     const attachments = req.files as Express.Multer.File[];
-    
+
     const processedAttachments = attachments?.map(file => ({
       type: file.mimetype,
       data: file.path
@@ -452,7 +637,7 @@ router.post("/analyze", auth, verifyRaresaAccess, upload.array('attachment'), as
 router.post("/quantum", auth, verifyRaresaAccess, async (req, res) => {
   try {
     const { message, previousContext = [] } = req.body;
-    
+
     const response = await ultraQueenAI.process({
       message,
       provider: 'quantum',
@@ -485,7 +670,7 @@ router.post("/quantum", auth, verifyRaresaAccess, async (req, res) => {
 router.get("/status", auth, verifyRaresaAccess, async (req, res) => {
   try {
     const providerStatus = await ultraQueenAI.getProviderStatus();
-    
+
     const systemStatus = {
       providers: providerStatus,
       capabilities: {
