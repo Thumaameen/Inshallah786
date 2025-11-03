@@ -2,22 +2,43 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 import { env } from '../config/environment';
 
-// Initialize connection pool
-const pool = new Pool({
-  connectionString: env.DATABASE_URL,
-  ssl: env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-  max: 20,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000,
-});
+// Initialize connection pool only if DATABASE_URL is configured
+let pool: Pool | null = null;
+let db: any = null;
 
-// Initialize Drizzle with the pool
-export const db = drizzle(pool, {
-  logger: env.NODE_ENV === 'development',
-});
+if (env.DATABASE_URL && typeof env.DATABASE_URL === 'string' && env.DATABASE_URL.length > 0) {
+  try {
+    pool = new Pool({
+      connectionString: env.DATABASE_URL,
+      ssl: env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+      max: 20,
+      idleTimeoutMillis: 30000,
+      connectionTimeoutMillis: 2000,
+    });
+
+    // Initialize Drizzle with the pool
+    db = drizzle(pool, {
+      logger: env.NODE_ENV === 'development',
+    });
+    
+    console.log('✅ Database connection pool initialized');
+  } catch (error) {
+    console.error('⚠️  Database initialization error:', error);
+    console.log('📝 Application will continue without database');
+  }
+} else {
+  console.log('⚠️  DATABASE_URL not configured - using in-memory storage');
+}
+
+export { db };
 
 // Health check function
 export const checkDatabaseConnection = async () => {
+  if (!pool) {
+    console.log('⚠️  Database not configured');
+    return false;
+  }
+  
   try {
     const client = await pool.connect();
     await client.query('SELECT 1');
@@ -31,6 +52,8 @@ export const checkDatabaseConnection = async () => {
 
 // Connection management
 process.on('SIGINT', async () => {
-  await pool.end();
+  if (pool) {
+    await pool.end();
+  }
   process.exit(0);
 });
