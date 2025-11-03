@@ -13,7 +13,7 @@ export class PDFService {
     return PDFService.instance;
   }
 
-  // Helper function to trigger file download
+  // Helper function to trigger file download with iOS optimization
   private downloadFile(blob: Blob, filename: string): void {
     // Validate blob before attempting download
     if (!blob || blob.size === 0) {
@@ -27,24 +27,68 @@ export class PDFService {
     
     const url = window.URL.createObjectURL(blob);
     
-    // Mobile-friendly download
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    // Detect device type
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    const isMobile = isIOS || isAndroid;
     
-    if (isMobile) {
-      // For mobile: open in new tab so user can save
-      const newWindow = window.open(url, '_blank');
-      if (!newWindow) {
-        // Fallback: try direct download
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = filename;
-        link.target = '_blank';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }
-      // Show user notification
-      alert(`Your document "${filename}" will open in a new tab. Tap and hold to save it to your device.`);
+    if (isIOS) {
+      // iOS specific handling - open in new window with share options
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64 = reader.result as string;
+        const newWindow = window.open('', '_blank');
+        if (newWindow) {
+          newWindow.document.write(`
+            <!DOCTYPE html>
+            <html>
+              <head>
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>${filename}</title>
+                <style>
+                  body { margin: 0; padding: 20px; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+                  .container { max-width: 800px; margin: 0 auto; }
+                  .header { background: #007AFF; color: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; }
+                  .instructions { background: #f0f0f0; padding: 15px; border-radius: 10px; margin-bottom: 20px; }
+                  iframe { width: 100%; height: 80vh; border: none; border-radius: 10px; }
+                </style>
+              </head>
+              <body>
+                <div class="container">
+                  <div class="header">
+                    <h2>📄 ${filename}</h2>
+                  </div>
+                  <div class="instructions">
+                    <p><strong>To save this document:</strong></p>
+                    <ol>
+                      <li>Tap the document below</li>
+                      <li>Tap the <strong>Share</strong> button (square with arrow)</li>
+                      <li>Choose <strong>Save to Files</strong></li>
+                      <li>Select your preferred location</li>
+                    </ol>
+                  </div>
+                  <iframe src="${base64}" type="application/pdf"></iframe>
+                </div>
+              </body>
+            </html>
+          `);
+        }
+      };
+      reader.readAsDataURL(blob);
+    } else if (isAndroid) {
+      // Android handling - direct download with notification
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      link.target = '_blank';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Show Android-specific notification
+      setTimeout(() => {
+        alert(`📱 Download Complete!\n\nFile saved to: Downloads/${filename}\n\nAccess from: Files app > Downloads folder`);
+      }, 500);
     } else {
       // Desktop: direct download
       const link = document.createElement("a");
@@ -58,7 +102,7 @@ export class PDFService {
     // Cleanup after delay
     setTimeout(() => {
       window.URL.revokeObjectURL(url);
-    }, 1000);
+    }, 3000);
   }
 
   // Helper function to convert base64 to blob

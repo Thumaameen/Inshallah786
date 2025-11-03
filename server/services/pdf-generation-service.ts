@@ -2561,10 +2561,12 @@ export class PDFGenerationService {
           size: [297, 420], // Passport page size (A6)
           margin: 20,
           info: {
-            Title: `Passport - ${data.passportNumber}`,
+            Title: `Passport - ${data.passportNumber || 'NEW'}`,
             Author: 'Department of Home Affairs',
             Subject: 'South African Passport',
-            Keywords: 'DHA, Passport, South Africa'
+            Keywords: 'DHA, Passport, South Africa',
+            Creator: 'DHA Digital Services Platform',
+            Producer: 'DHA PDF Generator v2.0'
           }
         });
 

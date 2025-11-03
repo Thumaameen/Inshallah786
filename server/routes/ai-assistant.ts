@@ -945,42 +945,81 @@ router.post('/passport/extract', requireAuth, upload.single('passportImage'), as
       passportData.permitType = result.extractedFields.permit_type?.value || '';
     }
 
-    // Generate form auto-fill data if requested
+    // Generate comprehensive form auto-fill data for document generation
     let autoFillData = {};
     if (enableAutoFill) {
       autoFillData = {
-        // Form field mapping for all DHA document types
+        // Core personal information
         childFullName: passportData.fullName,
         fullName: passportData.fullName,
-        surname: passportData.surname,
-        givenNames: passportData.givenNames,
+        surname: passportData.surname || passportData.fullName.split(' ').pop(),
+        givenNames: passportData.givenNames || passportData.fullName.split(' ').slice(0, -1).join(' '),
         dateOfBirth: passportData.dateOfBirth,
-        placeOfBirth: passportData.placeOfBirth,
-        nationality: passportData.nationality,
-        sex: passportData.sex,
+        placeOfBirth: passportData.placeOfBirth || 'South Africa',
+        nationality: passportData.nationality || 'South African',
+        sex: passportData.sex || 'M',
+        gender: passportData.sex || 'M',
+        
+        // Document numbers
         passportNumber: passportData.passportNumber,
-        documentNumber: passportData.documentNumber,
+        documentNumber: passportData.documentNumber || passportData.passportNumber,
+        controlNumber: passportData.controlNumber,
+        referenceNumber: passportData.referenceNumber,
+        
+        // Validity dates
         expiryDate: passportData.dateOfExpiry,
+        dateOfExpiry: passportData.dateOfExpiry,
+        dateOfIssue: passportData.dateOfIssue || new Date().toISOString().split('T')[0],
+        validFrom: passportData.validFrom || new Date().toISOString().split('T')[0],
+        validUntil: passportData.validUntil || passportData.dateOfExpiry,
+        
+        // Physical characteristics
         height: result.extractedFields.height?.value || '',
-        eyeColor: result.extractedFields.eye_color?.value || '',
+        eyeColor: result.extractedFields.eye_color?.value || ''_color?.value || '',
 
         // Work permit specific fields
         employeeFullName: passportData.fullName,
-        employeeNationality: passportData.nationality,
+        employeeNationality: passportData.nationality || 'South African',
         employeePassportNumber: passportData.passportNumber,
-        employerName: passportData.employerName,
-        jobTitle: passportData.jobTitle,
-        workLocation: passportData.workLocation,
-        validFrom: passportData.validFrom,
-        validUntil: passportData.validUntil,
-
+        employerName: passportData.employerName || result.extractedFields.employer_name?.value || '',
+        jobTitle: passportData.jobTitle || result.extractedFields.job_title?.value || '',
+        workLocation: passportData.workLocation || result.extractedFields.work_location?.value || 'South Africa',
+        occupation: result.extractedFields.occupation?.value || passportData.jobTitle || '',
+        
         // Birth certificate fields
         motherFullName: result.extractedFields.mother_name?.value || '',
+        motherIdNumber: result.extractedFields.mother_id?.value || '',
         fatherFullName: result.extractedFields.father_name?.value || '',
+        fatherIdNumber: result.extractedFields.father_id?.value || '',
 
         // Address and contact
         address: result.extractedFields.address?.value || '',
-        idNumber: result.extractedFields.id_number?.value || ''
+        residentialAddress: result.extractedFields.address?.value || result.extractedFields.residential_address?.value || '',
+        postalAddress: result.extractedFields.postal_address?.value || '',
+        phoneNumber: result.extractedFields.phone?.value || result.extractedFields.contact_number?.value || '',
+        emailAddress: result.extractedFields.email?.value || '',
+        idNumber: result.extractedFields.id_number?.value || '',
+        
+        // Issuing authority
+        issuingAuthority: passportData.issuingAuthority || 'Department of Home Affairs',
+        portOfEntry: passportData.portOfEntry || result.extractedFields.port_of_entry?.value || '',
+        
+        // MRZ data for verification
+        mrzLine1: passportData.mrzLine1,
+        mrzLine2: passportData.mrzLine2,
+        
+        // Marital status
+        maritalStatus: result.extractedFields.marital_status?.value || '',
+        
+        // Spouse details if applicable
+        spouseFullName: result.extractedFields.spouse_name?.value || '',
+        spouseNationality: result.extractedFields.spouse_nationality?.value || '',
+        
+        // Document metadata for generation
+        documentType: targetFormType,
+        extractedFromPassport: true,
+        ocrConfidence: result.confidence,
+        aiAnalysisScore: result.aiAnalysis.completenessScore
       };
     }
 
