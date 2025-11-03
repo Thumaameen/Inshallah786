@@ -1,6 +1,6 @@
 /**
  * Production Health Check and Deployment Readiness API Routes
- * 
+ *
  * Provides endpoints for system health monitoring and deployment readiness validation
  * for the DHA Digital Services platform.
  */
@@ -19,10 +19,10 @@ router.get('/health', async (req: Request, res: Response) => {
   try {
     const healthResult = await productionHealthCheck.performFullHealthCheck();
     const integrationStatus = await integrationManager.checkAllIntegrations();
-    
+
     // Convert integration status from Map to object
     const integrations = Object.fromEntries(integrationStatus);
-    
+
     const response = {
       status: 'healthy', // Always healthy for Render health checks
       timestamp: new Date().toISOString(),
@@ -83,7 +83,7 @@ message: String(error)
 router.get('/health/detailed', authenticate, async (req: Request, res: Response) => {
   try {
     const healthResult = await productionHealthCheck.performFullHealthCheck();
-    
+
     res.json({
       status: healthResult.overallHealth,
       timestamp: new Date().toISOString(),
@@ -110,7 +110,7 @@ router.get('/health/readiness', authenticate, async (req: Request, res: Response
     const readinessResult = await productionHealthCheck.checkDeploymentReadiness();
     const integrationStatus = await integrationManager.checkAllIntegrations();
     const isAllIntegrationsActive = integrationManager.isAllIntegrationsActive();
-    
+
     // Check for specific integration issues
     const integrationIssues = Array.from(integrationStatus.values())
       .filter(status => status.status !== 'active')
@@ -119,9 +119,9 @@ router.get('/health/readiness', authenticate, async (req: Request, res: Response
         status: status.status,
         error: status.error
       }));
-    
+
     const statusCode = (readinessResult.isReady && isAllIntegrationsActive) ? 200 : 503;
-    
+
     res.status(statusCode).json({
       ready: readinessResult.isReady && isAllIntegrationsActive,
       readinessScore: readinessResult.readinessScore,
@@ -157,7 +157,7 @@ router.get('/health/security', authenticate, async (req: Request, res: Response)
   try {
     const readinessResult = await productionHealthCheck.checkDeploymentReadiness();
     const integrationStatus = await integrationManager.checkAllIntegrations();
-    
+
     // Check integration security by verifying if services have valid configurations
     const serviceRequirements = {
       'openai': 'OPENAI_API_KEY',
@@ -169,12 +169,12 @@ router.get('/health/security', authenticate, async (req: Request, res: Response)
       'npr': 'DHA_NPR_API_KEY',
       'icao': 'ICAO_PKD_KEY'
     };
-    
-    const secureIntegrations = Array.from(integrationStatus.values()).filter(status => 
-      status.status === 'active' && 
+
+    const secureIntegrations = Array.from(integrationStatus.values()).filter(status =>
+      status.status === 'active' &&
       process.env[serviceRequirements[status.name as keyof typeof serviceRequirements]]
     );
-    
+
     const integrationSecurity = {
       activeIntegrations: secureIntegrations.length,
       totalIntegrations: integrationStatus.size,
@@ -183,7 +183,7 @@ router.get('/health/security', authenticate, async (req: Request, res: Response)
         .filter(status => !process.env[serviceRequirements[status.name as keyof typeof serviceRequirements]])
         .map(status => status.name)
     };
-    
+
     res.json({
       securityCompliance: {
         ...readinessResult.securityCompliance,
@@ -191,17 +191,17 @@ router.get('/health/security', authenticate, async (req: Request, res: Response)
       },
       timestamp: new Date().toISOString(),
       recommendations: {
-        encryption: readinessResult.securityCompliance.encryptionEnabled ? 
-          'Encryption systems operational' : 
+        encryption: readinessResult.securityCompliance.encryptionEnabled ?
+          'Encryption systems operational' :
           'CRITICAL: Configure encryption systems',
-        secrets: readinessResult.securityCompliance.secretsConfigured ? 
-          'Secrets properly configured' : 
+        secrets: readinessResult.securityCompliance.secretsConfigured ?
+          'Secrets properly configured' :
           'CRITICAL: Configure required secrets',
-        authentication: readinessResult.securityCompliance.authenticationStrengthValid ? 
-          'Authentication meets government standards' : 
+        authentication: readinessResult.securityCompliance.authenticationStrengthValid ?
+          'Authentication meets government standards' :
           'CRITICAL: Strengthen authentication configuration',
-        certificates: readinessResult.securityCompliance.certificatesValid ? 
-          'Government certificates valid' : 
+        certificates: readinessResult.securityCompliance.certificatesValid ?
+          'Government certificates valid' :
           'CRITICAL: Renew government certificates',
         integrations: integrationSecurity.securityScore === 100 ?
           'All integrations properly secured' :

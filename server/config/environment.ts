@@ -58,13 +58,15 @@ export const environment: Record<string, string | number | boolean> = {
                         (process.env.POLYGON_API_KEY ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.POLYGON_API_KEY}` : '') ||
                         (process.env.ALCHEMY_API_KEY ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}` : '') ||
                         (process.env.INFURA_API_KEY ? `https://polygon-mainnet.infura.io/v3/${process.env.INFURA_API_KEY}` : '') ||
-                        'https://polygon-rpc.com', // Public fallback
+                        'https://polygon-rpc.com', // Public fallback - always available
+  POLYGON_API_KEY: process.env.POLYGON_API_KEY || process.env.ALCHEMY_API_KEY || '',
   SOLANA_RPC_URL: process.env.SOLANA_RPC_URL || 
                   process.env.SOLANA_RPC || 
                   process.env.SOL_RPC_URL ||
-                  process.env.SOLANA_RPC_ENDPOINT || // Added for Render secrets compatibility
+                  process.env.SOLANA_RPC_ENDPOINT ||
                   (process.env.SOLANA_API_KEY ? `https://solana-mainnet.g.alchemy.com/v2/${process.env.SOLANA_API_KEY}` : '') ||
-                  'https://api.mainnet-beta.solana.com', // Public fallback
+                  'https://api.mainnet-beta.solana.com', // Public fallback - always available
+  SOLANA_API_KEY: process.env.SOLANA_API_KEY || ''
   WEB3_PRIVATE_KEY: process.env.WEB3_PRIVATE_KEY || process.env.PRIVATE_KEY || '',
   INFURA_PROJECT_ID: process.env.INFURA_PROJECT_ID || process.env.INFURA_API_KEY || process.env.INFURA_KEY || '',
   ALCHEMY_API_KEY: process.env.ALCHEMY_API_KEY || process.env.POLYGON_API_KEY || process.env.ALCHEMY_KEY || '',
