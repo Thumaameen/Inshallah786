@@ -82,17 +82,17 @@ services:
         generateValue: true
       # All 5 AI Providers - Required for Ultra Queen AI
       - key: OPENAI_API_KEY
-        sync: false
+        sync: true
       - key: ANTHROPIC_API_KEY
-        sync: false
+        sync: true
       - key: MISTRAL_API_KEY
-        sync: false
+        sync: true
       - key: GEMINI_API_KEY
-        sync: false
+        sync: true
       - key: GOOGLE_API_KEY
-        sync: false
+        sync: true
       - key: PERPLEXITY_API_KEY
-        sync: false
+        sync: true
       # Additional AI Services (Optional)
       - key: WORKATO_API_KEY
         sync: false
@@ -102,7 +102,7 @@ services:
         sync: false
       # Government & DHA APIs (Optional - Mock mode if not provided)
       - key: DHA_NPR_API_KEY
-        sync: false
+        sync: true
       - key: DHA_NPR_BASE_URL
         value: "https://npr-prod.dha.gov.za/api/v1"
       - key: DHA_NPR_TIMEOUT
@@ -110,7 +110,7 @@ services:
       - key: DHA_NPR_RETRY_COUNT
         value: "3"
       - key: DHA_ABIS_API_KEY
-        sync: false
+        sync: true
       - key: DHA_ABIS_BASE_URL
         value: "https://abis-prod.dha.gov.za/api/v1"
       - key: DHA_ABIS_TIMEOUT
@@ -120,11 +120,11 @@ services:
       - key: DHA_API_VERSION
         value: "2024-10"
       - key: SAPS_CRC_API_KEY
-        sync: false
+        sync: true
       - key: SAPS_CRC_BASE_URL
         value: "https://crc-api.saps.gov.za/v1"
       - key: ICAO_PKD_API_KEY
-        sync: false
+        sync: true
       - key: ICAO_PKD_BASE_URL
         value: "https://pkddownloadsg.icao.int"
       - key: SITA_API_KEY
@@ -264,7 +264,7 @@ services:
     env: node
     region: frankfurt
     plan: starter
-    nodeVersion: "20.18.1"
+    nodeVersion: "20.10.0"
     schedule: "*/15 * * * *"
     buildCommand: npm ci --legacy-peer-deps --production=false
     startCommand: node dist/workers/scheduled-tasks.js
