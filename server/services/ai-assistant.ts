@@ -1,14 +1,15 @@
 import OpenAI from "openai";
 
-// the newest OpenAI model is "gpt-4o" - highly capable and reliable
+// Use HIGHEST tier models for production - no compromises
 const AI_MODEL_CONFIG = {
-  GPT_4O: "gpt-4o", // Primary model - highly capable
-  GPT_4_TURBO: "gpt-4-turbo", // Fallback model
-  GPT_3_5_TURBO: "gpt-3.5-turbo" // Secondary fallback
+  GPT_4_TURBO: "gpt-4-turbo-preview", // Highest OpenAI model
+  CLAUDE_3_5_SONNET: "claude-3-5-sonnet-20241022", // Highest Anthropic model
+  GPT_4O: "gpt-4o", // Fallback
+  GPT_3_5_TURBO: "gpt-3.5-turbo" // Emergency fallback
 };
 
-// Use reliable GPT-4o model for optimal performance
-const CURRENT_AI_MODEL = AI_MODEL_CONFIG.GPT_4O;
+// Use GPT-4 Turbo for maximum capability and real data processing
+const CURRENT_AI_MODEL = AI_MODEL_CONFIG.GPT_4_TURBO;
 import { storage } from "../mem-storage.js";
 import { monitoringService } from "./monitoring.js";
 import { fraudDetectionService } from "./fraud-detection.js";
