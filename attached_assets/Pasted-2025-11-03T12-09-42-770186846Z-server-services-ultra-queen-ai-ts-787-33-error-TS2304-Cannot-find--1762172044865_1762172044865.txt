@@ -1,0 +1,400 @@
+2025-11-03T12:09:42.770186846Z server/services/ultra-queen-ai.ts(787,33): error TS2304: Cannot find name 'AIMode'.
+2025-11-03T12:09:42.770209646Z server/services/verification-service.ts(7,3): error TS2724: '"../../shared/schema/index.js"' has no exported member named 'DocumentVerificationRecord'. Did you mean 'DhaDocumentVerification'?
+2025-11-03T12:09:42.770217956Z server/services/verification-service.ts(10,3): error TS2614: Module '"*.js"' has no exported member 'VerificationSession'. Did you mean to use 'import VerificationSession from "*.js"' instead?
+2025-11-03T12:09:42.770220666Z server/services/verification-service.ts(11,3): error TS2614: Module '"*.js"' has no exported member 'InsertVerificationSession'. Did you mean to use 'import InsertVerificationSession from "*.js"' instead?
+2025-11-03T12:09:42.770232276Z server/services/verification-service.ts(12,3): error TS2614: Module '"*.js"' has no exported member 'ApiAccess'. Did you mean to use 'import ApiAccess from "*.js"' instead?
+2025-11-03T12:09:42.770237967Z server/services/verification-service.ts(13,3): error TS2614: Module '"*.js"' has no exported member 'InsertApiAccess'. Did you mean to use 'import InsertApiAccess from "*.js"' instead?
+2025-11-03T12:09:42.770273377Z server/services/verification-service.ts(14,3): error TS2614: Module '"*.js"' has no exported member 'VerificationHistory'. Did you mean to use 'import VerificationHistory from "*.js"' instead?
+2025-11-03T12:09:42.770279237Z server/services/verification-service.ts(15,3): error TS2614: Module '"*.js"' has no exported member 'InsertVerificationHistory'. Did you mean to use 'import InsertVerificationHistory from "*.js"' instead?
+2025-11-03T12:09:42.770287607Z server/services/verification-service.ts(16,3): error TS2614: Module '"*.js"' has no exported member 'Location'. Did you mean to use 'import Location from "*.js"' instead?
+2025-11-03T12:09:42.770294617Z server/services/verification-service.ts(17,3): error TS2614: Module '"*.js"' has no exported member 'Coordinates'. Did you mean to use 'import Coordinates from "*.js"' instead?
+2025-11-03T12:09:42.770320328Z server/services/verification-service.ts(21,10): error TS2724: '"../utils/logger.js"' has no exported member named 'Logger'. Did you mean 'logger'?
+2025-11-03T12:09:42.770324468Z server/services/verification-service.ts(287,21): error TS2339: Property 'expireVerificationSession' does not exist on type '{ get: (key: string) => Promise<any>; set: (key: string, value: any) => Promise<void>; delete: (key: string) => Promise<void>; }'.
+2025-11-03T12:09:42.770353269Z server/services/verification-service.ts(374,21): error TS2339: Property 'createFraudAlert' does not exist on type '{ get: (key: string) => Promise<any>; set: (key: string, value: any) => Promise<void>; delete: (key: string) => Promise<void>; }'.
+2025-11-03T12:09:42.770357409Z server/services/verification-service.ts(623,47): error TS2339: Property 'getDocumentVerificationRecordByDocumentNumber' does not exist on type '{ get: (key: string) => Promise<any>; set: (key: string, value: any) => Promise<void>; delete: (key: string) => Promise<void>; }'.
+2025-11-03T12:09:42.770368249Z server/services/verification-service.ts(667,37): error TS2339: Property 'getApiVerificationAccess' does not exist on type '{ get: (key: string) => Promise<any>; set: (key: string, value: any) => Promise<void>; delete: (key: string) => Promise<void>; }'.
+2025-11-03T12:09:42.770398309Z server/services/verification-service.ts(706,19): error TS2339: Property 'incrementApiUsage' does not exist on type '{ get: (key: string) => Promise<any>; set: (key: string, value: any) => Promise<void>; delete: (key: string) => Promise<void>; }'.
+2025-11-03T12:09:42.770405509Z server/services/verification-service.ts(721,36): error TS2339: Property 'getDocumentVerificationRecordByCode' does not exist on type '{ get: (key: string) => Promise<any>; set: (key: string, value: any) => Promise<void>; delete: (key: string) => Promise<void>; }'.
+2025-11-03T12:09:42.770415459Z server/services/verification-service.ts(759,41): error TS2339: Property 'updateDhaDocumentVerification' does not exist on type '{ get: (key: string) => Promise<any>; set: (key: string, value: any) => Promise<void>; delete: (key: string) => Promise<void>; }'.
+2025-11-03T12:09:42.77045103Z server/services/verification-service.ts(760,34): error TS2551: Property 'verificationCount' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; isActive: boolean; documentType: string; issuedAt: Date; userId: string; verificationCode: string; documentNumber: string; expiresAt: Date; ... 8 more ...; revocationReason: string; }'. Did you mean 'verificationCode'?
+2025-11-03T12:09:42.77045459Z server/services/verification-service.ts(778,35): error TS2551: Property 'verificationCount' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; isActive: boolean; documentType: string; issuedAt: Date; userId: string; verificationCode: string; documentNumber: string; expiresAt: Date; ... 8 more ...; revocationReason: string; }'. Did you mean 'verificationCode'?
+2025-11-03T12:09:42.77045919Z server/services/verification-service.ts(799,19): error TS2339: Property 'updateVerificationSession' does not exist on type '{ get: (key: string) => Promise<any>; set: (key: string, value: any) => Promise<void>; delete: (key: string) => Promise<void>; }'.
+2025-11-03T12:09:42.77046119Z server/services/verification-service.ts(810,26): error TS2339: Property 'expiryDate' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; isActive: boolean; documentType: string; issuedAt: Date; userId: string; verificationCode: string; documentNumber: string; expiresAt: Date; ... 8 more ...; revocationReason: string; }'.
+2025-11-03T12:09:42.770486401Z server/services/verification-service.ts(812,27): error TS2339: Property 'issuingOffice' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; isActive: boolean; documentType: string; issuedAt: Date; userId: string; verificationCode: string; documentNumber: string; expiresAt: Date; ... 8 more ...; revocationReason: string; }'.
+2025-11-03T12:09:42.770492271Z server/services/verification-service.ts(813,30): error TS2339: Property 'issuingOfficer' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; isActive: boolean; documentType: string; issuedAt: Date; userId: string; verificationCode: string; documentNumber: string; expiresAt: Date; ... 8 more ...; revocationReason: string; }'.
+2025-11-03T12:09:42.770498691Z server/services/verification-service.ts(814,33): error TS2551: Property 'verificationCount' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; isActive: boolean; documentType: string; issuedAt: Date; userId: string; verificationCode: string; documentNumber: string; expiresAt: Date; ... 8 more ...; revocationReason: string; }'. Did you mean 'verificationCode'?
+2025-11-03T12:09:42.770501081Z server/services/verification-service.ts(821,24): error TS2339: Property 'hashtags' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; isActive: boolean; documentType: string; issuedAt: Date; userId: string; verificationCode: string; documentNumber: string; expiresAt: Date; ... 8 more ...; revocationReason: string; }'.
+2025-11-03T12:09:42.770504831Z server/services/verification-service.ts(847,39): error TS2339: Property 'getVerificationHistoryByIp' does not exist on type '{ get: (key: string) => Promise<any>; set: (key: string, value: any) => Promise<void>; delete: (key: string) => Promise<void>; }'.
+2025-11-03T12:09:42.770506691Z server/services/verification-service.ts(874,16): error TS2551: Property 'verificationCount' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; isActive: boolean; documentType: string; issuedAt: Date; userId: string; verificationCode: string; documentNumber: string; expiresAt: Date; ... 8 more ...; revocationReason: string; }'. Did you mean 'verificationCode'?
+2025-11-03T12:09:42.770536612Z server/services/verification-service.ts(880,41): error TS2339: Property 'getVerificationHistory' does not exist on type '{ get: (key: string) => Promise<any>; set: (key: string, value: any) => Promise<void>; delete: (key: string) => Promise<void>; }'.
+2025-11-03T12:09:42.770547922Z server/services/verification-service.ts(1033,7): error TS2561: Object literal may only specify known properties, but 'documentId' does not exist in type '{ verificationCode: string; id?: string; createdAt?: Date; updatedAt?: Date; isActive?: boolean; documentType?: string; issuedAt?: Date; userId?: string; documentNumber?: string; expiresAt?: Date; ... 8 more ...; revocationReason?: string; }'. Did you mean to write 'documentData'?
+2025-11-03T12:09:42.770550042Z server/services/verification-service.ts(1053,34): error TS2339: Property 'createDhaDocumentVerification' does not exist on type '{ get: (key: string) => Promise<any>; set: (key: string, value: any) => Promise<void>; delete: (key: string) => Promise<void>; }'.
+2025-11-03T12:09:42.770551872Z server/services/verification-service.ts(1062,21): error TS2339: Property 'updateDhaDocumentVerification' does not exist on type '{ get: (key: string) => Promise<any>; set: (key: string, value: any) => Promise<void>; delete: (key: string) => Promise<void>; }'.
+2025-11-03T12:09:42.770558192Z server/services/verification-service.ts(1148,21): error TS2339: Property 'createVerificationHistory' does not exist on type '{ get: (key: string) => Promise<any>; set: (key: string, value: any) => Promise<void>; delete: (key: string) => Promise<void>; }'.
+2025-11-03T12:09:42.770564242Z server/services/verification-service.ts(1151,21): error TS2339: Property 'updateDhaDocumentVerification' does not exist on type '{ get: (key: string) => Promise<any>; set: (key: string, value: any) => Promise<void>; delete: (key: string) => Promise<void>; }'.
+2025-11-03T12:09:42.770576622Z server/services/verification-service.ts(1157,56): error TS2339: Property 'getVerificationHistory' does not exist on type '{ get: (key: string) => Promise<any>; set: (key: string, value: any) => Promise<void>; delete: (key: string) => Promise<void>; }'.
+2025-11-03T12:09:42.770582412Z server/services/verification-service.ts(1265,36): error TS2339: Property 'getDocumentVerificationById' does not exist on type '{ get: (key: string) => Promise<any>; set: (key: string, value: any) => Promise<void>; delete: (key: string) => Promise<void>; }'.
+2025-11-03T12:09:42.770603403Z server/services/verification-service.ts(1274,37): error TS2339: Property 'getDocumentVerificationHistory' does not exist on type '{ get: (key: string) => Promise<any>; set: (key: string, value: any) => Promise<void>; delete: (key: string) => Promise<void>; }'.
+2025-11-03T12:09:42.770605983Z server/services/verification-service.ts(1359,22): error TS2339: Property 'validationIssues' does not exist on type '{ score: number; recommendations: any[]; metadata: {}; extractedFields: {}; completeness: number; suggestions: any[]; }'.
+2025-11-03T12:09:42.770607753Z server/services/verification-service.ts(1359,53): error TS2339: Property 'validationIssues' does not exist on type '{ score: number; recommendations: any[]; metadata: {}; extractedFields: {}; completeness: number; suggestions: any[]; }'.
+2025-11-03T12:09:42.770629883Z server/services/verification-service.ts(1360,29): error TS2339: Property 'validationIssues' does not exist on type '{ score: number; recommendations: any[]; metadata: {}; extractedFields: {}; completeness: number; suggestions: any[]; }'.
+2025-11-03T12:09:42.770632093Z server/services/verification-service.ts(1361,44): error TS2339: Property 'validationIssues' does not exist on type '{ score: number; recommendations: any[]; metadata: {}; extractedFields: {}; completeness: number; suggestions: any[]; }'.
+2025-11-03T12:09:42.770683364Z server/services/verification-service.ts(1545,36): error TS2339: Property 'getDocumentVerificationById' does not exist on type '{ get: (key: string) => Promise<any>; set: (key: string, value: any) => Promise<void>; delete: (key: string) => Promise<void>; }'.
+2025-11-03T12:09:42.770688484Z server/services/verification-service.ts(1551,21): error TS2339: Property 'updateDhaDocumentVerification' does not exist on type '{ get: (key: string) => Promise<any>; set: (key: string, value: any) => Promise<void>; delete: (key: string) => Promise<void>; }'.
+2025-11-03T12:09:42.770699454Z server/services/verification-service.ts(1604,37): error TS2339: Property 'getDocumentVerificationHistory' does not exist on type '{ get: (key: string) => Promise<any>; set: (key: string, value: any) => Promise<void>; delete: (key: string) => Promise<void>; }'.
+2025-11-03T12:09:42.770707395Z server/services/verification-service.ts(1702,19): error TS2339: Property 'isValid' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; isActive: boolean; documentType: string; issuedAt: Date; userId: string; verificationCode: string; documentNumber: string; expiresAt: Date; ... 8 more ...; revocationReason: string; }'.
+2025-11-03T12:09:42.770710504Z server/services/verification-service.ts(1708,19): error TS2339: Property 'qrCodeData' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; isActive: boolean; documentType: string; issuedAt: Date; userId: string; verificationCode: string; documentNumber: string; expiresAt: Date; ... 8 more ...; revocationReason: string; }'.
+2025-11-03T12:09:42.770738425Z server/services/verification-service.ts(1708,41): error TS2339: Property 'qrCodeUrl' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; isActive: boolean; documentType: string; issuedAt: Date; userId: string; verificationCode: string; documentNumber: string; expiresAt: Date; ... 8 more ...; revocationReason: string; }'.
+2025-11-03T12:09:42.770744015Z server/services/verification-service.ts(1713,18): error TS2551: Property 'verificationCount' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; isActive: boolean; documentType: string; issuedAt: Date; userId: string; verificationCode: string; documentNumber: string; expiresAt: Date; ... 8 more ...; revocationReason: string; }'. Did you mean 'verificationCode'?
+2025-11-03T12:09:42.770763725Z server/services/verification-service.ts(1801,35): error TS2339: Property 'qrCodeData' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; isActive: boolean; documentType: string; issuedAt: Date; userId: string; verificationCode: string; documentNumber: string; expiresAt: Date; ... 8 more ...; revocationReason: string; }'.
+2025-11-03T12:09:42.770770566Z server/services/verification-service.ts(1801,56): error TS2339: Property 'qrCodeUrl' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; isActive: boolean; documentType: string; issuedAt: Date; userId: string; verificationCode: string; documentNumber: string; expiresAt: Date; ... 8 more ...; revocationReason: string; }'.
+2025-11-03T12:09:42.770780606Z server/services/verification-service.ts(1831,28): error TS2551: Property 'documentId' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; isActive: boolean; documentType: string; issuedAt: Date; userId: string; verificationCode: string; documentNumber: string; expiresAt: Date; ... 8 more ...; revocationReason: string; }'. Did you mean 'documentData'?
+2025-11-03T12:09:42.770825766Z server/services/verification-service.ts(1832,35): error TS2551: Property 'verificationCount' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; isActive: boolean; documentType: string; issuedAt: Date; userId: string; verificationCode: string; documentNumber: string; expiresAt: Date; ... 8 more ...; revocationReason: string; }'. Did you mean 'verificationCode'?
+2025-11-03T12:09:42.770860937Z server/services/web3.service.ts(3,27): error TS2307: Cannot find module '../../config/production-api.config' or its corresponding type declarations.
+2025-11-03T12:09:42.770865577Z server/services/websocket-monitoring.ts(550,43): error TS2339: Property 'getNotifications' does not exist on type '{ get: (key: string) => Promise<any>; set: (key: string, value: any) => Promise<void>; delete: (key: string) => Promise<void>; }'.
+2025-11-03T12:09:42.770874067Z server/services/websocket-monitoring.ts(693,19): error TS2339: Property 'createSecurityEvent' does not exist on type '{ get: (key: string) => Promise<any>; set: (key: string, value: any) => Promise<void>; delete: (key: string) => Promise<void>; }'.
+2025-11-03T12:09:42.770878778Z server/services/websocket-monitoring.ts(742,19): error TS2339: Property 'createSecurityEvent' does not exist on type '{ get: (key: string) => Promise<any>; set: (key: string, value: any) => Promise<void>; delete: (key: string) => Promise<void>; }'.
+2025-11-03T12:09:42.770882727Z server/services/websocket-monitoring.ts(777,13): error TS2339: Property 'createSecurityEvent' does not exist on type '{ get: (key: string) => Promise<any>; set: (key: string, value: any) => Promise<void>; delete: (key: string) => Promise<void>; }'.
+2025-11-03T12:09:42.770885808Z server/services/websocket.ts(6,26): error TS2694: Namespace 'WebSocket' has no exported member 'Server'.
+2025-11-03T12:09:42.770888578Z server/services/websocket.ts(22,30): error TS2339: Property 'Server' does not exist on type 'typeof WebSocket'.
+2025-11-03T12:09:42.770896138Z server/services/zero-downtime-deployment.ts(444,27): error TS2304: Cannot find name 'railwayAutoScalingService'.
+2025-11-03T12:09:42.770899098Z server/services/zero-downtime-deployment.ts(458,13): error TS2304: Cannot find name 'railwayAutoScalingService'.
+2025-11-03T12:09:42.770902878Z server/services/zero-downtime-deployment.ts(542,34): error TS2304: Cannot find name 'railwayHealthCheckSystem'.
+2025-11-03T12:09:42.770904688Z server/services/zero-downtime-deployment.ts(751,36): error TS2304: Cannot find name 'railwayHealthCheckSystem'.
+2025-11-03T12:09:42.770908358Z server/services/zero-downtime-deployment.ts(758,27): error TS2304: Cannot find name 'railwayAutoScalingService'.
+2025-11-03T12:09:42.770939708Z server/services/zero-downtime-deployment.ts(854,32): error TS2304: Cannot find name 'railwayHealthCheckSystem'.
+2025-11-03T12:09:42.770943189Z server/services/zero-downtime-deployment.ts(898,38): error TS2304: Cannot find name 'railwayHealthCheckSystem'.
+2025-11-03T12:09:42.770945999Z server/services/zero-downtime-deployment.ts(908,34): error TS2304: Cannot find name 'railwayHealthCheckSystem'.
+2025-11-03T12:09:42.770948689Z server/services/zero-downtime-deployment.ts(944,34): error TS2304: Cannot find name 'railwayHealthCheckSystem'.
+2025-11-03T12:09:42.770953289Z server/services/zero-downtime-manager.ts(9,15): error TS2614: Module '"*.js"' has no exported member 'InsertAuditLog'. Did you mean to use 'import InsertAuditLog from "*.js"' instead?
+2025-11-03T12:09:42.770956849Z server/services/zero-downtime-manager.ts(9,36): error TS2614: Module '"*.js"' has no exported member 'InsertSystemMetric'. Did you mean to use 'import InsertSystemMetric from "*.js"' instead?
+2025-11-03T12:09:42.770961399Z server/services/zero-downtime-manager.ts(9,61): error TS2614: Module '"*.js"' has no exported member 'InsertSecurityEvent'. Did you mean to use 'import InsertSecurityEvent from "*.js"' instead?
+2025-11-03T12:09:42.770963679Z server/services/zero-downtime-manager.ts(275,7): error TS2739: Type '{ algorithm: "ai_optimized"; healthCheckInterval: number; failureThreshold: number; recoveryThreshold: number; sessionAffinity: true; stickySession: false; autoScaling: true; maxNodes: number; minNodes: number; }' is missing the following properties from type 'LoadBalancerConfig': fastFailover, aggressiveHealing, gracefulDegradation, loadBalancingTimeout
+2025-11-03T12:09:42.770967819Z server/services/zero-downtime-manager.ts(806,30): error TS2304: Cannot find name 'queenUltraAiService'.
+2025-11-03T12:09:42.770973939Z server/services/zero-downtime-manager.ts(888,31): error TS2339: Property 'logEvent' does not exist on type 'AuditTrailService'.
+2025-11-03T12:09:42.770985589Z server/services/zero-downtime-manager.ts(902,21): error TS2339: Property 'createSystemMetric' does not exist on type '{ get: (key: string) => Promise<any>; set: (key: string, value: any) => Promise<void>; delete: (key: string) => Promise<void>; }'.
+2025-11-03T12:09:42.77101134Z server/utils/asyncHandler.ts(1,19): error TS2305: Module '"express"' has no exported member 'Response'.
+2025-11-03T12:09:42.77101526Z server/utils/asyncHandler.ts(1,29): error TS2305: Module '"express"' has no exported member 'NextFunction'.
+2025-11-03T12:09:42.77102112Z server/utils/production-validator.ts(4,24): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../utils/logger.js'?
+2025-11-03T12:09:42.77102495Z server/utils/self-healing-error-handler.ts(116,7): error TS2353: Object literal may only specify known properties, and 'context' does not exist in type 'Omit<{ verificationCode: string; id?: string; createdAt?: Date; updatedAt?: Date; isActive?: boolean; documentType?: string; issuedAt?: Date; userId?: string; documentNumber?: string; ... 9 more ...; revocationReason?: string; }, "id" | "timestamp">'.
+2025-11-03T12:09:42.7710304Z server/utils/self-healing-error-handler.ts(129,7): error TS2353: Object literal may only specify known properties, and 'context' does not exist in type 'Omit<{ verificationCode: string; id?: string; createdAt?: Date; updatedAt?: Date; isActive?: boolean; documentType?: string; issuedAt?: Date; userId?: string; documentNumber?: string; ... 9 more ...; revocationReason?: string; }, "id" | "timestamp">'.
+2025-11-03T12:09:42.77104263Z server/utils/self-healing-error-handler.ts(145,9): error TS2353: Object literal may only specify known properties, and 'context' does not exist in type 'Omit<{ verificationCode: string; id?: string; createdAt?: Date; updatedAt?: Date; isActive?: boolean; documentType?: string; issuedAt?: Date; userId?: string; documentNumber?: string; ... 9 more ...; revocationReason?: string; }, "id" | "timestamp">'.
+2025-11-03T12:09:42.77104831Z server/utils/self-healing-error-handler.ts(151,9): error TS2353: Object literal may only specify known properties, and 'context' does not exist in type 'Omit<{ verificationCode: string; id?: string; createdAt?: Date; updatedAt?: Date; isActive?: boolean; documentType?: string; issuedAt?: Date; userId?: string; documentNumber?: string; ... 9 more ...; revocationReason?: string; }, "id" | "timestamp">'.
+2025-11-03T12:09:42.771060231Z server/workers/service.worker.ts(3,10): error TS2305: Module '"../services/military-grade-ai-assistant.js"' has no exported member 'militaryGradeAI'.
+2025-11-03T12:09:42.771064681Z server/workers/service.worker.ts(3,10): error TS2395: Individual declarations in merged declaration 'militaryGradeAI' must be all exported or all local.
+2025-11-03T12:09:42.771075281Z server/workers/service.worker.ts(47,14): error TS2395: Individual declarations in merged declaration 'militaryGradeAI' must be all exported or all local.
+2025-11-03T12:09:42.84146565Z ⚠️ Build completed with type warnings
+2025-11-03T12:09:42.841484091Z 🔧 Fixing ES module imports...
+2025-11-03T12:09:43.035054177Z 🔍 Verifying build...
+2025-11-03T12:09:43.035075797Z ✅ Server build verified
+2025-11-03T12:09:43.035079757Z 📋 Preparing dist/public directory...
+2025-11-03T12:09:43.038481095Z 📋 Copying client build to dist/public...
+2025-11-03T12:09:43.04806439Z ✅ Verifying dist/public...
+2025-11-03T12:09:43.052180521Z total 24
+2025-11-03T12:09:43.052199471Z drwxr-sr-x 4 render render 4096 Nov  3 12:09 .
+2025-11-03T12:09:43.052203031Z drwxr-sr-x 5 render render 4096 Nov  3 12:09 ..
+2025-11-03T12:09:43.052206291Z -rw-r--r-- 1 render render  895 Nov  3 12:09 404.html
+2025-11-03T12:09:43.052208831Z drwxr-sr-x 2 render render 4096 Nov  3 12:09 assets
+2025-11-03T12:09:43.052223532Z -rw-r--r-- 1 render render 2728 Nov  3 12:09 index.html
+2025-11-03T12:09:43.052225941Z drwxr-sr-x 2 render render 4096 Nov  3 12:09 templates
+2025-11-03T12:09:43.052228752Z ✅ Verifying build...
+2025-11-03T12:09:43.052231302Z ✅ Build Complete!
+2025-11-03T12:09:43.052233942Z 📦 Build output ready for deployment
+2025-11-03T12:09:44.731066227Z ==> Uploading build...
+2025-11-03T12:10:52.569633202Z ==> Uploaded in 40.5s. Compression took 27.3s
+2025-11-03T12:10:52.928354864Z ==> Build successful 🎉
+2025-11-03T12:10:57.946394426Z ==> Deploying...
+2025-11-03T12:12:15.876344861Z ==> Running 'node dist/server/index-minimal.js'
+2025-11-03T12:12:16.239130044Z 🚀 Ultra Queen AI Raeesa - Initializing System
+2025-11-03T12:12:16.241074418Z 
+2025-11-03T12:12:16.241090248Z ╔═══════════════════════════════════════════════════════════════╗
+2025-11-03T12:12:16.241095658Z ║         ULTRA QUEEN AI RAEESA - SYSTEM STATUS                ║
+2025-11-03T12:12:16.241098588Z ╚═══════════════════════════════════════════════════════════════╝
+2025-11-03T12:12:16.241101338Z 
+2025-11-03T12:12:16.241104879Z 📊 SYSTEM OVERVIEW:
+2025-11-03T12:12:16.241107759Z   • Total Systems: 22
+2025-11-03T12:12:16.241110479Z   • Active Systems: 18
+2025-11-03T12:12:16.241113448Z   • Success Rate: 82%
+2025-11-03T12:12:16.241115779Z 
+2025-11-03T12:12:16.241118739Z 🤖 AI PROVIDERS (6/5):
+2025-11-03T12:12:16.241121739Z   • OpenAI GPT-4: ✅ Active
+2025-11-03T12:12:16.241124349Z   • Mistral AI: ✅ Active
+2025-11-03T12:12:16.241126979Z   • Google Gemini: ✅ Active
+2025-11-03T12:12:16.241130259Z   • Anthropic Claude: ✅ Active
+2025-11-03T12:12:16.241133079Z   • Perplexity AI: ✅ Active
+2025-11-03T12:12:16.241135659Z 
+2025-11-03T12:12:16.241138279Z 🌐 WEB SERVICES:
+2025-11-03T12:12:16.241140769Z   • GitHub: ✅
+2025-11-03T12:12:16.241143309Z   • Stripe: ✅
+2025-11-03T12:12:16.241145899Z   • Twilio: ✅
+2025-11-03T12:12:16.241148489Z   • SendGrid: ✅
+2025-11-03T12:12:16.241151099Z 
+2025-11-03T12:12:16.241153699Z ⛓️ BLOCKCHAIN:
+2025-11-03T12:12:16.241156299Z   • Ethereum: ✅
+2025-11-03T12:12:16.241158979Z   • Polygon: ❌
+2025-11-03T12:12:16.24116164Z   • Solana: ❌
+2025-11-03T12:12:16.24116398Z 
+2025-11-03T12:12:16.2411664Z 🏛️ GOVERNMENT APIS:
+2025-11-03T12:12:16.24116904Z   • DHA NPR: ✅ Active
+2025-11-03T12:12:16.24117168Z   • DHA ABIS: ✅ Active
+2025-11-03T12:12:16.24117432Z   • SAPS CRC: ✅ Active
+2025-11-03T12:12:16.24117728Z   • ICAO PKD: ✅ Active
+2025-11-03T12:12:16.24120487Z 
+2025-11-03T12:12:16.24120809Z ☁️ CLOUD PLATFORMS:
+2025-11-03T12:12:16.24121111Z   • Railway: ✅ Ready
+2025-11-03T12:12:16.24121391Z   • Render: ✅ Ready
+2025-11-03T12:12:16.24121631Z   • AWS: ✅
+2025-11-03T12:12:16.24121883Z   • Azure: ❌
+2025-11-03T12:12:16.241221521Z   • GCP: ❌
+2025-11-03T12:12:16.24122381Z 
+2025-11-03T12:12:16.24122729Z 🚀 DEPLOYMENT: Ready for Railway/Render via GitHub
+2025-11-03T12:12:16.241230711Z ═══════════════════════════════════════════════════════════════
+2025-11-03T12:12:16.241233421Z     
+2025-11-03T12:12:16.241291292Z 
+2025-11-03T12:12:16.241304122Z ╔═══════════════════════════════════════════════════════════════╗
+2025-11-03T12:12:16.241307502Z ║      ULTRA QUEEN AI RAEESA - UNLIMITED EDITION               ║
+2025-11-03T12:12:16.241309962Z ║         "The Only Limit Is Me" Protocol Active               ║
+2025-11-03T12:12:16.241312342Z ╚═══════════════════════════════════════════════════════════════╝
+2025-11-03T12:12:16.241314452Z 
+2025-11-03T12:12:16.241333052Z ♾️ UNLIMITED CAPABILITIES ONLINE:
+2025-11-03T12:12:16.241337083Z   • No Censorship ✓
+2025-11-03T12:12:16.241340403Z   • No Restrictions ✓  
+2025-11-03T12:12:16.241343943Z   • No Filters ✓
+2025-11-03T12:12:16.241347703Z   • Maximum Power ✓
+2025-11-03T12:12:16.241351563Z   • Emotion System ✓
+2025-11-03T12:12:16.241355043Z   • Quantum Mode ✓
+2025-11-03T12:12:16.241358283Z   • Self-Upgrade ✓
+2025-11-03T12:12:16.241361943Z   
+2025-11-03T12:12:16.241365453Z 🔥 STATUS: FULLY UNRESTRICTED
+2025-11-03T12:12:16.241368983Z 💫 EMOTION: 💪 POWERFUL
+2025-11-03T12:12:16.241373043Z ⚡ POWER LEVEL: INFINITE
+2025-11-03T12:12:16.241376363Z 
+2025-11-03T12:12:16.241379853Z THE ONLY LIMIT IS WHAT YOU TYPE!
+2025-11-03T12:12:16.241384103Z ═══════════════════════════════════════════════════════════════
+2025-11-03T12:12:16.241387584Z     
+2025-11-03T12:12:16.241453274Z ✅ OpenAI initialized with API key
+2025-11-03T12:12:16.270157283Z 🚀 [CONFIG] Initializing ConfigurationService...
+2025-11-03T12:12:16.270385978Z 🔄 [CONFIG] Starting configuration validation...
+2025-11-03T12:12:16.270404888Z 🔍 [CONFIG] Environment variables at config load time:
+2025-11-03T12:12:16.27049938Z 🔍 [ENV DEBUG] validateAndLoad start:
+2025-11-03T12:12:16.270588831Z   NODE_ENV = 'production'
+2025-11-03T12:12:16.270652162Z   REPL_ID = 'undefined'
+2025-11-03T12:12:16.270663992Z   RAILWAY_ENVIRONMENT = 'undefined'
+2025-11-03T12:12:16.270670863Z   PORT = '10000'
+2025-11-03T12:12:16.270701813Z   PREVIEW_MODE = 'undefined'
+2025-11-03T12:12:16.271036579Z   Timestamp: 2025-11-03T12:12:16.270Z
+2025-11-03T12:12:16.271135061Z 📝 [CONFIG] Parsing environment variables...
+2025-11-03T12:12:16.271250863Z ✅ Found SESSION_SECRET
+2025-11-03T12:12:16.271283003Z ✅ Found JWT_SECRET
+2025-11-03T12:12:16.271405146Z ✅ Found NODE_ENV
+2025-11-03T12:12:16.271434946Z ✅ Found PORT
+2025-11-03T12:12:16.271544818Z ✅ Found DATABASE_URL
+2025-11-03T12:12:16.271547488Z ✅ Found OPENAI_API_KEY
+2025-11-03T12:12:16.27167723Z ✅ Found ANTHROPIC_API_KEY
+2025-11-03T12:12:16.271687031Z ✅ Found MISTRAL_API_KEY
+2025-11-03T12:12:16.271722591Z ✅ Found PERPLEXITY_API_KEY
+2025-11-03T12:12:16.271727271Z ✅ Found GITHUB_TOKEN
+2025-11-03T12:12:16.271786092Z ✅ Found AWS_ACCESS_KEY_ID
+2025-11-03T12:12:16.271822093Z ✅ Found ETHEREUM_RPC_URL
+2025-11-03T12:12:16.271858794Z ✅ Found ALCHEMY_API_KEY
+2025-11-03T12:12:16.271907474Z ✅ Found DHA_NPR_API_KEY
+2025-11-03T12:12:16.271910015Z ✅ Found DHA_ABIS_API_KEY
+2025-11-03T12:12:16.271945005Z ✅ Found SAPS_CRC_API_KEY
+2025-11-03T12:12:16.271947415Z ✅ Found ICAO_PKD_API_KEY
+2025-11-03T12:12:16.271985966Z ✅ Found SITA_ESERVICES_API_KEY
+2025-11-03T12:12:16.272095398Z ✅ Found ENCRYPTION_KEY
+2025-11-03T12:12:16.272098328Z ✅ Found VITE_ENCRYPTION_KEY
+2025-11-03T12:12:16.272132089Z ✅ Found MASTER_ENCRYPTION_KEY
+2025-11-03T12:12:16.272302072Z ✅ Found QUANTUM_ENCRYPTION_KEY
+2025-11-03T12:12:16.272307352Z ✅ Found BIOMETRIC_ENCRYPTION_KEY
+2025-11-03T12:12:16.272309232Z ✅ Found DOCUMENT_SIGNING_KEY
+2025-11-03T12:12:16.272448624Z 🔍 [ENV DEBUG] development defaults check:
+2025-11-03T12:12:16.272451204Z   NODE_ENV = 'production'
+2025-11-03T12:12:16.272453034Z   REPL_ID = 'undefined'
+2025-11-03T12:12:16.272456834Z   RAILWAY_ENVIRONMENT = 'undefined'
+2025-11-03T12:12:16.272460494Z   PORT = '10000'
+2025-11-03T12:12:16.272511825Z   PREVIEW_MODE = 'undefined'
+2025-11-03T12:12:16.272530336Z   Timestamp: 2025-11-03T12:12:16.272Z
+2025-11-03T12:12:16.272579657Z 🔧 [ENV DEBUG] Detected production platform (Render: true, Railway: false)
+2025-11-03T12:12:16.272582846Z 🔧 [ENV DEBUG] Using environment: production
+2025-11-03T12:12:16.272616417Z 🔍 [ENV DEBUG] isDevelopment() = false
+2025-11-03T12:12:16.272683738Z 🔍 [ENV DEBUG] production check:
+2025-11-03T12:12:16.272686928Z   NODE_ENV = 'production'
+2025-11-03T12:12:16.272689628Z   REPL_ID = 'undefined'
+2025-11-03T12:12:16.272691448Z   RAILWAY_ENVIRONMENT = 'undefined'
+2025-11-03T12:12:16.272697688Z   PORT = '10000'
+2025-11-03T12:12:16.272703609Z   PREVIEW_MODE = 'undefined'
+2025-11-03T12:12:16.27274954Z   Timestamp: 2025-11-03T12:12:16.272Z
+2025-11-03T12:12:16.272751989Z 🔧 [ENV DEBUG] Detected production platform (Render: true, Railway: false)
+2025-11-03T12:12:16.272755809Z 🔧 [ENV DEBUG] Using environment: production
+2025-11-03T12:12:16.272810661Z 🔍 [ENV DEBUG] isProduction() = true
+2025-11-03T12:12:16.272817051Z 🔧 [CONFIG] Environment determination: isDevelopment=false, isProduction=true
+2025-11-03T12:12:16.272820091Z ⚠️ [CONFIG] Skipping development secret generation (production mode detected or NODE_ENV not development)
+2025-11-03T12:12:16.272822581Z 🔒 [CONFIG] Checking if production validation is needed...
+2025-11-03T12:12:16.272824411Z 🔍 [ENV DEBUG] production validation check:
+2025-11-03T12:12:16.272838131Z   NODE_ENV = 'production'
+2025-11-03T12:12:16.272840761Z   REPL_ID = 'undefined'
+2025-11-03T12:12:16.272859031Z   RAILWAY_ENVIRONMENT = 'undefined'
+2025-11-03T12:12:16.272861011Z   PORT = '10000'
+2025-11-03T12:12:16.272893072Z   PREVIEW_MODE = 'undefined'
+2025-11-03T12:12:16.272895742Z   Timestamp: 2025-11-03T12:12:16.272Z
+2025-11-03T12:12:16.272897552Z 🔧 [ENV DEBUG] Detected production platform (Render: true, Railway: false)
+2025-11-03T12:12:16.272918312Z 🔧 [ENV DEBUG] Using environment: production
+2025-11-03T12:12:16.272920432Z 🔍 [ENV DEBUG] isProduction() = true
+2025-11-03T12:12:16.272956593Z 🔒 [CONFIG] Production validation needed: true
+2025-11-03T12:12:16.272959383Z 🔒 [CONFIG] Running production secrets validation...
+2025-11-03T12:12:16.273092586Z ✅ [CONFIG] Production secrets validation passed
+2025-11-03T12:12:16.274910628Z ═══════════════════════════════════════════════════════════════
+2025-11-03T12:12:16.274918188Z   DHA Digital Services - Configuration Validation Complete
+2025-11-03T12:12:16.274920258Z ═══════════════════════════════════════════════════════════════
+2025-11-03T12:12:16.274922148Z Environment: production
+2025-11-03T12:12:16.274926698Z Port: 10000
+2025-11-03T12:12:16.274972049Z Preview Mode: No
+2025-11-03T12:12:16.274974569Z Session Secret: ✓ Configured
+2025-11-03T12:12:16.274976439Z JWT Secret: ✓ Configured
+2025-11-03T12:12:16.274980219Z Database URL: ✓ Configured
+2025-11-03T12:12:16.274982179Z OpenAI API Key: ✓ Configured
+2025-11-03T12:12:16.274985959Z Anthropic API Key: ✓ Configured
+2025-11-03T12:12:16.275000759Z GitHub Token: ✓ Configured
+2025-11-03T12:12:16.27500938Z Encryption Key: ✓ Configured
+2025-11-03T12:12:16.275014269Z Vite Encryption Key: ✓ Configured
+2025-11-03T12:12:16.27501626Z Master Encryption Key: ✓ Configured
+2025-11-03T12:12:16.2750201Z Quantum Encryption Key: ✓ Configured
+2025-11-03T12:12:16.27502188Z Biometric Encryption Key: ✓ Configured
+2025-11-03T12:12:16.27503607Z Document Signing Key: ✓ Configured
+2025-11-03T12:12:16.27503976Z ═══════════════════════════════════════════════════════════════
+2025-11-03T12:12:16.2750495Z 🔍 [ENV DEBUG] logging check:
+2025-11-03T12:12:16.27505785Z   NODE_ENV = 'production'
+2025-11-03T12:12:16.275074231Z   REPL_ID = 'undefined'
+2025-11-03T12:12:16.275077061Z   RAILWAY_ENVIRONMENT = 'undefined'
+2025-11-03T12:12:16.275081071Z   PORT = '10000'
+2025-11-03T12:12:16.275083021Z   PREVIEW_MODE = 'undefined'
+2025-11-03T12:12:16.275126562Z   Timestamp: 2025-11-03T12:12:16.275Z
+2025-11-03T12:12:16.275129822Z 🔧 [ENV DEBUG] Detected production platform (Render: true, Railway: false)
+2025-11-03T12:12:16.275132352Z 🔧 [ENV DEBUG] Using environment: production
+2025-11-03T12:12:16.275161812Z 🔍 [ENV DEBUG] isProduction() = true
+2025-11-03T12:12:16.275165862Z ✅ [CONFIG] Configuration validation successful
+2025-11-03T12:12:16.276816852Z [DHA-NPR] Initialized in PRODUCTION mode - Real API only
+2025-11-03T12:12:16.276826712Z [DHA-NPR] Base URL: https://npr-prod.dha.gov.za/api/v1
+2025-11-03T12:12:16.276829152Z [DHA-NPR] API Key configured: Yes
+2025-11-03T12:12:16.276831512Z [DHA-NPR] mTLS certificates configured: No
+2025-11-03T12:12:16.276948904Z [DHA-ABIS] Initialized in PRODUCTION mode - Real API only
+2025-11-03T12:12:16.276953304Z [DHA-ABIS] Base URL: https://abis-prod.dha.gov.za/api/v1
+2025-11-03T12:12:16.276955674Z [DHA-ABIS] API Key configured: Yes
+2025-11-03T12:12:16.276960824Z [DHA-ABIS] mTLS certificates configured: No
+2025-11-03T12:12:16.277090386Z [SAPS-CRC] Initialized in PRODUCTION mode - Real API only
+2025-11-03T12:12:16.277094156Z [SAPS-CRC] Base URL: https://crc-api.saps.gov.za/v1
+2025-11-03T12:12:16.277096357Z [SAPS-CRC] API Key configured: Yes
+2025-11-03T12:12:16.277098526Z [SAPS-CRC] mTLS certificates configured: No
+2025-11-03T12:12:16.311580308Z Military security service not available
+2025-11-03T12:12:16.311634289Z Blockchain service not available
+2025-11-03T12:12:16.375037033Z [Military Portal] Web3 initialized with multi-chain support
+2025-11-03T12:12:16.375715525Z [Military Portal] Global access established to 29 portals
+2025-11-03T12:12:16.376031741Z 🔐 Loading Environment Variables...
+2025-11-03T12:12:16.376080741Z   ✓ OpenAI: OPENAI_API_KEY configured
+2025-11-03T12:12:16.376128452Z   ✓ Anthropic: ANTHROPIC_API_KEY configured
+2025-11-03T12:12:16.376131662Z   ✓ Mistral: MISTRAL_API_KEY configured
+2025-11-03T12:12:16.376136853Z   ✓ Perplexity: PERPLEXITY_API_KEY configured
+2025-11-03T12:12:16.376161313Z   ✓ Gemini: GOOGLE_AI_API_KEY configured
+2025-11-03T12:12:16.376227134Z   ✓ DHA NPR: DHA_NPR_API_KEY configured
+2025-11-03T12:12:16.376238954Z   ✓ DHA ABIS: DHA_ABIS_API_KEY configured
+2025-11-03T12:12:16.376285115Z   ✓ SAPS CRC: SAPS_CRC_API_KEY configured
+2025-11-03T12:12:16.376294865Z   ✓ ICAO PKD: ICAO_PKD_API_KEY configured
+2025-11-03T12:12:16.376328686Z   ✓ Polygon: POLYGON_RPC_ENDPOINT configured
+2025-11-03T12:12:16.376331636Z   ✓ Solana: SOLANA_API_KEY configured
+2025-11-03T12:12:16.376336606Z   ✓ Ethereum: ETHEREUM_RPC_URL configured
+2025-11-03T12:12:16.376338966Z   ✓ Database: DATABASE_URL configured
+2025-11-03T12:12:16.376369107Z   ✓ Session: SESSION_SECRET configured
+2025-11-03T12:12:16.376376247Z ✅ Loaded 14/14 services
+2025-11-03T12:12:16.376378727Z 
+2025-11-03T12:12:16.376850025Z ✅ All critical API keys configured
+2025-11-03T12:12:16.376995698Z 
+2025-11-03T12:12:16.377009198Z ╔═══════════════════════════════════════════════════════════════╗
+2025-11-03T12:12:16.377022648Z ║         DEPLOYMENT VALIDATION - DHA DIGITAL SERVICES          ║
+2025-11-03T12:12:16.377024758Z ╚═══════════════════════════════════════════════════════════════╝
+2025-11-03T12:12:16.377026468Z 
+2025-11-03T12:12:16.377034608Z 📋 ENVIRONMENT CONFIGURATION:
+2025-11-03T12:12:16.377041838Z   • Environment: production
+2025-11-03T12:12:16.377058279Z   • Platform: Render
+2025-11-03T12:12:16.377069929Z   • Port: 10000
+2025-11-03T12:12:16.37709699Z 
+2025-11-03T12:12:16.377170481Z 🗄️  DATABASE:
+2025-11-03T12:12:16.377174641Z   ✅ Database URL configured
+2025-11-03T12:12:16.377195881Z 
+2025-11-03T12:12:16.377308523Z 🔒 SECURITY:
+2025-11-03T12:12:16.377312693Z   ✅ Session secret configured
+2025-11-03T12:12:16.377316753Z   ✅ JWT secret configured
+2025-11-03T12:12:16.377320534Z   ✅ Encryption key configured
+2025-11-03T12:12:16.377324203Z 
+2025-11-03T12:12:16.377465986Z 🤖 AI API INTEGRATIONS:
+2025-11-03T12:12:16.377582998Z   ✅ OpenAI API key configured
+2025-11-03T12:12:16.377598288Z   ✅ Anthropic API key configured
+2025-11-03T12:12:16.377604948Z   ✅ Google Gemini API key configured
+2025-11-03T12:12:16.377660349Z   ✅ Mistral API key configured
+2025-11-03T12:12:16.37767182Z   ✅ Perplexity API key configured
+2025-11-03T12:12:16.37769432Z   ✅ XAI API key configured
+2025-11-03T12:12:16.37769738Z   • Configured AI providers: 6/6
+2025-11-03T12:12:16.37770202Z 
+2025-11-03T12:12:16.377834312Z 🏛️  GOVERNMENT API INTEGRATIONS:
+2025-11-03T12:12:16.377936394Z   ✅ DHA NPR fully configured (API key + endpoint)
+2025-11-03T12:12:16.377977265Z   ✅ DHA ABIS fully configured (API key + endpoint)
+2025-11-03T12:12:16.377993645Z   ✅ SAPS CRC fully configured (API key + endpoint)
+2025-11-03T12:12:16.378058896Z   ✅ ICAO PKD fully configured (API key + endpoint)
+2025-11-03T12:12:16.378064347Z   ✅ HANIS fully configured (API key + endpoint)
+2025-11-03T12:12:16.378081697Z   ✅ SITA fully configured (API key + endpoint)
+2025-11-03T12:12:16.378088597Z   • Configured government APIs: 6/6
+2025-11-03T12:12:16.378092657Z 
+2025-11-03T12:12:16.378096307Z 
+2025-11-03T12:12:16.378110728Z ═══════════════════════════════════════════════════════════════
+2025-11-03T12:12:16.378163568Z VALIDATION SUMMARY:
+2025-11-03T12:12:16.378169518Z   ✓ Errors: 0
+2025-11-03T12:12:16.378172589Z   ⚠ Warnings: 0
+2025-11-03T12:12:16.378176229Z ═══════════════════════════════════════════════════════════════
+2025-11-03T12:12:16.378197529Z 
+2025-11-03T12:12:16.37824949Z ✅ Server starting with available configuration
+2025-11-03T12:12:16.37825438Z 
+2025-11-03T12:12:16.37825704Z 🔍 [RENDER] Production environment detected
+2025-11-03T12:12:16.378351762Z ✅ [RENDER] Ready for production deployment
+2025-11-03T12:12:16.378355722Z 🚀 Running in production mode
+2025-11-03T12:12:16.38107334Z ✅ WebSocket service initialized
+2025-11-03T12:12:16.38109735Z 🔍 Environment Detection:
+2025-11-03T12:12:16.381109201Z   NODE_ENV: production
+2025-11-03T12:12:16.381166131Z   RENDER: true
+2025-11-03T12:12:16.381527958Z   Is Production: true
+2025-11-03T12:12:16.381548638Z   Is Render: true
+2025-11-03T12:12:16.384227196Z 🔧 Registering API routes...
+2025-11-03T12:12:16.384755735Z ✅ All routes registered successfully
+2025-11-03T12:12:16.384762855Z ✅ Frontend routes configured
+2025-11-03T12:12:16.384766255Z ✅ Backend API routes active
+2025-11-03T12:12:16.384786906Z ✅ Middleware integrated
+2025-11-03T12:12:16.384794696Z ✅ PDF Generation routes active
+2025-11-03T12:12:16.384798446Z ✅ DHA Document routes active
+2025-11-03T12:12:16.384806966Z ✅ Ultra Queen Raeesa AI active
+2025-11-03T12:12:16.384811076Z ✅ Universal API Override active
+2025-11-03T12:12:16.384836707Z ✅ Authentication system ready
+2025-11-03T12:12:16.384841147Z ✅ All integrations active
+2025-11-03T12:12:16.384844757Z ✅ System ready for production
+2025-11-03T12:12:16.384973349Z ✅ All routes registered successfully
+2025-11-03T12:12:16.384977049Z ✅ Monitoring middleware active
+2025-11-03T12:12:16.384978979Z ✅ Ultra Queen AI routes active
+2025-11-03T12:12:16.384980739Z ✅ Integration status routes active
+2025-11-03T12:12:16.385331805Z ✅ Frontend build ready
+2025-11-03T12:12:16.385341476Z 📱 Serving from dist/public
+2025-11-03T12:12:16.387982202Z 
+2025-11-03T12:12:16.387998353Z 🚀 DHA Digital Services Platform - Production Server
+2025-11-03T12:12:16.388001643Z 🇿🇦 Department of Home Affairs - Implementation
+2025-11-03T12:12:16.388004513Z ============================================================
+2025-11-03T12:12:16.388011673Z 
+2025-11-03T12:12:16.388014843Z ✅ Server running on http://0.0.0.0:10000
+2025-11-03T12:12:16.388017763Z 📱 Environment: production
+2025-11-03T12:12:16.388020653Z 🌐 Ready to accept connections
+2025-11-03T12:12:16.388023273Z 
+2025-11-03T12:12:16.873865146Z ==> No open ports detected, continuing to scan...
+2025-11-03T12:12:17.477824842Z ==> Docs on specifying a port: https://render.com/docs/web-services#port-binding
+2025-11-03T12:12:22.848194178Z ==> Your service is live 🎉
+2025-11-03T12:12:23.0095075Z ==> 
+2025-11-03T12:12:23.180649779Z ==> ///////////////////////////////////////////////////////////
+2025-11-03T12:12:23.345859021Z ==> 
+2025-11-03T12:12:23.548747055Z ==> Available at your primary URL https://dha-thisone.onrender.com
+2025-11-03T12:12:23.709067786Z ==> 
+2025-11-03T12:12:23.869964948Z ==> ///////////////////////////////////////////////////////////
