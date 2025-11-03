@@ -110,7 +110,8 @@ export class BlockchainService {
     if (!this.polygonRPC) {
       return {
         connected: false,
-        error: 'Polygon RPC not configured - set POLYGON_RPC_URL environment variable'
+        error: 'Polygon RPC not configured - using public fallback',
+        rpcUrl: 'https://polygon-rpc.com'
       };
     }
     
@@ -123,11 +124,15 @@ export class BlockchainService {
           method: 'eth_blockNumber',
           params: [],
           id: 1
-        })
+        }),
+        signal: AbortSignal.timeout(10000) // 10 second timeout
       });
 
       if (response.ok) {
         const data = await response.json();
+        if (data.error) {
+          throw new Error(data.error.message || 'RPC error');
+        }
         const blockNumber = parseInt(data.result, 16);
         
         return {
@@ -136,16 +141,22 @@ export class BlockchainService {
           blockNumber,
           gasPrice: '30 gwei',
           network: 'Polygon Mainnet',
-          rpcUrl: this.polygonRPC
+          rpcUrl: this.polygonRPC.includes('alchemy') ? 'Alchemy' : this.polygonRPC.substring(0, 50)
         };
       }
     } catch (error) {
       console.error('Polygon connection error:', error);
+      // Try public fallback
+      if (this.polygonRPC !== 'https://polygon-rpc.com') {
+        this.polygonRPC = 'https://polygon-rpc.com';
+        console.log('🔄 Switched to public Polygon RPC fallback');
+      }
     }
     
     return {
       connected: false,
-      error: 'Connection failed'
+      error: 'Connection failed - using public RPC',
+      rpcUrl: this.polygonRPC
     };
   }
 

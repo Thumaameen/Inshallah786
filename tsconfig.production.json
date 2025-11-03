@@ -23,9 +23,10 @@
     "allowSyntheticDefaultImports": true,
     "incremental": false,
     "resolveJsonModule": true,
-    "types": ["node"]
+    "types": ["node"],
+    "skipDefaultLibCheck": true
   },
-  "include": ["server/**/*", "shared/**/*"],
+  "include": ["server/**/*", "shared/**/*", "config/**/*"],
   "exclude": [
     "node_modules",
     "dist",
@@ -33,6 +34,8 @@
     "**/*.test.ts",
     "**/*test*.ts",
     "**/test-*.ts",
-    "**/__tests__/**"
+    "**/__tests__/**",
+    "client",
+    "**/*.spec.ts"
   ]
 }

@@ -16,8 +16,8 @@ import { perplexityService } from "./perplexity-integration.js";
 import { anthropicService } from "./anthropic-integration.js";
 import { storage } from "../storage.js";
 
-// Define AIMode type
-type AIMode = 'unrestricted' | 'standard' | 'creative' | 'precise' | 'balanced';
+// AI Mode type definition
+type AIMode = 'assistant' | 'expert' | 'quantum' | 'unlimited' | 'god';
 
 // Provider selection types
 export type AIProvider = 'auto' | 'openai' | 'anthropic' | 'perplexity' | 'mistral' | 'quantum';

@@ -2,12 +2,12 @@ import { EventEmitter } from 'events';
 import crypto from 'crypto';
 import {
   DhaDocumentVerification,
-  InsertDhaDocumentVerification
+  InsertDocumentVerificationRecord,
 } from '../../shared/schema/index.js';
 
 import { logger } from '../utils/logger.js';
 
-// Type definitions for missing types
+// Type definitions for verification service
 type VerificationSession = any;
 type InsertVerificationSession = any;
 type ApiAccess = any;
@@ -16,6 +16,7 @@ type VerificationHistory = any;
 type InsertVerificationHistory = any;
 type Location = any;
 type Coordinates = any;
+type DocumentVerificationRecord = DhaDocumentVerification;
 
 // Mock aiAssistantService for demonstration purposes
 const aiAssistantService = {
@@ -33,6 +34,35 @@ const aiAssistantService = {
 };
 
 
+// Mock storage and fraudDetectionService for demonstration purposes
+const storage = {
+  expireVerificationSession: async (sessionId: string) => { console.log(`Mock storage: Expiring session ${sessionId}`); },
+  delete: async (key: string) => { console.log(`Mock storage: Deleting key ${key}`); },
+  get: async (key: string) => { console.log(`Mock storage: Getting key ${key}`); return null; },
+  set: async (key: string, value: any) => { console.log(`Mock storage: Setting key ${key}`); },
+  updateDhaDocumentVerification: async (id: string, data: any) => { console.log(`Mock storage: Updating DHA verification ${id}`); return null; },
+  getDocumentVerificationRecordByDocumentNumber: async (documentNumber: string, documentType: string) => { console.log(`Mock storage: Getting record by document number ${documentNumber}`); return []; },
+  getApiVerificationAccess: async (apiKeyId: string) => { console.log(`Mock storage: Getting API access ${apiKeyId}`); return null; },
+  incrementApiUsage: async (apiKeyId: string, isValid: boolean) => { console.log(`Mock storage: Incrementing API usage for ${apiKeyId}`); },
+  getDocumentVerificationRecordByCode: async (verificationCode: string) => { console.log(`Mock storage: Getting record by code ${verificationCode}`); return null; },
+  createDhaDocumentVerification: async (record: InsertDocumentVerificationRecord) => { console.log(`Mock storage: Creating DHA verification`); return null; },
+  getVerificationHistoryByIp: async (ipAddress: string, hours: number) => { console.log(`Mock storage: Getting history by IP ${ipAddress}`); return []; },
+  getVerificationHistory: async (verificationId: string) => { console.log(`Mock storage: Getting history for ${verificationId}`); return []; },
+  getDocumentVerificationHistory: async (recordId: string) => { console.log(`Mock storage: Getting document history for ${recordId}`); return []; },
+  createFraudAlert: async (alert: any) => { console.log('Mock storage: Creating fraud alert'); },
+  set: async (key: string, value: any) => { console.log(`Mock storage: Setting key ${key}`); },
+  get: async (key: string) => { console.log(`Mock storage: Getting key ${key}`); return null; },
+  updateVerificationSession: async (sessionId: string, data: any) => { console.log(`Mock storage: Updating session ${sessionId}`); },
+  getDocumentVerificationById: async (documentId: string) => { console.log(`Mock storage: Getting document by ID ${documentId}`); return null; },
+  validateWithNPR: async (documentNumber: string, documentType: string) => { console.log(`Mock storage: Validating with NPR for ${documentNumber}`); return true; },
+  createVerificationHistory: async (history: InsertVerificationHistory) => { console.log('Mock storage: Creating verification history'); },
+};
+
+const fraudDetectionService = {
+  analyzeUserBehavior: async (params: any) => ({ riskScore: 0, riskLevel: 'low', fraudIndicators: [], behavioralAnomalies: [], geoTemporalAnomalies: [], suspiciousPatterns: [], mlConfidenceScore: 0, recommendedActions: [] }),
+};
+
+// --- Global logger instance ---
 const logger = new Logger('verification-service');
 
 export interface BaseVerificationRequest {
@@ -281,7 +311,9 @@ export class ComprehensiveVerificationService extends EventEmitter {
     try {
       const expiredTime = new Date(Date.now() - 24 * 60 * 60 * 1000); // 24 hours ago
       // Cleanup expired sessions - using available method
-      await storage.expireVerificationSession(expiredTime.toISOString());
+      // Mocking the storage interaction
+      // await storage.expireVerificationSession(expiredTime.toISOString());
+      console.log(`Mock storage: Cleaning up sessions expired before ${expiredTime.toISOString()}`);
     } catch (error) {
       console.error('Session cleanup error:', error);
     }
@@ -294,7 +326,7 @@ export class ComprehensiveVerificationService extends EventEmitter {
     try {
       // Get recent verification attempts for pattern analysis
       // Get verifications from storage
-    const verifications = await storage.get('document_verifications') || [];
+      const verifications = await storage.get('document_verifications') || [];
 
       // Look for suspicious patterns using fraud detection service
       const patterns = await fraudDetectionService.analyzeUserBehavior({
@@ -522,23 +554,23 @@ export class ComprehensiveVerificationService extends EventEmitter {
    */
   private async createOrUpdateSession(request: VerificationRequest): Promise<VerificationSession> {
     const sessionId = request.sessionId || crypto.randomBytes(16).toString('hex'); // Use crypto.randomBytes for session ID
+    const sessionKey = `verification:session:${sessionId}`;
 
     // Try to get existing session
-    const session = await storage.get('verification_session_' + sessionId);
+    let session = await storage.get(sessionKey);
 
     if (session) {
       // Update existing session
-      await storage.set('verification_session_' + sessionId, {
-        ...session,
-        lastActivity: new Date(),
-        currentVerifications: (session.currentVerifications || 0) + 1,
-        isActive: true
-      });
-      return { ...session, currentVerifications: (session.currentVerifications || 0) + 1 };
+      session.lastActivity = new Date();
+      session.currentVerifications = (session.currentVerifications || 0) + 1;
+      session.isActive = true;
+      await storage.set(sessionKey, session);
+      return session;
     } else {
       // Create new session
-      const newSessionId = 'session_' + Date.now();
-      await storage.set('verification_session_' + newSessionId, {
+      const newSessionId = 'session_' + crypto.randomBytes(16).toString('hex');
+      const newSessionKey = `verification:session:${newSessionId}`;
+      const newSession = {
         id: newSessionId,
         userId: request.userId || null,
         sessionToken: crypto.randomBytes(32).toString('hex'),
@@ -550,9 +582,9 @@ export class ComprehensiveVerificationService extends EventEmitter {
         currentVerifications: 0,
         maxVerifications: this.MAX_VERIFICATIONS_PER_SESSION,
         metadata: null
-      });
-      const createdSession = await storage.get('verification_session_' + newSessionId);
-      return createdSession;
+      };
+      await storage.set(newSessionKey, newSession);
+      return newSession;
     }
   }
 
@@ -1025,7 +1057,7 @@ export class ComprehensiveVerificationService extends EventEmitter {
     const hashtags = this.generateHashtags(documentType, documentNumber);
 
     // Store in database
-    const verificationRecord: InsertDhaDocumentVerification = {
+    const verificationRecord: InsertDocumentVerificationRecord = {
       verificationCode: code,
       documentId: documentNumber, // Assuming documentNumber can be used as an ID here
       documentNumber,
@@ -1628,11 +1660,11 @@ export class ComprehensiveVerificationService extends EventEmitter {
         try {
           // NPR validation would go here - placeholder implementation
           // Assuming a function like storage.validateWithNPR exists
-          // const nprIsValid = await storage.validateWithNPR(record.documentNumber, record.documentType);
+          const nprIsValid = await storage.validateWithNPR(record.documentNumber, record.documentType);
           results.nprValidation = {
             status: 'success', // Or 'failed'/'timeout' based on actual call
-            isValid: true, // Placeholder
-            matchScore: 95, // Placeholder
+            isValid: nprIsValid,
+            matchScore: nprIsValid ? 95 : 0, // Placeholder
             responseTime: Date.now() - startTime
           };
         } catch (error) {

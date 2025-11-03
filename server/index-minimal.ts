@@ -182,12 +182,19 @@ registerRoutes(app);
 
 // Add monitoring middleware and routes (non-intrusive)
 try {
-  const { default: monitoringMiddleware } = await import('./monitoring/monitoring-middleware.js');
-  const { default: monitoringRoutes } = await import('./monitoring/monitoring-routes.js');
+  const monitoringModule = await import('./monitoring/monitoring-middleware.js');
+  const routesModule = await import('./monitoring/monitoring-routes.js');
+  
+  const monitoringMiddleware = monitoringModule.default || monitoringModule;
+  const monitoringRoutes = routesModule.default || routesModule;
+  
   if (typeof monitoringMiddleware === 'function') {
     app.use(monitoringMiddleware);
+  } else if (monitoringMiddleware && typeof monitoringMiddleware.middleware === 'function') {
+    app.use(monitoringMiddleware.middleware);
   }
-  if (monitoringRoutes) {
+  
+  if (monitoringRoutes && typeof monitoringRoutes === 'object') {
     app.use('/api/monitor', monitoringRoutes);
   }
 } catch (error) {
