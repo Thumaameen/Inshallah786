@@ -4,16 +4,8 @@ import { documentVerificationService } from '../services/document-verification.s
 import { web3Service } from '../services/web3.service';
 import { ultraAI } from '../services/ultra-ai.service';
 import { apiConfig } from '../../config/production-api.config';
-import multer from 'multer';
-import OpenAI from 'openai';
-import Anthropic from '@anthropic-ai/sdk';
 
 const router = express.Router();
-const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 50 * 1024 * 1024 } });
-
-// Initialize AI clients with fallback
-const openai = process.env.OPENAI_API_KEY ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY }) : null;
-const anthropic = process.env.ANTHROPIC_API_KEY ? new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY }) : null;
 
 // Type definitions
 interface VerificationResult {
@@ -172,73 +164,5 @@ router.post(
     }
   }
 );
-
-// Get available AI providers
-router.get('/ai/providers', (req, res) => {
-  const providers = {
-    'gpt-4o': { available: !!openai, name: 'GPT-4 Optimized', provider: 'openai' },
-    'gpt-4-turbo': { available: !!openai, name: 'GPT-4 Turbo', provider: 'openai' },
-    'claude-3.5-sonnet': { available: !!anthropic, name: 'Claude 3.5 Sonnet', provider: 'anthropic' },
-    'claude-3-opus': { available: !!anthropic, name: 'Claude 3 Opus', provider: 'anthropic' },
-    'claude-3-sonnet': { available: !!anthropic, name: 'Claude 3 Sonnet', provider: 'anthropic' }
-  };
-
-  res.json({ success: true, providers });
-});
-
-// Multi-provider AI chat with file upload
-router.post('/ai/chat', upload.array('files', 10), async (req, res) => {
-  try {
-    const { message, model = 'gpt-4o', mode = 'assistant' } = req.body;
-    const files = req.files as Express.Multer.File[];
-
-    if (!message) {
-      return res.status(400).json({ success: false, error: 'Message required' });
-    }
-
-    let response = null;
-    let usedModel = model;
-
-    // Handle file attachments
-    let fileContext = '';
-    if (files && files.length > 0) {
-      fileContext = `\n\nAttached files: ${files.map(f => f.originalname).join(', ')}`;
-    }
-
-    const fullMessage = message + fileContext;
-
-    // Route to appropriate AI provider
-    if (model.startsWith('gpt-') && openai) {
-      const completion = await openai.chat.completions.create({
-        model: model === 'gpt-4o' ? 'gpt-4o' : 'gpt-4-turbo-preview',
-        messages: [
-          { role: 'system', content: 'You are a helpful AI assistant for the DHA Digital Services Platform.' },
-          { role: 'user', content: fullMessage }
-        ],
-        max_tokens: 4000
-      });
-      response = completion.choices[0].message.content;
-    } else if (model.startsWith('claude-') && anthropic) {
-      const completion = await anthropic.messages.create({
-        model: model === 'claude-3.5-sonnet' ? 'claude-3-5-sonnet-20241022' : 'claude-3-opus-20240229',
-        max_tokens: 4000,
-        messages: [{ role: 'user', content: fullMessage }]
-      });
-      response = completion.content[0].type === 'text' ? completion.content[0].text : '';
-    } else {
-      return res.status(503).json({ success: false, error: 'Selected AI model not available' });
-    }
-
-    res.json({
-      success: true,
-      content: response,
-      model: usedModel,
-      filesProcessed: files?.length || 0
-    });
-  } catch (error: any) {
-    console.error('AI Chat error:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
 
 export default router;

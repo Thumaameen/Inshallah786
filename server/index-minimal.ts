@@ -186,10 +186,6 @@ import { monitoringRoutes } from './monitoring/monitoring-routes';
 app.use(monitoringMiddleware);
 app.use('/api/monitor', monitoringRoutes);
 
-// Ultra AI Routes
-import ultraAIRoutes from './routes/ultra-ai.js';
-app.use('/api', ultraAIRoutes);
-
 // Ultra Queen AI Routes
 app.use('/api/ultra-queen-ai', ultraQueenAIRoutes);
 app.use('/api/integrations', integrationStatusRoutes);
