@@ -67,7 +67,7 @@ services:
       - key: ALERT_THRESHOLD
         value: 5
       - key: DATABASE_URL
-        fromDatabase:postgresql://dhathisone_zia7_user:qPvaBoUuAwmnKT1E78NXyegnajCeF9Fc@dpg-d3oqb8p5pdvs73a3vmi0-a/dhathisone_zia7
+        fromDatabase:
           name: dha-production-db
           property: connectionString
       - key: SESSION_SECRET
