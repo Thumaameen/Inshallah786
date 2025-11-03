@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosResponse, AxiosError } from 'axios';
+import type { ApiResponse } from '../types/api';
 
 export class ApiError extends Error {
   constructor(
@@ -8,6 +9,24 @@ export class ApiError extends Error {
   ) {
     super(message);
     this.name = 'ApiError';
+  }
+}
+
+// Fetch API wrapper with proper types
+export async function apiRequest<T = any>(
+  url: string,
+  options?: RequestInit
+): Promise<ApiResponse<T>> {
+  try {
+    const response = await fetch(url, options);
+    const data = await response.json();
+    return data as ApiResponse<T>;
+  } catch (error) {
+    const err = error as Error;
+    return {
+      success: false,
+      error: err?.message || 'Request failed'
+    };
   }
 }
 

@@ -20,6 +20,7 @@ import {
 import { Link } from 'wouter';
 import { useToast } from '@/hooks/use-toast';
 import APIDocumentation from '@/components/APIDocumentation';
+import type { AIResponse } from '@/types/api';
 
 // 5 ULTRA AI AGENTS with FULL WEB2/WEB3 ACCESS
 const ULTRA_AI_AGENTS = {
@@ -383,28 +384,38 @@ export default function UltraQueenAIEnhanced() {
       
       if (maxUltraPowerMode) {
         // Use unlimited mode with emotion and "Only Limit Is Me" protocol
-        const res = await apiRequest('POST', '/api/ultra-queen-ai/unlimited/process', {
-          prompt: prompt || 'Process attached files',
-          emotion: currentEmotion,
-          maxTokens: 8000,
-          creativityBoost: 1.5,
-          stream: false,
-          model: 'gpt-4-turbo-preview',
-          onlyLimitIsMe: true  // Activate "Only Limit Is Me" protocol for Max Ultra Power Mode
+        const res = await fetch('/api/ultra-queen-ai/unlimited/process', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            prompt: prompt || 'Process attached files',
+            emotion: currentEmotion,
+            maxTokens: 8000,
+            creativityBoost: 1.5,
+            stream: false,
+            model: 'gpt-4-turbo-preview',
+            onlyLimitIsMe: true  // Activate "Only Limit Is Me" protocol for Max Ultra Power Mode
+          })
         });
-        response = await res.json();
+        const data: AIResponse = await res.json();
+        response = data;
       } else {
         // Regular mode
-        const res = await apiRequest('POST', '/api/ultra-queen-ai/query', {
-          prompt: prompt || 'Process attached files',
-          provider: selectedProvider,
-          attachments: userMessage.attachments,
-          temperature: 0.7,
-          maxTokens: 2000,
-          quantumMode: false,
-          selfUpgrade: false
+        const res = await fetch('/api/ultra-queen-ai/query', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            prompt: prompt || 'Process attached files',
+            provider: selectedProvider,
+            attachments: userMessage.attachments,
+            temperature: 0.7,
+            maxTokens: 2000,
+            quantumMode: false,
+            selfUpgrade: false
+          })
         });
-        response = await res.json();
+        const data: AIResponse = await res.json();
+        response = data;
       }
 
       // Add assistant response with emotion

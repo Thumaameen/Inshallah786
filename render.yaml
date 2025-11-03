@@ -4,11 +4,11 @@ services:
     name: ultra-queen-ai-raeesa
     runtime: node
     env: node
-    nodeVersion: "24.4.0"
+    nodeVersion: "20.19.1"
     region: frankfurt
     plan: starter
     buildCommand: bash render-build-production.sh
-    startCommand: NODE_ENV=production NODE_OPTIONS='--max-old-space-size=4096 --experimental-modules --es-module-specifier-resolution=node' node dist/server/index-minimal.js
+    startCommand: NODE_ENV=production NODE_OPTIONS='--max-old-space-size=4096 --experimental-modules --es-module-specifier-resolution=node' node dist/server/index.js
     healthCheckPath: /api/health
     autoDeploy: true
     healthCheckTimeout: 180
@@ -21,7 +21,7 @@ services:
       targetCPUPercent: 65
     envVars:
       - key: NODE_VERSION
-        value: 24.4.0
+        value: 20.19.1
       - key: NODE_ENV
         value: production
       - key: PORT
@@ -218,7 +218,7 @@ services:
     env: node
     plan: starter
     region: frankfurt
-    nodeVersion: "24.4.0"
+    nodeVersion: "20.19.1"
     buildCommand: npm install --legacy-peer-deps
     startCommand: node server/workers/monitoring-worker.cjs
     envVars:
@@ -268,7 +268,7 @@ services:
     env: node
     region: frankfurt
     plan: starter
-    nodeVersion: "24.4.0"
+    nodeVersion: "20.19.1"
     schedule: "*/15 * * * *"
     buildCommand: npm install --legacy-peer-deps
     startCommand: node server/workers/scheduled-tasks.cjs
