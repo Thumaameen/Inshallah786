@@ -43,6 +43,7 @@ export interface ABISRequest {
 }
 
 export class GovernmentAPIIntegrations {
+  [x: string]: any;
   private config: DHAApiConfig;
 
   constructor() {
@@ -142,6 +143,7 @@ export class GovernmentAPIIntegrations {
    * 📄 DOCUMENT VERIFICATION - Authentic document validation
    */
   async verifyDocument(request: DocumentVerificationRequest): Promise<{
+    [x: string]: any;
     authentic: boolean;
     documentDetails?: any;
     securityStatus?: string;

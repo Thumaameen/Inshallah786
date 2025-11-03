@@ -92,6 +92,8 @@ export const DHA_DOCUMENT_TYPES = {
 };
 
 export class DHADocumentGenerator {
+  [x: string]: any;
+  [x: string]: any;
   
   /**
    * 🎯 MASTER DOCUMENT GENERATION - ALL 21+ TYPES
