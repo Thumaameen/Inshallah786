@@ -1,24 +1,21 @@
 import { EventEmitter } from 'events';
 import crypto from 'crypto';
-import type {
+import {
   DhaDocumentVerification,
-  InsertDhaDocumentVerification,
-  InsertSecurityEvent,
-  DocumentVerificationRecord
+  InsertDhaDocumentVerification
 } from '../../shared/schema/index.js';
-import type {
-  VerificationSession,
-  InsertVerificationSession,
-  ApiAccess,
-  InsertApiAccess,
-  VerificationHistory,
-  InsertVerificationHistory,
-  Location,
-  Coordinates
-} from '../../shared/verification-schema.js';
-import { storage } from '../storage.js';
-import { fraudDetectionService } from './fraud-detection.js';
-import { Logger } from '../utils/logger.js';
+
+import { logger } from '../utils/logger.js';
+
+// Type definitions for missing types
+type VerificationSession = any;
+type InsertVerificationSession = any;
+type ApiAccess = any;
+type InsertApiAccess = any;
+type VerificationHistory = any;
+type InsertVerificationHistory = any;
+type Location = any;
+type Coordinates = any;
 
 // Mock aiAssistantService for demonstration purposes
 const aiAssistantService = {

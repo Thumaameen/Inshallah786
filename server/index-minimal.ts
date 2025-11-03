@@ -181,10 +181,18 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 registerRoutes(app);
 
 // Add monitoring middleware and routes (non-intrusive)
-const { default: monitoringMiddleware } = await import('./monitoring/monitoring-middleware.js');
-const { default: monitoringRoutes } = await import('./monitoring/monitoring-routes.js');
-app.use(monitoringMiddleware);
-app.use('/api/monitor', monitoringRoutes);
+try {
+  const { default: monitoringMiddleware } = await import('./monitoring/monitoring-middleware.js');
+  const { default: monitoringRoutes } = await import('./monitoring/monitoring-routes.js');
+  if (typeof monitoringMiddleware === 'function') {
+    app.use(monitoringMiddleware);
+  }
+  if (monitoringRoutes) {
+    app.use('/api/monitor', monitoringRoutes);
+  }
+} catch (error) {
+  console.log('⚠️ Monitoring middleware not available, skipping');
+}
 
 // Ultra Queen AI Routes
 app.use('/api/ultra-queen-ai', ultraQueenAIRoutes);
