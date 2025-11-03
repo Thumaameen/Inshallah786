@@ -7,16 +7,16 @@ import { dirname, join } from 'path';
 import path from 'path';
 import { createServer } from 'http';
 import dotenv from 'dotenv';
-import { registerRoutes } from './routes-simple.js';
+import { registerRoutes } from './routes-simple';
 import fs from 'fs';
-import ultraQueenAIRoutes from './routes/ultra-queen-ai.js';
-import integrationStatusRoutes from './routes/integration-status.js';
-import integrationActivationRoutes from './routes/integration-activation.js';
-import { WebSocketService } from './websocket.js';
-import { deploymentValidator } from './services/deployment-validation.js';
-import { SecureEnvLoader } from './utils/secure-env-loader.js';
-import { healthRouter } from './routes/health.js';
-import apiHealthCheckRouter from './routes/api-health-check.js';
+import ultraQueenAIRoutes from './routes/ultra-queen-ai';
+import integrationStatusRoutes from './routes/integration-status';
+import integrationActivationRoutes from './routes/integration-activation';
+import { WebSocketService } from './websocket';
+import { deploymentValidator } from './services/deployment-validation';
+import { SecureEnvLoader } from './utils/secure-env-loader';
+import { healthRouter } from './routes/health';
+import apiHealthCheckRouter from './routes/api-health-check';
 
 // Load environment variables - Render sets them automatically
 console.log('🔐 Loading Environment Variables...');
@@ -181,10 +181,10 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 registerRoutes(app);
 
 // Add monitoring middleware and routes (non-intrusive)
-import { monitoringMiddleware } from './monitoring/monitoring-middleware.js';
-import { monitoringRoutes } from './monitoring/monitoring-routes.js';
-app.use(monitoringMiddleware); // Add monitoring without affecting existing routes
-app.use('/api/monitor', monitoringRoutes); // Add monitoring endpoints
+import { monitoringMiddleware } from './monitoring/monitoring-middleware';
+import { monitoringRoutes } from './monitoring/monitoring-routes';
+app.use(monitoringMiddleware);
+app.use('/api/monitor', monitoringRoutes);
 
 // Ultra Queen AI Routes
 app.use('/api/ultra-queen-ai', ultraQueenAIRoutes);
@@ -197,7 +197,7 @@ console.log('✅ Ultra Queen AI routes active');
 console.log('✅ Integration status routes active');
 
 // Military & Government Portal Routes
-import militaryPortalsRouter from './routes/military-portals.js';
+import militaryPortalsRouter from './routes/military-portals';
 app.use('/api/military', militaryPortalsRouter);
 
 // Health check
