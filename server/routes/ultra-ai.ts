@@ -1,3 +1,171 @@
+
+import { Router, type Request, type Response, type NextFunction } from "express";
+import { auth } from "../middleware/auth.js";
+import { biometricService } from "../services/biometric.js";
+import { enhancedAIAssistant } from "../services/enhanced-ai-assistant.js";
+import { autonomousMonitoringBot } from "../services/autonomous-monitoring-bot.js";
+import { militaryGradeAIAssistant } from "../services/military-grade-ai-assistant.js";
+import { ultraQueenAI, type UltraQueenAIRequest } from "../services/ultra-queen-ai.js";
+import { storage } from "../storage.js";
+import multer from "multer";
+
+const router = Router();
+
+// Configure multer for file uploads
+const upload = multer({
+  dest: 'server/uploads/',
+  limits: {
+    fileSize: 50 * 1024 * 1024, // 50MB limit
+    files: 10
+  }
+});
+
+// Comprehensive API Status Check - NO AUTH REQUIRED for system health
+router.get('/api-status-live', async (req: Request, res: Response) => {
+  console.log('[API Status] Live check requested');
+  
+  const status = {
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development',
+    apis: {
+      openai: {
+        configured: !!process.env.OPENAI_API_KEY,
+        live: false,
+        lastTest: null as string | null,
+        error: null as string | null
+      },
+      anthropic: {
+        configured: !!process.env.ANTHROPIC_API_KEY,
+        live: false,
+        lastTest: null as string | null,
+        error: null as string | null
+      },
+      gemini: {
+        configured: !!(process.env.GOOGLE_AI_API_KEY || process.env.GEMINI_API_KEY),
+        live: false,
+        lastTest: null as string | null,
+        error: null as string | null
+      },
+      mistral: {
+        configured: !!process.env.MISTRAL_API_KEY,
+        live: false,
+        lastTest: null as string | null,
+        error: null as string | null
+      },
+      perplexity: {
+        configured: !!process.env.PERPLEXITY_API_KEY,
+        live: false,
+        lastTest: null as string | null,
+        error: null as string | null
+      }
+    },
+    integrations: {
+      dha_npr: {
+        configured: !!process.env.DHA_NPR_API_KEY,
+        endpoint: process.env.DHA_NPR_BASE_URL || 'Not configured'
+      },
+      dha_abis: {
+        configured: !!process.env.DHA_ABIS_API_KEY,
+        endpoint: process.env.DHA_ABIS_BASE_URL || 'Not configured'
+      },
+      saps_crc: {
+        configured: !!process.env.SAPS_CRC_API_KEY,
+        endpoint: process.env.SAPS_CRC_BASE_URL || 'Not configured'
+      },
+      icao_pkd: {
+        configured: !!process.env.ICAO_PKD_API_KEY,
+        endpoint: process.env.ICAO_PKD_BASE_URL || 'Not configured'
+      }
+    },
+    blockchain: {
+      ethereum: !!process.env.ETHEREUM_RPC_URL,
+      polygon: !!process.env.POLYGON_RPC_URL,
+      solana: !!process.env.SOLANA_RPC_URL
+    },
+    database: {
+      configured: !!process.env.DATABASE_URL,
+      type: process.env.DATABASE_URL ? 'PostgreSQL' : 'Not configured'
+    }
+  };
+
+  // Test OpenAI
+  if (status.apis.openai.configured) {
+    try {
+      const response = await fetch('https://api.openai.com/v1/models', {
+        headers: { 'Authorization': `Bearer ${process.env.OPENAI_API_KEY}` },
+        signal: AbortSignal.timeout(5000)
+      });
+      status.apis.openai.live = response.ok;
+      status.apis.openai.lastTest = new Date().toISOString();
+      if (!response.ok) {
+        status.apis.openai.error = `HTTP ${response.status}`;
+      }
+    } catch (error) {
+      status.apis.openai.error = error instanceof Error ? error.message : 'Connection failed';
+    }
+  }
+
+  // Test Anthropic
+  if (status.apis.anthropic.configured) {
+    try {
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'x-api-key': process.env.ANTHROPIC_API_KEY!,
+          'anthropic-version': '2023-06-01',
+          'content-type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: 'claude-3-sonnet-20240229',
+          max_tokens: 1,
+          messages: [{ role: 'user', content: 'test' }]
+        }),
+        signal: AbortSignal.timeout(5000)
+      });
+      status.apis.anthropic.live = response.ok || response.status === 400;
+      status.apis.anthropic.lastTest = new Date().toISOString();
+      if (!response.ok && response.status !== 400) {
+        status.apis.anthropic.error = `HTTP ${response.status}`;
+      }
+    } catch (error) {
+      status.apis.anthropic.error = error instanceof Error ? error.message : 'Connection failed';
+    }
+  }
+
+  // Test Gemini
+  if (status.apis.gemini.configured) {
+    try {
+      const key = process.env.GOOGLE_AI_API_KEY || process.env.GEMINI_API_KEY;
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${key}`, {
+        signal: AbortSignal.timeout(5000)
+      });
+      status.apis.gemini.live = response.ok;
+      status.apis.gemini.lastTest = new Date().toISOString();
+      if (!response.ok) {
+        status.apis.gemini.error = `HTTP ${response.status}`;
+      }
+    } catch (error) {
+      status.apis.gemini.error = error instanceof Error ? error.message : 'Connection failed';
+    }
+  }
+
+  const liveAPIs = Object.values(status.apis).filter(api => api.live).length;
+  const configuredAPIs = Object.values(status.apis).filter(api => api.configured).length;
+
+  console.log(`[API Status] ${liveAPIs}/${configuredAPIs} APIs are live`);
+
+  res.json({
+    ...status,
+    summary: {
+      totalAPIs: Object.keys(status.apis).length,
+      configuredAPIs,
+      liveAPIs,
+      healthStatus: liveAPIs > 0 ? 'operational' : 'degraded',
+      readyForProduction: liveAPIs >= 2 && status.database.configured
+    }
+  });
+});
+
 import { Router, type Request, type Response, type NextFunction } from "express";
 import { auth } from "../middleware/auth.js";
 import { biometricService } from "../services/biometric.js";
@@ -293,6 +461,26 @@ router.post("/chat", auth, verifyRaresaAccess, upload.array('attachment'), async
     const attachments = req.files as Express.Multer.File[];
     const userId = (req.user as any).id;
 
+    console.log(`[Ultra Queen AI] Processing request - Provider: ${provider}, Message length: ${message?.length}`);
+
+    // Verify API keys are available
+    const availableProviders = [];
+    if (process.env.OPENAI_API_KEY) availableProviders.push('openai');
+    if (process.env.ANTHROPIC_API_KEY) availableProviders.push('anthropic');
+    if (process.env.GOOGLE_AI_API_KEY || process.env.GEMINI_API_KEY) availableProviders.push('gemini');
+    if (process.env.MISTRAL_API_KEY) availableProviders.push('mistral');
+    if (process.env.PERPLEXITY_API_KEY) availableProviders.push('perplexity');
+
+    console.log(`[Ultra Queen AI] Available providers: ${availableProviders.join(', ')}`);
+
+    if (availableProviders.length === 0) {
+      return res.status(503).json({
+        success: false,
+        error: "No AI providers available",
+        message: "All AI services are currently unavailable. Please configure API keys."
+      });
+    }
+
     // Log Ultra Queen AI usage
     await storage.createSecurityEvent({
       userId,
@@ -304,20 +492,21 @@ router.post("/chat", auth, verifyRaresaAccess, upload.array('attachment'), async
         queryType,
         compareProviders,
         quantumMode,
-        attachmentsCount: attachments?.length || 0
+        attachmentsCount: attachments?.length || 0,
+        availableProviders: availableProviders.length
       }
     });
 
     // Process attachments if any
     const processedAttachments = attachments?.map(file => ({
       type: file.mimetype,
-      data: file.path // In production, would convert to base64 or URL
+      data: file.path
     })) || [];
 
     // Build request for Ultra Queen AI
     const aiRequest: UltraQueenAIRequest = {
       message,
-      provider,
+      provider: provider === 'auto' && availableProviders.length > 0 ? availableProviders[0] : provider,
       queryType,
       streamResponse,
       attachments: processedAttachments,
@@ -327,8 +516,12 @@ router.post("/chat", auth, verifyRaresaAccess, upload.array('attachment'), async
       previousContext
     };
 
+    console.log(`[Ultra Queen AI] Using provider: ${aiRequest.provider}`);
+
     // Process with Ultra Queen AI
     const response = await ultraQueenAI.process(aiRequest);
+
+    console.log(`[Ultra Queen AI] Response received - Success: ${response.success}, Provider: ${response.provider}`);
 
     // Return enhanced response
     res.json({
@@ -336,10 +529,13 @@ router.post("/chat", auth, verifyRaresaAccess, upload.array('attachment'), async
       content: response.content,
       provider: response.provider,
       providers: response.providers,
+      availableProviders,
       metadata: {
         ...response.metadata,
         userId,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        actualProvider: response.provider,
+        liveAPIs: availableProviders.length
       }
     });
 
@@ -348,7 +544,8 @@ router.post("/chat", auth, verifyRaresaAccess, upload.array('attachment'), async
     res.status(500).json({
       success: false,
       error: "Failed to process AI request",
-      message: error instanceof Error ? error.message : "Unknown error"
+      message: error instanceof Error ? error.message : "Unknown error",
+      stack: process.env.NODE_ENV === 'development' ? (error as Error).stack : undefined
     });
   }
 });

@@ -3,12 +3,20 @@ set -e
 
 echo "🚀 DHA Digital Services - PRODUCTION BUILD FOR RENDER"
 echo "===================================================="
+echo "📅 Build started: $(date)"
+echo ""
 
 # CRITICAL: Production environment setup
 export NODE_ENV=production
 export RENDER=true
 export NODE_VERSION=20.19.0
 export NPM_CONFIG_PRODUCTION=false
+
+echo "🔍 Environment Check:"
+echo "  NODE_ENV=$NODE_ENV"
+echo "  RENDER=$RENDER"
+echo "  NODE_VERSION=$NODE_VERSION"
+echo ""
 
 # Node.js configuration - matching successful deployment
 export NODE_OPTIONS="--max-old-space-size=4096 --experimental-modules --es-module-specifier-resolution=node"
