@@ -85,43 +85,45 @@ export class DHAVFSIntegrationService {
   };
 
   constructor() {
-    // REQUIRE all API keys for production - NO FALLBACKS
-    if (!process.env.DHA_HANIS_API_KEY) {
-      throw new Error('DHA_HANIS_API_KEY environment variable is required for production');
-    }
-    if (!process.env.DHA_NPR_API_KEY) {
-      throw new Error('DHA_NPR_API_KEY environment variable is required for production');
-    }
-    if (!process.env.DHA_ABIS_API_KEY) {
-      throw new Error('DHA_ABIS_API_KEY environment variable is required for production');
-    }
-    if (!process.env.VFS_API_KEY) {
-      throw new Error('VFS_API_KEY environment variable is required for production');
+    // Configure API keys - graceful degradation if not available
+    // Validation happens at request time, not module load time to prevent startup crashes
+    const hasHanis = !!process.env.DHA_HANIS_API_KEY;
+    const hasNPR = !!process.env.DHA_NPR_API_KEY;
+    const hasABIS = !!process.env.DHA_ABIS_API_KEY;
+    const hasVFS = !!process.env.VFS_API_KEY;
+
+    if (!hasHanis || !hasNPR || !hasABIS || !hasVFS) {
+      console.warn('⚠️ [DHA-VFS] Some government API keys not configured:');
+      if (!hasHanis) console.warn('   - DHA_HANIS_API_KEY missing');
+      if (!hasNPR) console.warn('   - DHA_NPR_API_KEY missing');
+      if (!hasABIS) console.warn('   - DHA_ABIS_API_KEY missing');
+      if (!hasVFS) console.warn('   - VFS_API_KEY missing');
+      console.warn('   Government integration features will be limited. Configure these keys in Render environment for full functionality.');
     }
 
     this.config = {
       hanis: {
         baseUrl: process.env.DHA_HANIS_URL || 'https://hanis.dha.gov.za/api/v1',
-        apiKey: process.env.DHA_HANIS_API_KEY,
-        enabled: true,
+        apiKey: process.env.DHA_HANIS_API_KEY || '',
+        enabled: hasHanis,
         timeout: 30000
       },
       npr: {
         baseUrl: process.env.DHA_NPR_URL || 'https://npr.dha.gov.za/api/v1',
-        apiKey: process.env.DHA_NPR_API_KEY,
-        enabled: true,
+        apiKey: process.env.DHA_NPR_API_KEY || '',
+        enabled: hasNPR,
         timeout: 30000
       },
       abis: {
         baseUrl: process.env.DHA_ABIS_URL || 'https://abis.dha.gov.za/api/v1',
-        apiKey: process.env.DHA_ABIS_API_KEY,
-        enabled: true,
+        apiKey: process.env.DHA_ABIS_API_KEY || '',
+        enabled: hasABIS,
         timeout: 30000
       },
       vfs: {
         baseUrl: process.env.VFS_API_URL || 'https://visa.vfsglobal.com/zaf/api/v1',
-        apiKey: process.env.VFS_API_KEY,
-        enabled: true,
+        apiKey: process.env.VFS_API_KEY || '',
+        enabled: hasVFS,
         timeout: 30000
       }
     };
