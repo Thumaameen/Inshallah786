@@ -301,7 +301,17 @@ class UltraQueenAI {
     const startTime = Date.now();
 
     if (!this.openai) {
-      throw new Error('OpenAI not configured');
+      console.warn('🔱 [Ultra Queen AI] OpenAI provider requested but not configured');
+      return {
+        success: false,
+        content: 'OpenAI service is currently unavailable. Please configure OPENAI_API_KEY in your environment variables or try another AI provider.',
+        provider: 'openai',
+        metadata: {
+          executionTime: Date.now() - startTime,
+          confidence: 0
+        },
+        error: 'OpenAI API key not configured'
+      };
     }
 
     try {
@@ -358,6 +368,20 @@ class UltraQueenAI {
   private async processAnthropic(request: UltraQueenAIRequest): Promise<UltraQueenAIResponse> {
     const startTime = Date.now();
 
+    if (!this.anthropic) {
+      console.warn('🔱 [Ultra Queen AI] Anthropic provider requested but not configured');
+      return {
+        success: false,
+        content: 'Anthropic Claude service is currently unavailable. Please configure ANTHROPIC_API_KEY in your environment variables or try another AI provider.',
+        provider: 'anthropic',
+        metadata: {
+          executionTime: Date.now() - startTime,
+          confidence: 0
+        },
+        error: 'Anthropic API key not configured'
+      };
+    }
+
     try {
       const result = await anthropicService.generateSecureResponse(
         request.message,
@@ -412,7 +436,17 @@ class UltraQueenAI {
     const startTime = Date.now();
 
     if (!this.mistralApiKey) {
-      throw new Error('Mistral not configured');
+      console.warn('🔱 [Ultra Queen AI] Mistral provider requested but not configured');
+      return {
+        success: false,
+        content: 'Mistral AI service is currently unavailable. Please configure MISTRAL_API_KEY in your environment variables or try another AI provider.',
+        provider: 'mistral',
+        metadata: {
+          executionTime: Date.now() - startTime,
+          confidence: 0
+        },
+        error: 'Mistral API key not configured'
+      };
     }
 
     try {

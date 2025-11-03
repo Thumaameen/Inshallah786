@@ -1,17 +1,47 @@
 // Blockchain Service with Real RPC Connections
 export class BlockchainService {
-  private ethereumRPC: string;
-  private polygonRPC: string;
+  private ethereumRPC: string | null;
+  private polygonRPC: string | null;
+  private solanaRPC: string | null;
   private zoraRPC: string;
 
   constructor() {
-    // Using your REAL RPC endpoints
-    this.ethereumRPC = process.env.ETHEREUM_RPC_URL || 'https://mainnet.infura.io/v3/YOUR_KEY';
-    this.polygonRPC = process.env.POLYGON_RPC_URL || 'https://polygon-rpc.com';
+    // Using configured RPC endpoints - require proper configuration for production
+    // Don't use placeholder keys that will fail
+    this.ethereumRPC = this.validateRPCUrl(process.env.ETHEREUM_RPC_URL, 'Ethereum');
+    this.polygonRPC = this.validateRPCUrl(process.env.POLYGON_RPC_URL || process.env.POLYGON_RPC_ENDPOINT, 'Polygon');
+    this.solanaRPC = this.validateRPCUrl(process.env.SOLANA_RPC_URL || process.env.SOLANA_RPC, 'Solana');
+    // Zora has a public RPC, so it can be used without configuration
     this.zoraRPC = 'https://rpc.zora.energy';
+    
+    if (!this.ethereumRPC && !this.polygonRPC && !this.solanaRPC) {
+      console.warn('⚠️ [Blockchain] No blockchain RPC endpoints configured. Blockchain features will be limited.');
+      console.warn('   Configure ETHEREUM_RPC_URL, POLYGON_RPC_URL, and/or SOLANA_RPC_URL for full functionality.');
+    }
+  }
+
+  private validateRPCUrl(url: string | undefined, network: string): string | null {
+    if (!url) {
+      console.warn(`⚠️ [Blockchain] ${network} RPC URL not configured`);
+      return null;
+    }
+    // Check for placeholder values
+    if (url.includes('YOUR_KEY') || url.includes('YOUR_') || url.includes('placeholder')) {
+      console.warn(`⚠️ [Blockchain] ${network} RPC URL contains placeholder - ignoring`);
+      return null;
+    }
+    console.log(`✅ [Blockchain] ${network} RPC configured`);
+    return url;
   }
 
   async getEthereumStatus() {
+    if (!this.ethereumRPC) {
+      return {
+        connected: false,
+        error: 'Ethereum RPC not configured - set ETHEREUM_RPC_URL environment variable'
+      };
+    }
+    
     try {
       // Make RPC call to check connection
       const response = await fetch(this.ethereumRPC, {
@@ -49,6 +79,13 @@ export class BlockchainService {
   }
 
   async getPolygonStatus() {
+    if (!this.polygonRPC) {
+      return {
+        connected: false,
+        error: 'Polygon RPC not configured - set POLYGON_RPC_URL environment variable'
+      };
+    }
+    
     try {
       const response = await fetch(this.polygonRPC, {
         method: 'POST',
@@ -133,6 +170,11 @@ export class BlockchainService {
           rpcUrl = this.ethereumRPC;
       }
 
+      if (!rpcUrl) {
+        console.warn(`[Blockchain] ${network} RPC not configured - cannot get balance`);
+        return '0.000000';
+      }
+
       const response = await fetch(rpcUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -169,6 +211,11 @@ export class BlockchainService {
           break;
         default:
           rpcUrl = this.ethereumRPC;
+      }
+
+      if (!rpcUrl) {
+        console.warn(`[Blockchain] ${network} RPC not configured - cannot get transaction`);
+        return null;
       }
 
       const response = await fetch(rpcUrl, {
