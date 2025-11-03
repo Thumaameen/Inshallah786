@@ -575,13 +575,15 @@ const initializeProviders = () => {
       enabled: !!(process.env.ETHEREUM_RPC_URL || process.env.INFURA_API_KEY)
     },
     polygon: {
-      rpcUrl: process.env.POLYGON_RPC_ENDPOINT || process.env.POLYGON_RPC_URL ||
-              (process.env.POLYGON_API_KEY ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.POLYGON_API_KEY}` : '') ||
-              (process.env.INFURA_API_KEY ? `https://polygon-mainnet.infura.io/v3/${process.env.INFURA_API_KEY}` : '') ||
-              (process.env.ALCHEMY_API_KEY ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}` : '') ||
-              'https://polygon-rpc.com',
+      rpcUrl: process.env.POLYGON_RPC_ENDPOINT || 
+                        process.env.POLYGON_RPC_URL || 
+                        process.env.MATIC_RPC_URL ||
+                        (process.env.POLYGON_API_KEY ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.POLYGON_API_KEY}` : '') ||
+                        (process.env.ALCHEMY_API_KEY ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}` : '') ||
+                        (process.env.INFURA_API_KEY ? `https://polygon-mainnet.infura.io/v3/${process.env.INFURA_API_KEY}` : '') ||
+                        'https://polygon-rpc.com',
       apiKey: process.env.POLYGON_API_KEY || process.env.ALCHEMY_API_KEY,
-      enabled: !!(process.env.POLYGON_RPC_ENDPOINT || process.env.POLYGON_API_KEY || process.env.POLYGON_RPC_URL || process.env.ALCHEMY_API_KEY)
+      enabled: !!(process.env.POLYGON_RPC_ENDPOINT || process.env.POLYGON_RPC_URL || process.env.POLYGON_API_KEY || process.env.ALCHEMY_API_KEY),
     },
     solana: {
       rpcUrl: process.env.SOLANA_RPC_URL || process.env.SOLANA_RPC || 'https://api.mainnet-beta.solana.com',

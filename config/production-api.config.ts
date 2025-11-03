@@ -5,12 +5,20 @@ export const apiConfig = {
   // Web3 Configuration
   web3: {
     polygon: {
-      rpcEndpoint: process.env.POLYGON_RPC_ENDPOINT,
-      apiKey: process.env.POLYGON_API_KEY,
+      rpcEndpoint: process.env.POLYGON_RPC_ENDPOINT || 
+                   process.env.POLYGON_RPC_URL || 
+                   process.env.MATIC_RPC_URL ||
+                   (process.env.POLYGON_API_KEY ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.POLYGON_API_KEY}` : '') ||
+                   (process.env.ALCHEMY_API_KEY ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}` : ''),
+      apiKey: process.env.POLYGON_API_KEY || process.env.ALCHEMY_API_KEY,
     },
     solana: {
       apiKey: process.env.SOLANA_API_KEY,
-      endpoint: 'https://api.mainnet-beta.solana.com',
+      endpoint: process.env.SOLANA_RPC_URL || 
+                process.env.SOLANA_RPC ||
+                process.env.SOL_RPC_URL ||
+                (process.env.SOLANA_API_KEY ? `https://solana-mainnet.g.alchemy.com/v2/${process.env.SOLANA_API_KEY}` : '') ||
+                'https://api.mainnet-beta.solana.com',
     },
     web3auth: {
       clientId: process.env.WEB3AUTH_CLIENT_ID,

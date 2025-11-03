@@ -31,16 +31,20 @@ import { saPermitValidator, type PermitValidationRequest, type PermitValidationR
 import { aiAssistantService } from "./ai-assistant.js";
 
 const UPLOAD_DIR = process.env.UPLOAD_DIR || "./uploads";
-const DOCUMENT_ENCRYPTION_KEY = (() => {
+const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
+
+// Deferred encryption key getter to prevent startup crashes
+// Key validation happens at request time, not module load time
+function getDocumentEncryptionKey(): string {
   if (process.env.DOCUMENT_ENCRYPTION_KEY) {
     return process.env.DOCUMENT_ENCRYPTION_KEY;
   }
   if (process.env.NODE_ENV === 'production') {
-    throw new Error('CRITICAL SECURITY ERROR: DOCUMENT_ENCRYPTION_KEY environment variable is required for document encryption in production');
+    console.error('CRITICAL SECURITY WARNING: DOCUMENT_ENCRYPTION_KEY not configured - document encryption unavailable');
+    throw new Error('Document encryption service unavailable - DOCUMENT_ENCRYPTION_KEY not configured. Please configure this secret in Render environment variables.');
   }
   return 'dev-document-key-for-testing-only-12345678901234567890123456789012';
-})();
-const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
+}
 
 // Ensure upload directory exists
 fs.mkdir(UPLOAD_DIR, { recursive: true }).catch((error) => {

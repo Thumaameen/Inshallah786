@@ -7,22 +7,22 @@ import { dirname, join } from 'path';
 import path from 'path';
 import { createServer } from 'http';
 import dotenv from 'dotenv';
-import { registerRoutes } from './routes-simple';
+import { registerRoutes } from './routes-simple.js';
 import fs from 'fs';
-import ultraQueenAIRoutes from './routes/ultra-queen-ai';
-import integrationStatusRoutes from './routes/integration-status';
-import integrationActivationRoutes from './routes/integration-activation';
-import { WebSocketService } from './websocket';
-import { deploymentValidator } from './services/deployment-validation';
-import { SecureEnvLoader } from './utils/secure-env-loader';
-import { healthRouter } from './routes/health';
-import apiHealthCheckRouter from './routes/api-health-check';
+import ultraQueenAIRoutes from './routes/ultra-queen-ai.js';
+import integrationStatusRoutes from './routes/integration-status.js';
+import integrationActivationRoutes from './routes/integration-activation.js';
+import { WebSocketService } from './websocket.js';
+import { deploymentValidator } from './services/deployment-validation.js';
+import { SecureEnvLoader } from './utils/secure-env-loader.js';
+import { healthRouter } from './routes/health.js';
+import apiHealthCheckRouter from './routes/api-health-check.js';
 
 // Load environment variables - Render sets them automatically
 console.log('🔐 Loading Environment Variables...');
 
 // Enhanced key checking with all variations
-const keyVariations: Record<string, string[]> = {
+const keyVariations = {
   'OpenAI': ['OPENAI_API_KEY', 'OPENAI_KEY'],
   'Anthropic': ['ANTHROPIC_API_KEY', 'ANTHROPIC_KEY', 'CLAUDE_API_KEY'],
   'Mistral': ['MISTRAL_API_KEY', 'MISTRAL_KEY'],
@@ -181,10 +181,25 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 registerRoutes(app);
 
 // Add monitoring middleware and routes (non-intrusive)
-import { monitoringMiddleware } from './monitoring/monitoring-middleware';
-import { monitoringRoutes } from './monitoring/monitoring-routes';
-app.use(monitoringMiddleware);
-app.use('/api/monitor', monitoringRoutes);
+try {
+  const monitoringModule = await import('./monitoring/monitoring-middleware.js');
+  const routesModule = await import('./monitoring/monitoring-routes.js');
+  
+  const monitoringMiddleware = monitoringModule.default || monitoringModule;
+  const monitoringRoutes = routesModule.default || routesModule;
+  
+  if (typeof monitoringMiddleware === 'function') {
+    app.use(monitoringMiddleware);
+  } else if (monitoringMiddleware && typeof monitoringMiddleware.middleware === 'function') {
+    app.use(monitoringMiddleware.middleware);
+  }
+  
+  if (monitoringRoutes && typeof monitoringRoutes === 'object') {
+    app.use('/api/monitor', monitoringRoutes);
+  }
+} catch (error) {
+  console.log('⚠️ Monitoring middleware not available, skipping');
+}
 
 // Ultra Queen AI Routes
 app.use('/api/ultra-queen-ai', ultraQueenAIRoutes);
@@ -197,8 +212,8 @@ console.log('✅ Ultra Queen AI routes active');
 console.log('✅ Integration status routes active');
 
 // Military & Government Portal Routes
-import militaryPortalsRouter from './routes/military-portals';
-app.use('/api/military', militaryPortalsRouter);
+const { default: militaryRoutes } = await import('./routes/military-portals.js');
+app.use('/api/military', militaryRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

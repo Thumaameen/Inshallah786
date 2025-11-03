@@ -7,7 +7,7 @@ echo "===================================================="
 # CRITICAL: Production environment setup
 export NODE_ENV=production
 export RENDER=true
-export NODE_VERSION=20.18.0
+export NODE_VERSION=20.19.0
 export NPM_CONFIG_PRODUCTION=false
 
 # Node.js configuration - matching successful deployment
