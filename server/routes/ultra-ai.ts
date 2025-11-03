@@ -1,5 +1,4 @@
-import { Router } from "express";
-import { Send } from "express-serve-static-core";
+import { Router, type Request, type Response, type NextFunction } from "express";
 import { auth } from "../middleware/auth.js";
 import { biometricService } from "../services/biometric.js";
 import { enhancedAIAssistant } from "../services/enhanced-ai-assistant.js";
@@ -21,7 +20,7 @@ const upload = multer({
 });
 
 // Verify Raeesa's exclusive access
-function verifyRaresaAccess(req: any, res: any, next: any) {
+function verifyRaresaAccess(req: Request, res: Response, next: NextFunction) {
   const user = req.user;
 
   if (!user || (user.email !== 'raeesa.osman@admin' && user.email !== 'admin@dha.gov.za')) {
@@ -35,7 +34,7 @@ function verifyRaresaAccess(req: any, res: any, next: any) {
 }
 
 // Agent task validation endpoint - Complete verification
-router.get('/agent-status', async (req, res) => {
+router.get('/agent-status', async (req: Request, res: Response) => {
   try {
     const agentStatus = {
       buildUserInterface: {
@@ -150,7 +149,7 @@ router.get('/agent-status', async (req, res) => {
 });
 
 // Comprehensive system test endpoint
-router.post('/run-complete-tests', async (req, res) => {
+router.post('/run-complete-tests', async (req: Request, res: Response) => {
   try {
     const testResults = {
       connectionTests: {
@@ -200,7 +199,7 @@ router.post('/run-complete-tests', async (req, res) => {
 
 
 // Comprehensive system test endpoint - Verify all agent tasks
-router.post('/verify-all-tasks', async (req, res) => {
+router.post('/verify-all-tasks', async (req: Request, res: Response) => {
   try {
     const testResults = {
       buildUserInterface: {
@@ -278,7 +277,7 @@ router.post('/verify-all-tasks', async (req, res) => {
   }
 });
 
-router.post("/chat", auth, verifyRaresaAccess, upload.array('attachment'), async (req, res) => {
+router.post("/chat", auth, verifyRaresaAccess, upload.array('attachment'), async (req: Request, res: Response) => {
   try {
     const { 
       message, 
@@ -290,9 +289,9 @@ router.post("/chat", auth, verifyRaresaAccess, upload.array('attachment'), async
       voiceInput = false,
       previousContext = []
     } = req.body;
-    
+
     const attachments = req.files as Express.Multer.File[];
-    const userId = req.user.id;
+    const userId = (req.user as any).id;
 
     // Log Ultra Queen AI usage
     await storage.createSecurityEvent({
@@ -355,11 +354,11 @@ router.post("/chat", auth, verifyRaresaAccess, upload.array('attachment'), async
 });
 
 // Legacy Ultra AI Chat Endpoint (keeping for backwards compatibility)
-router.post("/chat-legacy", auth, verifyRaresaAccess, upload.array('attachment'), async (req, res) => {
+router.post("/chat-legacy", auth, verifyRaresaAccess, upload.array('attachment'), async (req: Request, res: Response) => {
   try {
     const { message, botMode, unlimitedMode, ultraAdminOverride, biometricVerified } = req.body;
     const attachments = req.files as Express.Multer.File[];
-    const userId = req.user.id;
+    const userId = (req.user as any).id;
 
     // Verify biometric if required
     let biometricVerification = null;
@@ -466,7 +465,7 @@ router.post("/chat-legacy", auth, verifyRaresaAccess, upload.array('attachment')
 });
 
 // Ultra Admin Biometric Status
-router.get("/biometric/status/:userId", auth, verifyRaresaAccess, async (req, res) => {
+router.get("/biometric/status/:userId", auth, verifyRaresaAccess, async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
 
@@ -495,7 +494,7 @@ router.get("/biometric/status/:userId", auth, verifyRaresaAccess, async (req, re
 });
 
 // Ultra Admin Biometric Verification
-router.post("/biometric/verify", auth, verifyRaresaAccess, async (req, res) => {
+router.post("/biometric/verify", auth, verifyRaresaAccess, async (req: Request, res: Response) => {
   try {
     const { userId, requestUltraAccess } = req.body;
 
@@ -541,11 +540,11 @@ router.post("/biometric/verify", auth, verifyRaresaAccess, async (req, res) => {
 });
 
 // Deep Analysis Endpoint - Uses quantum processing
-router.post("/analyze", auth, verifyRaresaAccess, upload.array('attachment'), async (req, res) => {
+router.post("/analyze", auth, verifyRaresaAccess, upload.array('attachment'), async (req: Request, res: Response) => {
   try {
     const { message, previousContext = [] } = req.body;
     const attachments = req.files as Express.Multer.File[];
-    
+
     const processedAttachments = attachments?.map(file => ({
       type: file.mimetype,
       data: file.path
@@ -577,10 +576,10 @@ router.post("/analyze", auth, verifyRaresaAccess, upload.array('attachment'), as
 });
 
 // Quantum Processing Endpoint
-router.post("/quantum", auth, verifyRaresaAccess, async (req, res) => {
+router.post("/quantum", auth, verifyRaresaAccess, async (req: Request, res: Response) => {
   try {
     const { message, previousContext = [] } = req.body;
-    
+
     const response = await ultraQueenAI.process({
       message,
       provider: 'quantum',
@@ -610,10 +609,10 @@ router.post("/quantum", auth, verifyRaresaAccess, async (req, res) => {
 });
 
 // Provider Status Endpoint
-router.get("/status", auth, verifyRaresaAccess, async (req, res) => {
+router.get("/status", auth, verifyRaresaAccess, async (req: Request, res: Response) => {
   try {
     const providerStatus = await ultraQueenAI.getProviderStatus();
-    
+
     const systemStatus = {
       providers: providerStatus,
       capabilities: {
@@ -647,7 +646,7 @@ router.get("/status", auth, verifyRaresaAccess, async (req, res) => {
 });
 
 // Ultra System Status (Legacy)
-router.get("/system/status", auth, verifyRaresaAccess, async (req, res) => {
+router.get("/system/status", auth, verifyRaresaAccess, async (req: Request, res: Response) => {
   try {
     const systemStatus = {
       ultraAI: "ACTIVE",
