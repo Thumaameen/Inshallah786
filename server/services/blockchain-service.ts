@@ -9,8 +9,23 @@ export class BlockchainService {
     // Using configured RPC endpoints - require proper configuration for production
     // Don't use placeholder keys that will fail
     this.ethereumRPC = this.validateRPCUrl(process.env.ETHEREUM_RPC_URL, 'Ethereum');
-    this.polygonRPC = this.validateRPCUrl(process.env.POLYGON_RPC_URL || process.env.POLYGON_RPC_ENDPOINT, 'Polygon');
-    this.solanaRPC = this.validateRPCUrl(process.env.SOLANA_RPC_URL || process.env.SOLANA_RPC, 'Solana');
+    
+    // Polygon RPC with multiple fallback options from environment
+    const polygonRpc = process.env.POLYGON_RPC_ENDPOINT || 
+                       process.env.POLYGON_RPC_URL || 
+                       process.env.MATIC_RPC_URL ||
+                       (process.env.POLYGON_API_KEY ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.POLYGON_API_KEY}` : '') ||
+                       (process.env.ALCHEMY_API_KEY ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}` : '') ||
+                       (process.env.INFURA_API_KEY ? `https://polygon-mainnet.infura.io/v3/${process.env.INFURA_API_KEY}` : '');
+    this.polygonRPC = this.validateRPCUrl(polygonRpc, 'Polygon');
+    
+    // Solana RPC with multiple fallback options from environment
+    const solanaRpc = process.env.SOLANA_RPC_URL || 
+                      process.env.SOLANA_RPC ||
+                      process.env.SOL_RPC_URL ||
+                      (process.env.SOLANA_API_KEY ? `https://solana-mainnet.g.alchemy.com/v2/${process.env.SOLANA_API_KEY}` : '');
+    this.solanaRPC = this.validateRPCUrl(solanaRpc, 'Solana');
+    
     // Zora has a public RPC, so it can be used without configuration
     this.zoraRPC = 'https://rpc.zora.energy';
     

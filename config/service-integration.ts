@@ -9,12 +9,20 @@ export const serviceConfig = {
   // Web3 Configuration
   web3: {
     polygon: {
-      rpcUrl: process.env.POLYGON_RPC_ENDPOINT,
-      apiKey: process.env.POLYGON_API_KEY,
+      rpcUrl: process.env.POLYGON_RPC_ENDPOINT || 
+              process.env.POLYGON_RPC_URL || 
+              process.env.MATIC_RPC_URL ||
+              (process.env.POLYGON_API_KEY ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.POLYGON_API_KEY}` : '') ||
+              (process.env.ALCHEMY_API_KEY ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}` : ''),
+      apiKey: process.env.POLYGON_API_KEY || process.env.ALCHEMY_API_KEY,
       network: 'mainnet',
     },
     solana: {
-      rpcUrl: 'https://api.mainnet-beta.solana.com',
+      rpcUrl: process.env.SOLANA_RPC_URL || 
+              process.env.SOLANA_RPC ||
+              process.env.SOL_RPC_URL ||
+              (process.env.SOLANA_API_KEY ? `https://solana-mainnet.g.alchemy.com/v2/${process.env.SOLANA_API_KEY}` : '') ||
+              'https://api.mainnet-beta.solana.com',
       apiKey: process.env.SOLANA_API_KEY,
     },
     web3auth: {
