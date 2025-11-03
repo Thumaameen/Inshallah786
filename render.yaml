@@ -134,7 +134,7 @@ services:
       - key: CIPC_API_BASE_URL
         value: "https://api.cipc.co.za/v1"
       - key: DEL_API_KEY
-        sync:true
+        sync: true
       - key: DEL_API_BASE_URL
         value: "https://api.labour.gov.za/v1"
 
