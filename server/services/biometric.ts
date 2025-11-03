@@ -22,6 +22,7 @@ export interface BiometricRegistrationData {
 }
 
 export class BiometricService {
+  [x: string]: any;
   
   async registerBiometric(data: BiometricRegistrationData): Promise<{ success: boolean; error?: string }> {
     try {
