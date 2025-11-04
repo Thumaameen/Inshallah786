@@ -2,18 +2,20 @@
 // All API keys configured from Replit Secrets
 
 export const environment: Record<string, string | number | boolean> = {
-  // Integration Flags - PRODUCTION READY (ALL TRUE)
+  // Integration Flags - FORCE PRODUCTION REAL DATA ONLY
   ENABLE_REAL_CERTIFICATES: true,
   ENABLE_BIOMETRIC_VALIDATION: true,
   ENABLE_GOVERNMENT_INTEGRATION: true,
   USE_MOCK_DATA: false,
   FORCE_REAL_APIS: true,
-  BYPASS_MODE: true,
-  UNIVERSAL_BYPASS: true,
+  BYPASS_MODE: false, // No bypass - real APIs only
+  UNIVERSAL_BYPASS: false, // No bypass - real APIs only
   DISABLE_MOCK_MODE: true,
   API_ENVIRONMENT: 'production',
   USE_PRODUCTION_APIS: true,
   FORCE_LIVE_SERVICES: true,
+  ENFORCE_REAL_DATA: true,
+  REJECT_MOCK_RESPONSES: true,
   
   // Core Application Settings
   NODE_ENV: process.env.NODE_ENV || 'production',

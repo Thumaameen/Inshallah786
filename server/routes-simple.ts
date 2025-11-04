@@ -97,6 +97,62 @@ dhaRouter.get('/templates', (req, res) => {
     success: true,
     totalTemplates: 21,
     templates: [
+
+
+  // Comprehensive Endpoint Testing
+  app.get('/api/test/endpoints', async (req, res) => {
+    const endpoints = [
+      { name: 'Health Check', path: '/api/health', method: 'GET' },
+      { name: 'Document Templates', path: '/api/documents/templates', method: 'GET' },
+      { name: 'AI Chat', path: '/api/ai/chat', method: 'POST' },
+      { name: 'Document Generation', path: '/api/documents/generate', method: 'POST' },
+      { name: 'Ultra Queen AI', path: '/api/ultra-queen-ai', method: 'POST' },
+      { name: 'Integration Status', path: '/api/integrations/status', method: 'GET' },
+      { name: 'API Activation', path: '/api/activation/status', method: 'GET' }
+    ];
+
+    const results = await Promise.all(
+      endpoints.map(async (endpoint) => {
+        try {
+          const response = await fetch(`http://localhost:${process.env.PORT || 5000}${endpoint.path}`, {
+            method: endpoint.method,
+            headers: { 'Content-Type': 'application/json' },
+            body: endpoint.method === 'POST' ? JSON.stringify({ test: true }) : undefined
+          });
+          
+          return {
+            ...endpoint,
+            status: response.status,
+            working: response.ok || response.status === 400,
+            timestamp: new Date().toISOString()
+          };
+        } catch (error) {
+          return {
+            ...endpoint,
+            status: 500,
+            working: false,
+            error: error instanceof Error ? error.message : 'Unknown error',
+            timestamp: new Date().toISOString()
+          };
+        }
+      })
+    );
+
+    const workingCount = results.filter(r => r.working).length;
+    
+    res.json({
+      success: true,
+      summary: {
+        total: endpoints.length,
+        working: workingCount,
+        failing: endpoints.length - workingCount,
+        successRate: Math.round((workingCount / endpoints.length) * 100)
+      },
+      endpoints: results,
+      timestamp: new Date().toISOString()
+    });
+  });
+
       'Birth Certificate',
       'Death Certificate',
       'Marriage Certificate',
@@ -149,11 +205,12 @@ dhaRouter.post('/verify', (req, res) => {
 export function registerRoutes(app: Express) {
   console.log('🔧 Registering API routes...');
 
-  // Universal API Override Middleware
+  // Force Real API Middleware - No Mocks
   app.use((req, res, next) => {
-    // Enable universal bypass for all API requests
-    req.headers['x-api-override'] = 'enabled';
-    req.headers['x-universal-bypass'] = 'true';
+    // Force real APIs only
+    req.headers['x-force-real-apis'] = 'true';
+    req.headers['x-reject-mock-data'] = 'true';
+    req.headers['x-production-mode'] = 'true';
     next();
   });
 

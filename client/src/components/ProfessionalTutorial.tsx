@@ -116,6 +116,18 @@ export function ProfessionalTutorial() {
     if (!hasSeenTutorial) {
       setOpen(true);
     }
+
+    // Listen for tutorial show event
+    const handleShowTutorial = () => {
+      setOpen(true);
+      setCurrentStep(0);
+    };
+
+    window.addEventListener('showTutorial', handleShowTutorial);
+    
+    return () => {
+      window.removeEventListener('showTutorial', handleShowTutorial);
+    };
   }, []);
 
   const handleNext = () => {
