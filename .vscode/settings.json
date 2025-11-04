@@ -2,6 +2,7 @@
     "python-envs.defaultEnvManager": "ms-python.python:system",
     "python-envs.pythonProjects": [],
     "github.copilot.enable": {
+        "*": false,
         "plaintext": true,
         "markdown": true,
         "scminput": true,
