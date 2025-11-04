@@ -3,9 +3,9 @@
   "compilerOptions": {
     "target": "ES2022",
     "module": "ESNext",
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
     "allowJs": true,
-    "lib": ["ES2022", "DOM"],
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "outDir": "./dist",
     "noEmit": false,
     "noEmitOnError": false,
@@ -13,6 +13,8 @@
     "isolatedModules": true,
     "strict": false,
     "noImplicitAny": false,
+    "suppressImplicitAnyIndexErrors": true,
+    "useUnknownInCatchVariables": false,
     "allowUnreachableCode": true,
     "strictNullChecks": false,
     "forceConsistentCasingInFileNames": false,
@@ -25,7 +27,6 @@
     "resolveJsonModule": true,
     "types": ["node"],
     "skipDefaultLibCheck": true,
-    "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false
   },
