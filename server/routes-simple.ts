@@ -1,5 +1,9 @@
 import type { Express } from "express";
 import { Router } from "express";
+import dhaBookingRoutes from './routes/dha-booking.js';
+import ultraQueenAIRoutes from './routes/ultra-queen-ai.js';
+import integrationStatusRoutes from './routes/integration-status.js';
+import integrationActivationRoutes from './routes/integration-activation.js';
 
 const healthRouter = Router();
 
@@ -94,7 +98,7 @@ dhaRouter.get('/templates', (req, res) => {
     totalTemplates: 21,
     templates: [
       'Birth Certificate',
-      'Death Certificate', 
+      'Death Certificate',
       'Marriage Certificate',
       'Divorce Certificate',
       'ID Document',
@@ -410,30 +414,30 @@ export function registerRoutes(app: Express) {
   app.post('/api/documents/generate', async (req, res) => {
     try {
       const { documentType, formData } = req.body;
-      
+
       console.log(`📄 Generating ${documentType} document...`);
-      
+
       // Import PDF generator
       const { pdfGenerator } = await import('./services/pdf-generator.js');
-      
+
       // Generate real PDF
       const pdfBuffer = await pdfGenerator.generateDocument({
         documentType,
         ...formData
       });
-      
+
       const documentId = `DOC-${Date.now()}`;
       const verificationCode = `VER-${Math.random().toString(36).substring(2, 10).toUpperCase()}`;
-      
+
       // Set response headers for PDF download
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', `attachment; filename="${documentType}-${documentId}.pdf"`);
       res.setHeader('X-Document-ID', documentId);
       res.setHeader('X-Verification-Code', verificationCode);
-      
+
       // Send PDF
       res.send(pdfBuffer);
-      
+
       console.log(`✅ Document ${documentId} generated successfully`);
     } catch (error) {
       console.error('Document generation error:', error);
@@ -490,10 +494,10 @@ export function registerRoutes(app: Express) {
 
   app.post('/api/ultra-dashboard/test-blockchain', async (req, res) => {
     const { network } = req.body;
-    
+
     // Simulate blockchain test
     await new Promise(resolve => setTimeout(resolve, 500));
-    
+
     res.json({
       success: true,
       network,
@@ -507,10 +511,10 @@ export function registerRoutes(app: Express) {
 
   app.post('/api/ultra-dashboard/test-government-api', async (req, res) => {
     const { api } = req.body;
-    
+
     // Simulate API test
     await new Promise(resolve => setTimeout(resolve, 300));
-    
+
     res.json({
       success: true,
       api,
@@ -736,22 +740,6 @@ export function registerRoutes(app: Express) {
     res.json({ status: 'connected', networks: ['ethereum', 'polygon'] });
   });
 
-  app.get('/api/ultra-queen-ai/status', (req, res) => {
-    res.json({ status: 'active', ready: true });
-  });
-
-  app.get('/api/ultra-queen-ai/unlimited/capabilities', (req, res) => {
-    res.json({ capabilities: ['unlimited-access', 'full-control'] });
-  });
-
-  app.post('/api/ultra-queen-ai/unlimited/process', (req, res) => {
-    res.json({ success: true, processed: true });
-  });
-
-  app.post('/api/ultra-queen-ai/query', (req, res) => {
-    res.json({ success: true, result: 'Query processed' });
-  });
-
   // Vision/OCR endpoints
   app.post('/api/vision/pdf-page', (req, res) => {
     res.json({ success: true, extracted: 'Vision processing ready' });
@@ -845,6 +833,19 @@ export function registerRoutes(app: Express) {
       downloadUrl: `/download/${req.params.documentId}`
     });
   });
+
+  // Ultra Queen AI Routes
+  app.use('/api/ultra-queen-ai', ultraQueenAIRoutes);
+  app.use('/api/integrations', integrationStatusRoutes);
+  app.use('/api/integrations', integrationActivationRoutes);
+
+  // DHA Booking and Delivery
+  app.use('/api/dha-booking', dhaBookingRoutes);
+
+  // Ultra Queen AI Routes
+  app.use('/api/ultra-queen-ai', ultraQueenAIRoutes);
+  app.use('/api/integrations', integrationStatusRoutes);
+  app.use('/api/integrations', integrationActivationRoutes);
 
   console.log('✅ All routes registered successfully');
   console.log('✅ Frontend routes configured');

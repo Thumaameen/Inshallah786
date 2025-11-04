@@ -1,0 +1,50 @@
+2025-11-03T22:32:56.561820379Z src/pages/OfficialDocumentGenerator.tsx(219,48): error TS2345: Argument of type '{ method: string; headers: { 'Content-Type': string; }; body: string; }' is not assignable to parameter of type 'string'.
+2025-11-03T22:32:56.561827989Z src/pages/OfficialDocumentGenerator.tsx(475,67): error TS2339: Property 'click' does not exist on type 'Element'.
+2025-11-03T22:32:56.561831329Z src/pages/OfficialDocumentGenerator.tsx(477,67): error TS2339: Property 'click' does not exist on type 'Element'.
+2025-11-03T22:32:56.56188139Z src/pages/OfficialDocumentGenerator.tsx(798,78): error TS2339: Property 'click' does not exist on type 'Element'.
+2025-11-03T22:32:56.561946291Z src/pages/OfficialDocumentGenerator.tsx(971,68): error TS2339: Property 'click' does not exist on type 'Element'.
+2025-11-03T22:32:56.561994691Z src/pages/UltraAdvancedPDF.tsx(353,30): error TS2352: Conversion of type 'Uint8Array<ArrayBufferLike>' to type 'ArrayBuffer' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+2025-11-03T22:32:56.562003582Z   The types of 'slice(...)[Symbol.toStringTag]' are incompatible between these types.
+2025-11-03T22:32:56.562006952Z     Type '"Uint8Array"' is not comparable to type '"ArrayBuffer"'.
+2025-11-03T22:32:56.562016252Z src/pages/UltraAdvancedPDF.tsx(407,30): error TS2352: Conversion of type 'Uint8Array<ArrayBufferLike>' to type 'ArrayBuffer' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+2025-11-03T22:32:56.562019612Z   The types of 'slice(...)[Symbol.toStringTag]' are incompatible between these types.
+2025-11-03T22:32:56.562022632Z     Type '"Uint8Array"' is not comparable to type '"ArrayBuffer"'.
+2025-11-03T22:32:56.562040362Z src/pages/UltraQueenAI.tsx(106,47): error TS2345: Argument of type '{ method: string; body: string; }' is not assignable to parameter of type 'string'.
+2025-11-03T22:32:56.562167814Z src/pages/UltraQueenAI.tsx(112,16): error TS2339: Property 'success' does not exist on type 'Response'.
+2025-11-03T22:32:56.562176384Z src/pages/UltraQueenAI.tsx(116,25): error TS2339: Property 'content' does not exist on type 'Response'.
+2025-11-03T22:32:56.562202494Z src/pages/UltraQueenAI.tsx(117,26): error TS2339: Property 'provider' does not exist on type 'Response'.
+2025-11-03T22:32:56.562208134Z src/pages/UltraQueenAI.tsx(118,26): error TS2339: Property 'metadata' does not exist on type 'Response'.
+2025-11-03T22:32:56.562218694Z src/pages/UltraQueenAI.tsx(124,34): error TS2339: Property 'content' does not exist on type 'Response'.
+2025-11-03T22:32:56.562243705Z src/pages/UltraQueenAI.tsx(125,22): error TS2339: Property 'content' does not exist on type 'Response'.
+2025-11-03T22:32:56.562353206Z src/pages/UltraQueenAI.tsx(129,18): error TS2339: Property 'providers' does not exist on type 'Response'.
+2025-11-03T22:32:56.562359446Z src/pages/UltraQueenAI.tsx(129,36): error TS2339: Property 'providers' does not exist on type 'Response'.
+2025-11-03T22:32:56.562362646Z src/pages/UltraQueenAI.tsx(132,34): error TS2339: Property 'providers' does not exist on type 'Response'.
+2025-11-03T22:32:56.562378536Z src/pages/UltraQueenAI.tsx(139,29): error TS2339: Property 'error' does not exist on type 'Response'.
+2025-11-03T22:32:56.562391836Z src/pages/UltraQueenAIEnhanced.tsx(713,39): error TS2304: Cannot find name 'API_CAPABILITIES'.
+2025-11-03T22:32:56.562398247Z src/pages/UltraQueenAIEnhanced.tsx(718,89): error TS2339: Property 'color' does not exist on type 'unknown'.
+2025-11-03T22:32:56.562405127Z src/pages/UltraQueenAIEnhanced.tsx(721,32): error TS2339: Property 'icon' does not exist on type 'unknown'.
+2025-11-03T22:32:56.562414087Z src/pages/UltraQueenAIEnhanced.tsx(722,32): error TS2339: Property 'name' does not exist on type 'unknown'.
+2025-11-03T22:32:56.562418107Z src/pages/UltraQueenAIEnhanced.tsx(786,31): error TS2304: Cannot find name 'API_CAPABILITIES'.
+2025-11-03T22:32:56.562485848Z src/pages/UltraQueenAIEnhanced.tsx(790,78): error TS2339: Property 'color' does not exist on type 'unknown'.
+2025-11-03T22:32:56.562491868Z src/pages/UltraQueenAIEnhanced.tsx(791,30): error TS2339: Property 'icon' does not exist on type 'unknown'.
+2025-11-03T22:32:56.562495558Z src/pages/UltraQueenAIEnhanced.tsx(793,71): error TS2339: Property 'name' does not exist on type 'unknown'.
+2025-11-03T22:32:56.562505618Z src/pages/UltraQueenAIEnhanced.tsx(796,28): error TS2339: Property 'limits' does not exist on type 'unknown'.
+2025-11-03T22:32:56.562513198Z src/pages/UltraQueenAIEnhanced.tsx(801,28): error TS2339: Property 'capabilities' does not exist on type 'unknown'.
+2025-11-03T22:32:56.562570379Z src/pages/admin/AIAnalytics.tsx(18,32): error TS2305: Module '"lucide-react"' has no exported member 'ChartBar'.
+2025-11-03T22:32:56.562575949Z src/pages/admin/AIAnalytics.tsx(128,69): error TS2345: Argument of type '{ method: string; body: string; }' is not assignable to parameter of type 'string'.
+2025-11-03T22:32:56.562579019Z src/pages/admin/AIAnalytics.tsx(143,52): error TS2345: Argument of type '{ method: string; body: string; }' is not assignable to parameter of type 'string'.
+2025-11-03T22:32:56.562586429Z src/pages/admin/AIAnalytics.tsx(618,43): error TS2339: Property 'anomalies' does not exist on type 'Response'.
+2025-11-03T22:32:56.562592929Z src/pages/admin/AIAnalytics.tsx(618,68): error TS2339: Property 'anomalies' does not exist on type 'Response'.
+2025-11-03T22:32:56.5626453Z src/pages/admin/AIAnalytics.tsx(620,32): error TS2339: Property 'anomalies' does not exist on type 'Response'.
+2025-11-03T22:32:56.56264999Z src/pages/admin/AIAnalytics.tsx(621,61): error TS2339: Property 'severity' does not exist on type 'Response'.
+2025-11-03T22:32:56.5626568Z src/pages/admin/AIAnalytics.tsx(625,55): error TS2339: Property 'severity' does not exist on type 'Response'.
+2025-11-03T22:32:56.5626605Z src/pages/admin/AIAnalytics.tsx(628,38): error TS2339: Property 'recommendations' does not exist on type 'Response'.
+2025-11-03T22:32:56.562723981Z src/pages/admin/AIAnalytics.tsx(628,69): error TS2339: Property 'recommendations' does not exist on type 'Response'.
+2025-11-03T22:32:56.562729901Z src/pages/ai-assistant.tsx(301,44): error TS2339: Property 'error' does not exist on type '{ content: string; metadata: any; }'.
+2025-11-03T22:32:56.562737921Z src/pages/ai-assistant.tsx(318,16): error TS2339: Property 'fallback' does not exist on type '{ content: string; metadata: any; }'.
+2025-11-03T22:32:56.562741311Z src/pages/ai-assistant.tsx(322,25): error TS2339: Property 'response' does not exist on type '{ content: string; metadata: any; }'.
+2025-11-03T22:32:56.562757401Z src/pages/ai-assistant.tsx(324,29): error TS2339: Property 'suggestions' does not exist on type '{ content: string; metadata: any; }'.
+2025-11-03T22:32:56.562766081Z src/pages/verify.tsx(72,29): error TS2339: Property 'code' does not exist on type 'StringRouteParams<undefined>'.
+2025-11-03T22:32:56.562873133Z src/services/api-client.ts(44,34): error TS2339: Property 'message' does not exist on type 'unknown'.
+2025-11-03T22:32:56.774696191Z ==> Build failed 😞
+2025-11-03T22:32:56.774732111Z ==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys

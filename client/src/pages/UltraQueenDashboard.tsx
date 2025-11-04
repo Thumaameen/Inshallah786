@@ -146,7 +146,7 @@ export default function UltraQueenDashboard() {
   };
 
   // Handler for AI chat response, ensuring it handles errors gracefully.
-  const handleAIChatResponse = async (prompt: string) => {
+  const handleAIChatResponse = async (prompt: string): Promise<string> => {
     try {
       const response = await fetch('/api/ai/chat', {
         method: 'POST',
@@ -155,25 +155,26 @@ export default function UltraQueenDashboard() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
+        const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
         throw new Error(errorData.message || 'Failed to get AI response');
       }
 
       const data = await response.json();
-      return data.reply;
-    } catch (error: any) {
+      return data.reply || data.content || "No response received";
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "I apologize, but I encountered an issue processing your request.";
       console.error("AI Chat Error:", error);
       toast({
         title: "AI Chat Error",
-        description: error.message || "I apologize, but I encountered an issue processing your request.",
+        description: errorMessage,
         variant: "destructive",
       });
-      return "I apologize, but I encountered an issue processing your request.";
+      return errorMessage;
     }
   };
 
   // Handler for document generation, ensuring it triggers a download to the phone.
-  const generateDocument = async (docId: string) => {
+  const generateDocument = async (docId: string): Promise<void> => {
     toast({
       title: 'Document Generation',
       description: `Generating ${docId}...`,
@@ -183,15 +184,28 @@ export default function UltraQueenDashboard() {
       const response = await fetch('/api/documents/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ docId }),
+        body: JSON.stringify({ 
+          documentType: docId,
+          personalData: {
+            fullName: 'Test User',
+            dateOfBirth: '1990-01-01',
+            nationality: 'South African',
+            gender: 'M'
+          }
+        }),
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
+        const errorData = await response.json().catch(() => ({ message: 'Document generation failed' }));
         throw new Error(errorData.message || 'Failed to generate document');
       }
 
       const blob = await response.blob();
+      
+      if (blob.size === 0) {
+        throw new Error('Generated document is empty');
+      }
+
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.style.display = 'none';
@@ -199,36 +213,40 @@ export default function UltraQueenDashboard() {
       
       // Attempt to determine filename from headers or default
       const disposition = response.headers.get('content-disposition');
-      let filename = `${docId}.pdf`; // Default filename
+      let filename = `${docId}_${Date.now()}.pdf`;
       if (disposition && disposition.includes('attachment')) {
           const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
           const matches = filenameRegex.exec(disposition);
-          if (matches != null && matches[1]) { 
+          if (matches?.[1]) { 
             filename = matches[1].replace(/['"]/g, '');
           }
       }
       a.download = filename;
       document.body.appendChild(a);
       a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
+      
+      setTimeout(() => {
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      }, 100);
 
       toast({
         title: 'Document Generated',
         description: `Your ${docId} has been generated and is downloading.`,
       });
-    } catch (error: any) {
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to generate document. Please try again.';
       console.error("Document Generation Error:", error);
       toast({
         title: 'Document Generation Failed',
-        description: error.message || 'Failed to generate document. Please try again.',
+        description: errorMessage,
         variant: 'destructive',
       });
     }
   };
 
   // Handler for admin commands, ensuring proper execution and error reporting.
-  const handleAdminCommand = async (command: string) => {
+  const handleAdminCommand = async (command: string): Promise<void> => {
     toast({
       title: 'Admin Command',
       description: `Executing: ${command}...`,
@@ -242,7 +260,7 @@ export default function UltraQueenDashboard() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
+        const errorData = await response.json().catch(() => ({ message: 'Command execution failed' }));
         throw new Error(errorData.message || 'Failed to execute admin command');
       }
 
@@ -251,11 +269,12 @@ export default function UltraQueenDashboard() {
         title: 'Command Executed',
         description: data.result || 'Admin command executed successfully.',
       });
-    } catch (error: any) {
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to execute admin command.';
       console.error("Admin Command Error:", error);
       toast({
         title: 'Admin Command Failed',
-        description: error.message || 'Failed to execute admin command.',
+        description: errorMessage,
         variant: 'destructive',
       });
     }

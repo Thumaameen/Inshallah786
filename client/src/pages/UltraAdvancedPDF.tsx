@@ -10,6 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { FileText, Upload, Download, Code, Edit, Eye, Sparkles, Save, FileCode, Highlighter, Book, FileJson, Brain, Shield, Globe } from 'lucide-react';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
+import { uint8ArrayToArrayBuffer } from '@/utils/binary-helpers';
+import type { AIResponse } from '@/types/api';
 // @ts-ignore
 import * as pdfjsLib from 'pdfjs-dist';
 // @ts-ignore
@@ -350,7 +352,7 @@ export default function UltraAdvancedPDF() {
       
       // Save PDF
       const pdfBytes = await pdfDoc.save();
-      const blob = new Blob([pdfBytes as ArrayBuffer], { type: 'application/pdf' });
+      const blob = new Blob([uint8ArrayToArrayBuffer(pdfBytes)], { type: 'application/pdf' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -404,7 +406,7 @@ export default function UltraAdvancedPDF() {
       
       // Save edited PDF
       const pdfBytes = await pdfDoc.save();
-      const blob = new Blob([pdfBytes as ArrayBuffer], { type: 'application/pdf' });
+      const blob = new Blob([uint8ArrayToArrayBuffer(pdfBytes)], { type: 'application/pdf' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
