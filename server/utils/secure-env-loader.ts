@@ -59,7 +59,18 @@ export class SecureEnvLoader {
       'DHA_ABIS_API_KEY',
       'SAPS_CRC_API_KEY',
       'OPENAI_API_KEY',
-      'ANTHROPIC_API_KEY'
+      'ANTHROPIC_API_KEY',
+      'POLYGON_RPC_ENDPOINT',
+      'POLYGON_API_KEY',
+      'SOLANA_RPC_ENDPOINT',
+      'SOLANA_API_KEY',
+      'ALCHEMY_ALL_NETWORKS_API_KEY',
+      'AWS_ACCESS_KEY_ID',
+      'AWS_SECRET_ACCESS_KEY',
+      'AWS_REGION',
+      'AZURE_CONNECTION_STRING',
+      'GCP_PROJECT_ID',
+      'GCP_SERVICE_ACCOUNT'
     ];
     
     const missingKeys: string[] = [];
@@ -106,7 +117,32 @@ export class SecureEnvLoader {
       connectionTests.push('Perplexity');
     }
     
-    console.log(`✅ Preparing to test ${connectionTests.length} AI providers`);
+    if (process.env.POLYGON_RPC_ENDPOINT || process.env.POLYGON_API_KEY) {
+      console.log('  • Testing Polygon connection...');
+      connectionTests.push('Polygon');
+    }
+    
+    if (process.env.SOLANA_RPC_ENDPOINT || process.env.SOLANA_API_KEY) {
+      console.log('  • Testing Solana connection...');
+      connectionTests.push('Solana');
+    }
+    
+    if (process.env.AWS_ACCESS_KEY_ID) {
+      console.log('  • Testing AWS connection...');
+      connectionTests.push('AWS');
+    }
+    
+    if (process.env.AZURE_CONNECTION_STRING) {
+      console.log('  • Testing Azure connection...');
+      connectionTests.push('Azure');
+    }
+    
+    if (process.env.GCP_PROJECT_ID) {
+      console.log('  • Testing GCP connection...');
+      connectionTests.push('GCP');
+    }
+    
+    console.log(`✅ Preparing to test ${connectionTests.length} services`);
   }
 
   /**

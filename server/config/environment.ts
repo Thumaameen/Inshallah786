@@ -51,25 +51,30 @@ export const environment: Record<string, string | number | boolean> = {
   ETHEREUM_RPC_URL: process.env.ETHEREUM_RPC_URL || 
                     process.env.ETH_RPC_URL ||
                     (process.env.INFURA_API_KEY ? `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}` : '') ||
-                    (process.env.ALCHEMY_API_KEY ? `https://eth-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}` : ''),
+                    (process.env.ALCHEMY_API_KEY ? `https://eth-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}` : '') ||
+                    (process.env.ALCHEMY_ALL_NETWORKS_API_KEY ? `https://eth-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ALL_NETWORKS_API_KEY}` : ''),
   POLYGON_RPC_ENDPOINT: process.env.POLYGON_RPC_ENDPOINT || 
                         process.env.POLYGON_RPC_URL || 
                         process.env.MATIC_RPC_URL ||
                         (process.env.POLYGON_API_KEY ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.POLYGON_API_KEY}` : '') ||
                         (process.env.ALCHEMY_API_KEY ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}` : '') ||
+                        (process.env.ALCHEMY_ALL_NETWORKS_API_KEY ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ALL_NETWORKS_API_KEY}` : '') ||
                         (process.env.INFURA_API_KEY ? `https://polygon-mainnet.infura.io/v3/${process.env.INFURA_API_KEY}` : '') ||
                         'https://polygon-rpc.com', // Public fallback - always available
-  POLYGON_API_KEY: process.env.POLYGON_API_KEY || process.env.ALCHEMY_API_KEY || '',
+  POLYGON_API_KEY: process.env.POLYGON_API_KEY || process.env.ALCHEMY_API_KEY || process.env.ALCHEMY_ALL_NETWORKS_API_KEY || '',
   SOLANA_RPC_URL: process.env.SOLANA_RPC_URL || 
                   process.env.SOLANA_RPC || 
                   process.env.SOL_RPC_URL ||
                   process.env.SOLANA_RPC_ENDPOINT ||
                   (process.env.SOLANA_API_KEY ? `https://solana-mainnet.g.alchemy.com/v2/${process.env.SOLANA_API_KEY}` : '') ||
+                  (process.env.ALCHEMY_ALL_NETWORKS_API_KEY ? `https://solana-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ALL_NETWORKS_API_KEY}` : '') ||
                   'https://api.mainnet-beta.solana.com', // Public fallback - always available
-  SOLANA_API_KEY: process.env.SOLANA_API_KEY || ''
+  SOLANA_API_KEY: process.env.SOLANA_API_KEY || '',
+  SOLANA_RPC_ENDPOINT: process.env.SOLANA_RPC_ENDPOINT || process.env.SOLANA_RPC_URL || '',
   WEB3_PRIVATE_KEY: process.env.WEB3_PRIVATE_KEY || process.env.PRIVATE_KEY || '',
   INFURA_PROJECT_ID: process.env.INFURA_PROJECT_ID || process.env.INFURA_API_KEY || process.env.INFURA_KEY || '',
-  ALCHEMY_API_KEY: process.env.ALCHEMY_API_KEY || process.env.POLYGON_API_KEY || process.env.ALCHEMY_KEY || '',
+  ALCHEMY_API_KEY: process.env.ALCHEMY_API_KEY || process.env.POLYGON_API_KEY || process.env.ALCHEMY_KEY || process.env.ALCHEMY_ALL_NETWORKS_API_KEY || '',
+  ALCHEMY_ALL_NETWORKS_API_KEY: process.env.ALCHEMY_ALL_NETWORKS_API_KEY || process.env.ALCHEMY_API_KEY || '',
   
   // External Services (40+ integrations)
   GITHUB_TOKEN: process.env.GITHUB_TOKEN || '',
@@ -84,15 +89,17 @@ export const environment: Record<string, string | number | boolean> = {
   // Cloud Services (AWS, Azure, GCP) - Optional
   AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID || process.env.AWS_KEY || process.env.AWS_ACCESS_KEY || '',
   AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY || process.env.AWS_SECRET || process.env.AWS_SECRET_KEY || '',
-  AWS_REGION: process.env.AWS_REGION || process.env.AWS_DEFAULT_REGION || 'us-east-1',
+  AWS_REGION: process.env.AWS_REGION || process.env.AWS_DEFAULT_REGION || 'eu-west-1',
   AWS_S3_BUCKET: process.env.AWS_S3_BUCKET || process.env.S3_BUCKET || '',
   AZURE_CLIENT_ID: process.env.AZURE_CLIENT_ID || process.env.AZURE_KEY || process.env.AZURE_APP_ID || '',
   AZURE_CLIENT_SECRET: process.env.AZURE_CLIENT_SECRET || process.env.AZURE_SECRET || process.env.AZURE_PASSWORD || '',
   AZURE_TENANT_ID: process.env.AZURE_TENANT_ID || process.env.AZURE_DIRECTORY_ID || '',
   AZURE_SUBSCRIPTION_ID: process.env.AZURE_SUBSCRIPTION_ID || '',
+  AZURE_CONNECTION_STRING: process.env.AZURE_CONNECTION_STRING || process.env.AZURE_STORAGE_CONNECTION_STRING || '',
   GCP_PROJECT_ID: process.env.GCP_PROJECT_ID || process.env.GOOGLE_CLOUD_PROJECT || process.env.GCP_PROJECT || '',
   GCP_CLIENT_EMAIL: process.env.GCP_CLIENT_EMAIL || '',
   GCP_PRIVATE_KEY: process.env.GCP_PRIVATE_KEY || '',
+  GCP_SERVICE_ACCOUNT: process.env.GCP_SERVICE_ACCOUNT || '',
   GOOGLE_CLOUD_PROJECT: process.env.GOOGLE_CLOUD_PROJECT || process.env.GCP_PROJECT || '',
   GOOGLE_APPLICATION_CREDENTIALS: process.env.GOOGLE_APPLICATION_CREDENTIALS || process.env.GCP_CREDENTIALS || '',
   
@@ -178,6 +185,11 @@ export function validateProductionEnvironment(): void {
     'Gemini AI': environment.GOOGLE_AI_API_KEY as string,
     'Polygon RPC': environment.POLYGON_RPC_ENDPOINT as string,
     'Solana RPC': environment.SOLANA_RPC_URL as string,
+    'Solana RPC Endpoint': environment.SOLANA_RPC_ENDPOINT as string,
+    'Alchemy All Networks': environment.ALCHEMY_ALL_NETWORKS_API_KEY as string,
+    'AWS Access': environment.AWS_ACCESS_KEY_ID as string,
+    'Azure Storage': environment.AZURE_CONNECTION_STRING as string,
+    'GCP Project': environment.GCP_PROJECT_ID as string,
     'SAPS CRC': environment.SAPS_CRC_API_KEY as string
   };
   
