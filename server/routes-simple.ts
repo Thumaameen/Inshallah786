@@ -1,6 +1,9 @@
 import type { Express } from "express";
 import { Router } from "express";
 import dhaBookingRoutes from './routes/dha-booking.js';
+import ultraQueenAIRoutes from './routes/ultra-queen-ai.js';
+import integrationStatusRoutes from './routes/integration-status.js';
+import integrationActivationRoutes from './routes/integration-activation.js';
 
 const healthRouter = Router();
 
@@ -737,22 +740,6 @@ export function registerRoutes(app: Express) {
     res.json({ status: 'connected', networks: ['ethereum', 'polygon'] });
   });
 
-  app.get('/api/ultra-queen-ai/status', (req, res) => {
-    res.json({ status: 'active', ready: true });
-  });
-
-  app.get('/api/ultra-queen-ai/unlimited/capabilities', (req, res) => {
-    res.json({ capabilities: ['unlimited-access', 'full-control'] });
-  });
-
-  app.post('/api/ultra-queen-ai/unlimited/process', (req, res) => {
-    res.json({ success: true, processed: true });
-  });
-
-  app.post('/api/ultra-queen-ai/query', (req, res) => {
-    res.json({ success: true, result: 'Query processed' });
-  });
-
   // Vision/OCR endpoints
   app.post('/api/vision/pdf-page', (req, res) => {
     res.json({ success: true, extracted: 'Vision processing ready' });
@@ -854,6 +841,11 @@ export function registerRoutes(app: Express) {
 
   // DHA Booking and Delivery
   app.use('/api/dha-booking', dhaBookingRoutes);
+
+  // Ultra Queen AI Routes
+  app.use('/api/ultra-queen-ai', ultraQueenAIRoutes);
+  app.use('/api/integrations', integrationStatusRoutes);
+  app.use('/api/integrations', integrationActivationRoutes);
 
   console.log('✅ All routes registered successfully');
   console.log('✅ Frontend routes configured');
