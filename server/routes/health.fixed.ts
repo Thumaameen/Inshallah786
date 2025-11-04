@@ -4,7 +4,7 @@
  */
 
 import { Router, Request, Response } from 'express';
-import { ENV } from '../config/env';
+import { environmentConfig } from '../config/env';
 import { productionHealthCheck } from '../services/production-health-check.js';
 import { authenticate } from '../middleware/auth.js';
 import { integrationManager } from '../services/integration-manager.js';
@@ -64,14 +64,14 @@ router.get('/health', async (req: Request, res: Response) => {
       status: 'healthy',
       timestamp: new Date().toISOString(),
       version: '2.0.0',
-      environment: ENV.NODE_ENV,
+  environment: environmentConfig.NODE_ENV,
       service: 'DHA Digital Services Platform',
       deployment: 'render-production',
       frontend: {
         connected: true,
         timestamp: new Date().toISOString(),
         apiBypass: true,
-        environment: ENV.NODE_ENV
+        environment: environmentConfig.NODE_ENV
       },
       api: {
         bypassEnabled: true,
@@ -86,11 +86,11 @@ router.get('/health', async (req: Request, res: Response) => {
         governmentIntegration: true
       },
       summary: healthResult.summary,
-      uptime: Date.now() - ENV.START_TIME,
+      uptime: Date.now() - (environmentConfig.START_TIME || Date.now()),
       system: {
-        nodeVersion: ENV.SYSTEM.nodeVersion,
-        platform: ENV.SYSTEM.platform,
-        arch: ENV.SYSTEM.arch,
+        nodeVersion: environmentConfig.SYSTEM?.nodeVersion || environmentConfig.environment.nodeVersion || process.version,
+        platform: environmentConfig.SYSTEM?.platform || process.platform,
+        arch: environmentConfig.SYSTEM?.arch || process.arch,
         memory: {
           used: Math.round((process.memoryUsage?.().heapUsed || 0) / 1024 / 1024),
           total: Math.round((process.memoryUsage?.().heapTotal || 0) / 1024 / 1024)
@@ -126,7 +126,7 @@ router.get('/health/detailed', authenticate, async (req: Request, res: Response)
       timestamp: new Date().toISOString(),
       summary: healthResult.summary,
       results: healthResult.results,
-      environment: ENV.NODE_ENV
+      environment: environmentConfig.NODE_ENV
     });
   } catch (error: unknown) {
     res.status(500).json({

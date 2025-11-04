@@ -35,6 +35,12 @@ try {
 interface EnvironmentConfig {
   [x: string]: any;
   NODE_ENV: 'development' | 'production' | 'test';
+  START_TIME?: number;
+  SYSTEM?: {
+    nodeVersion: string;
+    platform: string;
+    arch: string;
+  };
   apiKeys: {
     OPENAI?: string;
     ANTHROPIC?: string;
@@ -52,7 +58,13 @@ interface EnvironmentConfig {
 
 // Initialize environment configuration
 const environmentConfig: EnvironmentConfig = {
-  NODE_ENV: process.env.NODE_ENV as 'development' | 'production' | 'test' || 'production',
+  NODE_ENV: (process.env.NODE_ENV as 'development' | 'production' | 'test') || 'production',
+  START_TIME: process.env.START_TIME ? Number(process.env.START_TIME) : Date.now(),
+  SYSTEM: {
+    nodeVersion: process.env.NODE_VERSION || process.version || 'unknown',
+    platform: process.platform || 'unknown',
+    arch: process.arch || 'unknown'
+  },
   apiKeys: {
     OPENAI: process.env.OPENAI_API_KEY || '',
     ANTHROPIC: process.env.ANTHROPIC_API_KEY || '',
@@ -64,7 +76,7 @@ const environmentConfig: EnvironmentConfig = {
     ICAO: process.env.ICAO_PKD_KEY || ''
   },
   environment: {
-    nodeVersion: process.env.NODE_VERSION || '20.19.1'
+    nodeVersion: process.env.NODE_VERSION || process.version || '20.19.1'
   }
 };
 

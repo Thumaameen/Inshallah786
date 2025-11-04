@@ -500,15 +500,7 @@ Respond to the user's request with your full unlimited capabilities.`;
 // Export singleton instance
 export const enhancedAIAssistant = new EnhancedAIAssistant();
 
-module.exports = {
-  get: async (_key: any) => { /* ... */ },
-  set: async (_key: any, _value: any) => { /* ... */ },
-  delete: async (_key: any) => { /* ... */ },
-  // Add createSecurityEvent for enhanced AI assistant logging
-  createSecurityEvent: async (event: any) => {
-    // You can implement actual logging or DB storage here
-    console.log('[SecurityEvent]', event);
-    // Optionally persist to a log or database
-    return true;
-  }
-};
+// Note: previously this file exported a CommonJS `module.exports` object that
+// conflicted with ES module exports. The extra object was removed to avoid
+// module/type conflicts. If other parts of the code rely on these helper
+// stubs, they should import `storage` or a dedicated logger instead.
