@@ -135,7 +135,7 @@ ${processedPrompt}`;
       // Combine results
       const successfulResults = allResults
         .filter(r => r.status === 'fulfilled' && (r.value as any).success)
-        .map(r => (r.value as any));
+        .map(r => r.status === 'fulfilled' ? r.value : undefined)
 
       result = {
         success: successfulResults.length > 0,
@@ -282,7 +282,7 @@ router.post('/quantum', authenticate, async (req: Request, res: Response) => {
 });
 
 // Self-upgrade endpoint
-router.post('/self-upgrade', authenticate, requireRole('admin'), async (req: Request, res: Response) => {
+router.post('/self-upgrade', authenticate, requireRole(['admin']), async (req: Request, res: Response) => {
   try {
     const result = await ultraQueenAI.performSelfUpgrade();
 

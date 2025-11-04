@@ -89,7 +89,7 @@ router.post('/global-search', authenticate, async (req: Request, res: Response) 
 });
 
 // Execute blockchain transaction on government network
-router.post('/blockchain/execute', authenticate, requireRole('admin'), async (req: Request, res: Response) => {
+router.post('/blockchain/execute', authenticate, requireRole(['admin']), async (req: Request, res: Response) => {
   try {
     const { network, contractAddress, method, params } = req.body;
     
