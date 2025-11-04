@@ -168,7 +168,7 @@ export class ProductionAPIActivator {
               'content-type': 'application/json'
             },
             body: JSON.stringify({
-              model: 'claude-3-sonnet-20240229',
+              model: 'claude-3-5-sonnet-20241022',
               max_tokens: 1,
               messages: [{ role: 'user', content: 'test' }]
             }),
@@ -181,6 +181,61 @@ export class ProductionAPIActivator {
             signal: AbortSignal.timeout(5000)
           });
           return geminiResponse.ok;
+
+        case 'Mistral':
+          const mistralResponse = await fetch('https://api.mistral.ai/v1/models', {
+            headers: { 'Authorization': `Bearer ${apiKey}` },
+            signal: AbortSignal.timeout(5000)
+          });
+          return mistralResponse.ok;
+
+        case 'Perplexity':
+          const perplexityResponse = await fetch('https://api.perplexity.ai/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${apiKey}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              model: 'llama-3.1-sonar-small-128k-online',
+              messages: [{ role: 'user', content: 'test' }],
+              max_tokens: 1
+            }),
+            signal: AbortSignal.timeout(5000)
+          });
+          return perplexityResponse.ok || perplexityResponse.status === 400;
+
+        case 'XAI':
+          const xaiResponse = await fetch('https://api.x.ai/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${apiKey}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              model: 'grok-beta',
+              messages: [{ role: 'user', content: 'test' }],
+              max_tokens: 1
+            }),
+            signal: AbortSignal.timeout(5000)
+          });
+          return xaiResponse.ok || xaiResponse.status === 400;
+
+        case 'Polygon RPC':
+        case 'Solana RPC':
+        case 'Ethereum RPC':
+          const rpcResponse = await fetch(apiKey, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              jsonrpc: '2.0',
+              method: provider.includes('Solana') ? 'getHealth' : 'eth_blockNumber',
+              params: [],
+              id: 1
+            }),
+            signal: AbortSignal.timeout(5000)
+          });
+          return rpcResponse.ok;
 
         default:
           return false;

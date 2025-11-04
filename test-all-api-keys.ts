@@ -127,6 +127,87 @@ async function testGemini(): Promise<TestResult> {
   }
 }
 
+async function testMistral(): Promise<TestResult> {
+  const start = Date.now();
+  try {
+    if (!process.env.MISTRAL_API_KEY) {
+      return { provider: 'Mistral', status: 'missing', message: 'API key not configured' };
+    }
+
+    const response = await fetch('https://api.mistral.ai/v1/models', {
+      headers: { 'Authorization': `Bearer ${process.env.MISTRAL_API_KEY}` }
+    });
+
+    const responseTime = Date.now() - start;
+    
+    if (response.ok) {
+      return { 
+        provider: 'Mistral', 
+        status: 'success', 
+        message: 'Live and working',
+        responseTime 
+      };
+    } else {
+      return { 
+        provider: 'Mistral', 
+        status: 'failed', 
+        message: `HTTP ${response.status}: ${response.statusText}` 
+      };
+    }
+  } catch (error) {
+    return { 
+      provider: 'Mistral', 
+      status: 'failed', 
+      message: error instanceof Error ? error.message : 'Unknown error' 
+    };
+  }
+}
+
+async function testPerplexity(): Promise<TestResult> {
+  const start = Date.now();
+  try {
+    if (!process.env.PERPLEXITY_API_KEY) {
+      return { provider: 'Perplexity', status: 'missing', message: 'API key not configured' };
+    }
+
+    const response = await fetch('https://api.perplexity.ai/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.PERPLEXITY_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'llama-3.1-sonar-small-128k-online',
+        messages: [{ role: 'user', content: 'test' }],
+        max_tokens: 1
+      })
+    });
+
+    const responseTime = Date.now() - start;
+    
+    if (response.ok || response.status === 400) {
+      return { 
+        provider: 'Perplexity', 
+        status: 'success', 
+        message: 'Live and working',
+        responseTime 
+      };
+    } else {
+      return { 
+        provider: 'Perplexity', 
+        status: 'failed', 
+        message: `HTTP ${response.status}: ${response.statusText}` 
+      };
+    }
+  } catch (error) {
+    return { 
+      provider: 'Perplexity', 
+      status: 'failed', 
+      message: error instanceof Error ? error.message : 'Unknown error' 
+    };
+  }
+}
+
 async function runAllTests() {
   console.log('\n🧪 COMPREHENSIVE API KEY TESTING');
   console.log('='.repeat(70));
@@ -135,7 +216,9 @@ async function runAllTests() {
   const results = await Promise.all([
     testOpenAI(),
     testAnthropic(),
-    testGemini()
+    testGemini(),
+    testMistral(),
+    testPerplexity()
   ]);
 
   results.forEach(result => {
