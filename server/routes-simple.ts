@@ -99,6 +99,32 @@ dhaRouter.get('/templates', (req, res) => {
     templates: [
 
 
+  'Birth Certificate',
+      'Death Certificate',
+      'Marriage Certificate',
+      'Divorce Certificate',
+      'ID Document',
+      'Passport',
+      'Visa',
+      'Work Permit',
+      'Study Permit',
+      'Permanent Residence',
+      'Certificate of Naturalization',
+      'DHA-802 Form',
+      'BI-1738 Form',
+      'Travel Document',
+      'Refugee Status',
+      'Asylum Application',
+      'Certificate of No Impediment',
+      'Letter of Authority',
+      'Apostille Certificate',
+      'Authentication Certificate',
+      'Verification Letter'
+    ],
+    message: 'DHA templates ready'
+  });
+});
+
   // Comprehensive Endpoint Testing
   app.get('/api/test/endpoints', async (req, res) => {
     const endpoints = [
@@ -152,32 +178,6 @@ dhaRouter.get('/templates', (req, res) => {
       timestamp: new Date().toISOString()
     });
   });
-
-      'Birth Certificate',
-      'Death Certificate',
-      'Marriage Certificate',
-      'Divorce Certificate',
-      'ID Document',
-      'Passport',
-      'Visa',
-      'Work Permit',
-      'Study Permit',
-      'Permanent Residence',
-      'Certificate of Naturalization',
-      'DHA-802 Form',
-      'BI-1738 Form',
-      'Travel Document',
-      'Refugee Status',
-      'Asylum Application',
-      'Certificate of No Impediment',
-      'Letter of Authority',
-      'Apostille Certificate',
-      'Authentication Certificate',
-      'Verification Letter'
-    ],
-    message: 'DHA templates ready'
-  });
-});
 
 dhaRouter.post('/validate', (req, res) => {
   res.json({
