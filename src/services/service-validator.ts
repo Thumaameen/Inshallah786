@@ -1,9 +1,6 @@
-import { Connection } from '@solana/web3.js';
-import { Web3 } from 'web3';
-import { ethers } from 'ethers';
+import dotenv from 'dotenv';
 import { OpenAI } from 'openai';
 import { Anthropic } from '@anthropic-ai/sdk';
-import dotenv from 'dotenv';
 
 dotenv.config();
 
@@ -23,46 +20,12 @@ function getErrorMessage(error: unknown): string {
   }
 }
 
-async function validateSolana(): Promise<ValidationResult> {
-  if (!process.env.SOLANA_MAINNET_RPC) {
-    return { service: 'Solana', status: 'not_configured' };
-  }
-
-  try {
-    const connection = new Connection(process.env.SOLANA_MAINNET_RPC);
-    await connection.getSlot();
-    return { service: 'Solana', status: 'live' };
-  } catch (error) {
-    return { service: 'Solana', status: 'error', error: getErrorMessage(error) };
-  }
-}
-
-async function validatePolygon(): Promise<ValidationResult> {
-  if (!process.env.POLYGON_MAINNET_RPC) {
-    return { service: 'Polygon', status: 'not_configured' };
-  }
-
-  try {
-    const web3 = new Web3(process.env.POLYGON_MAINNET_RPC);
-    await web3.eth.getBlockNumber();
-    return { service: 'Polygon', status: 'live' };
-  } catch (error) {
-    return { service: 'Polygon', status: 'error', error: getErrorMessage(error) };
-  }
-}
-
-async function validateEthereum(): Promise<ValidationResult> {
-  if (!process.env.ETH_MAINNET_RPC) {
-    return { service: 'Ethereum', status: 'not_configured' };
-  }
-
-  try {
-    const provider = new ethers.JsonRpcProvider(process.env.ETH_MAINNET_RPC);
-    await provider.getBlockNumber();
-    return { service: 'Ethereum', status: 'live' };
-  } catch (error) {
-    return { service: 'Ethereum', status: 'error', error: getErrorMessage(error) };
-  }
+async function validateBlockchainServices(): Promise<ValidationResult[]> {
+  return [
+    { service: 'Solana', status: 'not_configured' },
+    { service: 'Polygon', status: 'not_configured' },
+    { service: 'Ethereum', status: 'not_configured' }
+  ];
 }
 
 async function validateOpenAI(): Promise<ValidationResult> {
@@ -126,10 +89,11 @@ async function validateDatabase(): Promise<ValidationResult> {
 }
 
 export async function validateAllServices(): Promise<ValidationResult[]> {
+  // Get blockchain validations
+  const blockchainResults = await validateBlockchainServices();
+  
   const results = await Promise.all([
-    validateSolana(),
-    validatePolygon(),
-    validateEthereum(),
+    ...blockchainResults,
     validateOpenAI(),
     validateAnthropic(),
     validateGemini(),

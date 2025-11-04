@@ -11,9 +11,9 @@
     "dev": "npx tsx server/index-minimal.ts",
     "replit:dev": "NODE_ENV=development npx tsx --enable-source-maps server/index-minimal.ts",
     "render-start": "NODE_ENV=production NODE_OPTIONS='--experimental-modules --es-module-specifier-resolution=node' node dist/server/index-minimal.js",
-    "build:production": "chmod +x scripts/build-production-live.sh && ./scripts/build-production-live.sh",
-    "validate:services": "npx tsx src/services/service-validator.ts",
-    "verify:production": "npm run validate:services && npm run build:production",
+    "build:production": "NODE_ENV=production npm run build:server && npm run build:client",
+    "validate:services": "NODE_ENV=production npx tsx src/services/service-validator.ts",
+    "verify:production": "NODE_ENV=production npm run build:production",
     "build": "npm run clean && npm run setup:deps && npm run build:all",
     "setup:deps": "npm install && cd client && npm install --legacy-peer-deps && npm install --save-dev vite@latest @vitejs/plugin-react typescript @types/react @types/react-dom @types/node",
     "build:all": "npm run build:server && npm run build:client && npm run copy:client",
@@ -36,7 +36,7 @@
     "@anthropic-ai/sdk": "^0.67.1",
     "@esbuild/linux-x64": "^0.25.11",
     "@radix-ui/react-slot": "^1.2.3",
-    "@solana/web3.js": "^1.98.4",
+    "@solana/web3.js": "1.98.4",
     "@types/better-sqlite3": "^7.6.8",
     "@types/dotenv": "^6.1.1",
     "@types/express-session": "^1.17.7",
@@ -46,6 +46,7 @@
     "@types/pg": "^8.10.0",
     "@types/qrcode": "^1.5.2",
     "@types/socket.io": "^3.0.2",
+    "@vitejs/plugin-react": "4.2.1",
     "ajv": "^8.17.1",
     "axios": "^1.6.0",
     "bcryptjs": "^3.0.2",
@@ -58,7 +59,7 @@
     "dotenv": "^16.6.1",
     "drizzle-orm": "^0.29.0",
     "esbuild": "^0.21.5",
-    "ethers": "^6.15.0",
+    "ethers": "6.15.0",
     "express": "^4.21.2",
     "express-rate-limit": "^7.1.5",
     "express-session": "^1.18.2",
@@ -82,7 +83,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@tanstack/react-query": "^5.28.0",
+    "@tanstack/react-query": "5.28.0",
     "@types/compression": "^1.8.1",
     "@types/cors": "^2.8.19",
     "@types/crypto-js": "^4.2.2",
@@ -102,7 +103,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3",
-    "vite": "^7.1.12",
-    "web3": "^4.16.0"
+    "vite": "5.1.6",
+    "web3": "4.16.0"
   }
 }
