@@ -31,7 +31,7 @@ export async function apiRequest<T = any>(
   url: string,
   options: RequestInit = {},
 ): Promise<T> {
-  const { method = 'GET', body, headers: customHeaders = {} } = options;
+  const { method = 'GET', data, headers: customHeaders = {} } = options;
   const token = localStorage.getItem("authToken");
   const headers: HeadersInit = {};
   

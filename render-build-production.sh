@@ -9,9 +9,16 @@ echo ""
 # CRITICAL: Production environment setup
 export NODE_ENV=production
 export RENDER=true
-# Allow newer Node versions
-export NODE_VERSION=$(node -v | sed 's/v//')
+export NODE_VERSION=20.19.1
+export NPM_VERSION=10.2.3
 export NPM_CONFIG_PRODUCTION=false
+
+# Enforce Node.js version
+if [ "$(node -v)" != "v$NODE_VERSION" ]; then
+    echo "❌ Error: Required Node.js version v$NODE_VERSION not found"
+    echo "Current version: $(node -v)"
+    exit 1
+fi
 
 echo "🔍 Environment Check:"
 echo "  NODE_ENV=$NODE_ENV"
