@@ -223,7 +223,7 @@ services:
     env: node
     plan: starter
     region: frankfurt
-    nodeVersion: "20.19.0"
+    nodeVersion: "20.19.1"
     buildCommand: npm install --legacy-peer-deps
     startCommand: node server/workers/monitoring-worker.cjs
     envVars:
@@ -273,7 +273,7 @@ services:
     env: node
     region: frankfurt
     plan: starter
-    nodeVersion: "20.19.0"
+    nodeVersion: "20.19.1"
     schedule: "*/15 * * * *"
     buildCommand: npm install --legacy-peer-deps
     startCommand: node server/workers/scheduled-tasks.cjs

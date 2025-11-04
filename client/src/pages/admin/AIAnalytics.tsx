@@ -15,10 +15,11 @@ import {
 import {
   Brain, TrendingUp, AlertTriangle, FileText, Users, Clock,
   Activity, Shield, Target, Zap, BarChart3, PieChartIcon,
-  BrainCircuit, Sparkles, Bot, ChartBar, AlertCircle, CheckCircle
+  BrainCircuit, Sparkles, Bot, AlertCircle, CheckCircle
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
+import type { AnalyticsResponse } from '@/types/api';
 
 interface PredictiveData {
   date: string;
@@ -71,6 +72,7 @@ export default function AIAnalytics() {
     queryFn: async () => {
       const response = await fetch(`/api/ai/predictive-analytics?timeframe=${selectedTimeframe}&metric=${selectedMetric}`, {
         headers: {
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem("auth_token")}`
         }
       });
@@ -85,6 +87,7 @@ export default function AIAnalytics() {
     queryFn: async () => {
       const response = await fetch(`/api/ai/trend-analysis?timeframe=${selectedTimeframe}`, {
         headers: {
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem("auth_token")}`
         }
       });
@@ -99,6 +102,7 @@ export default function AIAnalytics() {
     queryFn: async () => {
       const response = await fetch("/api/ai/performance-recommendations", {
         headers: {
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem("auth_token")}`
         }
       });
@@ -113,6 +117,7 @@ export default function AIAnalytics() {
     queryFn: async () => {
       const response = await fetch(`/api/ai/user-behavior-insights?timeframe=${selectedTimeframe}`, {
         headers: {
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem("auth_token")}`
         }
       });
@@ -127,12 +132,14 @@ export default function AIAnalytics() {
     queryFn: async () => {
       const response = await apiRequest("/api/ai/detect-anomalies", {
         method: "POST",
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           data: performanceData?.metrics || [],
           dataType: "system_metrics"
         })
       });
-      return response;
+      const data: AnalyticsResponse = await response;
+      return data;
     },
     enabled: !!performanceData
   });
@@ -142,6 +149,7 @@ export default function AIAnalytics() {
     mutationFn: async () => {
       return apiRequest("/api/ai/generate-report", {
         method: "POST",
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           timeframe: selectedTimeframe,
           includeRecommendations: true,

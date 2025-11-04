@@ -5,10 +5,10 @@
 
 /* Custom styles */
 :root {
-  /* Base Colors - Enhanced Contrast */
-  --queen-gold: #ffd700;
-  --queen-gold-light: #ffed4a;
-  --queen-gold-dark: #e6c200;
+  /* Base Colors - Enhanced Contrast with Better Visibility */
+  --queen-gold: #f59e0b;
+  --queen-gold-light: #fbbf24;
+  --queen-gold-dark: #d97706;
   --queen-black: #111111;
   --queen-gray: #374151;
   --queen-dark-blue: #1e3a8a;

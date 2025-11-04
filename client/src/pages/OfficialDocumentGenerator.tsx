@@ -472,9 +472,11 @@ export default function OfficialDocumentGenerator() {
                     onClick={() => {
                       if (batchMode && selectedDocuments.length > 0) {
                         // Switch to form tab
-                        document.querySelector('[value="form"]')?.click();
+                        const formTab = document.querySelector('[value="form"]') as HTMLElement;
+                        formTab?.click();
                       } else if (selectedDocument) {
-                        document.querySelector('[value="form"]')?.click();
+                        const formTab = document.querySelector('[value="form"]') as HTMLElement;
+                        formTab?.click();
                       } else {
                         toast({
                           title: "No Document Selected",

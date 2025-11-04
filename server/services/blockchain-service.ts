@@ -11,40 +11,60 @@ export class BlockchainService {
   constructor() {
     // Using configured RPC endpoints - graceful degradation if not configured
     this.ethereumRPC = this.validateRPCUrl(process.env.ETHEREUM_RPC_URL, 'Ethereum') || '';
-    
+
     // Polygon RPC with multiple fallback options from environment
-    const polygonRpc = process.env.POLYGON_RPC_ENDPOINT || 
-                       process.env.POLYGON_RPC_URL || 
-                       process.env.MATIC_RPC_URL ||
-                       (process.env.POLYGON_API_KEY ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.POLYGON_API_KEY}` : '') ||
-                       (process.env.ALCHEMY_API_KEY ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}` : '') ||
-                       (process.env.INFURA_API_KEY ? `https://polygon-mainnet.infura.io/v3/${process.env.INFURA_API_KEY}` : '') ||
-                       'https://polygon-rpc.com'; // Public fallback
+    let polygonRpc = process.env.POLYGON_RPC_ENDPOINT || process.env.POLYGON_RPC_URL || process.env.MATIC_RPC_URL;
+    
+    // If no full URL provided, construct from API key
+    if (!polygonRpc || polygonRpc === 'undefined' || polygonRpc.includes('YOUR_')) {
+      const apiKey = process.env.POLYGON_API_KEY || process.env.ALCHEMY_API_KEY || process.env.ALCHEMY_ALL_NETWORKS_API_KEY;
+      if (apiKey && apiKey !== 'undefined' && !apiKey.includes('YOUR_')) {
+        polygonRpc = `https://polygon-mainnet.g.alchemy.com/v2/${apiKey}`;
+      } else if (process.env.INFURA_API_KEY && process.env.INFURA_API_KEY !== 'undefined') {
+        polygonRpc = `https://polygon-mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`;
+      } else {
+        polygonRpc = 'https://polygon-rpc.com'; // Public fallback
+      }
+    }
     this.polygonRPC = this.validateRPCUrl(polygonRpc, 'Polygon') || 'https://polygon-rpc.com';
-    
+
     // Solana RPC with multiple fallback options from environment
-    const solanaRpc = process.env.SOLANA_RPC_URL || 
-                      process.env.SOLANA_RPC ||
-                      process.env.SOL_RPC_URL ||
-                      process.env.SOLANA_RPC_ENDPOINT || // Added for Render compatibility
-                      (process.env.SOLANA_API_KEY ? `https://solana-mainnet.g.alchemy.com/v2/${process.env.SOLANA_API_KEY}` : '') ||
-                      'https://api.mainnet-beta.solana.com'; // Public fallback
+    let solanaRpc = process.env.SOLANA_RPC_URL || process.env.SOLANA_RPC || process.env.SOL_RPC_URL || process.env.SOLANA_RPC_ENDPOINT;
+    
+    // If no full URL provided, construct from API key
+    if (!solanaRpc || solanaRpc === 'undefined' || solanaRpc.includes('YOUR_')) {
+      const apiKey = process.env.SOLANA_API_KEY || process.env.ALCHEMY_ALL_NETWORKS_API_KEY;
+      if (apiKey && apiKey !== 'undefined' && !apiKey.includes('YOUR_')) {
+        solanaRpc = `https://solana-mainnet.g.alchemy.com/v2/${apiKey}`;
+      } else {
+        solanaRpc = 'https://api.mainnet-beta.solana.com'; // Public fallback
+      }
+    }
     this.solanaRPC = this.validateRPCUrl(solanaRpc, 'Solana') || 'https://api.mainnet-beta.solana.com';
+
+    // Log the actual URLs being used (with partial info for debugging)
+    const maskUrl = (url: string) => {
+      if (!url) return 'Not configured';
+      if (url.includes('alchemy.com/v2/')) {
+        const parts = url.split('/v2/');
+        return `${parts[0]}/v2/${parts[1]?.substring(0, 10)}***`;
+      }
+      return url;
+    };
     
-    // Log the actual URLs being used (without exposing API keys)
-    console.log('[Blockchain] Polygon RPC:', this.polygonRPC.includes('alchemy') ? 'Alchemy (configured)' : this.polygonRPC.includes('infura') ? 'Infura (configured)' : this.polygonRPC);
-    console.log('[Blockchain] Solana RPC:', this.solanaRPC.includes('alchemy') ? 'Alchemy (configured)' : this.solanaRPC);
-    
+    console.log('[Blockchain] Polygon RPC:', maskUrl(this.polygonRPC));
+    console.log('[Blockchain] Solana RPC:', maskUrl(this.solanaRPC));
+
     // Zora has a public RPC, so it can be used without configuration
     this.zoraRPC = 'https://rpc.zora.energy';
-    
+
     // Log blockchain configuration status
     console.log('🔗 Blockchain Configuration:');
     console.log(`  Ethereum: ${this.ethereumRPC ? '✅ Configured' : '⚠️  Not configured'}`);
     console.log(`  Polygon: ${this.polygonRPC ? '✅ Configured' : '⚠️  Using public RPC'}`);
     console.log(`  Solana: ${this.solanaRPC ? '✅ Configured' : '⚠️  Using public RPC'}`);
     console.log(`  Zora: ✅ Public RPC`);
-    
+
     if (!this.ethereumRPC && !this.polygonRPC && !this.solanaRPC) {
       console.warn('⚠️ [Blockchain] No blockchain RPC endpoints configured. Blockchain features will be limited.');
       console.warn('   Configure ETHEREUM_RPC_URL, POLYGON_RPC_URL, and/or SOLANA_RPC_URL for full functionality.');
@@ -72,7 +92,7 @@ export class BlockchainService {
         error: 'Ethereum RPC not configured - set ETHEREUM_RPC_URL environment variable'
       };
     }
-    
+
     try {
       // Make RPC call to check connection
       const response = await fetch(this.ethereumRPC, {
@@ -89,7 +109,7 @@ export class BlockchainService {
       if (response.ok) {
         const data = await response.json();
         const blockNumber = parseInt(data.result, 16);
-        
+
         return {
           connected: true,
           chainId: 1,
@@ -102,7 +122,7 @@ export class BlockchainService {
     } catch (error) {
       console.error('Ethereum connection error:', error);
     }
-    
+
     return {
       connected: false,
       error: 'Connection failed'
@@ -117,7 +137,7 @@ export class BlockchainService {
         rpcUrl: 'https://polygon-rpc.com'
       };
     }
-    
+
     try {
       const response = await fetch(this.polygonRPC, {
         method: 'POST',
@@ -137,7 +157,7 @@ export class BlockchainService {
           throw new Error(data.error.message || 'RPC error');
         }
         const blockNumber = parseInt(data.result, 16);
-        
+
         return {
           connected: true,
           chainId: 137,
@@ -155,7 +175,7 @@ export class BlockchainService {
         console.log('🔄 Switched to public Polygon RPC fallback');
       }
     }
-    
+
     return {
       connected: false,
       error: 'Connection failed - using public RPC',
@@ -179,7 +199,7 @@ export class BlockchainService {
       if (response.ok) {
         const data = await response.json();
         const blockNumber = parseInt(data.result, 16);
-        
+
         return {
           connected: true,
           chainId: 7777777,
@@ -191,7 +211,7 @@ export class BlockchainService {
     } catch (error) {
       console.error('Zora connection error:', error);
     }
-    
+
     return {
       connected: false,
       error: 'Connection failed'
@@ -237,7 +257,7 @@ export class BlockchainService {
     } catch (error) {
       console.error(`Error getting balance for ${address}:`, error);
     }
-    
+
     return '0.000000';
   }
 
@@ -274,7 +294,7 @@ export class BlockchainService {
       if (response.ok) {
         const data = await response.json();
         const tx = data.result;
-        
+
         if (tx) {
           return {
             hash: tx.hash,
@@ -289,7 +309,7 @@ export class BlockchainService {
     } catch (error) {
       console.error(`Error getting transaction ${txHash}:`, error);
     }
-    
+
     return null;
   }
 

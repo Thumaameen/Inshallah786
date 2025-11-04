@@ -26,5 +26,5 @@ echo "✅ All pre-flight checks passed"
 echo "✅ Starting server on ${HOST}:${PORT}..."
 echo ""
 
-# Start the server
-node dist/server/index-minimal.js
+# Start the server with production environment
+exec node dist/server/index-minimal.js

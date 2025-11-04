@@ -274,7 +274,20 @@ export class CompletePDFGenerationService {
     controlNumber: string
   ): Promise<Buffer> {
     return new Promise((resolve, reject) => {
-      const doc = new PDFKit({ // Changed to PDFKit
+      const doc = new PDFKit({
+        size: 'A4',
+        margins: { top: 50, bottom: 50, left: 50, right: 50 },
+        info: {
+          Title: this.getDocumentTitle(options.documentType),
+          Author: 'Department of Home Affairs',
+          Subject: options.documentType.replace(/_/g, ' ').toUpperCase(),
+          Creator: 'DHA Digital Services',
+          Producer: 'DHA PDF Generator v2.0',
+          CreationDate: new Date()
+        },
+        pdfVersion: '1.7',
+        compress: true
+      });
         size: 'A4',
         margin: 30,
         info: {
