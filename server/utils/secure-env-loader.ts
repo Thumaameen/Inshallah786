@@ -179,7 +179,6 @@ export class SecureEnvLoader {
       console.warn(`⚠️ WARNING: Only ${workingCount}/${totalCount} APIs are working`);
     } else {
       console.log('✅ All configured APIs are working correctly');
-    }gured');
     }
   }
 }

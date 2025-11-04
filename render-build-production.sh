@@ -123,14 +123,18 @@ ls -la dist/public/ || true
 # Verify critical files
 echo "✅ Verifying build..."
 if [ ! -f "dist/server/index-minimal.js" ]; then
-  echo "❌ Server build failed"
+  echo "❌ Server build failed - dist/server/index-minimal.js not found"
+  ls -la dist/server/ || echo "dist/server directory not found"
   exit 1
 fi
 
 if [ ! -f "dist/public/index.html" ]; then
   echo "❌ Client build failed - dist/public/index.html not found"
+  ls -la dist/public/ || echo "dist/public directory not found"
   exit 1
 fi
 
 echo "✅ Build Complete!"
-echo "📦 Build output ready for deployment"
+echo "📦 Server entry point: dist/server/index-minimal.js"
+echo "📦 Client build: dist/public/"
+echo "✅ Ready for production deployment"
