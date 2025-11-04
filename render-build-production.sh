@@ -26,11 +26,14 @@ echo "  RENDER=$RENDER"
 echo "  NODE_VERSION=$NODE_VERSION"
 echo ""
 
-# Node.js configuration - matching successful deployment
+# Node.js configuration - optimized for production
 export NODE_OPTIONS="--max-old-space-size=4096 --experimental-modules --es-module-specifier-resolution=node"
 export SKIP_PREFLIGHT_CHECK=true
 export TSC_COMPILE_ON_ERROR=true
 export DISABLE_ESLINT_PLUGIN=true
+export VITE_DISABLE_OPTIMIZER=false
+export VITE_MINIFY=true
+export VITE_SOURCE_MAP=false
 
 # Ensure ES modules are handled correctly
 echo "📦 Configuring build system..."
