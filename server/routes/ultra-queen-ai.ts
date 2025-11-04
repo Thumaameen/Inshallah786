@@ -132,15 +132,36 @@ ${processedPrompt}`;
         )
       );
 
+      // Define the expected AI response type
+      type AIResponse = {
+        success: boolean;
+        provider: string;
+        content: string;
+        model: string;
+        usage: any;
+      };
+
+      // Helper function to check if a value is an AIResponse
+      function isAIResponse(value: any): value is AIResponse {
+        return value 
+          && typeof value === 'object'
+          && 'success' in value 
+          && 'provider' in value 
+          && 'content' in value;
+      }
+
       // Combine results
       const successfulResults = allResults
-        .filter(r => r.status === 'fulfilled' && (r.value as any).success)
-        .map(r => (r.value as any));
+        .filter((r): r is PromiseFulfilledResult<any> => 
+          r.status === 'fulfilled')
+        .map(r => r.value)
+        .filter(isAIResponse)
+        .filter(r => r.success);
 
       result = {
         success: successfulResults.length > 0,
         content: successfulResults.map(r => 
-          `[${r.provider?.toUpperCase() || 'AI'}]: ${r.content}`
+          `[${r.provider.toUpperCase()}]: ${r.content}`
         ).join('\n\n---\n\n'),
         provider: 'Multi-Provider (Max Ultra Power)',
         providers: successfulResults.map(r => r.provider),
@@ -282,7 +303,7 @@ router.post('/quantum', authenticate, async (req: Request, res: Response) => {
 });
 
 // Self-upgrade endpoint
-router.post('/self-upgrade', authenticate, requireRole('admin'), async (req: Request, res: Response) => {
+router.post('/self-upgrade', authenticate, requireRole(['admin']), async (req: Request, res: Response) => {
   try {
     const result = await ultraQueenAI.performSelfUpgrade();
 

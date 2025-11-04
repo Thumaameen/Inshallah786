@@ -8,16 +8,21 @@ services:
     region: frankfurt
     plan: starter
     buildCommand: bash render-build-production.sh
-    startCommand: NODE_ENV=production NODE_OPTIONS='--max-old-space-size=4096 --experimental-modules --es-module-specifier-resolution=node' node dist/server/index.js
+    startCommand: npm run render-start
     healthCheckPath: /api/health
     autoDeploy: true
     healthCheckTimeout: 180
     healthCheckInterval: 15
     pullRequestPreviewsEnabled: true
     scaling:
-      minInstances: 2
-      maxInstances: 5
-      targetMemoryPercent: 75
+      minInstances: 3
+      maxInstances: 10
+      targetMemoryPercent: 70
+      targetCPUPercent: 65
+    optimization:
+      performance: maximum
+      realData: true
+      enhancedAI: true
       targetCPUPercent: 65
     envVars:
       - key: NODE_VERSION

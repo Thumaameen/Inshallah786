@@ -309,13 +309,13 @@ try {
   const monitoringModule = await import('./monitoring/monitoring-middleware.js');
   const routesModule = await import('./monitoring/monitoring-routes.js');
   
-  const monitoringMiddleware = monitoringModule.default || monitoringModule;
-  const monitoringRoutes = routesModule.default || routesModule;
+  const { monitoringMiddleware } = monitoringModule;
+  const { monitoringRoutes } = routesModule;
   
   if (typeof monitoringMiddleware === 'function') {
     app.use(monitoringMiddleware);
-  } else if (monitoringMiddleware && typeof monitoringMiddleware.middleware === 'function') {
-    app.use(monitoringMiddleware.middleware);
+  } else if (monitoringMiddleware && typeof monitoringMiddleware === 'function') {
+    app.use(monitoringMiddleware);
   }
   
   if (monitoringRoutes && typeof monitoringRoutes === 'object') {

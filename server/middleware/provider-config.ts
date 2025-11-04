@@ -53,8 +53,8 @@ const detectEnvironmentWithLogging = (context: string) => {
     return 'development';
   }
 
-  // Failsafe: If NODE_ENV is not set or is empty, default to development
-  if (!process.env.NODE_ENV || process.env.NODE_ENV === '') {
+  // Failsafe: If NODE_ENV is not set, default to development
+  if (!process.env.NODE_ENV) {
     console.log(`🔧 [ENV DEBUG] NODE_ENV not set - defaulting to development mode`);
     process.env.NODE_ENV = 'development';
     return 'development';

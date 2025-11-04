@@ -6,6 +6,15 @@ import type { User } from "../mem-storage.js";
 import { privacyProtectionService } from "../services/privacy-protection.js";
 import { getConfig } from "./provider-config.js";
 
+// Extend Express Request type
+declare global {
+  namespace Express {
+    interface Request {
+      user?: AuthenticatedUser;
+    }
+  }
+}
+
 // SECURITY: JWT_SECRET now comes from centralized configuration service
 // No hardcoded fallbacks - production will fail fast if not properly configured
 const config = getConfig();
@@ -164,10 +173,17 @@ export async function requireApiKey(req: Request, res: Response, next: NextFunct
     let matchedKey = null;
 
     for (const storedKey of allApiKeys) {
-      const isMatch = await bcryptjs.compare(apiKey, storedKey.keyHash);
-      if (isMatch) {
-        matchedKey = storedKey;
-        break;
+      // storedKey may contain `keyHash` or `key` depending on storage implementation
+      const hashed = String((storedKey as any).keyHash || (storedKey as any).key || '');
+      try {
+        const isMatch = await bcryptjs.compare(apiKey, hashed);
+        if (isMatch) {
+          matchedKey = storedKey;
+          break;
+        }
+      } catch (err) {
+        // If compare fails for any reason, continue to next key
+        continue;
       }
     }
 
