@@ -8,7 +8,7 @@ services:
     region: frankfurt
     plan: starter
     buildCommand: bash render-build-production.sh
-    startCommand: npm run render-start
+    startCommand: node dist/server/index-minimal.js
     healthCheckPath: /api/health
     autoDeploy: true
     healthCheckTimeout: 180
