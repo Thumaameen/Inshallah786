@@ -13,27 +13,47 @@ export class BlockchainService {
     this.ethereumRPC = this.validateRPCUrl(process.env.ETHEREUM_RPC_URL, 'Ethereum') || '';
 
     // Polygon RPC with multiple fallback options from environment
-    const polygonRpc = process.env.POLYGON_RPC_ENDPOINT || 
-                       process.env.POLYGON_RPC_URL || 
-                       process.env.MATIC_RPC_URL ||
-                       (process.env.POLYGON_API_KEY ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.POLYGON_API_KEY}` : '') ||
-                       (process.env.ALCHEMY_API_KEY ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}` : '') ||
-                       (process.env.INFURA_API_KEY ? `https://polygon-mainnet.infura.io/v3/${process.env.INFURA_API_KEY}` : '') ||
-                       'https://polygon-rpc.com'; // Public fallback
+    let polygonRpc = process.env.POLYGON_RPC_ENDPOINT || process.env.POLYGON_RPC_URL || process.env.MATIC_RPC_URL;
+    
+    // If no full URL provided, construct from API key
+    if (!polygonRpc || polygonRpc === 'undefined' || polygonRpc.includes('YOUR_')) {
+      const apiKey = process.env.POLYGON_API_KEY || process.env.ALCHEMY_API_KEY || process.env.ALCHEMY_ALL_NETWORKS_API_KEY;
+      if (apiKey && apiKey !== 'undefined' && !apiKey.includes('YOUR_')) {
+        polygonRpc = `https://polygon-mainnet.g.alchemy.com/v2/${apiKey}`;
+      } else if (process.env.INFURA_API_KEY && process.env.INFURA_API_KEY !== 'undefined') {
+        polygonRpc = `https://polygon-mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`;
+      } else {
+        polygonRpc = 'https://polygon-rpc.com'; // Public fallback
+      }
+    }
     this.polygonRPC = this.validateRPCUrl(polygonRpc, 'Polygon') || 'https://polygon-rpc.com';
 
     // Solana RPC with multiple fallback options from environment
-    const solanaRpc = process.env.SOLANA_RPC_URL || 
-                      process.env.SOLANA_RPC ||
-                      process.env.SOL_RPC_URL ||
-                      process.env.SOLANA_RPC_ENDPOINT || // Added for Render compatibility
-                      (process.env.SOLANA_API_KEY ? `https://solana-mainnet.g.alchemy.com/v2/${process.env.SOLANA_API_KEY}` : '') ||
-                      'https://api.mainnet-beta.solana.com'; // Public fallback
+    let solanaRpc = process.env.SOLANA_RPC_URL || process.env.SOLANA_RPC || process.env.SOL_RPC_URL || process.env.SOLANA_RPC_ENDPOINT;
+    
+    // If no full URL provided, construct from API key
+    if (!solanaRpc || solanaRpc === 'undefined' || solanaRpc.includes('YOUR_')) {
+      const apiKey = process.env.SOLANA_API_KEY || process.env.ALCHEMY_ALL_NETWORKS_API_KEY;
+      if (apiKey && apiKey !== 'undefined' && !apiKey.includes('YOUR_')) {
+        solanaRpc = `https://solana-mainnet.g.alchemy.com/v2/${apiKey}`;
+      } else {
+        solanaRpc = 'https://api.mainnet-beta.solana.com'; // Public fallback
+      }
+    }
     this.solanaRPC = this.validateRPCUrl(solanaRpc, 'Solana') || 'https://api.mainnet-beta.solana.com';
 
-    // Log the actual URLs being used (without exposing API keys)
-    console.log('[Blockchain] Polygon RPC:', this.polygonRPC.includes('alchemy') ? 'Alchemy (configured)' : this.polygonRPC.includes('infura') ? 'Infura (configured)' : this.polygonRPC);
-    console.log('[Blockchain] Solana RPC:', this.solanaRPC.includes('alchemy') ? 'Alchemy (configured)' : this.solanaRPC);
+    // Log the actual URLs being used (with partial info for debugging)
+    const maskUrl = (url: string) => {
+      if (!url) return 'Not configured';
+      if (url.includes('alchemy.com/v2/')) {
+        const parts = url.split('/v2/');
+        return `${parts[0]}/v2/${parts[1]?.substring(0, 10)}***`;
+      }
+      return url;
+    };
+    
+    console.log('[Blockchain] Polygon RPC:', maskUrl(this.polygonRPC));
+    console.log('[Blockchain] Solana RPC:', maskUrl(this.solanaRPC));
 
     // Zora has a public RPC, so it can be used without configuration
     this.zoraRPC = 'https://rpc.zora.energy';

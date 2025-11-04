@@ -53,24 +53,45 @@ export const environment: Record<string, string | number | boolean> = {
                     (process.env.INFURA_API_KEY ? `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}` : '') ||
                     (process.env.ALCHEMY_API_KEY ? `https://eth-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}` : '') ||
                     (process.env.ALCHEMY_ALL_NETWORKS_API_KEY ? `https://eth-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ALL_NETWORKS_API_KEY}` : ''),
-  POLYGON_RPC_ENDPOINT: process.env.POLYGON_RPC_ENDPOINT || 
-                        process.env.POLYGON_RPC_URL || 
-                        process.env.MATIC_RPC_URL ||
-                        (process.env.POLYGON_API_KEY && process.env.POLYGON_API_KEY !== 'undefined' ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.POLYGON_API_KEY}` : '') ||
-                        (process.env.ALCHEMY_API_KEY && process.env.ALCHEMY_API_KEY !== 'undefined' ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}` : '') ||
-                        (process.env.ALCHEMY_ALL_NETWORKS_API_KEY && process.env.ALCHEMY_ALL_NETWORKS_API_KEY !== 'undefined' ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ALL_NETWORKS_API_KEY}` : '') ||
-                        (process.env.INFURA_API_KEY && process.env.INFURA_API_KEY !== 'undefined' ? `https://polygon-mainnet.infura.io/v3/${process.env.INFURA_API_KEY}` : '') ||
-                        'https://polygon-rpc.com', // Public fallback - always available
-  POLYGON_API_KEY: process.env.POLYGON_API_KEY || process.env.ALCHEMY_API_KEY || process.env.ALCHEMY_ALL_NETWORKS_API_KEY || 'KN_eB98h9rFdOdaVOLthB',
-  SOLANA_RPC_URL: process.env.SOLANA_RPC_URL || 
-                  process.env.SOLANA_RPC || 
-                  process.env.SOL_RPC_URL ||
-                  process.env.SOLANA_RPC_ENDPOINT ||
-                  (process.env.SOLANA_API_KEY && process.env.SOLANA_API_KEY !== 'undefined' ? `https://solana-mainnet.g.alchemy.com/v2/${process.env.SOLANA_API_KEY}` : '') ||
-                  (process.env.ALCHEMY_ALL_NETWORKS_API_KEY && process.env.ALCHEMY_ALL_NETWORKS_API_KEY !== 'undefined' ? `https://solana-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ALL_NETWORKS_API_KEY}` : '') ||
-                  `https://solana-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ALL_NETWORKS_API_KEY || 'kQjZGD9EB0QEZaWvxA0EK'}`, // Use configured API key
-  SOLANA_API_KEY: process.env.SOLANA_API_KEY || process.env.ALCHEMY_ALL_NETWORKS_API_KEY || 'kQjZGD9EB0QEZaWvxA0EK',
-  SOLANA_RPC_ENDPOINT: process.env.SOLANA_RPC_ENDPOINT || process.env.SOLANA_RPC_URL || `https://solana-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ALL_NETWORKS_API_KEY || 'kQjZGD9EB0QEZaWvxA0EK'}`,
+  POLYGON_RPC_ENDPOINT: (() => {
+    const endpoint = process.env.POLYGON_RPC_ENDPOINT || process.env.POLYGON_RPC_URL || process.env.MATIC_RPC_URL;
+    if (endpoint && endpoint !== 'undefined' && !endpoint.includes('YOUR_')) return endpoint;
+    
+    const apiKey = process.env.POLYGON_API_KEY || process.env.ALCHEMY_API_KEY || process.env.ALCHEMY_ALL_NETWORKS_API_KEY;
+    if (apiKey && apiKey !== 'undefined' && !apiKey.includes('YOUR_')) {
+      return `https://polygon-mainnet.g.alchemy.com/v2/${apiKey}`;
+    }
+    
+    if (process.env.INFURA_API_KEY && process.env.INFURA_API_KEY !== 'undefined') {
+      return `https://polygon-mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`;
+    }
+    
+    return 'https://polygon-rpc.com'; // Public fallback
+  })(),
+  POLYGON_API_KEY: process.env.POLYGON_API_KEY || process.env.ALCHEMY_API_KEY || process.env.ALCHEMY_ALL_NETWORKS_API_KEY || '',
+  SOLANA_RPC_URL: (() => {
+    const endpoint = process.env.SOLANA_RPC_URL || process.env.SOLANA_RPC || process.env.SOL_RPC_URL || process.env.SOLANA_RPC_ENDPOINT;
+    if (endpoint && endpoint !== 'undefined' && !endpoint.includes('YOUR_')) return endpoint;
+    
+    const apiKey = process.env.SOLANA_API_KEY || process.env.ALCHEMY_ALL_NETWORKS_API_KEY;
+    if (apiKey && apiKey !== 'undefined' && !apiKey.includes('YOUR_')) {
+      return `https://solana-mainnet.g.alchemy.com/v2/${apiKey}`;
+    }
+    
+    return 'https://api.mainnet-beta.solana.com'; // Public fallback
+  })(),
+  SOLANA_API_KEY: process.env.SOLANA_API_KEY || process.env.ALCHEMY_ALL_NETWORKS_API_KEY || '',
+  SOLANA_RPC_ENDPOINT: (() => {
+    const endpoint = process.env.SOLANA_RPC_ENDPOINT || process.env.SOLANA_RPC_URL;
+    if (endpoint && endpoint !== 'undefined' && !endpoint.includes('YOUR_')) return endpoint;
+    
+    const apiKey = process.env.SOLANA_API_KEY || process.env.ALCHEMY_ALL_NETWORKS_API_KEY;
+    if (apiKey && apiKey !== 'undefined' && !apiKey.includes('YOUR_')) {
+      return `https://solana-mainnet.g.alchemy.com/v2/${apiKey}`;
+    }
+    
+    return 'https://api.mainnet-beta.solana.com';
+  })(),
   WEB3_PRIVATE_KEY: process.env.WEB3_PRIVATE_KEY || process.env.PRIVATE_KEY || '',
   INFURA_PROJECT_ID: process.env.INFURA_PROJECT_ID || process.env.INFURA_API_KEY || process.env.INFURA_KEY || '',
   ALCHEMY_API_KEY: process.env.ALCHEMY_API_KEY || process.env.POLYGON_API_KEY || process.env.ALCHEMY_KEY || process.env.ALCHEMY_ALL_NETWORKS_API_KEY || '',
