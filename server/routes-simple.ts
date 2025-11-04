@@ -97,9 +97,7 @@ dhaRouter.get('/templates', (req, res) => {
     success: true,
     totalTemplates: 21,
     templates: [
-
-
-  'Birth Certificate',
+      'Birth Certificate',
       'Death Certificate',
       'Marriage Certificate',
       'Divorce Certificate',
@@ -125,6 +123,7 @@ dhaRouter.get('/templates', (req, res) => {
   });
 });
 
+function setupEndpointTesting(app: Express) {
   // Comprehensive Endpoint Testing
   app.get('/api/test/endpoints', async (req, res) => {
     const endpoints = [
@@ -178,6 +177,7 @@ dhaRouter.get('/templates', (req, res) => {
       timestamp: new Date().toISOString()
     });
   });
+}
 
 dhaRouter.post('/validate', (req, res) => {
   res.json({
@@ -204,6 +204,9 @@ dhaRouter.post('/verify', (req, res) => {
 
 export function registerRoutes(app: Express) {
   console.log('🔧 Registering API routes...');
+
+  // Setup endpoint testing
+  setupEndpointTesting(app);
 
   // Force Real API Middleware - No Mocks
   app.use((req, res, next) => {
@@ -451,6 +454,68 @@ export function registerRoutes(app: Express) {
         responseTime: `${Math.floor(Math.random() * 200) + 100}ms`
       }
     });
+  });
+
+  // Blockchain status endpoint
+  app.get('/api/blockchain/status', async (req, res) => {
+    try {
+      const { getActivePolygonRPC, getActiveSolanaRPC } = await import('./config/blockchain-config.js');
+      
+      const polygonRPC = getActivePolygonRPC();
+      const solanaRPC = getActiveSolanaRPC();
+
+      // Test Polygon connection
+      let polygonStatus = 'connected';
+      try {
+        const polygonTest = await fetch(polygonRPC, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ jsonrpc: '2.0', method: 'eth_blockNumber', params: [], id: 1 }),
+          signal: AbortSignal.timeout(5000)
+        });
+        polygonStatus = polygonTest.ok ? 'connected' : 'error';
+      } catch (error) {
+        polygonStatus = 'error';
+      }
+
+      // Test Solana connection
+      let solanaStatus = 'connected';
+      try {
+        const solanaTest = await fetch(solanaRPC, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'getHealth' }),
+          signal: AbortSignal.timeout(5000)
+        });
+        solanaStatus = solanaTest.ok ? 'connected' : 'error';
+      } catch (error) {
+        solanaStatus = 'error';
+      }
+
+      res.json({
+        success: true,
+        blockchain: {
+          polygon: {
+            status: polygonStatus,
+            rpc: polygonRPC.substring(0, 50) + '...',
+            chainId: 137,
+            name: 'Polygon Mainnet'
+          },
+          solana: {
+            status: solanaStatus,
+            rpc: solanaRPC.substring(0, 50) + '...',
+            name: 'Solana Mainnet'
+          }
+        },
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: 'Failed to check blockchain status',
+        message: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
   });
 
   // System status endpoint
