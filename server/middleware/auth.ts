@@ -173,10 +173,17 @@ export async function requireApiKey(req: Request, res: Response, next: NextFunct
     let matchedKey = null;
 
     for (const storedKey of allApiKeys) {
-      const isMatch = bcryptjs.compare(apiKey, storedKey.keyHash);
-      if (isMatch) {
-        matchedKey = storedKey;
-        break;
+      // storedKey may contain `keyHash` or `key` depending on storage implementation
+      const hashed = String((storedKey as any).keyHash || (storedKey as any).key || '');
+      try {
+        const isMatch = await bcryptjs.compare(apiKey, hashed);
+        if (isMatch) {
+          matchedKey = storedKey;
+          break;
+        }
+      } catch (err) {
+        // If compare fails for any reason, continue to next key
+        continue;
       }
     }
 
