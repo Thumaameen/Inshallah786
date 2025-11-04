@@ -1,7 +1,8 @@
 import dotenv from 'dotenv';
 import { OpenAI } from 'openai';
-import { Anthropic } from '@anthropic-ai/sdk';
 
+// Avoid relying on the @anthropic-ai/sdk package which may not be installed in this environment.
+// Use direct HTTP requests to Anthropic's API instead.
 dotenv.config();
 
 interface ValidationResult {
@@ -49,23 +50,36 @@ async function validateOpenAI(): Promise<ValidationResult> {
     return { service: 'OpenAI', status: 'error', error: getErrorMessage(error) };
   }
 }
-
 async function validateAnthropic(): Promise<ValidationResult> {
   if (!process.env.ANTHROPIC_API_KEY) {
     return { service: 'Anthropic', status: 'not_configured' };
   }
 
   try {
-    const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-    await anthropic.messages.create({
-      model: 'claude-3-opus-20240229',
-      max_tokens: 1,
-      messages: [{ role: 'user', content: 'Test' }]
+    // Simple lightweight health-check using Anthropic HTTP API to avoid requiring the SDK.
+    // Uses x-api-key header (Anthropic accepts x-api-key) and a minimal prompt to verify access.
+    const res = await fetch('https://api.anthropic.com/v1/complete', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': process.env.ANTHROPIC_API_KEY || ''
+      },
+      body: JSON.stringify({
+        model: 'claude-3-opus-20240229',
+        max_tokens_to_sample: 1,
+        prompt: 'Human: Test\nAssistant:'
+      })
     });
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+
     return { service: 'Anthropic', status: 'live' };
   } catch (error) {
     return { service: 'Anthropic', status: 'error', error: getErrorMessage(error) };
   }
+}
 }
 
 async function validateGemini(): Promise<ValidationResult> {
