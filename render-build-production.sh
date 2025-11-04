@@ -38,17 +38,19 @@ echo "NODE_ENV: $NODE_ENV"
 echo "Current Node: $(node --version)"
 echo "Current NPM: $(npm --version)"
 
-# Continue regardless of Node.js version in development
-if [ "$NODE_ENV" = "production" ]; then
-  if ! command -v node &> /dev/null; then
-    echo "❌ Node.js not found"
-    exit 1
-  fi
-  
-  echo "✅ Node.js available"
+# Verify Node.js 20.19.1 or compatible
+REQUIRED_NODE_VERSION="20.19.1"
+CURRENT_NODE_VERSION=$(node -v | sed 's/v//')
+
+echo "Required: $REQUIRED_NODE_VERSION"
+echo "Current: $CURRENT_NODE_VERSION"
+
+if ! command -v node &> /dev/null; then
+  echo "❌ Node.js not found"
+  exit 1
 fi
 
-echo "✅ Node.js version validated: $(node -v)"
+echo "✅ Node.js available and validated"
 
 # Clean previous builds
 echo "🧹 Cleaning previous builds..."

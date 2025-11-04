@@ -18,10 +18,11 @@ fi
 
 # Set production environment
 export NODE_ENV=production
-export NODE_OPTIONS="--experimental-modules --es-module-specifier-resolution=node"
+export NODE_OPTIONS="--max-old-space-size=4096 --experimental-modules --es-module-specifier-resolution=node"
 export PORT=${PORT:-10000}
 export HOST=0.0.0.0
 
+echo "✅ Node Version: $(node -v)"
 echo "✅ All pre-flight checks passed"
 echo "✅ Starting server on ${HOST}:${PORT}..."
 echo ""
