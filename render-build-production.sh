@@ -59,23 +59,14 @@ echo "📦 Installing dependencies..."
 npm install --legacy-peer-deps --no-audit
 export NODE_PATH="$(npm root -g)"
 
-# Install all necessary dependencies and types
-echo "📦 Installing critical dependencies..."
-npm install --save-dev @types/node @types/express @types/ws typescript @types/react @types/react-dom @types/react-router-dom @tanstack/react-query @typescript-eslint/eslint-plugin @typescript-eslint/parser eslint eslint-plugin-react eslint-plugin-react-hooks
-npm install --save react react-dom react-router-dom @tanstack/react-query
-
-# Install critical types and dependencies
-npm install --save-dev @types/node @types/express @types/ws @types/react @types/react-dom typescript @types/react-router-dom @types/react-query
-npm install --save react react-dom react-router-dom @tanstack/react-query
+echo "✅ Root dependencies installed"
 
 # Build client
 echo "🎨 Building client..."
 cd client
 
 echo "📦 Installing client dependencies..."
-npm install --legacy-peer-deps
-npm install --save-dev vite@latest @vitejs/plugin-react typescript @types/react @types/react-dom @types/node @tanstack/react-query
-npm install --save react react-dom react-router-dom @tanstack/react-query
+npm install --legacy-peer-deps --no-audit
 
 echo "🔨 Building client..."
 NODE_ENV=production CI=false npm run build

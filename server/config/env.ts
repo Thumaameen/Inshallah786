@@ -81,7 +81,7 @@ const environmentConfig: EnvironmentConfig = {
 };
 
 // Validate required environment variables
-const requiredEnvVars = ['NODE_ENV', 'NODE_VERSION'];
+const requiredEnvVars = ['NODE_ENV'];
 const missingEnvVars = requiredEnvVars.filter(envVar => !process.env[envVar]);
 
 if (missingEnvVars.length > 0) {
