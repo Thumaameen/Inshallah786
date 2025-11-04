@@ -504,3 +504,6 @@ export const enhancedAIAssistant = new EnhancedAIAssistant();
 // conflicted with ES module exports. The extra object was removed to avoid
 // module/type conflicts. If other parts of the code rely on these helper
 // stubs, they should import `storage` or a dedicated logger instead.
+
+// Do NOT redefine `storage` here — this module imports `storage` from ../storage.js
+// so that there is a single shared implementation across the codebase.

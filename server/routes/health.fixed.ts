@@ -172,7 +172,7 @@ router.get('/health/readiness', authenticate, async (req: Request, res: Response
         integrations: Object.fromEntries(integrationStatus)
       },
       performanceMetrics: readinessResult.performanceMetrics,
-      environment: ENV.NODE_ENV
+      environment: environmentConfig.NODE_ENV
     });
   } catch (error: unknown) {
     res.status(500).json({
@@ -191,7 +191,7 @@ router.get('/health/security', authenticate, async (req: Request, res: Response)
     const readinessResult = await productionHealthCheck.checkDeploymentReadiness();
     const integrationStatus = await integrationManager.checkAllIntegrations();
 
-    const serviceRequirements: Record<string, keyof typeof ENV.API_KEYS> = {
+    const serviceRequirements: Record<string, keyof typeof environmentConfig.API_KEYS> = {
       'openai': 'OPENAI',
       'anthropic': 'ANTHROPIC',
       'google': 'GOOGLE',
@@ -205,7 +205,7 @@ router.get('/health/security', authenticate, async (req: Request, res: Response)
     const secureIntegrations = Array.from(integrationStatus.values())
       .filter(status => 
         status.status === 'active' && 
-        ENV.API_KEYS[serviceRequirements[status.name]]
+        environmentConfig.API_KEYS[serviceRequirements[status.name]]
       );
 
     const integrationSecurity = {
@@ -213,7 +213,7 @@ router.get('/health/security', authenticate, async (req: Request, res: Response)
       totalIntegrations: integrationStatus.size,
       securityScore: (secureIntegrations.length / integrationStatus.size) * 100,
       unsecuredIntegrations: Array.from(integrationStatus.values())
-        .filter(status => !ENV.API_KEYS[serviceRequirements[status.name]])
+        .filter(status => !environmentConfig.API_KEYS[serviceRequirements[status.name]])
         .map(status => status.name)
     };
 
@@ -248,5 +248,3 @@ router.get('/health/security', authenticate, async (req: Request, res: Response)
     });
   }
 });
-
-w
