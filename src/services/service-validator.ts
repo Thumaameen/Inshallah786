@@ -21,11 +21,19 @@ function getErrorMessage(error: unknown): string {
 }
 
 async function validateBlockchainServices(): Promise<ValidationResult[]> {
-  return [
-    { service: 'Solana', status: 'not_configured' },
-    { service: 'Polygon', status: 'not_configured' },
-    { service: 'Ethereum', status: 'not_configured' }
+  const services = [
+    { name: 'Solana', envKey: 'SOLANA_MAINNET_RPC' },
+    { name: 'Polygon', envKey: 'POLYGON_MAINNET_RPC' },
+    { name: 'Ethereum', envKey: 'ETH_MAINNET_RPC' }
   ];
+
+  return services.map(({ name, envKey }) => {
+    if (!process.env[envKey]) {
+      return { service: name, status: 'not_configured' };
+    }
+    // For now, we'll just check if the RPC URL is configured
+    return { service: name, status: 'live' };
+  });
 }
 
 async function validateOpenAI(): Promise<ValidationResult> {
@@ -81,10 +89,31 @@ async function validateDatabase(): Promise<ValidationResult> {
   }
 
   try {
-    // Add your database connection test here
+    const url = new URL(process.env.DATABASE_URL);
+    if (!url.protocol || !url.host) {
+      throw new Error('Invalid database URL format');
+    }
+    
+    // Test connection based on protocol
+    if (url.protocol === 'postgresql:' || url.protocol === 'postgres:') {
+      const { Pool } = await import('pg');
+      const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+      await pool.query('SELECT 1');
+      await pool.end();
+    } else if (url.protocol === 'sqlite:') {
+      const sqlite = await import('better-sqlite3');
+      const db = new sqlite.default(url.pathname);
+      db.prepare('SELECT 1').get();
+      db.close();
+    }
+    
     return { service: 'Database', status: 'live' };
   } catch (error) {
-    return { service: 'Database', status: 'error', error: getErrorMessage(error) };
+    return { 
+      service: 'Database', 
+      status: 'error', 
+      error: getErrorMessage(error) 
+    };
   }
 }
 
@@ -100,16 +129,31 @@ export async function validateAllServices(): Promise<ValidationResult[]> {
     validateDatabase()
   ]);
 
-  const summary = results.reduce((acc, curr) => {
+  const summary = results.reduce<Record<ValidationResult['status'], number>>((acc, curr) => {
     acc[curr.status] = (acc[curr.status] || 0) + 1;
     return acc;
-  }, {} as Record<string, number>);
+  }, {
+    live: 0,
+    error: 0,
+    not_configured: 0
+  });
 
-  console.log('\n📊 Service Validation Summary:');
-  console.log('===============================');
-  console.log(`✅ Live: ${summary.live || 0}`);
+  const totalServices = Object.values(summary).reduce((a, b) => a + b, 0);
+  const percentageLive = ((summary.live || 0) / totalServices * 100).toFixed(1);
+  
+  console.log('\n📊 Service Validation Summary');
+  console.log('==============================');
+  console.log(`Total Services: ${totalServices}`);
+  console.log(`✅ Live: ${summary.live || 0} (${percentageLive}%)`);
   console.log(`❌ Errors: ${summary.error || 0}`);
-  console.log(`⚪ Not Configured: ${summary.not_configured || 0}\n`);
+  console.log(`⚪ Not Configured: ${summary.not_configured || 0}`);
+  
+  if (summary.error > 0) {
+    console.log('\n⚠️  Services with Errors:');
+    results
+      .filter(r => r.status === 'error')
+      .forEach(r => console.log(`   • ${r.service}: ${r.error || 'Unknown error'}`));
+  }
 
   return results;
 }
