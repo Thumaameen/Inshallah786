@@ -17,6 +17,7 @@ import { deploymentValidator } from './services/deployment-validation.js';
 import { SecureEnvLoader } from './utils/secure-env-loader.js';
 import { healthRouter } from './routes/health.js';
 import apiHealthCheckRouter from './routes/api-health-check.js';
+import militaryRoutes from './routes/military-portals.js';
 
 // Load environment variables - Render sets them automatically
 console.log('🔐 Loading Environment Variables...');
@@ -335,7 +336,6 @@ console.log('✅ Ultra Queen AI routes active');
 console.log('✅ Integration status routes active');
 
 // Military & Government Portal Routes
-const { default: militaryRoutes } = await import('./routes/military-portals.js');
 app.use('/api/military', militaryRoutes);
 
 // Health check

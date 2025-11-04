@@ -1,5 +1,6 @@
 import type { Express } from "express";
 import { Router } from "express";
+import dhaBookingRoutes from './routes/dha-booking.js';
 
 const healthRouter = Router();
 
@@ -852,9 +853,7 @@ export function registerRoutes(app: Express) {
   app.use('/api/integrations', integrationActivationRoutes);
 
   // DHA Booking and Delivery
-  const { default: dhaBookingRoutes } = await import('./routes/dha-booking.js');
   app.use('/api/dha-booking', dhaBookingRoutes);
-
 
   console.log('✅ All routes registered successfully');
   console.log('✅ Frontend routes configured');
