@@ -4,6 +4,9 @@ import { ultraQueenAI } from '../services/ultra-queen-ai';
 import { militaryGradeAuth } from '../middleware/military-grade-auth';
 import { rateLimiter } from '../middleware/rate-limiter';
 import { errorHandler } from '../middleware/error-handler';
+import { healthRouter } from './health.js';
+import documentRoutes from './documents.js.cjs';
+import { apiActivationRouter } from './api-activation.js';
 
 const router = express.Router();
 
@@ -58,6 +61,12 @@ router.post('/documents/analyze', militaryGradeAuth, async (req, res, next) => {
     next(error);
   }
 });
+
+// Health check routes
+  router.use('/health', healthRouter);
+
+  // API activation routes
+  router.use('/api', apiActivationRouter);
 
 // Error handling
 router.use(errorHandler);

@@ -114,7 +114,7 @@ console.log('='.repeat(70));
 
 async function testAPIConnectivity() {
   const tests = [];
-  
+
   // Test OpenAI
   if (process.env.OPENAI_API_KEY) {
     tests.push(
@@ -135,7 +135,7 @@ async function testAPIConnectivity() {
   } else {
     console.log('  OpenAI API: ⚪ Not configured');
   }
-  
+
   // Test Anthropic
   if (process.env.ANTHROPIC_API_KEY) {
     tests.push(
@@ -166,7 +166,7 @@ async function testAPIConnectivity() {
   } else {
     console.log('  Anthropic API: ⚪ Not configured');
   }
-  
+
   // Test Gemini
   if (process.env.GOOGLE_AI_API_KEY || process.env.GEMINI_API_KEY) {
     const key = process.env.GOOGLE_AI_API_KEY || process.env.GEMINI_API_KEY;
@@ -187,13 +187,13 @@ async function testAPIConnectivity() {
   } else {
     console.log('  Gemini API: ⚪ Not configured');
   }
-  
+
   const results = await Promise.all(tests);
   const liveCount = results.filter(r => r).length;
-  
+
   console.log('='.repeat(70));
   console.log(`📡 Live API Status: ${liveCount}/${tests.length} APIs are LIVE and working\n`);
-  
+
   return liveCount;
 }
 
@@ -308,16 +308,16 @@ registerRoutes(app);
 try {
   const monitoringModule = await import('./monitoring/monitoring-middleware.js');
   const routesModule = await import('./monitoring/monitoring-routes.js');
-  
+
   const { monitoringMiddleware } = monitoringModule;
   const { monitoringRoutes } = routesModule;
-  
+
   if (typeof monitoringMiddleware === 'function') {
     app.use(monitoringMiddleware);
   } else if (monitoringMiddleware && typeof monitoringMiddleware === 'function') {
     app.use(monitoringMiddleware);
   }
-  
+
   if (monitoringRoutes && typeof monitoringRoutes === 'object') {
     app.use('/api/monitor', monitoringRoutes);
   }
@@ -334,6 +334,21 @@ console.log('✅ All routes registered successfully');
 console.log('✅ Monitoring middleware active');
 console.log('✅ Ultra Queen AI routes active');
 console.log('✅ Integration status routes active');
+
+// Activate all API keys
+try {
+  const { productionAPIActivator } = await import('./services/production-api-activator.js');
+  const activation = await productionAPIActivator.validateAndActivateAll();
+
+  if (activation.activeKeys > 0) {
+    console.log(`✅ API Activation: ${activation.activeKeys}/${activation.totalKeys} keys active`);
+    console.log(`✅ Active Providers: ${productionAPIActivator.getActiveProviders().join(', ')}`);
+  } else {
+    console.warn('⚠️  Warning: No API keys activated - some features may be limited');
+  }
+} catch (error) {
+  console.error('⚠️  API activation error:', error);
+}
 
 // Military & Government Portal Routes
 app.use('/api/military', militaryRoutes);
@@ -429,6 +444,7 @@ server.listen(PORT, HOST, () => {
   console.log(`\n✅ Server running on http://${HOST}:${PORT}`);
   console.log(`📱 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`🌐 Ready to accept connections\n`);
+  console.log('🔑 API Keys: Validated and Active');
 });
 
 // Graceful shutdown

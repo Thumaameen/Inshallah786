@@ -18,6 +18,10 @@ router.get('/health', async (_req: Request, res: Response) => {
     const integrationStatus = await integrationManager.checkAllIntegrations();
     const integrations = Object.fromEntries(integrationStatus);
 
+    // Import and run API activator
+    const { productionAPIActivator } = await import('../services/production-api-activator.js');
+    const apiValidation = await productionAPIActivator.validateAndActivateAll();
+
     const response = {
       status: 'healthy',
       timestamp: new Date().toISOString(),
@@ -30,6 +34,11 @@ router.get('/health', async (_req: Request, res: Response) => {
         aiAssistant: true,
         biometricValidation: true,
         governmentIntegration: true
+      },
+      apiKeys: {
+        total: apiValidation.totalKeys,
+        active: apiValidation.activeKeys,
+        successRate: `${Math.round((apiValidation.activeKeys / apiValidation.totalKeys) * 100)}%`
       },
       system: environmentConfig.SYSTEM,
       integrations
