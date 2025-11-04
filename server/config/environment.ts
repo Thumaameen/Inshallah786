@@ -2,18 +2,20 @@
 // All API keys configured from Replit Secrets
 
 export const environment: Record<string, string | number | boolean> = {
-  // Integration Flags - PRODUCTION READY (ALL TRUE)
+  // Integration Flags - FORCE PRODUCTION REAL DATA ONLY
   ENABLE_REAL_CERTIFICATES: true,
   ENABLE_BIOMETRIC_VALIDATION: true,
   ENABLE_GOVERNMENT_INTEGRATION: true,
   USE_MOCK_DATA: false,
   FORCE_REAL_APIS: true,
-  BYPASS_MODE: true,
-  UNIVERSAL_BYPASS: true,
+  BYPASS_MODE: false, // No bypass - real APIs only
+  UNIVERSAL_BYPASS: false, // No bypass - real APIs only
   DISABLE_MOCK_MODE: true,
   API_ENVIRONMENT: 'production',
   USE_PRODUCTION_APIS: true,
   FORCE_LIVE_SERVICES: true,
+  ENFORCE_REAL_DATA: true,
+  REJECT_MOCK_RESPONSES: true,
   
   // Core Application Settings
   NODE_ENV: process.env.NODE_ENV || 'production',
@@ -26,13 +28,13 @@ export const environment: Record<string, string | number | boolean> = {
   SESSION_SECRET: process.env.SESSION_SECRET || '',
   JWT_SECRET: process.env.JWT_SECRET || process.env.SESSION_SECRET || '',
   
-  // All AI Provider Keys (20+ providers) - Loaded from Replit Secrets
-  OPENAI_API_KEY: process.env.OPENAI_API_KEY || process.env.OPENAI_KEY || '',
-  ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_KEY || process.env.CLAUDE_API_KEY || '',
-  MISTRAL_API_KEY: process.env.MISTRAL_API_KEY || process.env.MISTRAL_KEY || '',
-  GOOGLE_AI_API_KEY: process.env.GEMINI_API_KEY || process.env.GOOGLE_AI_API_KEY || process.env.GOOGLE_API_KEY || process.env.GOOGLE_KEY || process.env.GOOGLE_GEMINI_API_KEY || process.env.GEMINI_KEY || process.env.GOOGLE_CLOUD_API_KEY || '',
-  PERPLEXITY_API_KEY: process.env.PERPLEXITY_API_KEY || process.env.PERPLEXITY_KEY || '',
-  XAI_API_KEY: process.env.XAI_API_KEY || process.env.XAI_KEY || process.env.GROK_API_KEY || '',
+  // All AI Provider Keys (20+ providers) - Loaded from Replit Secrets with validation
+  OPENAI_API_KEY: (process.env.OPENAI_API_KEY || process.env.OPENAI_KEY || '').trim(),
+  ANTHROPIC_API_KEY: (process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_KEY || process.env.CLAUDE_API_KEY || '').trim(),
+  MISTRAL_API_KEY: (process.env.MISTRAL_API_KEY || process.env.MISTRAL_KEY || '').trim(),
+  GOOGLE_AI_API_KEY: (process.env.GEMINI_API_KEY || process.env.GOOGLE_AI_API_KEY || process.env.GOOGLE_API_KEY || process.env.GOOGLE_KEY || process.env.GOOGLE_GEMINI_API_KEY || process.env.GEMINI_KEY || process.env.GOOGLE_CLOUD_API_KEY || '').trim(),
+  PERPLEXITY_API_KEY: (process.env.PERPLEXITY_API_KEY || process.env.PERPLEXITY_KEY || '').trim(),
+  XAI_API_KEY: (process.env.XAI_API_KEY || process.env.XAI_KEY || process.env.GROK_API_KEY || '').trim(),
   COHERE_API_KEY: process.env.COHERE_API_KEY || process.env.COHERE_KEY || '',
   AI21_API_KEY: process.env.AI21_API_KEY || process.env.AI21_KEY || '',
   HUGGINGFACE_API_KEY: process.env.HUGGINGFACE_API_KEY || process.env.HUGGINGFACE_KEY || process.env.HF_API_KEY || '',

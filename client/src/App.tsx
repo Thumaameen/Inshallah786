@@ -31,6 +31,7 @@ import UltraQueenDashboard from "./pages/UltraQueenDashboard";
 import UltraQueenDashboardEnhanced from "./pages/UltraQueenDashboardEnhanced";
 import UltraQueenAssistant from "./pages/UltraQueenAssistant"; // Import the new page
 import { ProfessionalTutorial } from "./components/ProfessionalTutorial";
+import { TutorialHelper } from "@/components/TutorialHelper"; // Import the new tutorial helper
 
 // Lazy load admin components for better code splitting
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
@@ -94,6 +95,7 @@ function AppContent() {
   return (
     <>
       <ProfessionalTutorial />
+      <TutorialHelper /> {/* Add the TutorialHelper component here */}
       <div className="min-h-screen bg-background safe-area-top safe-area-left safe-area-right">
         <Switch>
             {/* Direct to Ultra Queen Dashboard - No login needed */}

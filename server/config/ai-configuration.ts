@@ -27,36 +27,36 @@ type AIConfig = z.infer<typeof AIConfigSchema>;
 class AIConfigurationService {
   private config: AIConfig = {
     openai: {
-      enabled: true,
-      apiKey: process.env.OPENAI_API_KEY || '',
+      enabled: !!(process.env.OPENAI_API_KEY || '').trim(),
+      apiKey: (process.env.OPENAI_API_KEY || '').trim(),
       models: ['gpt-4-turbo-preview', 'gpt-4', 'gpt-3.5-turbo'],
       maxTokens: 4096,
       temperature: 0.7
     },
     anthropic: {
-      enabled: true,
-      apiKey: process.env.ANTHROPIC_API_KEY || '',
+      enabled: !!(process.env.ANTHROPIC_API_KEY || '').trim(),
+      apiKey: (process.env.ANTHROPIC_API_KEY || '').trim(),
       models: ['claude-3-sonnet-20240229'],
       maxTokens: 4096,
       temperature: 0.7
     },
     mistral: {
-      enabled: true,
-      apiKey: process.env.MISTRAL_API_KEY || '',
+      enabled: !!(process.env.MISTRAL_API_KEY || '').trim(),
+      apiKey: (process.env.MISTRAL_API_KEY || '').trim(),
       models: ['mistral-large-latest'],
       maxTokens: 4096,
       temperature: 0.7
     },
     google: {
-      enabled: true,
-      apiKey: process.env.GOOGLE_AI_API_KEY || process.env.GEMINI_API_KEY || '',
+      enabled: !!((process.env.GOOGLE_AI_API_KEY || process.env.GEMINI_API_KEY || '').trim()),
+      apiKey: (process.env.GOOGLE_AI_API_KEY || process.env.GEMINI_API_KEY || '').trim(),
       models: ['gemini-pro'],
       maxTokens: 2048,
       temperature: 0.7
     },
     perplexity: {
-      enabled: true,
-      apiKey: process.env.PERPLEXITY_API_KEY || '',
+      enabled: !!(process.env.PERPLEXITY_API_KEY || '').trim(),
+      apiKey: (process.env.PERPLEXITY_API_KEY || '').trim(),
       models: ['pplx-70b', 'pplx-7b'],
       maxTokens: 4096,
       temperature: 0.7

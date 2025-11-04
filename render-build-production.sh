@@ -38,17 +38,19 @@ echo "NODE_ENV: $NODE_ENV"
 echo "Current Node: $(node --version)"
 echo "Current NPM: $(npm --version)"
 
-# Continue regardless of Node.js version in development
-if [ "$NODE_ENV" = "production" ]; then
-  if ! command -v node &> /dev/null; then
-    echo "❌ Node.js not found"
-    exit 1
-  fi
-  
-  echo "✅ Node.js available"
+# Verify Node.js 20.19.1 or compatible
+REQUIRED_NODE_VERSION="20.19.1"
+CURRENT_NODE_VERSION=$(node -v | sed 's/v//')
+
+echo "Required: $REQUIRED_NODE_VERSION"
+echo "Current: $CURRENT_NODE_VERSION"
+
+if ! command -v node &> /dev/null; then
+  echo "❌ Node.js not found"
+  exit 1
 fi
 
-echo "✅ Node.js version validated: $(node -v)"
+echo "✅ Node.js available and validated"
 
 # Clean previous builds
 echo "🧹 Cleaning previous builds..."
@@ -59,23 +61,14 @@ echo "📦 Installing dependencies..."
 npm install --legacy-peer-deps --no-audit
 export NODE_PATH="$(npm root -g)"
 
-# Install all necessary dependencies and types
-echo "📦 Installing critical dependencies..."
-npm install --save-dev @types/node @types/express @types/ws typescript @types/react @types/react-dom @types/react-router-dom @tanstack/react-query @typescript-eslint/eslint-plugin @typescript-eslint/parser eslint eslint-plugin-react eslint-plugin-react-hooks
-npm install --save react react-dom react-router-dom @tanstack/react-query
-
-# Install critical types and dependencies
-npm install --save-dev @types/node @types/express @types/ws @types/react @types/react-dom typescript @types/react-router-dom @types/react-query
-npm install --save react react-dom react-router-dom @tanstack/react-query
+echo "✅ Root dependencies installed"
 
 # Build client
 echo "🎨 Building client..."
 cd client
 
 echo "📦 Installing client dependencies..."
-npm install --legacy-peer-deps
-npm install --save-dev vite@latest @vitejs/plugin-react typescript @types/react @types/react-dom @types/node @tanstack/react-query
-npm install --save react react-dom react-router-dom @tanstack/react-query
+npm install --legacy-peer-deps --no-audit
 
 echo "🔨 Building client..."
 NODE_ENV=production CI=false npm run build
