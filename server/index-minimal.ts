@@ -99,7 +99,9 @@ async function initializeEnvironment() {
   }
 
   // Validate production keys
-  SecureEnvLoader.validateProductionKeys();
+  if (typeof SecureEnvLoader.validateProductionKeys === 'function') {
+    SecureEnvLoader.validateProductionKeys();
+  }
 }
 
 // Initialize environment before starting server

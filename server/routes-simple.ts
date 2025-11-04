@@ -94,7 +94,7 @@ dhaRouter.get('/templates', (req, res) => {
     totalTemplates: 21,
     templates: [
       'Birth Certificate',
-      'Death Certificate', 
+      'Death Certificate',
       'Marriage Certificate',
       'Divorce Certificate',
       'ID Document',
@@ -410,30 +410,30 @@ export function registerRoutes(app: Express) {
   app.post('/api/documents/generate', async (req, res) => {
     try {
       const { documentType, formData } = req.body;
-      
+
       console.log(`📄 Generating ${documentType} document...`);
-      
+
       // Import PDF generator
       const { pdfGenerator } = await import('./services/pdf-generator.js');
-      
+
       // Generate real PDF
       const pdfBuffer = await pdfGenerator.generateDocument({
         documentType,
         ...formData
       });
-      
+
       const documentId = `DOC-${Date.now()}`;
       const verificationCode = `VER-${Math.random().toString(36).substring(2, 10).toUpperCase()}`;
-      
+
       // Set response headers for PDF download
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', `attachment; filename="${documentType}-${documentId}.pdf"`);
       res.setHeader('X-Document-ID', documentId);
       res.setHeader('X-Verification-Code', verificationCode);
-      
+
       // Send PDF
       res.send(pdfBuffer);
-      
+
       console.log(`✅ Document ${documentId} generated successfully`);
     } catch (error) {
       console.error('Document generation error:', error);
@@ -490,10 +490,10 @@ export function registerRoutes(app: Express) {
 
   app.post('/api/ultra-dashboard/test-blockchain', async (req, res) => {
     const { network } = req.body;
-    
+
     // Simulate blockchain test
     await new Promise(resolve => setTimeout(resolve, 500));
-    
+
     res.json({
       success: true,
       network,
@@ -507,10 +507,10 @@ export function registerRoutes(app: Express) {
 
   app.post('/api/ultra-dashboard/test-government-api', async (req, res) => {
     const { api } = req.body;
-    
+
     // Simulate API test
     await new Promise(resolve => setTimeout(resolve, 300));
-    
+
     res.json({
       success: true,
       api,
@@ -845,6 +845,16 @@ export function registerRoutes(app: Express) {
       downloadUrl: `/download/${req.params.documentId}`
     });
   });
+
+  // Ultra Queen AI Routes
+  app.use('/api/ultra-queen-ai', ultraQueenAIRoutes);
+  app.use('/api/integrations', integrationStatusRoutes);
+  app.use('/api/integrations', integrationActivationRoutes);
+
+  // DHA Booking and Delivery
+  const { default: dhaBookingRoutes } = await import('./routes/dha-booking.js');
+  app.use('/api/dha-booking', dhaBookingRoutes);
+
 
   console.log('✅ All routes registered successfully');
   console.log('✅ Frontend routes configured');
