@@ -31,5 +31,8 @@
     "validate": "node ai-validation-suite.cjs",
     "test:all": "npx tsx comprehensive-system-test.ts",
     "test:render": "npx tsx test-render-deployment.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.0"
   }
 }
