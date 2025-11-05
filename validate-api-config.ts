@@ -1,6 +1,4 @@
-import { existsSync } from 'fs';
 import { config } from 'dotenv';
-import fetch from 'node-fetch';
 
 // Load environment variables
 config();
