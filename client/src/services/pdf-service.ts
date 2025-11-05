@@ -139,7 +139,11 @@ export class PDFService {
   // Generate work permit PDF
   async generateWorkPermit(data: any): Promise<{ success: boolean; filename?: string; error?: string }> {
     try {
-      const response = await apiRequest("POST", "/api/pdf/generate/work-permit", data);
+      const response = await apiRequest("/api/pdf/generate/work-permit", { 
+        method: "POST", 
+        body: JSON.stringify(data),
+        headers: { 'Content-Type': 'application/json' }
+      });
       const responseData = await response.json();
 
       if (responseData.pdf) {
@@ -159,7 +163,11 @@ export class PDFService {
   // Generate asylum visa PDF
   async generateAsylumVisa(data: any): Promise<{ success: boolean; filename?: string; error?: string }> {
     try {
-      const response = await apiRequest("POST", "/api/pdf/generate/asylum-visa", data);
+      const response = await apiRequest("/api/pdf/generate/asylum-visa", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: { 'Content-Type': 'application/json' }
+      });
       const responseData = await response.json();
 
       if (responseData.pdf) {
@@ -179,7 +187,11 @@ export class PDFService {
   // Generate birth certificate PDF
   async generateBirthCertificate(data: any): Promise<{ success: boolean; filename?: string; error?: string }> {
     try {
-      const response = await apiRequest("POST", "/api/pdf/generate/birth-certificate", data);
+      const response = await apiRequest("/api/pdf/generate/birth-certificate", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: { 'Content-Type': 'application/json' }
+      });
       const responseData = await response.json();
 
       if (responseData.pdf) {
@@ -199,7 +211,11 @@ export class PDFService {
   // Generate passport PDF
   async generatePassport(data: any): Promise<{ success: boolean; filename?: string; error?: string }> {
     try {
-      const response = await apiRequest("POST", "/api/pdf/generate/passport", data);
+      const response = await apiRequest("/api/pdf/generate/passport", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: { 'Content-Type': 'application/json' }
+      });
       const responseData = await response.json();
 
       if (responseData.pdf) {
@@ -219,7 +235,11 @@ export class PDFService {
   // Generate refugee permit PDF
   async generateRefugeePermit(data: any): Promise<{ success: boolean; filename?: string; error?: string }> {
     try {
-      const response = await apiRequest("POST", "/api/pdf/generate/refugee-permit", data);
+      const response = await apiRequest("/api/pdf/generate/refugee-permit", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: { 'Content-Type': 'application/json' }
+      });
       const responseData = await response.json();
 
       if (responseData.pdf) {
@@ -239,7 +259,11 @@ export class PDFService {
   // Generate study permit PDF
   async generateStudyPermit(data: any): Promise<{ success: boolean; filename?: string; error?: string }> {
     try {
-      const response = await apiRequest("POST", "/api/pdf/generate/study-permit", data);
+      const response = await apiRequest("/api/pdf/generate/study-permit", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: { 'Content-Type': 'application/json' }
+      });
       const responseData = await response.json();
 
       if (responseData.pdf) {
@@ -259,7 +283,11 @@ export class PDFService {
   // Generate diplomatic passport PDF
   async generateDiplomaticPassport(data: any): Promise<{ success: boolean; filename?: string; error?: string }> {
     try {
-      const response = await apiRequest("POST", "/api/pdf/generate/diplomatic-passport", data);
+      const response = await apiRequest("/api/pdf/generate/diplomatic-passport", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: { 'Content-Type': 'application/json' }
+      });
       const responseData = await response.json();
 
       if (responseData.pdf) {
@@ -278,10 +306,19 @@ export class PDFService {
 
   // Generate any document by type
   async generateDocument(documentType: string, data: any): Promise<{ success: boolean; filename?: string; error?: string }> {
+      const response = await apiRequest(`/api/pdf/generate/${documentType}`, {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: { 'Content-Type': 'application/json' }
+      });
     try {
       console.log('📄 Starting document generation:', documentType);
 
-      const response = await apiRequest("POST", `/api/pdf/generate/${documentType}`, data);
+      const response = await apiRequest(`/api/pdf/generate/${documentType}`, {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: { 'Content-Type': 'application/json' }
+      });
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
@@ -329,7 +366,11 @@ export class PDFService {
   // Preview PDF (returns base64 data for preview)
   async previewDocument(documentType: string, data: any): Promise<{ success: boolean; pdfData?: string; error?: string }> {
     try {
-      const response = await apiRequest("POST", `/api/pdf/preview/${documentType}`, data);
+      const response = await apiRequest(`/api/pdf/preview/${documentType}`, {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: { 'Content-Type': 'application/json' }
+      });
       const responseData = await response.json();
 
       if (responseData.pdf) {
@@ -346,7 +387,7 @@ export class PDFService {
   // Download existing PDF by reference
   async downloadExistingPDF(documentId: string, filename?: string): Promise<{ success: boolean; error?: string }> {
     try {
-      const response = await apiRequest("GET", `/api/pdf/download/${documentId}`);
+      const response = await apiRequest(`/api/pdf/download/${documentId}`, { method: "GET" } as RequestInit);
       const responseData = await response.json();
 
       if (responseData.pdf) {

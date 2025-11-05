@@ -69,9 +69,9 @@ export default function SystemMonitoring() {
   const [timeRange, setTimeRange] = useState("24h");
 
   // Fetch system health
-  const { data: systemHealth, isLoading: healthLoading } = useQuery<SystemHealth>({
-    queryKey: ["/api/monitoring/health"],
-    refetchInterval: 30000,
+    const { data: systemHealth, isLoading, error } = useQuery<SystemHealth>("systemHealth", async () => {
+    const response = await fetch("/api/system/health");
+    return response.json();
   });
 
   // Fetch system metrics
@@ -407,7 +407,7 @@ export default function SystemMonitoring() {
               <CardContent>
                 {systemHealth?.integrations ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {Object.entries(systemHealth.integrations).map(([name, integration]) => (
+                    {Object.entries(systemHealth.integrations).map(([name, integration]: [string, { status: string; lastCheck: string }]) => (
                       <div
                         key={name}
                         className="flex items-center justify-between p-4 border rounded-lg"

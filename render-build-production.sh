@@ -6,6 +6,15 @@ echo "===================================================="
 echo "📅 Build started: $(date)"
 echo ""
 
+# Critical error handling
+handle_error() {
+  echo "❌ Error occurred in build script"
+  echo "Error on line $1"
+  exit 1
+}
+
+trap 'handle_error $LINENO' ERR
+
 # CRITICAL: Production environment setup
 export NODE_ENV=production
 export RENDER=true
@@ -29,11 +38,12 @@ echo ""
 # Node.js configuration - optimized for production
 export NODE_OPTIONS="--max-old-space-size=4096 --experimental-modules --es-module-specifier-resolution=node"
 export SKIP_PREFLIGHT_CHECK=true
-export TSC_COMPILE_ON_ERROR=true
+export TSC_COMPILE_ON_ERROR=false
 export DISABLE_ESLINT_PLUGIN=true
 export VITE_DISABLE_OPTIMIZER=false
 export VITE_MINIFY=true
 export VITE_SOURCE_MAP=false
+export TS_NODE_PROJECT="tsconfig.production.json"
 
 # Ensure ES modules are handled correctly
 echo "📦 Configuring build system..."
