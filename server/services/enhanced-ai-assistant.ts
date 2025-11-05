@@ -1,4 +1,3 @@
-
 /**
  * ENHANCED AI ASSISTANT WITH GLOBAL CONNECTIVITY
  * Unlimited authority with seamless integration to all systems
@@ -9,7 +8,7 @@ import { ultraGlobalConnector } from "./ultra-global-connector.js";
 import { storage } from "../storage.js";
 
 // Latest AI Model Configuration - December 2024
-const ENHANCED_AI_MODEL = "claude-3-sonnet-20240229"; // Latest Claude Sonnet 3.5
+const ENHANCED_AI_MODEL = "claude-3-5-sonnet-20241022"; // Latest Claude Sonnet 3.5
 
 export interface EnhancedAIRequest {
   message: string;
@@ -215,7 +214,7 @@ export class EnhancedAIAssistant {
   private async generateEnhancedResponse(
     message: string, 
     systemResults: any, 
-    userId: string
+    _userId: string
   ): Promise<{ content: string; suggestions: string[]; actionItems: string[] }> {
     
     if (this.anthropic) {
@@ -500,3 +499,11 @@ Respond to the user's request with your full unlimited capabilities.`;
 
 // Export singleton instance
 export const enhancedAIAssistant = new EnhancedAIAssistant();
+
+// Note: previously this file exported a CommonJS `module.exports` object that
+// conflicted with ES module exports. The extra object was removed to avoid
+// module/type conflicts. If other parts of the code rely on these helper
+// stubs, they should import `storage` or a dedicated logger instead.
+
+// Do NOT redefine `storage` here — this module imports `storage` from ../storage.js
+// so that there is a single shared implementation across the codebase.

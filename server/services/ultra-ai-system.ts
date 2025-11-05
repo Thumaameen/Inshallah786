@@ -18,6 +18,10 @@ interface AiBotSession {
   aiMode: 'assistant' | 'agent' | 'security_bot' | 'intelligence' | 'command';
   unlimitedCapabilities: boolean;
   militaryGradeAccess: boolean;
+  enhancedProcessing: boolean;
+  quantumReady: boolean;
+  ultraIntelligence: boolean;
+  maxPerformance: boolean;
 }
 
 interface SecurityBotOperation {

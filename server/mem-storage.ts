@@ -1,3 +1,14 @@
+export interface ApiKey {
+  id: string;
+  userId: string;
+  key: string;
+  description: string;
+  lastUsed?: string; // ISO date string
+  isActive: boolean;
+  createdAt: string; // ISO date string
+  [x: string]: string | boolean | undefined;
+}
+
 export interface User {
   id: string;
   username: string;
@@ -178,13 +189,17 @@ export const storage = {
     return 0;
   },
 
-  createSecurityEvent: async (event: any) => {
+  async logSecurityEvent(event: any) {
     console.log('🔒 Creating security event:', event);
     return { id: Date.now().toString(), ...event, timestamp: new Date() };
   },
 
-  getDocument: async (documentId: string) => {
-    console.log('📄 Fetching document:', documentId);
-    return null;
+  // API Key management methods
+  async getAllApiKeys(): Promise<ApiKey[]> {
+    return [];
+  },
+
+  async updateApiKeyLastUsed(keyId: string): Promise<void> {
+    console.log('Updating API key last used:', keyId);
   }
 };

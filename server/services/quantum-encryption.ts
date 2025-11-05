@@ -26,6 +26,10 @@ export interface DecryptionResult {
 }
 
 export class QuantumEncryptionService {
+  [x: string]: any;
+  sign(documentData: any) {
+      throw new Error('Method not implemented.');
+  }
 
   private readonly ENTROPY_THRESHOLD = 2048; // Minimum entropy for quantum-grade keys
 

@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, createContext } from 'react';
+import { createPortal } from 'react-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -140,6 +141,141 @@ export default function UltraQueenDashboard() {
         title: 'API Test Failed',
         description: `Failed to connect to ${api}`,
         variant: 'destructive'
+      });
+    }
+  };
+
+  // Handler for AI chat response, ensuring it handles errors gracefully.
+  const handleAIChatResponse = async (prompt: string): Promise<string> => {
+    try {
+      const response = await fetch('/api/ai/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+        throw new Error(errorData.message || 'Failed to get AI response');
+      }
+
+      const data = await response.json();
+      return data.reply || data.content || "No response received";
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "I apologize, but I encountered an issue processing your request.";
+      console.error("AI Chat Error:", error);
+      toast({
+        title: "AI Chat Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
+      return errorMessage;
+    }
+  };
+
+  // Handler for document generation, ensuring it triggers a download to the phone.
+  const generateDocument = async (docId: string): Promise<void> => {
+    toast({
+      title: 'Document Generation',
+      description: `Generating ${docId}...`,
+    });
+
+    try {
+      const response = await fetch('/api/documents/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          documentType: docId,
+          personalData: {
+            fullName: 'Test User',
+            dateOfBirth: '1990-01-01',
+            nationality: 'South African',
+            gender: 'M'
+          }
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Document generation failed' }));
+        throw new Error(errorData.message || 'Failed to generate document');
+      }
+
+      const blob = await response.blob();
+      
+      if (blob.size === 0) {
+        throw new Error('Generated document is empty');
+      }
+
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      
+      // Attempt to determine filename from headers or default
+      const disposition = response.headers.get('content-disposition');
+      let filename = `${docId}_${Date.now()}.pdf`;
+      if (disposition && disposition.includes('attachment')) {
+          const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+          const matches = filenameRegex.exec(disposition);
+          if (matches?.[1]) { 
+            filename = matches[1].replace(/['"]/g, '');
+          }
+      }
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      
+      setTimeout(() => {
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      }, 100);
+
+      toast({
+        title: 'Document Generated',
+        description: `Your ${docId} has been generated and is downloading.`,
+      });
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to generate document. Please try again.';
+      console.error("Document Generation Error:", error);
+      toast({
+        title: 'Document Generation Failed',
+        description: errorMessage,
+        variant: 'destructive',
+      });
+    }
+  };
+
+  // Handler for admin commands, ensuring proper execution and error reporting.
+  const handleAdminCommand = async (command: string): Promise<void> => {
+    toast({
+      title: 'Admin Command',
+      description: `Executing: ${command}...`,
+    });
+
+    try {
+      const response = await fetch('/api/admin/command', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ command }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Command execution failed' }));
+        throw new Error(errorData.message || 'Failed to execute admin command');
+      }
+
+      const data = await response.json();
+      toast({
+        title: 'Command Executed',
+        description: data.result || 'Admin command executed successfully.',
+      });
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to execute admin command.';
+      console.error("Admin Command Error:", error);
+      toast({
+        title: 'Admin Command Failed',
+        description: errorMessage,
+        variant: 'destructive',
       });
     }
   };
@@ -348,6 +484,7 @@ export default function UltraQueenDashboard() {
                       <div
                         key={doc.id}
                         className="flex items-center gap-2 p-3 bg-gray-900/50 rounded-lg hover:bg-gray-800/50 transition-colors cursor-pointer"
+                        onClick={() => generateDocument(doc.id)}
                       >
                         <Icon className="w-5 h-5 text-blue-400" />
                         <span className="text-sm text-gray-300">{doc.name}</span>
@@ -358,9 +495,9 @@ export default function UltraQueenDashboard() {
               </ScrollArea>
               <div className="mt-4 flex justify-between items-center">
                 <Badge className="bg-green-600">All Documents Operational</Badge>
-                <Button className="bg-blue-600 hover:bg-blue-700">
+                <Button className="bg-blue-600 hover:bg-blue-700" onClick={() => handleAdminCommand('generate_all_documents')}>
                   <FileText className="w-4 h-4 mr-2" />
-                  Generate Document
+                  Generate All Documents
                 </Button>
               </div>
             </CardContent>
@@ -490,6 +627,24 @@ export default function UltraQueenDashboard() {
                     Quantum computing simulation
                   </div>
                 </div>
+              </div>
+              <div className="p-4 bg-gray-900/50 rounded-lg">
+                <h3 className="text-sm font-semibold text-gray-300 mb-2">AI Chat Interaction</h3>
+                <div className="flex items-center gap-2 mb-2">
+                  <input
+                    type="text"
+                    placeholder="Ask me anything..."
+                    className="flex-1 p-2 rounded-lg bg-gray-800 text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    // TODO: Implement state for chat input
+                  />
+                  <Button className="bg-green-600 hover:bg-green-700" onClick={() => handleAIChatResponse("User query")}> {/* Replace "User query" with actual input */}
+                    <Brain className="w-4 h-4 mr-2" />
+                    Ask AI
+                  </Button>
+                </div>
+                <p className="text-xs text-gray-500">
+                  Note: AI responses might take a moment. If an error occurs, a message will appear.
+                </p>
               </div>
             </CardContent>
           </Card>

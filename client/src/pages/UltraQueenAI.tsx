@@ -33,6 +33,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import type { AIResponse } from '@/types/api';
 
 type AIProvider = 'auto' | 'openai' | 'anthropic' | 'perplexity' | 'mistral' | 'quantum';
 
@@ -89,6 +90,7 @@ export default function UltraQueenAI() {
     try {
       const response = await fetch('/api/ultra-ai/status', {
         headers: {
+          'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
@@ -105,10 +107,11 @@ export default function UltraQueenAI() {
     mutationFn: async (data: any) => {
       return apiRequest('/api/ultra-ai/chat', {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       });
     },
-    onSuccess: (data) => {
+    onSuccess: (data: AIResponse) => {
       if (data.success) {
         const assistantMessage: Message = {
           id: Date.now().toString(),

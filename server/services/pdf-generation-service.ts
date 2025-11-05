@@ -82,7 +82,7 @@ const DOCUMENT_TRANSLATIONS = {
     temporary_residence_permit: "TEMPORARY RESIDENCE PERMIT",
     permanent_residence_permit: "PERMANENT RESIDENCE PERMIT",
     refugee_permit: "REFUGEE PERMIT",
-    
+
     // Common Fields
     full_name: "Full Name",
     surname: "Surname",
@@ -102,7 +102,7 @@ const DOCUMENT_TRANSLATIONS = {
     date_of_issue: "Date of Issue",
     date_of_expiry: "Date of Expiry",
     issuing_office: "Issuing Office",
-    
+
     // Personal Details
     personal_details: "PERSONAL DETAILS",
     address: "Address",
@@ -110,7 +110,7 @@ const DOCUMENT_TRANSLATIONS = {
     occupation: "Occupation",
     contact_number: "Contact Number",
     email_address: "Email Address",
-    
+
     // Security Features
     security_features: "SECURITY FEATURES",
     digital_signature: "Digital Signature",
@@ -118,13 +118,13 @@ const DOCUMENT_TRANSLATIONS = {
     machine_readable_zone: "Machine Readable Zone",
     official_use_only: "OFFICIAL USE ONLY",
     authentic_document: "AUTHENTIC DOCUMENT",
-    
+
     // Validity and Conditions
     validity: "VALIDITY",
     conditions: "Conditions",
     endorsements: "Endorsements",
     restrictions: "Restrictions",
-    
+
     // Document Specific
     deceased_details: "DECEASED DETAILS",
     death_details: "DEATH DETAILS",
@@ -137,7 +137,7 @@ const DOCUMENT_TRANSLATIONS = {
     study_details: "STUDY DETAILS",
     medical_details: "MEDICAL DETAILS",
     emergency_details: "EMERGENCY DETAILS",
-    
+
     // Footer Text
     this_is_official_document: "This is an official document of the Republic of South Africa",
     verify_authenticity: "Verify authenticity at",
@@ -162,7 +162,7 @@ const DOCUMENT_TRANSLATIONS = {
     temporary_residence_permit: "TYDELIKE VERBLYF PERMIT",
     permanent_residence_permit: "PERMANENTE VERBLYF PERMIT",
     refugee_permit: "VLUGTELINGPERMIT",
-    
+
     // Common Fields (Afrikaans)
     full_name: "Volle Naam",
     surname: "Van",
@@ -182,7 +182,7 @@ const DOCUMENT_TRANSLATIONS = {
     date_of_issue: "Datum van Uitreiking",
     date_of_expiry: "Vervaldatum",
     issuing_office: "Uitgee Kantoor",
-    
+
     // Personal Details (Afrikaans)
     personal_details: "PERSOONLIKE BESONDERHEDE",
     address: "Adres",
@@ -190,7 +190,7 @@ const DOCUMENT_TRANSLATIONS = {
     occupation: "Beroep",
     contact_number: "Kontak Nommer",
     email_address: "E-pos Adres",
-    
+
     // Security Features (Afrikaans)
     security_features: "SEKURITEITSKENMERKE",
     digital_signature: "Digitale Handtekening",
@@ -198,13 +198,13 @@ const DOCUMENT_TRANSLATIONS = {
     machine_readable_zone: "Masjienleesbare Sone",
     official_use_only: "SLEGS AMPTELIKE GEBRUIK",
     authentic_document: "OUTENTIEKE DOKUMENT",
-    
+
     // Validity and Conditions (Afrikaans)
     validity: "GELDIGHEID",
     conditions: "Voorwaardes",
     endorsements: "Endossemente",
     restrictions: "Beperkings",
-    
+
     // Document Specific (Afrikaans)
     deceased_details: "OORLEDENE BESONDERHEDE",
     death_details: "STERFTE BESONDERHEDE",
@@ -217,7 +217,7 @@ const DOCUMENT_TRANSLATIONS = {
     study_details: "STUDIE BESONDERHEDE",
     medical_details: "MEDIESE BESONDERHEDE",
     emergency_details: "NOOD BESONDERHEDE",
-    
+
     // Footer Text (Afrikaans)
     this_is_official_document: "Hierdie is 'n amptelike dokument van die Republiek van Suid-Afrika",
     verify_authenticity: "Verifieer egtheid by",
@@ -269,17 +269,17 @@ export enum DocumentType {
   BIRTH_CERTIFICATE = "birth_certificate",
   DEATH_CERTIFICATE = "death_certificate",
   MARRIAGE_CERTIFICATE = "marriage_certificate",
-  
+
   // Identity Documents
   SA_ID = "sa_id",
   SMART_ID = "smart_id",
-  
+
   // Travel Documents
   PASSPORT = "passport",
   DIPLOMATIC_PASSPORT = "diplomatic_passport",
   OFFICIAL_PASSPORT = "official_passport",
   EMERGENCY_TRAVEL_DOCUMENT = "emergency_travel_document",
-  
+
   // Work Permits (Section 19 variations)
   WORK_PERMIT_19_1 = "work_permit_19_1",
   WORK_PERMIT_19_2 = "work_permit_19_2",
@@ -287,11 +287,11 @@ export enum DocumentType {
   WORK_PERMIT_19_4 = "work_permit_19_4",
   GENERAL_WORK_PERMIT = "general_work_permit",
   CRITICAL_SKILLS_WORK_PERMIT = "critical_skills_work_permit",
-  
+
   // Study and Business Permits
   STUDY_PERMIT = "study_permit",
   BUSINESS_PERMIT = "business_permit",
-  
+
   // Visa Types
   VISITOR_VISA = "visitor_visa",
   TRANSIT_VISA = "transit_visa",
@@ -302,14 +302,14 @@ export enum DocumentType {
   INTRA_COMPANY_TRANSFER_VISA = "intra_company_transfer_visa",
   CORPORATE_VISA = "corporate_visa",
   TREATY_VISA = "treaty_visa",
-  
+
   // Residence Permits
   TEMPORARY_RESIDENCE_PERMIT = "temporary_residence_permit",
   PERMANENT_RESIDENCE_PERMIT = "permanent_residence_permit",
-  
+
   // Refugee Documents
   REFUGEE_PERMIT = "refugee_permit",
-  
+
   // Legacy document types (for backwards compatibility)
   WORK_PERMIT = "work_permit",
   ASYLUM_VISA = "asylum_visa",
@@ -1029,7 +1029,25 @@ export interface RetirementVisaData {
 }
 
 export class PDFGenerationService {
-  
+
+  // Mock implementations for dependencies
+  private readonly DOCUMENT_TYPES = Object.values(DocumentType);
+  private storage = {
+    set: async (key: string, value: any) => {
+      console.log(`[Mock Storage] Setting ${key}:`, value);
+      // Simulate async storage operation
+      await new Promise(resolve => setTimeout(resolve, 10));
+    }
+  };
+  private governmentAPIs = {
+    registerDocument: async (metadata: any) => {
+      console.log(`[Mock Gov API] Registering document:`, metadata.id);
+      // Simulate async API call
+      await new Promise(resolve => setTimeout(resolve, 50));
+      return { success: true };
+    }
+  };
+
   /**
    * Get translation for a key in specified language
    */
@@ -1037,7 +1055,7 @@ export class PDFGenerationService {
     const translations = DOCUMENT_TRANSLATIONS[language];
     return translations[key as keyof typeof translations] || key;
   }
-  
+
   /**
    * Add bilingual text (English + Afrikaans) to document
    */
@@ -1063,31 +1081,31 @@ export class PDFGenerationService {
       align = 'left',
       isBold = false
     } = options;
-    
+
     const fontName = isBold ? (font === 'Helvetica' ? 'Helvetica-Bold' : font) : font;
-    
+
     doc.save();
     doc.fontSize(fontSize)
        .font(fontName)
        .fillColor(color);
-    
+
     // English text
     const englishText = this.getTranslation(textKey, 'en');
     doc.text(englishText, x, y, { width, align: align as any });
-    
+
     // Afrikaans text (slightly smaller and below)
     const afrikaansText = this.getTranslation(textKey, 'af');
     doc.fontSize(fontSize * 0.9)
        .fillColor(color)
        .fillOpacity(0.8)
        .text(afrikaansText, x, y + (fontSize * 1.2), { width, align: align as any });
-    
+
     doc.restore();
-    
+
     // Return the total height used
     return (fontSize * 1.2) + (fontSize * 0.9 * 1.3);
   }
-  
+
   /**
    * Add single language text with proper typography
    */
@@ -1113,12 +1131,12 @@ export class PDFGenerationService {
       width = 500,
       align = 'left'
     } = options;
-    
+
     doc.save();
     doc.fontSize(fontSize)
        .font(font)
        .fillColor(color);
-    
+
     // Apply language-specific typography settings
     if (typography.characterSpacing) {
       doc.text(text, x, y, { 
@@ -1129,17 +1147,17 @@ export class PDFGenerationService {
     } else {
       doc.text(text, x, y, { width, align: align as any });
     }
-    
+
     doc.restore();
   }
-  
+
   /**
    * Add government header with bilingual support
    */
   private addBilingualGovernmentHeader(doc: PDFKit, documentTitle: string): number {
     const pageWidth = doc.page.width;
     let yPos = 30;
-    
+
     // South African coat of arms placeholder
     doc.save();
     doc.circle(pageWidth / 2, yPos + 25, 20)
@@ -1149,9 +1167,9 @@ export class PDFGenerationService {
        .lineWidth(2)
        .stroke();
     doc.restore();
-    
+
     yPos += 60;
-    
+
     // Republic of South Africa - Bilingual
     yPos += this.addBilingualText(doc, 'republic_of_south_africa', 0, yPos, {
       fontSize: 14,
@@ -1161,9 +1179,9 @@ export class PDFGenerationService {
       align: 'center',
       isBold: true
     });
-    
+
     yPos += 10;
-    
+
     // Department of Home Affairs - Bilingual
     yPos += this.addBilingualText(doc, 'department_home_affairs', 0, yPos, {
       fontSize: 12,
@@ -1171,9 +1189,9 @@ export class PDFGenerationService {
       width: pageWidth,
       align: 'center'
     });
-    
+
     yPos += 20;
-    
+
     // Document title - Bilingual
     const documentTitleKey = documentTitle.toLowerCase().replace(/\s+/g, '_');
     yPos += this.addBilingualText(doc, documentTitleKey, 0, yPos, {
@@ -1184,7 +1202,7 @@ export class PDFGenerationService {
       align: 'center',
       isBold: true
     });
-    
+
     // Add decorative line
     doc.save();
     doc.strokeColor(SA_COLORS.gold)
@@ -1193,10 +1211,10 @@ export class PDFGenerationService {
        .lineTo(pageWidth - 50, yPos + 10)
        .stroke();
     doc.restore();
-    
+
     return yPos + 20;
   }
-  
+
   /**
    * Add bilingual field with label and value
    */
@@ -1213,31 +1231,31 @@ export class PDFGenerationService {
     } = {}
   ): number {
     const { labelWidth = 150, fontSize = 10, valueColor = SA_COLORS.black } = options;
-    
+
     // English label
     const englishLabel = this.getTranslation(labelKey, 'en');
     doc.fontSize(fontSize)
        .font('Helvetica-Bold')
        .fillColor(SA_COLORS.green)
        .text(englishLabel, x, y, { width: labelWidth });
-    
+
     // Afrikaans label (smaller, below English)
     const afrikaansLabel = this.getTranslation(labelKey, 'af');
     doc.fontSize(fontSize * 0.9)
        .fillColor(SA_COLORS.green)
        .fillOpacity(0.8)
        .text(afrikaansLabel, x, y + (fontSize * 1.1), { width: labelWidth });
-    
+
     // Value (aligned to the right of labels)
     doc.fontSize(fontSize)
        .font('Helvetica')
        .fillColor(valueColor)
        .fillOpacity(1)
        .text(value, x + labelWidth + 10, y, { width: 300 });
-    
+
     return (fontSize * 1.1) + (fontSize * 0.9 * 1.3) + 5; // Total height used
   }
-  
+
   /**
    * Format date according to South African standards
    */
@@ -1246,16 +1264,16 @@ export class PDFGenerationService {
     const day = date.getDate().toString().padStart(2, '0');
     const month = date.getMonth() + 1;
     const year = date.getFullYear();
-    
+
     const monthNames = {
       en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
       af: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Des']
     };
-    
+
     const monthName = monthNames[language][month - 1];
     return `${day} ${monthName} ${year}`;
   }
-  
+
   /**
    * Add government footer with security information
    */
@@ -1263,7 +1281,7 @@ export class PDFGenerationService {
     const pageHeight = doc.page.height;
     const pageWidth = doc.page.width;
     const footerY = pageHeight - 80;
-    
+
     // Security line
     doc.save();
     doc.strokeColor(SA_COLORS.security_blue)
@@ -1272,7 +1290,7 @@ export class PDFGenerationService {
        .lineTo(pageWidth - 30, footerY)
        .stroke();
     doc.restore();
-    
+
     // Official document notice - Bilingual
     this.addBilingualText(doc, 'this_is_official_document', 30, footerY + 10, {
       fontSize: 8,
@@ -1280,7 +1298,7 @@ export class PDFGenerationService {
       width: pageWidth - 60,
       align: 'center'
     });
-    
+
     // Verification URL
     doc.fontSize(8)
        .font('Helvetica')
@@ -1289,7 +1307,7 @@ export class PDFGenerationService {
          width: pageWidth - 60,
          align: 'center'
        });
-    
+
     // Fraud warning - Bilingual
     this.addBilingualText(doc, 'fraud_warning', 30, footerY + 55, {
       fontSize: 7,
@@ -1298,7 +1316,7 @@ export class PDFGenerationService {
       align: 'center'
     });
   }
-  
+
   /**
    * Generate ICAO-compliant Machine Readable Zone (MRZ) for travel documents
    */
@@ -1311,7 +1329,7 @@ export class PDFGenerationService {
       const day = date.getDate().toString().padStart(2, '0');
       return year + month + day;
     };
-    
+
     // Calculate check digit using ICAO standard
     const calculateCheckDigit = (data: string) => {
       const weights = [7, 3, 1];
@@ -1330,32 +1348,32 @@ export class PDFGenerationService {
       }
       return (sum % 10).toString();
     };
-    
+
     // Pad and truncate strings to fit MRZ format
     const padRight = (str: string, length: number) => {
       return (str + '<'.repeat(length)).substring(0, length);
     };
-    
+
     // Clean and format names (remove special characters, convert to uppercase)
     const cleanName = (name: string) => {
       return name.toUpperCase()
                  .replace(/[^A-Z\s]/g, '')
                  .replace(/\s+/g, '<');
     };
-    
+
     const formattedSurname = cleanName(surname);
     const formattedGivenNames = cleanName(givenNames);
     const formattedDOB = formatMRZDate(dateOfBirth);
     const formattedExpiry = formatMRZDate(expiryDate);
     const genderCode = gender.toUpperCase().charAt(0);
-    
+
     let mrz: string[] = [];
-    
+
     if (documentType === 'passport' || documentType === 'emergency_travel_document') {
       // TD-3 format (passport)
       // Line 1: P<COUNTRY<SURNAME<<GIVEN<NAMES<<<<<<<<<<<<<<<
       const line1 = 'P<ZAF' + padRight(formattedSurname + '<<' + formattedGivenNames, 39);
-      
+
       // Line 2: PASSPORT_NUMBER<CHECK_DIGIT<NATIONALITY<DOB<CHECK_DIGIT<GENDER<EXPIRY<CHECK_DIGIT<PERSONAL_NUMBER<CHECK_DIGIT<OVERALL_CHECK_DIGIT
       const passportField = padRight(passportNumber, 9);
       const passportCheckDigit = calculateCheckDigit(passportField);
@@ -1363,60 +1381,63 @@ export class PDFGenerationService {
       const expiryCheckDigit = calculateCheckDigit(formattedExpiry);
       const personalNumberField = padRight(personalNumber || '', 14);
       const personalNumberCheckDigit = calculateCheckDigit(personalNumberField);
-      
+
       // Calculate overall check digit for line 2 (excluding the last check digit itself)
       const line2ForOverallCheck = passportField + passportCheckDigit + nationality + formattedDOB + dobCheckDigit + genderCode + formattedExpiry + expiryCheckDigit + personalNumberField + personalNumberCheckDigit;
       const overallCheckDigit = calculateCheckDigit(line2ForOverallCheck);
-      
+
       const line2 = passportField + passportCheckDigit + nationality + formattedDOB + dobCheckDigit + genderCode + formattedExpiry + expiryCheckDigit + personalNumberField + personalNumberCheckDigit + overallCheckDigit;
-      
+
       mrz = [line1, line2];
     } else if (documentType === 'sa_id' || documentType === 'smart_id') {
       // TD-1 format (ID card) - 3 lines of 30 characters each
       // Line 1: I<COUNTRY<DOCUMENT_NUMBER<CHECK_DIGIT<<<<<<<<<<<<<
       const line1 = 'I<ZAF' + padRight(passportNumber, 9) + calculateCheckDigit(padRight(passportNumber, 9)) + '<'.repeat(15);
-      
+
       // Line 2: DOB<CHECK_DIGIT<GENDER<EXPIRY<CHECK_DIGIT<NATIONALITY<<<<<<<
       const line2 = formattedDOB + calculateCheckDigit(formattedDOB) + genderCode + formattedExpiry + calculateCheckDigit(formattedExpiry) + nationality + '<'.repeat(7);
-      
+
       // Line 3: SURNAME<<GIVEN<NAMES<<<<<<<<<<<<<<<<<<<
       const line3 = padRight(formattedSurname + '<<' + formattedGivenNames, 30);
-      
+
       mrz = [line1, line2, line3];
     }
-    
+
     return mrz;
   }
-  
+
   /**
    * Add MRZ to travel document
    */
   private addMRZToDocument(doc: PDFKit, mrz: string[], x: number, y: number): void {
     doc.save();
-    
+
     // MRZ background
     doc.rect(x - 5, y - 5, 350, (mrz.length * 15) + 10)
        .fillColor('#f0f0f0')
-       .fill();
-    
+       .fill()
+       .strokeColor(SA_COLORS.black)
+       .lineWidth(1)
+       .stroke();
+
     // MRZ text using monospace font
     doc.font('Courier')
        .fontSize(10)
        .fillColor(SA_COLORS.black);
-    
+
     mrz.forEach((line, index) => {
       doc.text(line, x, y + (index * 15), {
         characterSpacing: 1.2,
         width: 340
       });
     });
-    
+
     // Add holographic overlay on MRZ for security
     this.addHolographicEffect(doc, x - 5, y - 5, 350, (mrz.length * 15) + 10);
-    
+
     doc.restore();
   }
-  
+
   /**
    * Generate RFID/NFC chip data placeholder for smart documents
    */
@@ -1451,16 +1472,16 @@ export class PDFGenerationService {
         compliance: ['ICAO-9303', 'NIST-SP-800-73']
       }
     };
-    
+
     return JSON.stringify(chipData);
   }
-  
+
   /**
    * Add RFID/NFC chip indicator to smart documents
    */
   private addRFIDChipIndicator(doc: PDFKit, x: number, y: number): void {
     doc.save();
-    
+
     // RFID chip background
     doc.rect(x, y, 30, 20)
        .fillColor(SA_COLORS.gold)
@@ -1468,38 +1489,38 @@ export class PDFGenerationService {
        .strokeColor(SA_COLORS.black)
        .lineWidth(1)
        .stroke();
-    
+
     // Chip contact points
     const contacts = [
       [x + 5, y + 3], [x + 15, y + 3], [x + 25, y + 3],
       [x + 5, y + 8], [x + 15, y + 8], [x + 25, y + 8],
       [x + 5, y + 13], [x + 15, y + 13], [x + 25, y + 13]
     ];
-    
+
     contacts.forEach(([cx, cy]) => {
       doc.circle(cx, cy, 1)
          .fillColor(SA_COLORS.black)
          .fill();
     });
-    
+
     // NFC waves indicator
     doc.strokeColor(SA_COLORS.security_blue)
        .lineWidth(0.5);
-    
+
     for (let i = 1; i <= 3; i++) {
       doc.circle(x + 35, y + 10, 5 * i)
          .stroke();
     }
-    
+
     // Add text
     doc.fontSize(6)
        .font('Helvetica')
        .fillColor(SA_COLORS.black)
        .text('RFID', x, y + 22);
-    
+
     doc.restore();
   }
-  
+
   /**
    * Generate biometric data placeholders for documents
    */
@@ -1546,27 +1567,27 @@ export class PDFGenerationService {
       }
     };
   }
-  
+
   /**
    * Add biometric data indicators to document
    */
   private addBiometricIndicators(doc: PDFKit, x: number, y: number, biometricData: any): void {
     doc.save();
-    
+
     doc.fontSize(8)
        .font('Helvetica-Bold')
        .fillColor(SA_COLORS.security_blue)
        .text('BIOMETRIC DATA', x, y);
-    
+
     let indicatorY = y + 15;
-    
+
     // Face biometric indicator
     if (biometricData.faceTemplate) {
       doc.fontSize(6)
          .text(`✓ Face Template (Quality: ${biometricData.faceTemplate.quality})`, x, indicatorY);
       indicatorY += 10;
     }
-    
+
     // Fingerprint indicators
     if (biometricData.fingerprintTemplates) {
       biometricData.fingerprintTemplates.forEach((fp: any, index: number) => {
@@ -1574,54 +1595,54 @@ export class PDFGenerationService {
         indicatorY += 10;
       });
     }
-    
+
     // Iris indicator (for passports)
     if (biometricData.irisTemplate) {
       doc.text(`✓ Iris Template (Quality: ${biometricData.irisTemplate.quality})`, x, indicatorY);
       indicatorY += 10;
     }
-    
+
     // Signature indicator
     if (biometricData.signatureTemplate) {
       doc.text('✓ Digital Signature Template', x, indicatorY);
     }
-    
+
     doc.restore();
   }
-  
+
   /**
    * Generate prominent Braille pattern with larger dots and better spacing
    */
   private addProminentBraillePattern(doc: PDFKit, text: string, x: number, y: number): void {
     const brailleText = verificationService.generateBraillePattern(text);
-    
+
     // Add background for Braille section
     doc.save();
     doc.rect(x - 5, y - 5, 400, 35)
        .fill('#f0f0f0');
-    
+
     // Add label
     doc.fillColor(SA_COLORS.black)
        .fontSize(8)
        .font('Helvetica')
        .text('Braille Reference (Grade 1):', x, y - 3);
-    
+
     // Add prominent Braille dots with larger size
     doc.fontSize(20)
        .font('Helvetica')
        .fillColor(SA_COLORS.black)
        .text(brailleText, x, y + 10, { width: 390 });
-    
+
     doc.restore();
   }
-  
+
   /**
    * Add enhanced holographic security strip with rainbow gradient
    */
   private addEnhancedHolographicStrip(doc: PDFKit, y: number): void {
     const pageWidth = 565;
     const stripHeight = 30;
-    
+
     // Create rainbow gradient effect
     const colors = [
       { offset: 0, color: [255, 0, 0, 0.3] },    // Red
@@ -1632,7 +1653,7 @@ export class PDFGenerationService {
       { offset: 0.83, color: [75, 0, 130, 0.3] },  // Indigo
       { offset: 1, color: [238, 130, 238, 0.3] }   // Violet
     ];
-    
+
     // Draw gradient strips
     const stripWidth = pageWidth / colors.length;
     colors.forEach((color, index) => {
@@ -1643,31 +1664,31 @@ export class PDFGenerationService {
          .fill();
       doc.restore();
     });
-    
+
     // Add SECURE text overlay
     doc.save();
     doc.fontSize(20)
        .font('Helvetica-Bold')
        .fillOpacity(0.2)
        .fillColor(SA_COLORS.black);
-    
+
     for (let i = 0; i < 5; i++) {
       doc.text('SECURE', 50 + (i * 110), y + 8);
     }
-    
+
     // Add shimmer pattern lines
     doc.strokeOpacity(0.1)
        .strokeColor(SA_COLORS.gold);
-    
+
     for (let i = 0; i < 20; i++) {
       doc.moveTo(25 + (i * 30), y)
          .lineTo(25 + (i * 30) + 10, y + stripHeight)
          .stroke();
     }
-    
+
     doc.restore();
   }
-  
+
   /**
    * Add functional QR code with live verification link
    */
@@ -1680,12 +1701,12 @@ export class PDFGenerationService {
     y: number
   ): Promise<{ code: string; hashtags: string[] }> {
     // Register document with verification service
-    const verification = await verificationService.registerDocument(
+    const verification = await this.governmentAPIs.registerDocument(
       documentType,
       documentNumber,
       documentData
     );
-    
+
     // Create QR code with verification URL
     const qrData = verification.url;
     const qrCode = await QRCode.toDataURL(qrData, {
@@ -1693,78 +1714,78 @@ export class PDFGenerationService {
       margin: 1,
       color: { dark: SA_COLORS.black, light: SA_COLORS.white }
     });
-    
+
     // Add QR code background
     doc.save();
     doc.rect(x - 10, y - 10, 140, 180)
-       .fill('#ffffff')
+       .fillColor('#ffffff')
        .stroke(SA_COLORS.green);
-    
+
     // Add QR code image
     doc.image(qrCode, x, y, { width: 120, height: 120 });
-    
+
     // Add SCAN TO VERIFY text
     doc.fillColor(SA_COLORS.green)
        .fontSize(12)
        .font('Helvetica-Bold')
        .text('SCAN FOR LIVE', x, y + 125, { width: 120, align: 'center' })
        .text('VERIFICATION', x, y + 140, { width: 120, align: 'center' });
-    
+
     // Add verification URL
     doc.fillColor(SA_COLORS.black)
        .fontSize(7)
        .font('Helvetica')
        .text(`Verify at: ${verification.url}`, x - 5, y + 155, { width: 130, align: 'center' });
-    
+
     doc.restore();
-    
+
     return { code: verification.code, hashtags: verification.hashtags };
   }
-  
+
   /**
    * Add hashtag section for social media tracking
    */
   private addHashtagSection(doc: PDFKit, hashtags: string[], x: number, y: number): void {
     doc.save();
-    
+
     // Add hashtag box
     doc.rect(x - 5, y - 5, 520, 35)
        .fill('#f8f8f8')
        .stroke(SA_COLORS.blue);
-    
+
     // Add hashtag icon
     doc.fillColor(SA_COLORS.blue)
        .fontSize(16)
        .font('Helvetica-Bold')
        .text('#', x, y + 2);
-    
+
     // Add hashtags
     doc.fillColor(SA_COLORS.black)
        .fontSize(9)
        .font('Helvetica');
-    
+
     const hashtagText = hashtags.join(' ');
     doc.text(hashtagText, x + 20, y + 5, { width: 490 });
-    
+
     doc.restore();
   }
-  
+
   /**
    * Add verification status indicator
    */
   private addVerificationStatusIndicator(doc: PDFKit, x: number, y: number): void {
     doc.save();
-    
+
     // Add status box
     doc.rect(x, y, 200, 60)
        .fill('#e8f5e9')
        .stroke(SA_COLORS.green);
-    
+
     // Add verified stamp
     doc.circle(x + 30, y + 30, 20)
        .lineWidth(2)
        .stroke(SA_COLORS.green);
-    
+
     // Add checkmark
     doc.strokeColor(SA_COLORS.green)
        .lineWidth(3)
@@ -1772,22 +1793,22 @@ export class PDFGenerationService {
        .lineTo(x + 27, y + 37)
        .lineTo(x + 40, y + 23)
        .stroke();
-    
+
     // Add text
     doc.fillColor(SA_COLORS.green)
        .fontSize(11)
        .font('Helvetica-Bold')
        .text('VERIFIED', x + 60, y + 15);
-    
+
     doc.fillColor(SA_COLORS.black)
        .fontSize(8)
        .font('Helvetica')
        .text('Authenticity Guaranteed', x + 60, y + 30)
        .text('Scan QR for live status', x + 60, y + 42);
-    
+
     doc.restore();
   }
-  
+
   /**
    * Generate Work Permit PDF (Section 19 permits)
    */
@@ -1828,7 +1849,7 @@ export class PDFGenerationService {
         doc.fontSize(16)
            .font('Helvetica-Bold')
            .text(`WORK PERMIT`, 50, 140, { align: 'center', width: 515 });
-        
+
         doc.fontSize(14)
            .text(`${data.permitType}`, 50, 160, { align: 'center', width: 515 });
 
@@ -1838,7 +1859,7 @@ export class PDFGenerationService {
         doc.fontSize(12)
            .font('Helvetica-Bold')
            .text(`Permit No: ${data.permitNumber}`, 190, 200, { align: 'center', width: 215 });
-        
+
         // Add holographic effect over permit number
         this.addHolographicEffect(doc, 175, 185, 245, 40);
 
@@ -1848,7 +1869,7 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('PERSONAL DETAILS', 50, yPos);
-        
+
         yPos += 25;
         doc.font('Helvetica')
            .fillColor(SA_COLORS.black)
@@ -1876,7 +1897,7 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('EMPLOYMENT DETAILS', 50, yPos);
-        
+
         yPos += 25;
         doc.font('Helvetica')
            .fillColor(SA_COLORS.black)
@@ -1905,7 +1926,7 @@ export class PDFGenerationService {
              .font('Helvetica-Bold')
              .fillColor(SA_COLORS.green)
              .text('CONDITIONS', 50, yPos);
-          
+
           yPos += 20;
           doc.font('Helvetica')
              .fillColor(SA_COLORS.black)
@@ -1919,10 +1940,10 @@ export class PDFGenerationService {
 
         // Add prominent Braille pattern at top
         this.addProminentBraillePattern(doc, data.permitNumber, 50, 90);
-        
+
         // Add enhanced holographic security strip
         this.addEnhancedHolographicStrip(doc, 370);
-        
+
         // Add functional QR code with live verification
         const verification = await this.addLiveVerificationQRCode(
           doc,
@@ -1932,13 +1953,13 @@ export class PDFGenerationService {
           430,
           420
         );
-        
+
         // Add hashtag section
         this.addHashtagSection(doc, verification.hashtags, 50, 640);
-        
+
         // Add verification status indicator
         this.addVerificationStatusIndicator(doc, 50, 560);
-        
+
         // Add UV reactive indicator around QR code
         this.addUVReactiveIndicator(doc, 445, 395, 110, 110);
 
@@ -1956,7 +1977,7 @@ export class PDFGenerationService {
            .font('Helvetica')
            .fillColor(SA_COLORS.red)
            .text('IMPORTANT: This permit must be kept in your passport at all times.', 50, 700, { align: 'center', width: 515 });
-        
+
         doc.fontSize(7)
            .fillColor(SA_COLORS.black)
            .text('For verification: Tel: 0800 60 11 90 | Email: info@dha.gov.za | Website: www.dha.gov.za', 50, 720, { align: 'center', width: 515 });
@@ -2008,7 +2029,7 @@ export class PDFGenerationService {
         doc.fontSize(16)
            .font('Helvetica-Bold')
            .text(`ASYLUM SEEKER`, 50, 140, { align: 'center', width: 515 });
-        
+
         doc.fontSize(14)
            .text(`TEMPORARY VISA`, 50, 160, { align: 'center', width: 515 });
 
@@ -2023,10 +2044,10 @@ export class PDFGenerationService {
         doc.fontSize(12)
            .font('Helvetica-Bold')
            .text(`Permit No: ${data.permitNumber}`, 190, 220, { align: 'center', width: 215 });
-        
+
         // Add prominent Braille pattern at top
         this.addProminentBraillePattern(doc, data.permitNumber, 50, 90);
-        
+
         // Add enhanced holographic security strip
         this.addEnhancedHolographicStrip(doc, 300);
 
@@ -2036,7 +2057,7 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('APPLICANT DETAILS', 50, yPos);
-        
+
         yPos += 25;
         doc.font('Helvetica')
            .fillColor(SA_COLORS.black)
@@ -2066,7 +2087,7 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('VALIDITY PERIOD', 50, yPos);
-        
+
         yPos += 25;
         doc.font('Helvetica')
            .fillColor(SA_COLORS.black)
@@ -2088,7 +2109,7 @@ export class PDFGenerationService {
              .font('Helvetica-Bold')
              .fillColor(SA_COLORS.green)
              .text('DEPENDENTS', 50, yPos);
-          
+
           yPos += 20;
           doc.font('Helvetica')
              .fillColor(SA_COLORS.black)
@@ -2106,7 +2127,7 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('RIGHTS AND RESTRICTIONS', 50, yPos);
-        
+
         yPos += 20;
         doc.font('Helvetica')
            .fillColor(SA_COLORS.black)
@@ -2134,7 +2155,7 @@ export class PDFGenerationService {
         }).then(qrCode => {
           doc.image(qrCode, 450, 500, { width: 100 });
         });
-        
+
         // Add holographic strip near QR
         this.addHolographicEffect(doc, 430, 495, 10, 110);
 
@@ -2145,15 +2166,15 @@ export class PDFGenerationService {
         this.addOfficialStampArea(doc, 350, 630);
 
         // Footer
-        doc.fontSize(8)
+        doc.fontSize(9)
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.red)
            .text('WARNING: This document does not constitute a right to permanent residence', 50, 720, { align: 'center', width: 515 });
-        
+
         doc.fontSize(7)
            .fillColor(SA_COLORS.black)
            .text('Refugee Reception Offices: Cape Town | Durban | Musina | Pretoria | Port Elizabeth', 50, 740, { align: 'center', width: 515 });
-        
+
         doc.text('24hr Hotline: 0800 60 11 90 | www.dha.gov.za', 50, 755, { align: 'center', width: 515 });
 
         doc.end();
@@ -2190,7 +2211,7 @@ export class PDFGenerationService {
 
         // Add multi-layer security with microtext border
         const serialNumber = this.addMultiLayerSecurity(doc, 'PR', data.permitNumber);
-        
+
         // Add specific microtext border pattern for residence permit
         this.addMicrotextPattern(doc, 'PERMANENT RESIDENCE RSA ', 0, 30, 595, 10);
         this.addMicrotextPattern(doc, 'PERMANENT RESIDENCE RSA ', 0, 802, 595, 10);
@@ -2214,7 +2235,7 @@ export class PDFGenerationService {
         doc.fontSize(14)
            .font('Helvetica-Bold')
            .text(`Permit No: ${data.permitNumber}`, 160, 207, { align: 'center', width: 275 });
-        
+
         // Add holographic overlay on permit box
         this.addHolographicEffect(doc, 150, 195, 295, 35);
 
@@ -2224,7 +2245,7 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('HOLDER DETAILS', 50, yPos);
-        
+
         yPos += 25;
         doc.font('Helvetica')
            .fillColor(SA_COLORS.black)
@@ -2254,7 +2275,7 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('VALIDITY', 50, yPos);
-        
+
         yPos += 25;
         doc.font('Helvetica')
            .fillColor(SA_COLORS.black)
@@ -2264,7 +2285,7 @@ export class PDFGenerationService {
            .text('Issue Date:', 50, yPos, { continued: true, width: 100 })
            .font('Helvetica')
            .text(` ${data.validFrom}`, { width: 200 });
-        
+
         yPos += 20;
         doc.font('Helvetica-Bold')
            .text('Status:', 50, yPos, { continued: true, width: 100 })
@@ -2278,7 +2299,7 @@ export class PDFGenerationService {
              .font('Helvetica-Bold')
              .fillColor(SA_COLORS.green)
              .text('CONDITIONS', 50, yPos);
-          
+
           yPos += 20;
           doc.font('Helvetica')
              .fillColor(SA_COLORS.black)
@@ -2296,7 +2317,7 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('RIGHTS AND PRIVILEGES', 50, yPos);
-        
+
         yPos += 20;
         doc.font('Helvetica')
            .fillColor(SA_COLORS.black)
@@ -2336,7 +2357,7 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.blue)
            .text('This permit confirms permanent residence status in the Republic of South Africa', 50, 720, { align: 'center', width: 515 });
-        
+
         doc.fontSize(7)
            .fillColor(SA_COLORS.black)
            .text('Department of Home Affairs | www.dha.gov.za | Call Centre: 0800 60 11 90', 50, 740, { align: 'center', width: 515 });
@@ -2374,7 +2395,7 @@ export class PDFGenerationService {
         doc.rect(20, 20, 555, 802)
            .lineWidth(2)
            .stroke(SA_COLORS.green);
-        
+
         doc.rect(25, 25, 545, 792)
            .lineWidth(1)
            .stroke(SA_COLORS.gold);
@@ -2396,7 +2417,7 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('BIRTH CERTIFICATE', 50, 150, { align: 'center', width: 495 });
-        
+
         doc.fontSize(12)
            .font('Helvetica')
            .fillColor(SA_COLORS.black)
@@ -2410,7 +2431,7 @@ export class PDFGenerationService {
         doc.fontSize(12)
            .font('Helvetica-Bold')
            .text(`Registration No: ${data.registrationNumber}`, 190, 223, { align: 'center', width: 215 });
-        
+
         // Add holographic overlay on registration box
         this.addHolographicEffect(doc, 180, 210, 235, 35);
 
@@ -2420,7 +2441,7 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('PARTICULARS OF CHILD', 50, yPos);
-        
+
         yPos += 30;
         doc.font('Helvetica')
            .fillColor(SA_COLORS.black)
@@ -2448,7 +2469,7 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('PARTICULARS OF MOTHER', 50, yPos);
-        
+
         yPos += 30;
         doc.font('Helvetica')
            .fillColor(SA_COLORS.black)
@@ -2474,7 +2495,7 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('PARTICULARS OF FATHER', 50, yPos);
-        
+
         yPos += 30;
         doc.font('Helvetica')
            .fillColor(SA_COLORS.black)
@@ -2501,7 +2522,7 @@ export class PDFGenerationService {
            .text('Date of Registration:', 50, yPos, { width: 180, align: 'right' })
            .font('Helvetica')
            .text(data.dateOfRegistration, 240, yPos, { width: 300 });
-        
+
         yPos += 25;
         doc.font('Helvetica-Bold')
            .text('Registration Office:', 50, yPos, { width: 180, align: 'right' })
@@ -2519,7 +2540,7 @@ export class PDFGenerationService {
           doc.fontSize(8)
              .text('Verification Code', 460, 725);
         });
-        
+
         // Add UV reactive areas
         this.addUVReactiveIndicator(doc, 50, 100, 60, 60);
         this.addUVReactiveIndicator(doc, 485, 100, 60, 60);
@@ -2539,7 +2560,7 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.blue)
            .text('This is an official document of the Republic of South Africa', 50, 750, { align: 'center', width: 495 });
-        
+
         doc.fontSize(8)
            .fillColor(SA_COLORS.black)
            .text('Department of Home Affairs | www.dha.gov.za', 50, 770, { align: 'center', width: 495 });
@@ -2561,10 +2582,12 @@ export class PDFGenerationService {
           size: [297, 420], // Passport page size (A6)
           margin: 20,
           info: {
-            Title: `Passport - ${data.passportNumber}`,
+            Title: `Passport - ${data.passportNumber || 'NEW'}`,
             Author: 'Department of Home Affairs',
             Subject: 'South African Passport',
-            Keywords: 'DHA, Passport, South Africa'
+            Keywords: 'DHA, Passport, South Africa',
+            Creator: 'DHA Digital Services Platform',
+            Producer: 'DHA PDF Generator v2.0'
           }
         });
 
@@ -2576,18 +2599,18 @@ export class PDFGenerationService {
         // Page 1 - Cover (simplified representation)
         doc.rect(0, 0, 297, 420)
            .fill(SA_COLORS.green);
-        
+
         doc.fontSize(16)
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.gold)
            .text('REPUBLIC OF', 0, 100, { align: 'center', width: 297 });
         doc.text('SOUTH AFRICA', 0, 120, { align: 'center', width: 297 });
-        
+
         // Coat of arms placeholder
         doc.circle(148.5, 210, 40)
            .lineWidth(2)
            .stroke(SA_COLORS.gold);
-        
+
         doc.fontSize(14)
            .text('PASSPORT', 0, 280, { align: 'center', width: 297 });
         doc.fontSize(12)
@@ -2595,24 +2618,24 @@ export class PDFGenerationService {
 
         // Page 2 - Data page
         doc.addPage();
-        
+
         // Add holographic overlay on data page
         this.addHolographicEffect(doc, 0, 0, 297, 50);
-        
+
         // Add guilloche pattern background
         this.addGuillochePattern(doc, 10, 60, 277, 350);
-        
+
         // Header
         doc.fontSize(10)
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('SOUTH AFRICAN PASSPORT', 20, 20, { align: 'center', width: 257 });
-        
+
         // Passport type
         doc.fontSize(9)
            .fillColor(SA_COLORS.black)
            .text(`Type/Tipe: ${data.passportType.charAt(0)}`, 20, 40);
-        
+
         doc.text(`Passport No./Paspoortnr: ${data.passportNumber}`, 20, 55);
 
         // Photo area
@@ -2625,10 +2648,10 @@ export class PDFGenerationService {
         let yPos = 75;
         const xLabel = 110;
         const xValue = 110;
-        
+
         doc.fontSize(8)
            .font('Helvetica');
-        
+
         const details = [
           { label: 'Surname/Van', value: data.personal.surname || data.personal.fullName.split(' ').pop() || '' },
           { label: 'Given names/Voorname', value: data.personal.givenNames || data.personal.fullName.split(' ').slice(0, -1).join(' ') || '' },
@@ -2656,20 +2679,20 @@ export class PDFGenerationService {
         yPos = 280;
         doc.rect(20, yPos - 5, 257, 50)
            .fill('#f0f0f0');
-        
+
         // Add holographic security overlay on MRZ
         this.addHolographicEffect(doc, 20, yPos - 5, 257, 50);
-        
+
         doc.font('Courier')
            .fontSize(10)
            .fillColor(SA_COLORS.black);
-        
+
         // Use enhanced MRZ generation
         const mrzLines = data.machineReadableZone || this.generatePassportMRZ(data);
         mrzLines.forEach((line, index) => {
           doc.text(line, 25, yPos + (index * 15));
         });
-        
+
         // Add UV reactive indicators on passport
         this.addUVReactiveIndicator(doc, 20, 75, 30, 30);
         this.addUVReactiveIndicator(doc, 247, 75, 30, 30);
@@ -2692,7 +2715,7 @@ export class PDFGenerationService {
         }).then(qrCode => {
           doc.image(qrCode, 217, 340, { width: 60 });
         });
-        
+
         // Add microtext at bottom
         this.addMicrotextPattern(doc, 'RSA GOV ', 20, 395, 257, 5);
 
@@ -2710,7 +2733,7 @@ export class PDFGenerationService {
     // Header background
     doc.rect(0, 0, 595, 80)
        .fill(SA_COLORS.green);
-    
+
     // Coat of arms placeholder (left)
     doc.circle(60, 40, 25)
        .lineWidth(2)
@@ -2749,12 +2772,12 @@ export class PDFGenerationService {
     doc.fontSize(60)
        .font('Helvetica-Bold')
        .fillColor(SA_COLORS.green);
-    
+
     // Rotate and add watermark text
     doc.rotate(-45, { origin: [297, 421] })
        .text('REPUBLIC OF', 100, 300)
        .text('SOUTH AFRICA', 80, 370);
-    
+
     doc.restore();
   }
 
@@ -2766,11 +2789,11 @@ export class PDFGenerationService {
     const barcodeData = this.generateBarcodePattern(data);
     const barWidth = 1.5;
     const barHeight = 40;
-    
+
     doc.fontSize(8)
        .fillColor(SA_COLORS.black)
        .text('|||||||||||||||||||||||||||||||||||||||||||', x, y, { characterSpacing: -2 });
-    
+
     doc.fontSize(10)
        .text(data, x, y + 45);
   }
@@ -2783,23 +2806,23 @@ export class PDFGenerationService {
     doc.circle(x + 40, y + 40, 35)
        .lineWidth(2)
        .stroke(SA_COLORS.red);
-    
+
     doc.circle(x + 40, y + 40, 30)
        .lineWidth(1)
        .stroke(SA_COLORS.red);
-    
+
     // Stamp text
     doc.fontSize(8)
        .fillColor(SA_COLORS.red)
        .text('DEPARTMENT OF', x + 5, y + 20, { width: 70, align: 'center' });
     doc.text('HOME AFFAIRS', x + 5, y + 30, { width: 70, align: 'center' });
-    
+
     if (withDate) {
       const today = new Date().toLocaleDateString('en-ZA');
       doc.fontSize(10)
          .text(today, x + 5, y + 45, { width: 70, align: 'center' });
     }
-    
+
     doc.fontSize(7)
        .text('OFFICIAL', x + 5, y + 60, { width: 70, align: 'center' });
   }
@@ -2810,11 +2833,11 @@ export class PDFGenerationService {
   private addGovernmentFooter(doc: PDFKit) {
     const pageHeight = doc.page.height;
     const footerY = pageHeight - 60;
-    
+
     doc.moveTo(30, footerY)
        .lineTo(565, footerY)
        .stroke(SA_COLORS.green);
-    
+
     doc.fontSize(7)
        .fillColor(SA_COLORS.black)
        .text('This document is the property of the Government of the Republic of South Africa', 30, footerY + 5, { align: 'center', width: 535 });
@@ -2837,7 +2860,7 @@ export class PDFGenerationService {
   private addHolographicEffect(doc: PDFKit, x: number, y: number, width: number, height: number) {
     doc.save();
     doc.opacity(0.15);
-    
+
     // Create gradient-like effect with multiple overlapping patterns
     const colors = [SA_COLORS.blue, SA_COLORS.gold, SA_COLORS.green];
     const patterns = [
@@ -2845,12 +2868,12 @@ export class PDFGenerationService {
       { type: 'hexagon', size: 4 },
       { type: 'wave', amplitude: 2 }
     ];
-    
+
     // Draw holographic pattern layers
     for (let i = 0; i < 3; i++) {
       doc.fillColor(colors[i]);
       doc.opacity(0.05 + (i * 0.02));
-      
+
       // Create repeating pattern
       for (let px = x; px < x + width; px += 10) {
         for (let py = y; py < y + height; py += 10) {
@@ -2871,13 +2894,13 @@ export class PDFGenerationService {
         }
       }
     }
-    
+
     // Add "HOLOGRAM" text indicator
     doc.opacity(0.1);
     doc.fontSize(8);
     doc.fillColor(SA_COLORS.blue);
     doc.text('SECURE', x + width/2 - 20, y + height/2 - 5);
-    
+
     doc.restore();
   }
 
@@ -2897,27 +2920,27 @@ export class PDFGenerationService {
       '4': '\u2819', '5': '\u2811', '6': '\u280b', '7': '\u281b', '8': '\u2813',
       '9': '\u280a', '-': '\u2824', ' ': '\u2800'
     };
-    
+
     // Convert text to uppercase and create Braille pattern
     const upperText = text.toUpperCase().substring(0, 20); // Limit length
     let brailleX = x;
-    
+
     doc.save();
     doc.fillColor(SA_COLORS.black);
-    
+
     // Draw Braille dots
     for (const char of upperText) {
       if (brailleMap[char]) {
         // Draw dot pattern (simplified representation)
         const pattern = brailleMap[char];
-        
+
         // Create 2x3 dot matrix for each character
         const dotPositions = [
           [0, 0], [4, 0],   // Top row
           [0, 4], [4, 4],   // Middle row
           [0, 8], [4, 8]    // Bottom row
         ];
-        
+
         // Draw dots based on character pattern
         const charCode = pattern.charCodeAt(0);
         for (let i = 0; i < 6; i++) {
@@ -2930,13 +2953,13 @@ export class PDFGenerationService {
         brailleX += 10; // Move to next character position
       }
     }
-    
+
     // Add description below
     doc.fontSize(6)
        .fillColor(SA_COLORS.black)
        .opacity(0.5)
        .text('Braille Reference', x, y + 15);
-    
+
     doc.restore();
   }
 
@@ -2949,10 +2972,10 @@ export class PDFGenerationService {
     doc.fontSize(2); // Very small text
     doc.opacity(0.1);
     doc.fillColor(SA_COLORS.green);
-    
+
     const microtext = text.repeat(20);
     const lineHeight = 3;
-    
+
     // Fill area with microtext
     for (let yPos = y; yPos < y + height; yPos += lineHeight) {
       doc.text(microtext, x, yPos, {
@@ -2961,7 +2984,7 @@ export class PDFGenerationService {
         continued: false
       });
     }
-    
+
     doc.restore();
   }
 
@@ -2973,24 +2996,24 @@ export class PDFGenerationService {
     doc.save();
     doc.opacity(0.05);
     doc.lineWidth(0.3);
-    
+
     // Create spiral/wave patterns
     const centerX = x + width / 2;
     const centerY = y + height / 2;
     const maxRadius = Math.min(width, height) / 2;
-    
+
     // Draw concentric circular patterns
     for (let r = 10; r < maxRadius; r += 5) {
       doc.circle(centerX, centerY, r)
          .stroke(SA_COLORS.gold);
     }
-    
+
     // Add intersecting wave patterns
     for (let i = 0; i < 8; i++) {
       const angle = (Math.PI * 2 * i) / 8;
       const endX = centerX + Math.cos(angle) * maxRadius;
       const endY = centerY + Math.sin(angle) * maxRadius;
-      
+
       doc.moveTo(centerX, centerY)
          .bezierCurveTo(
            centerX + Math.cos(angle + 0.5) * (maxRadius/2),
@@ -3002,7 +3025,7 @@ export class PDFGenerationService {
          )
          .stroke(SA_COLORS.green);
     }
-    
+
     doc.restore();
   }
 
@@ -3012,20 +3035,20 @@ export class PDFGenerationService {
    */
   private addUVReactiveIndicator(doc: PDFKit, x: number, y: number, width: number, height: number) {
     doc.save();
-    
+
     // Draw dashed border to indicate UV area
     doc.lineWidth(0.5);
     doc.dash(2, { space: 2 });
     doc.opacity(0.2);
     doc.rect(x, y, width, height)
        .stroke(SA_COLORS.blue);
-    
+
     // Add UV indicator text
     doc.fontSize(6);
     doc.opacity(0.3);
     doc.fillColor(SA_COLORS.blue);
     doc.text('UV', x + width - 15, y + 2);
-    
+
     doc.undash();
     doc.restore();
   }
@@ -3038,7 +3061,7 @@ export class PDFGenerationService {
     const digits = number.replace(/\D/g, '').split('').map(Number);
     let sum = 0;
     let isEven = false;
-    
+
     for (let i = digits.length - 1; i >= 0; i--) {
       let digit = digits[i];
       if (isEven) {
@@ -3050,7 +3073,7 @@ export class PDFGenerationService {
       sum += digit;
       isEven = !isEven;
     }
-    
+
     const checkDigit = (10 - (sum % 10)) % 10;
     return checkDigit.toString();
   }
@@ -3064,14 +3087,14 @@ export class PDFGenerationService {
     const baseNumber = timestamp.substr(-6) + random;
     const checkDigit = this.generateCheckDigit(baseNumber);
     const serialNumber = `${prefix}-${baseNumber}-${checkDigit}`;
-    
+
     doc.save();
     doc.fontSize(9);
     doc.font('Helvetica');
     doc.fillColor(SA_COLORS.black);
     doc.text(`Serial: ${serialNumber}`, x, y);
     doc.restore();
-    
+
     return serialNumber;
   }
 
@@ -3082,31 +3105,31 @@ export class PDFGenerationService {
   private addMultiLayerSecurity(doc: PDFKit, documentType: string, permitNumber: string) {
     const pageWidth = 595;
     const pageHeight = 842;
-    
+
     // Layer 1: Guilloche background pattern
     this.addGuillochePattern(doc, 50, 100, pageWidth - 100, pageHeight - 200);
-    
+
     // Layer 2: Microtext borders
     this.addMicrotextPattern(doc, `${documentType} RSA GOV `, 0, 0, pageWidth, 20);
     this.addMicrotextPattern(doc, `SECURE DOCUMENT `, 0, pageHeight - 20, pageWidth, 20);
-    
+
     // Layer 3: Holographic strips (vertical)
     this.addHolographicEffect(doc, 30, 100, 15, pageHeight - 200);
     this.addHolographicEffect(doc, pageWidth - 45, 100, 15, pageHeight - 200);
-    
+
     // Layer 4: UV-reactive areas
     this.addUVReactiveIndicator(doc, 100, 200, 100, 30);
     this.addUVReactiveIndicator(doc, pageWidth - 200, 200, 100, 30);
-    
+
     // Layer 5: Braille reference (for accessibility)
     this.addBraillePattern(doc, permitNumber.substring(0, 10), 50, pageHeight - 100);
-    
+
     // Layer 6: Serial number with check digit
     const serialNumber = this.addSerialNumber(doc, pageWidth - 150, 50, documentType.substring(0, 3));
-    
+
     // Add security features legend
     this.addSecurityLegend(doc, 50, pageHeight - 150);
-    
+
     return serialNumber;
   }
 
@@ -3116,14 +3139,14 @@ export class PDFGenerationService {
    */
   private addSecurityLegend(doc: PDFKit, x: number, y: number) {
     doc.save();
-    
+
     doc.fontSize(7);
     doc.font('Helvetica');
     doc.fillColor(SA_COLORS.black);
     doc.opacity(0.6);
-    
+
     doc.text('Security Features:', x, y);
-    
+
     const features = [
       '\u2713 Holographic security strip',
       '\u2713 Guilloche pattern background',
@@ -3134,20 +3157,20 @@ export class PDFGenerationService {
       '\u2713 QR code verification',
       '\u2713 Watermark'
     ];
-    
+
     let yPos = y + 10;
     doc.fontSize(6);
-    
+
     features.forEach(feature => {
       doc.text(feature, x + 5, yPos);
       yPos += 8;
     });
-    
+
     // Add verification instructions box
     doc.rect(x - 5, y - 5, 120, yPos - y + 10)
        .lineWidth(0.5)
        .stroke(SA_COLORS.green);
-    
+
     doc.restore();
   }
 
@@ -3159,9 +3182,9 @@ export class PDFGenerationService {
     // Placeholder implementation
     // In a real implementation, this would use a library like pdf-parse or pdfjs-dist
     // to extract text and form field data from the PDF
-    
+
     console.log('PDF data extraction requested. Buffer size:', pdfBuffer.length);
-    
+
     // Return mock extracted data for demonstration
     return {
       extractedText: 'Document text content',
@@ -3207,18 +3230,18 @@ export class PDFGenerationService {
   addWatermark(pdf: jsPDF, text: string = 'REPUBLIC OF SOUTH AFRICA'): void {
     const pageWidth = pdf.internal.pageSize.getWidth();
     const pageHeight = pdf.internal.pageSize.getHeight();
-    
+
     pdf.saveGraphicsState();
     pdf.setGState(new (pdf as any).GState({ opacity: 0.1 }));
     pdf.setFontSize(40);
     pdf.setTextColor(0, 119, 73); // SA Green
-    
+
     // Center and rotate text
     pdf.text(text, pageWidth / 2, pageHeight / 2, {
       angle: -45,
       align: 'center'
     });
-    
+
     pdf.restoreGraphicsState();
   }
 
@@ -3235,7 +3258,7 @@ export class PDFGenerationService {
           light: SA_COLORS.white
         }
       });
-      
+
       pdf.addImage(qrCodeDataUrl, 'PNG', x, y, size, size);
     } catch (error) {
       console.error('Error generating QR code:', error);
@@ -3249,11 +3272,11 @@ export class PDFGenerationService {
     // Simple barcode representation
     pdf.setFontSize(8);
     pdf.setFont('courier', 'normal');
-    
+
     // Generate barcode pattern
     const pattern = this.generateBarcodePattern(trackingNumber);
     let barcodeX = x;
-    
+
     pdf.setFillColor(0, 0, 0);
     pattern.split('').forEach((bit) => {
       if (bit === '1') {
@@ -3261,7 +3284,7 @@ export class PDFGenerationService {
       }
       barcodeX += 2;
     });
-    
+
     // Add human-readable text below barcode
     pdf.setFontSize(10);
     pdf.text(trackingNumber, x, y + 15);
@@ -3275,10 +3298,10 @@ export class PDFGenerationService {
     pdf.setDrawColor(222, 56, 49); // SA Red
     pdf.setLineWidth(0.5);
     pdf.circle(x, y, 15, 'S');
-    
+
     // Inner circle
     pdf.circle(x, y, 12, 'S');
-    
+
     // Stamp text
     pdf.setFontSize(6);
     pdf.setTextColor(222, 56, 49);
@@ -3286,7 +3309,7 @@ export class PDFGenerationService {
     pdf.text('HOME AFFAIRS', x, y - 4, { align: 'center' });
     pdf.text(date, x, y + 2, { align: 'center' });
     pdf.text('OFFICIAL', x, y + 6, { align: 'center' });
-    
+
     // Reset colors
     pdf.setTextColor(0, 0, 0);
     pdf.setDrawColor(0, 0, 0);
@@ -3306,7 +3329,7 @@ export class PDFGenerationService {
         "Must contribute to skills transfer and development"
       ]
     };
-    
+
     return this.generateWorkPermitPDF(modifiedData);
   }
 
@@ -3349,19 +3372,19 @@ export class PDFGenerationService {
 
         // Header with official form number
         this.addGovernmentHeader(doc, "REPUBLIC OF SOUTH AFRICA");
-        
+
         // Form title and number
         doc.fontSize(14)
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.black)
            .text('DEPARTMENT OF HOME AFFAIRS', 50, 100, { align: 'center', width: 515 });
-        
+
         doc.fontSize(16)
            .text('APPLICATION FOR VISITOR\'S/TRANSIT VISA', 50, 120, { align: 'center', width: 515 });
-        
+
         doc.fontSize(12)
            .text('(FORM 11 - REGULATION 9(1))', 50, 145, { align: 'center', width: 515 });
-        
+
         doc.fontSize(10)
            .font('Helvetica')
            .text(`Application No: ${data.applicationNumber}`, 50, 170)
@@ -3373,7 +3396,7 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('SECTION A: PERSONAL PARTICULARS', 50, yPos);
-        
+
         yPos += 25;
         doc.fontSize(10)
            .font('Helvetica')
@@ -3405,7 +3428,7 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('SECTION B: TRAVEL INFORMATION', 50, yPos);
-        
+
         yPos += 25;
         doc.fontSize(10)
            .font('Helvetica')
@@ -3451,7 +3474,7 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('SECTION C: BACKGROUND QUESTIONS', 50, yPos);
-        
+
         yPos += 25;
         doc.fontSize(10)
            .font('Helvetica')
@@ -3477,17 +3500,17 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('SECTION D: HEALTH DECLARATION', 50, yPos);
-        
+
         yPos += 25;
         doc.fontSize(10)
            .font('Helvetica')
            .fillColor(SA_COLORS.black);
-        
+
         doc.text('Yellow Fever Vaccination:', 50, yPos, { continued: true });
         doc.font('Helvetica-Bold')
            .text(` ${data.yellowFeverVaccination ? 'Yes' : 'No'}`, { width: 100 })
            .font('Helvetica');
-        
+
         if (data.medicalConditions && data.medicalConditions.length > 0) {
           yPos += 20;
           doc.text('Medical Conditions:', 50, yPos);
@@ -3504,12 +3527,12 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('SECTION E: FINANCIAL STATUS', 50, yPos);
-        
+
         yPos += 25;
         doc.fontSize(10)
            .font('Helvetica')
            .fillColor(SA_COLORS.black);
-        
+
         doc.text('Proof of Financial Means:', 50, yPos, { continued: true });
         doc.text(` ${data.financialMeans}`, { width: 350 });
         yPos += 18;
@@ -3520,7 +3543,7 @@ export class PDFGenerationService {
 
         // Add security features
         this.addEnhancedHolographicStrip(doc, 420);
-        
+
         // Add functional QR code with live verification
         const verification = await this.addLiveVerificationQRCode(
           doc,
@@ -3530,21 +3553,21 @@ export class PDFGenerationService {
           430,
           480
         );
-        
+
         // Add hashtags
         this.addHashtagSection(doc, verification.hashtags, 50, 700);
-        
+
         // Declaration section
         yPos = 650;
         doc.fontSize(10)
            .font('Helvetica-Bold')
            .text('DECLARATION', 50, yPos);
-        
+
         yPos += 15;
         doc.fontSize(9)
            .font('Helvetica')
            .text('I declare that the information furnished in this application is true and correct.', 50, yPos, { width: 500 });
-        
+
         yPos += 30;
         doc.text('Signature: _______________________', 50, yPos);
         doc.text('Date: _______________________', 300, yPos);
@@ -3596,14 +3619,14 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.black)
            .text('APPLICATION FOR TEMPORARY RESIDENCE PERMIT', 50, 100, { align: 'center', width: 515 });
-        
+
         doc.fontSize(12)
            .text('(FORM 8 - REGULATION 9(9))', 50, 125, { align: 'center', width: 515 });
-        
+
         doc.fontSize(11)
            .fillColor(SA_COLORS.blue)
            .text(`Category: ${data.permitCategory}`, 50, 150, { align: 'center', width: 515 });
-        
+
         doc.fontSize(10)
            .fillColor(SA_COLORS.black)
            .font('Helvetica')
@@ -3616,7 +3639,7 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('SECTION A: PERSONAL PARTICULARS', 50, yPos);
-        
+
         yPos += 25;
         this.addPersonalDetailsSection(doc, data.personal, 50, yPos);
         yPos += 180;
@@ -3627,12 +3650,12 @@ export class PDFGenerationService {
              .font('Helvetica-Bold')
              .fillColor(SA_COLORS.green)
              .text('SECTION B: CURRENT PERMIT STATUS', 50, yPos);
-          
+
           yPos += 25;
           doc.fontSize(10)
              .font('Helvetica')
              .fillColor(SA_COLORS.black);
-          
+
           doc.text(`Current Permit Number: ${data.currentPermitNumber}`, 50, yPos);
           yPos += 18;
           doc.text(`Current Permit Expiry: ${data.currentPermitExpiry || 'N/A'}`, 50, yPos);
@@ -3644,12 +3667,12 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('SECTION C: PURPOSE AND DURATION', 50, yPos);
-        
+
         yPos += 25;
         doc.fontSize(10)
            .font('Helvetica')
            .fillColor(SA_COLORS.black);
-        
+
         doc.text(`Purpose of Application: ${data.purposeOfApplication}`, 50, yPos);
         yPos += 18;
         doc.text(`Intended Duration: ${data.intendedDuration}`, 50, yPos);
@@ -3665,12 +3688,12 @@ export class PDFGenerationService {
              .font('Helvetica-Bold')
              .fillColor(SA_COLORS.green)
              .text('SECTION D: EMPLOYER DETAILS', 50, yPos);
-          
+
           yPos += 25;
           doc.fontSize(10)
              .font('Helvetica')
              .fillColor(SA_COLORS.black);
-          
+
           const employerFields = [
             { label: 'Company Name:', value: data.employer.name },
             { label: 'Registration No:', value: data.employer.registrationNumber },
@@ -3679,7 +3702,7 @@ export class PDFGenerationService {
             { label: 'Email:', value: data.employer.email },
             { label: 'Contact Person:', value: data.employer.contactPerson }
           ];
-          
+
           employerFields.forEach(field => {
             doc.font('Helvetica-Bold')
                .text(field.label, 50, yPos, { continued: true, width: 130 })
@@ -3695,12 +3718,12 @@ export class PDFGenerationService {
              .font('Helvetica-Bold')
              .fillColor(SA_COLORS.green)
              .text('SECTION D: INSTITUTION DETAILS', 50, yPos);
-          
+
           yPos += 25;
           doc.fontSize(10)
              .font('Helvetica')
              .fillColor(SA_COLORS.black);
-          
+
           const institutionFields = [
             { label: 'Institution Name:', value: data.institution.name },
             { label: 'Address:', value: data.institution.address },
@@ -3708,7 +3731,7 @@ export class PDFGenerationService {
             { label: 'Course:', value: data.institution.courseName },
             { label: 'Duration:', value: data.institution.duration }
           ];
-          
+
           institutionFields.forEach(field => {
             doc.font('Helvetica-Bold')
                .text(field.label, 50, yPos, { continued: true, width: 130 })
@@ -3724,12 +3747,12 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('SECTION E: SUPPORTING DOCUMENTS CHECKLIST', 50, yPos);
-        
+
         yPos += 25;
         doc.fontSize(10)
            .font('Helvetica')
            .fillColor(SA_COLORS.black);
-        
+
         const documents = [
           { name: 'Police Clearance Certificate', attached: data.policeClearance },
           { name: 'Medical Report', attached: data.medicalReport },
@@ -3737,7 +3760,7 @@ export class PDFGenerationService {
           { name: 'Financial Guarantee', attached: data.financialGuarantee ? true : false },
           { name: 'Criminal Record Check', attached: !data.criminalRecord }
         ];
-        
+
         documents.forEach(docItem => {
           doc.text(`☐ ${docItem.name}`, 50, yPos, { continued: true });
           doc.font('Helvetica-Bold')
@@ -3748,7 +3771,7 @@ export class PDFGenerationService {
 
         // Add security features
         this.addEnhancedHolographicStrip(doc, 400);
-        
+
         // Add QR code
         const verification = await this.addLiveVerificationQRCode(
           doc,
@@ -3758,9 +3781,6 @@ export class PDFGenerationService {
           430,
           450
         );
-        
-        // Add hashtags
-        this.addHashtagSection(doc, verification.hashtags, 50, 650);
 
         // Footer
         this.addGovernmentFooter(doc);
@@ -3809,10 +3829,10 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.black)
            .text('APPLICATION FOR GENERAL WORK PERMIT', 50, 100, { align: 'center', width: 515 });
-        
+
         doc.fontSize(12)
            .text('(FORM BI-947)', 50, 125, { align: 'center', width: 515 });
-        
+
         doc.fontSize(10)
            .font('Helvetica')
            .text(`Application No: ${data.applicationNumber}`, 50, 150)
@@ -3824,7 +3844,7 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('SECTION A: APPLICANT INFORMATION', 50, yPos);
-        
+
         yPos += 25;
         this.addPersonalDetailsSection(doc, data.personal, 50, yPos);
         yPos += 180;
@@ -3834,12 +3854,12 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('SECTION B: EMPLOYER INFORMATION', 50, yPos);
-        
+
         yPos += 25;
         doc.fontSize(10)
            .font('Helvetica')
            .fillColor(SA_COLORS.black);
-        
+
         const employerFields = [
           { label: 'Company Name:', value: data.employer.name },
           { label: 'Registration No:', value: data.employer.registrationNumber },
@@ -3849,7 +3869,7 @@ export class PDFGenerationService {
           { label: 'Contact Person:', value: data.employer.contactPerson },
           { label: 'HR Manager:', value: data.employer.hrManager }
         ];
-        
+
         employerFields.forEach(field => {
           if (yPos > 750) {
             doc.addPage();
@@ -3871,12 +3891,12 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('SECTION C: JOB DETAILS', 50, yPos);
-        
+
         yPos += 25;
         doc.fontSize(10)
            .font('Helvetica')
            .fillColor(SA_COLORS.black);
-        
+
         doc.text(`Position: ${data.jobDetails.position}`, 50, yPos);
         yPos += 18;
         doc.text(`Department: ${data.jobDetails.department}`, 50, yPos);
@@ -3889,7 +3909,7 @@ export class PDFGenerationService {
           doc.text(`Contract Duration: ${data.jobDetails.contractDuration}`, 50, yPos);
           yPos += 18;
         }
-        
+
         yPos += 10;
         doc.text('Job Description:', 50, yPos);
         yPos += 15;
@@ -3902,12 +3922,12 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('SECTION D: LABOR MARKET TESTING', 50, yPos);
-        
+
         yPos += 25;
         doc.fontSize(10)
            .font('Helvetica')
            .fillColor(SA_COLORS.black);
-        
+
         doc.text(`Position Advertised: ${data.laborMarketTesting.advertised ? 'Yes' : 'No'}`, 50, yPos);
         yPos += 18;
         if (data.laborMarketTesting.advertised) {
@@ -3929,12 +3949,12 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('SECTION E: SKILLS TRANSFER AND REPLACEMENT PLAN', 50, yPos);
-        
+
         yPos += 25;
         doc.fontSize(10)
            .font('Helvetica')
            .fillColor(SA_COLORS.black);
-        
+
         doc.text(`Replacement Plan in Place: ${data.replacementPlan.hasplan ? 'Yes' : 'No'}`, 50, yPos);
         yPos += 18;
         doc.text(`Training SA Citizen: ${data.replacementPlan.trainingSAcitizen ? 'Yes' : 'No'}`, 50, yPos);
@@ -3952,7 +3972,7 @@ export class PDFGenerationService {
 
         // Add security features
         this.addEnhancedHolographicStrip(doc, 600);
-        
+
         // Add QR code
         const verification = await this.addLiveVerificationQRCode(
           doc,
@@ -4010,10 +4030,10 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.black)
            .text('MEDICAL CERTIFICATE', 50, 100, { align: 'center', width: 515 });
-        
+
         doc.fontSize(12)
            .text('FOR IMMIGRATION PURPOSES', 50, 125, { align: 'center', width: 515 });
-        
+
         doc.fontSize(10)
            .font('Helvetica')
            .text(`Certificate No: ${certNumber}`, 50, 150)
@@ -4025,12 +4045,12 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('PATIENT INFORMATION', 50, yPos);
-        
+
         yPos += 25;
         doc.fontSize(10)
            .font('Helvetica')
            .fillColor(SA_COLORS.black);
-        
+
         doc.text(`Full Name: ${data.patient.fullName}`, 50, yPos);
         yPos += 18;
         doc.text(`Date of Birth: ${data.patient.dateOfBirth}`, 50, yPos);
@@ -4045,12 +4065,12 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('PHYSICAL EXAMINATION', 50, yPos);
-        
+
         yPos += 25;
         doc.fontSize(10)
            .font('Helvetica')
            .fillColor(SA_COLORS.black);
-        
+
         doc.text(`Height: ${data.physicalExamination.height}`, 50, yPos);
         doc.text(`Weight: ${data.physicalExamination.weight}`, 200, yPos);
         yPos += 18;
@@ -4065,12 +4085,12 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('TUBERCULOSIS SCREENING', 50, yPos);
-        
+
         yPos += 25;
         doc.fontSize(10)
            .font('Helvetica')
            .fillColor(SA_COLORS.black);
-        
+
         doc.text(`TB Test Performed: ${data.tuberculosisScreening.tested ? 'Yes' : 'No'}`, 50, yPos);
         yPos += 18;
         if (data.tuberculosisScreening.tested) {
@@ -4088,12 +4108,12 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('FITNESS FOR PURPOSE', 50, yPos);
-        
+
         yPos += 25;
         doc.fontSize(10)
            .font('Helvetica')
            .fillColor(SA_COLORS.black);
-        
+
         doc.text(`Fit for Work: ${data.fitnessForPurpose.fitForWork ? 'Yes' : 'No'}`, 50, yPos);
         yPos += 18;
         doc.text(`Fit for Study: ${data.fitnessForPurpose.fitForStudy ? 'Yes' : 'No'}`, 50, yPos);
@@ -4106,12 +4126,12 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('MEDICAL PRACTITIONER DETAILS', 50, yPos);
-        
+
         yPos += 25;
         doc.fontSize(10)
            .font('Helvetica')
            .fillColor(SA_COLORS.black);
-        
+
         doc.text(`Doctor: ${data.doctor.fullName}`, 50, yPos);
         yPos += 18;
         doc.text(`Qualifications: ${data.doctor.qualifications}`, 50, yPos);
@@ -4120,10 +4140,10 @@ export class PDFGenerationService {
         yPos += 18;
         doc.text(`Address: ${data.doctor.address}`, 50, yPos);
         yPos += 30;
-        
+
         doc.text('Signature: _______________________', 50, yPos);
         doc.text('Date: _______________________', 300, yPos);
-        
+
         // Add official stamp area
         this.addOfficialStampArea(doc, 400, yPos - 20);
 
@@ -4184,10 +4204,10 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.black)
            .text('RADIOLOGICAL REPORT', 50, 100, { align: 'center', width: 515 });
-        
+
         doc.fontSize(12)
            .text('FOR IMMIGRATION PURPOSES', 50, 125, { align: 'center', width: 515 });
-        
+
         doc.fontSize(10)
            .font('Helvetica')
            .text(`Report No: ${reportNumber}`, 50, 150)
@@ -4199,12 +4219,12 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('PATIENT INFORMATION', 50, yPos);
-        
+
         yPos += 25;
         doc.fontSize(10)
            .font('Helvetica')
            .fillColor(SA_COLORS.black);
-        
+
         doc.text(`Full Name: ${data.patient.fullName}`, 50, yPos);
         yPos += 18;
         doc.text(`Date of Birth: ${data.patient.dateOfBirth}`, 50, yPos);
@@ -4217,12 +4237,12 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('EXAMINATION DETAILS', 50, yPos);
-        
+
         yPos += 25;
         doc.fontSize(10)
            .font('Helvetica')
            .fillColor(SA_COLORS.black);
-        
+
         doc.text(`Examination Type: ${data.examType}`, 50, yPos);
         yPos += 18;
         doc.text(`Indication: ${data.indication}`, 50, yPos);
@@ -4233,12 +4253,12 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('FINDINGS', 50, yPos);
-        
+
         yPos += 25;
         doc.fontSize(10)
            .font('Helvetica')
            .fillColor(SA_COLORS.black);
-        
+
         // Lungs
         doc.font('Helvetica-Bold')
            .text('Lungs:', 50, yPos);
@@ -4251,26 +4271,26 @@ export class PDFGenerationService {
             yPos += 15;
           });
         }
-        
+
         // Heart
         doc.font('Helvetica-Bold')
            .text('Heart:', 50, yPos);
         doc.font('Helvetica')
            .text(data.findings.heart.normal ? ' Normal' : ' Abnormal', 100, yPos);
         yPos += 18;
-        
+
         // TB Screening
         yPos += 10;
         doc.fontSize(12)
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('TUBERCULOSIS SCREENING', 50, yPos);
-        
+
         yPos += 25;
         doc.fontSize(10)
            .font('Helvetica')
            .fillColor(SA_COLORS.black);
-        
+
         doc.text(`Signs of Active TB: ${data.tuberculosisScreening.signsOfActiveTB ? 'Yes' : 'No'}`, 50, yPos);
         yPos += 18;
         doc.text(`Signs of Old TB: ${data.tuberculosisScreening.signsOfOldTB ? 'Yes' : 'No'}`, 50, yPos);
@@ -4283,7 +4303,7 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('IMPRESSION', 50, yPos);
-        
+
         yPos += 20;
         doc.fontSize(10)
            .font('Helvetica')
@@ -4296,12 +4316,12 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('RECOMMENDATIONS', 50, yPos);
-        
+
         yPos += 20;
         doc.fontSize(10)
            .font('Helvetica')
            .fillColor(SA_COLORS.black);
-        
+
         data.recommendations.forEach(rec => {
           doc.text(`• ${rec}`, 50, yPos);
           yPos += 15;
@@ -4313,12 +4333,12 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('RADIOLOGIST DETAILS', 50, yPos);
-        
+
         yPos += 25;
         doc.fontSize(10)
            .font('Helvetica')
            .fillColor(SA_COLORS.black);
-        
+
         doc.text(`Radiologist: ${data.radiologist.fullName}`, 50, yPos);
         yPos += 18;
         doc.text(`Qualifications: ${data.radiologist.qualifications}`, 50, yPos);
@@ -4327,7 +4347,7 @@ export class PDFGenerationService {
         yPos += 18;
         doc.text(`Facility: ${data.radiologist.facility}`, 50, yPos);
         yPos += 30;
-        
+
         doc.text('Signature: _______________________', 50, yPos);
         doc.text('Date: _______________________', 300, yPos);
 
@@ -4388,10 +4408,10 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.black)
            .text('CRITICAL SKILLS VISA APPLICATION', 50, 100, { align: 'center', width: 515 });
-        
+
         doc.fontSize(12)
            .text('SECTION 19(4) OF THE IMMIGRATION ACT', 50, 125, { align: 'center', width: 515 });
-        
+
         doc.fontSize(10)
            .font('Helvetica')
            .text(`Application No: ${data.applicationNumber}`, 50, 150)
@@ -4403,7 +4423,7 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('APPLICANT INFORMATION', 50, yPos);
-        
+
         yPos += 25;
         this.addPersonalDetailsSection(doc, data.personal, 50, yPos);
         yPos += 180;
@@ -4413,7 +4433,7 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('CRITICAL SKILL CATEGORY', 50, yPos);
-        
+
         yPos += 25;
         doc.fontSize(10)
            .font('Helvetica')
@@ -4426,12 +4446,12 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('QUALIFICATIONS', 50, yPos);
-        
+
         yPos += 25;
         doc.fontSize(10)
            .font('Helvetica')
            .fillColor(SA_COLORS.black);
-        
+
         data.qualifications.forEach((qual, index) => {
           if (yPos > 700) {
             doc.addPage();
@@ -4459,12 +4479,12 @@ export class PDFGenerationService {
              .font('Helvetica-Bold')
              .fillColor(SA_COLORS.green)
              .text('PROFESSIONAL REGISTRATION', 50, yPos);
-          
+
           yPos += 25;
           doc.fontSize(10)
              .font('Helvetica')
              .fillColor(SA_COLORS.black);
-          
+
           doc.text(`Professional Body: ${data.professionalRegistration.body}`, 50, yPos);
           yPos += 18;
           doc.text(`Registration Number: ${data.professionalRegistration.registrationNumber}`, 50, yPos);
@@ -4479,12 +4499,12 @@ export class PDFGenerationService {
              .font('Helvetica-Bold')
              .fillColor(SA_COLORS.green)
              .text('JOB OFFER', 50, yPos);
-          
+
           yPos += 25;
           doc.fontSize(10)
              .font('Helvetica')
              .fillColor(SA_COLORS.black);
-          
+
           doc.text(`Employer: ${data.jobOffer.employer}`, 50, yPos);
           yPos += 18;
           doc.text(`Position: ${data.jobOffer.position}`, 50, yPos);
@@ -4496,7 +4516,7 @@ export class PDFGenerationService {
 
         // Add security features
         this.addEnhancedHolographicStrip(doc, 550);
-        
+
         // Add QR code
         const verification = await this.addLiveVerificationQRCode(
           doc,
@@ -4554,7 +4574,7 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.black)
            .text('BUSINESS VISA APPLICATION', 50, 100, { align: 'center', width: 515 });
-        
+
         doc.fontSize(10)
            .font('Helvetica')
            .text(`Application No: ${data.applicationNumber}`, 50, 130)
@@ -4566,7 +4586,7 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('APPLICANT INFORMATION', 50, yPos);
-        
+
         yPos += 25;
         this.addPersonalDetailsSection(doc, data.personal, 50, yPos);
         yPos += 180;
@@ -4576,12 +4596,12 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('BUSINESS DETAILS', 50, yPos);
-        
+
         yPos += 25;
         doc.fontSize(10)
            .font('Helvetica')
            .fillColor(SA_COLORS.black);
-        
+
         doc.text(`Company Name: ${data.businessDetails.companyName}`, 50, yPos);
         yPos += 18;
         doc.text(`Registration Number: ${data.businessDetails.registrationNumber}`, 50, yPos);
@@ -4601,12 +4621,12 @@ export class PDFGenerationService {
              .font('Helvetica-Bold')
              .fillColor(SA_COLORS.green)
              .text('INVESTMENT DETAILS', 50, yPos);
-          
+
           yPos += 25;
           doc.fontSize(10)
              .font('Helvetica')
              .fillColor(SA_COLORS.black);
-          
+
           doc.text(`Investment Amount: ${data.investmentAmount}`, 50, yPos);
           yPos += 18;
           if (data.jobCreation) {
@@ -4623,12 +4643,12 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('SUPPORTING DOCUMENTS', 50, yPos);
-        
+
         yPos += 25;
         doc.fontSize(10)
            .font('Helvetica')
            .fillColor(SA_COLORS.black);
-        
+
         doc.text(`Business Plan: ${data.businessPlan ? '✓ Attached' : '✗ Not Attached'}`, 50, yPos);
         yPos += 18;
         doc.text(`Financial Statements: ${data.financialStatements ? '✓ Attached' : '✗ Not Attached'}`, 50, yPos);
@@ -4637,7 +4657,7 @@ export class PDFGenerationService {
 
         // Add security features
         this.addEnhancedHolographicStrip(doc, 550);
-        
+
         // Add QR code
         const verification = await this.addLiveVerificationQRCode(
           doc,
@@ -4695,7 +4715,7 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.black)
            .text('RETIREMENT VISA APPLICATION', 50, 100, { align: 'center', width: 515 });
-        
+
         doc.fontSize(10)
            .font('Helvetica')
            .text(`Application No: ${data.applicationNumber}`, 50, 130)
@@ -4707,7 +4727,7 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('APPLICANT INFORMATION', 50, yPos);
-        
+
         yPos += 25;
         this.addPersonalDetailsSection(doc, data.personal, 50, yPos);
         yPos += 180;
@@ -4717,12 +4737,12 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('FINANCIAL INFORMATION', 50, yPos);
-        
+
         yPos += 25;
         doc.fontSize(10)
            .font('Helvetica')
            .fillColor(SA_COLORS.black);
-        
+
         doc.text(`Monthly Pension: ${data.retirementIncome.monthlyPension}`, 50, yPos);
         yPos += 18;
         if (data.retirementIncome.otherIncome) {
@@ -4740,12 +4760,12 @@ export class PDFGenerationService {
              .font('Helvetica-Bold')
              .fillColor(SA_COLORS.green)
              .text('PROPERTY IN SOUTH AFRICA', 50, yPos);
-          
+
           yPos += 25;
           doc.fontSize(10)
              .font('Helvetica')
              .fillColor(SA_COLORS.black);
-          
+
           doc.text(`Property Owned: Yes`, 50, yPos);
           yPos += 18;
           if (data.propertyInSA.address) {
@@ -4764,12 +4784,12 @@ export class PDFGenerationService {
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
            .text('HEALTH INSURANCE', 50, yPos);
-        
+
         yPos += 25;
         doc.fontSize(10)
            .font('Helvetica')
            .fillColor(SA_COLORS.black);
-        
+
         doc.text(`Provider: ${data.healthInsurance.provider}`, 50, yPos);
         yPos += 18;
         doc.text(`Policy Number: ${data.healthInsurance.policyNumber}`, 50, yPos);
@@ -4778,7 +4798,7 @@ export class PDFGenerationService {
 
         // Add security features
         this.addEnhancedHolographicStrip(doc, 550);
-        
+
         // Add QR code
         const verification = await this.addLiveVerificationQRCode(
           doc,
@@ -4806,7 +4826,7 @@ export class PDFGenerationService {
     doc.fontSize(10)
        .font('Helvetica')
        .fillColor(SA_COLORS.black);
-    
+
     const fields = [
       { label: 'Full Name:', value: personal.fullName },
       { label: 'Surname:', value: personal.surname || '' },
@@ -4819,7 +4839,7 @@ export class PDFGenerationService {
       { label: 'Gender:', value: personal.gender || '' },
       { label: 'Marital Status:', value: personal.maritalStatus || '' }
     ];
-    
+
     let yPos = y;
     fields.forEach(field => {
       doc.font('Helvetica-Bold')
@@ -4865,32 +4885,32 @@ export class PDFGenerationService {
 
         // Content sections
         let yPos = 200;
-        
+
         // Personal details
         doc.fontSize(12)
            .fillColor(SA_COLORS.green)
            .text('STUDENT DETAILS', 50, yPos);
-        
+
         yPos += 25;
         doc.fontSize(11)
            .fillColor(SA_COLORS.black);
-        
+
         doc.text(`Name: ${data.personal.fullName}`, 50, yPos);
         yPos += 20;
         doc.text(`Passport: ${data.personal.passportNumber}`, 50, yPos);
         yPos += 20;
         doc.text(`Nationality: ${data.personal.nationality}`, 50, yPos);
-        
+
         // Institution details
         yPos += 30;
         doc.fontSize(12)
            .fillColor(SA_COLORS.green)
            .text('INSTITUTION DETAILS', 50, yPos);
-        
+
         yPos += 25;
         doc.fontSize(11)
            .fillColor(SA_COLORS.black);
-        
+
         doc.text(`Institution: ${data.institution}`, 50, yPos);
         yPos += 20;
         doc.text(`Course: ${data.course}`, 50, yPos);

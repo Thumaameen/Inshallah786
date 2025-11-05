@@ -13,11 +13,30 @@ const router = Router();
  */
 router.get('/status', async (req, res) => {
   try {
-    // Perform real health checks on government APIs
-    const [nprHealth, abisHealth, sapsHealth] = await Promise.allSettled([
+    console.log('🔍 [Integration Status] Checking integrations...');
+    
+    // Perform real health checks on government APIs with timeout
+    const healthCheckTimeout = 5000; // 5 seconds
+    
+    const nprHealthPromise = Promise.race([
       dhaNPRAdapter.healthCheck(),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), healthCheckTimeout))
+    ]);
+    
+    const abisHealthPromise = Promise.race([
       dhaABISAdapter.healthCheck(),
-      dhaSAPSAdapter.healthCheck()
+      new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), healthCheckTimeout))
+    ]);
+    
+    const sapsHealthPromise = Promise.race([
+      dhaSAPSAdapter.healthCheck(),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), healthCheckTimeout))
+    ]);
+    
+    const [nprHealth, abisHealth, sapsHealth] = await Promise.allSettled([
+      nprHealthPromise,
+      abisHealthPromise,
+      sapsHealthPromise
     ]);
 
     const integrationStatus = {
@@ -90,33 +109,33 @@ router.get('/status', async (req, res) => {
       governmentAPIs: {
         dha_npr: {
           configured: !!process.env.DHA_NPR_API_KEY,
-          status: nprHealth.status === 'fulfilled' && nprHealth.value.status === 'healthy' 
+          status: nprHealth.status === 'fulfilled' && (nprHealth as any).value.status === 'healthy' 
             ? 'healthy' 
-            : nprHealth.status === 'fulfilled' && nprHealth.value.status === 'unhealthy'
+            : nprHealth.status === 'fulfilled' && (nprHealth as any).value.status === 'unhealthy'
             ? 'unhealthy'
             : 'not_configured',
-          message: nprHealth.status === 'fulfilled' ? nprHealth.value.message : 'Health check failed',
-          responseTime: nprHealth.status === 'fulfilled' ? nprHealth.value.responseTime : undefined
+          message: nprHealth.status === 'fulfilled' ? (nprHealth as any).value.message : 'Health check failed',
+          responseTime: nprHealth.status === 'fulfilled' ? (nprHealth as any).value.responseTime : undefined
         },
         dha_abis: {
           configured: !!process.env.DHA_ABIS_API_KEY,
-          status: abisHealth.status === 'fulfilled' && abisHealth.value.status === 'healthy' 
+          status: abisHealth.status === 'fulfilled' && (abisHealth as any).value.status === 'healthy' 
             ? 'healthy' 
-            : abisHealth.status === 'fulfilled' && abisHealth.value.status === 'unhealthy'
+            : abisHealth.status === 'fulfilled' && (abisHealth as any).value.status === 'unhealthy'
             ? 'unhealthy'
             : 'not_configured',
-          message: abisHealth.status === 'fulfilled' ? abisHealth.value.message : 'Health check failed',
-          responseTime: abisHealth.status === 'fulfilled' ? abisHealth.value.responseTime : undefined
+          message: abisHealth.status === 'fulfilled' ? (abisHealth as any).value.message : 'Health check failed',
+          responseTime: abisHealth.status === 'fulfilled' ? (abisHealth as any).value.responseTime : undefined
         },
         saps_crc: {
           configured: !!process.env.SAPS_CRC_API_KEY,
-          status: sapsHealth.status === 'fulfilled' && sapsHealth.value.status === 'healthy' 
+          status: sapsHealth.status === 'fulfilled' && (sapsHealth as any).value.status === 'healthy' 
             ? 'healthy' 
-            : sapsHealth.status === 'fulfilled' && sapsHealth.value.status === 'unhealthy'
+            : sapsHealth.status === 'fulfilled' && (sapsHealth as any).value.status === 'unhealthy'
             ? 'unhealthy'
             : 'not_configured',
-          message: sapsHealth.status === 'fulfilled' ? sapsHealth.value.message : 'Health check failed',
-          responseTime: sapsHealth.status === 'fulfilled' ? sapsHealth.value.responseTime : undefined
+          message: sapsHealth.status === 'fulfilled' ? (sapsHealth as any).value.message : 'Health check failed',
+          responseTime: sapsHealth.status === 'fulfilled' ? (sapsHealth as any).value.responseTime : undefined
         },
         icao_pkd: {
           configured: !!process.env.ICAO_PKD_API_KEY,

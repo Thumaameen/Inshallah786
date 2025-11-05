@@ -1,5 +1,9 @@
 import type { Express } from "express";
 import { Router } from "express";
+import dhaBookingRoutes from './routes/dha-booking.js';
+import ultraQueenAIRoutes from './routes/ultra-queen-ai.js';
+import integrationStatusRoutes from './routes/integration-status.js';
+import integrationActivationRoutes from './routes/integration-activation.js';
 
 const healthRouter = Router();
 
@@ -94,7 +98,7 @@ dhaRouter.get('/templates', (req, res) => {
     totalTemplates: 21,
     templates: [
       'Birth Certificate',
-      'Death Certificate', 
+      'Death Certificate',
       'Marriage Certificate',
       'Divorce Certificate',
       'ID Document',
@@ -118,6 +122,62 @@ dhaRouter.get('/templates', (req, res) => {
     message: 'DHA templates ready'
   });
 });
+
+function setupEndpointTesting(app: Express) {
+  // Comprehensive Endpoint Testing
+  app.get('/api/test/endpoints', async (req, res) => {
+    const endpoints = [
+      { name: 'Health Check', path: '/api/health', method: 'GET' },
+      { name: 'Document Templates', path: '/api/documents/templates', method: 'GET' },
+      { name: 'AI Chat', path: '/api/ai/chat', method: 'POST' },
+      { name: 'Document Generation', path: '/api/documents/generate', method: 'POST' },
+      { name: 'Ultra Queen AI', path: '/api/ultra-queen-ai', method: 'POST' },
+      { name: 'Integration Status', path: '/api/integrations/status', method: 'GET' },
+      { name: 'API Activation', path: '/api/activation/status', method: 'GET' }
+    ];
+
+    const results = await Promise.all(
+      endpoints.map(async (endpoint) => {
+        try {
+          const response = await fetch(`http://localhost:${process.env.PORT || 5000}${endpoint.path}`, {
+            method: endpoint.method,
+            headers: { 'Content-Type': 'application/json' },
+            body: endpoint.method === 'POST' ? JSON.stringify({ test: true }) : undefined
+          });
+
+          return {
+            ...endpoint,
+            status: response.status,
+            working: response.ok || response.status === 400,
+            timestamp: new Date().toISOString()
+          };
+        } catch (error) {
+          return {
+            ...endpoint,
+            status: 500,
+            working: false,
+            error: error instanceof Error ? error.message : 'Unknown error',
+            timestamp: new Date().toISOString()
+          };
+        }
+      })
+    );
+
+    const workingCount = results.filter(r => r.working).length;
+
+    res.json({
+      success: true,
+      summary: {
+        total: endpoints.length,
+        working: workingCount,
+        failing: endpoints.length - workingCount,
+        successRate: Math.round((workingCount / endpoints.length) * 100)
+      },
+      endpoints: results,
+      timestamp: new Date().toISOString()
+    });
+  });
+}
 
 dhaRouter.post('/validate', (req, res) => {
   res.json({
@@ -145,11 +205,15 @@ dhaRouter.post('/verify', (req, res) => {
 export function registerRoutes(app: Express) {
   console.log('🔧 Registering API routes...');
 
-  // Universal API Override Middleware
+  // Setup endpoint testing
+  setupEndpointTesting(app);
+
+  // Force Real API Middleware - No Mocks
   app.use((req, res, next) => {
-    // Enable universal bypass for all API requests
-    req.headers['x-api-override'] = 'enabled';
-    req.headers['x-universal-bypass'] = 'true';
+    // Force real APIs only
+    req.headers['x-force-real-apis'] = 'true';
+    req.headers['x-reject-mock-data'] = 'true';
+    req.headers['x-production-mode'] = 'true';
     next();
   });
 
@@ -257,118 +321,6 @@ export function registerRoutes(app: Express) {
         securityFeatures: ['Chip', 'Hologram', 'Watermark'],
         processingTime: '3-6 weeks',
         fees: 'R140'
-      },
-      {
-        id: 'identity_document_book',
-        type: 'identity_document_book',
-        name: 'identity document book',
-        displayName: 'Identity Document Book',
-        description: 'Traditional green bar-coded ID book',
-        category: 'Identity Documents',
-        formNumber: 'DHA-1538',
-        icon: 'BookOpen',
-        color: 'green',
-        isImplemented: true,
-        requirements: ['Birth Certificate', 'Proof of Address', 'Photograph'],
-        securityFeatures: ['Barcode', 'Security Paper', 'Official Stamp'],
-        processingTime: '3-6 weeks',
-        fees: 'R140'
-      },
-      {
-        id: 'south_african_passport',
-        type: 'south_african_passport',
-        name: 'south african passport',
-        displayName: 'South African Passport',
-        category: 'Travel Documents',
-        description: 'Official passport for international travel',
-        formNumber: 'DHA-73',
-        icon: 'Plane',
-        color: 'purple',
-        isImplemented: true,
-        requirements: ['ID Document', 'Photographs', 'Proof of Address'],
-        securityFeatures: ['Biometric Chip', 'Watermark', 'UV Features'],
-        processingTime: '6-8 weeks',
-        fees: 'R400'
-      },
-      {
-        id: 'birth_certificate',
-        type: 'birth_certificate',
-        name: 'birth certificate',
-        displayName: 'Birth Certificate',
-        description: 'Official birth registration certificate',
-        category: 'Vital Records',
-        formNumber: 'DHA-24',
-        icon: 'Baby',
-        color: 'pink',
-        isImplemented: true,
-        requirements: ['Hospital Birth Record', 'Parents ID', 'Notification of Birth'],
-        securityFeatures: ['Security Paper', 'Watermark', 'Official Seal'],
-        processingTime: '3 months',
-        fees: 'Free'
-      },
-      {
-        id: 'general_work_visa',
-        type: 'general_work_visa',
-        name: 'general work visa',
-        displayName: 'General Work Visa',
-        description: 'Work permit for foreign nationals',
-        category: 'Visas & Permits',
-        formNumber: 'DHA-1738',
-        icon: 'Briefcase',
-        color: 'orange',
-        isImplemented: true,
-        requirements: ['Job Offer', 'Qualifications', 'Medical Certificate'],
-        securityFeatures: ['Biometric Data', 'Hologram', 'Barcode'],
-        processingTime: '8-12 weeks',
-        fees: 'R1520'
-      },
-      {
-        id: 'critical_skills_work_visa',
-        type: 'critical_skills_work_visa',
-        name: 'critical skills work visa',
-        displayName: 'Critical Skills Work Visa',
-        description: 'Visa for scarce and critical skills',
-        category: 'Visas & Permits',
-        formNumber: 'DHA-1744',
-        icon: 'Star',
-        color: 'yellow',
-        isImplemented: true,
-        requirements: ['Proof of Skills', 'Qualifications', 'Experience'],
-        securityFeatures: ['Biometric Data', 'Hologram', 'Watermark'],
-        processingTime: '8-12 weeks',
-        fees: 'R1520'
-      },
-      {
-        id: 'business_visa',
-        type: 'business_visa',
-        name: 'business visa',
-        displayName: 'Business Visa',
-        description: 'Visa for business establishment',
-        category: 'Visas & Permits',
-        formNumber: 'DHA-1738',
-        icon: 'Building2',
-        color: 'indigo',
-        isImplemented: true,
-        requirements: ['Business Plan', 'Proof of Funds', 'Company Registration'],
-        securityFeatures: ['Biometric Data', 'Hologram', 'Security Features'],
-        processingTime: '8-12 weeks',
-        fees: 'R1520'
-      },
-      {
-        id: 'study_visa_permit',
-        type: 'study_visa_permit',
-        name: 'study visa permit',
-        displayName: 'Study Visa Permit',
-        description: 'Study permit for international students',
-        category: 'Visas & Permits',
-        formNumber: 'DHA-1738',
-        icon: 'BookOpen',
-        color: 'teal',
-        isImplemented: true,
-        requirements: ['Admission Letter', 'Proof of Funds', 'Medical Certificate'],
-        securityFeatures: ['Biometric Data', 'Hologram', 'Barcode'],
-        processingTime: '6-8 weeks',
-        fees: 'R1070'
       }
     ];
 
@@ -381,25 +333,7 @@ export function registerRoutes(app: Express) {
           name: 'Identity Documents',
           icon: 'UserCheck',
           color: 'blue',
-          count: 2
-        },
-        'Travel Documents': {
-          name: 'Travel Documents',
-          icon: 'Plane',
-          color: 'purple',
           count: 1
-        },
-        'Vital Records': {
-          name: 'Vital Records',
-          icon: 'FileText',
-          color: 'pink',
-          count: 1
-        },
-        'Visas & Permits': {
-          name: 'Visas & Permits',
-          icon: 'Globe',
-          color: 'orange',
-          count: 4
         }
       },
       timestamp: new Date().toISOString(),
@@ -410,30 +344,30 @@ export function registerRoutes(app: Express) {
   app.post('/api/documents/generate', async (req, res) => {
     try {
       const { documentType, formData } = req.body;
-      
+
       console.log(`📄 Generating ${documentType} document...`);
-      
+
       // Import PDF generator
       const { pdfGenerator } = await import('./services/pdf-generator.js');
-      
+
       // Generate real PDF
       const pdfBuffer = await pdfGenerator.generateDocument({
         documentType,
         ...formData
       });
-      
+
       const documentId = `DOC-${Date.now()}`;
       const verificationCode = `VER-${Math.random().toString(36).substring(2, 10).toUpperCase()}`;
-      
+
       // Set response headers for PDF download
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', `attachment; filename="${documentType}-${documentId}.pdf"`);
       res.setHeader('X-Document-ID', documentId);
       res.setHeader('X-Verification-Code', verificationCode);
-      
+
       // Send PDF
       res.send(pdfBuffer);
-      
+
       console.log(`✅ Document ${documentId} generated successfully`);
     } catch (error) {
       console.error('Document generation error:', error);
@@ -490,10 +424,10 @@ export function registerRoutes(app: Express) {
 
   app.post('/api/ultra-dashboard/test-blockchain', async (req, res) => {
     const { network } = req.body;
-    
+
     // Simulate blockchain test
     await new Promise(resolve => setTimeout(resolve, 500));
-    
+
     res.json({
       success: true,
       network,
@@ -507,10 +441,10 @@ export function registerRoutes(app: Express) {
 
   app.post('/api/ultra-dashboard/test-government-api', async (req, res) => {
     const { api } = req.body;
-    
+
     // Simulate API test
     await new Promise(resolve => setTimeout(resolve, 300));
-    
+
     res.json({
       success: true,
       api,
@@ -520,6 +454,68 @@ export function registerRoutes(app: Express) {
         responseTime: `${Math.floor(Math.random() * 200) + 100}ms`
       }
     });
+  });
+
+  // Blockchain status endpoint
+  app.get('/api/blockchain/status', async (req, res) => {
+    try {
+      const { getActivePolygonRPC, getActiveSolanaRPC } = await import('./config/blockchain-config.js');
+      
+      const polygonRPC = getActivePolygonRPC();
+      const solanaRPC = getActiveSolanaRPC();
+
+      // Test Polygon connection
+      let polygonStatus = 'connected';
+      try {
+        const polygonTest = await fetch(polygonRPC, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ jsonrpc: '2.0', method: 'eth_blockNumber', params: [], id: 1 }),
+          signal: AbortSignal.timeout(5000)
+        });
+        polygonStatus = polygonTest.ok ? 'connected' : 'error';
+      } catch (error) {
+        polygonStatus = 'error';
+      }
+
+      // Test Solana connection
+      let solanaStatus = 'connected';
+      try {
+        const solanaTest = await fetch(solanaRPC, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'getHealth' }),
+          signal: AbortSignal.timeout(5000)
+        });
+        solanaStatus = solanaTest.ok ? 'connected' : 'error';
+      } catch (error) {
+        solanaStatus = 'error';
+      }
+
+      res.json({
+        success: true,
+        blockchain: {
+          polygon: {
+            status: polygonStatus,
+            rpc: polygonRPC.substring(0, 50) + '...',
+            chainId: 137,
+            name: 'Polygon Mainnet'
+          },
+          solana: {
+            status: solanaStatus,
+            rpc: solanaRPC.substring(0, 50) + '...',
+            name: 'Solana Mainnet'
+          }
+        },
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: 'Failed to check blockchain status',
+        message: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
   });
 
   // System status endpoint
@@ -736,22 +732,6 @@ export function registerRoutes(app: Express) {
     res.json({ status: 'connected', networks: ['ethereum', 'polygon'] });
   });
 
-  app.get('/api/ultra-queen-ai/status', (req, res) => {
-    res.json({ status: 'active', ready: true });
-  });
-
-  app.get('/api/ultra-queen-ai/unlimited/capabilities', (req, res) => {
-    res.json({ capabilities: ['unlimited-access', 'full-control'] });
-  });
-
-  app.post('/api/ultra-queen-ai/unlimited/process', (req, res) => {
-    res.json({ success: true, processed: true });
-  });
-
-  app.post('/api/ultra-queen-ai/query', (req, res) => {
-    res.json({ success: true, result: 'Query processed' });
-  });
-
   // Vision/OCR endpoints
   app.post('/api/vision/pdf-page', (req, res) => {
     res.json({ success: true, extracted: 'Vision processing ready' });
@@ -845,6 +825,19 @@ export function registerRoutes(app: Express) {
       downloadUrl: `/download/${req.params.documentId}`
     });
   });
+
+  // Ultra Queen AI Routes
+  app.use('/api/ultra-queen-ai', ultraQueenAIRoutes);
+  app.use('/api/integrations', integrationStatusRoutes);
+  app.use('/api/integrations', integrationActivationRoutes);
+
+  // DHA Booking and Delivery
+  app.use('/api/dha-booking', dhaBookingRoutes);
+
+  // Ultra Queen AI Routes
+  app.use('/api/ultra-queen-ai', ultraQueenAIRoutes);
+  app.use('/api/integrations', integrationStatusRoutes);
+  app.use('/api/integrations', integrationActivationRoutes);
 
   console.log('✅ All routes registered successfully');
   console.log('✅ Frontend routes configured');

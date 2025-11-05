@@ -113,8 +113,12 @@ export default function Navigation() {
                   size="sm"
                   className="text-white/80 hover:text-white"
                   data-testid="help-button"
+                  asChild // This ensures the Button renders as a Link or another element if needed
                 >
-                  <HelpCircle className="h-4 w-4" />
+                  <Link href="/tutorial"> {/* Assuming tutorial is at '/tutorial' */}
+                    <HelpCircle className="h-4 w-4" />
+                    <span className="text-xs">Help/Tutorial</span>
+                  </Link>
                 </Button>
 
                 <Badge className="dha-badge" data-testid="security-level-badge">
@@ -254,6 +258,13 @@ export default function Navigation() {
                   <Link href="/ultra-queen-ai">
                     <Brain className="mr-2 h-4 w-4" />
                     Ultra Queen AI Assistant
+                  </Link>
+                </Button>
+                {/* Tutorial Button */}
+                <Button variant="ghost" asChild className="w-full justify-start">
+                  <Link href="/tutorial">
+                    <HelpCircle className="mr-2 h-4 w-4" />
+                    Show Tutorial
                   </Link>
                 </Button>
               </div>

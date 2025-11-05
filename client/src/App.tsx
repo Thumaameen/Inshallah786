@@ -30,7 +30,8 @@ import UltraAdvancedPDF from "./pages/UltraAdvancedPDF";
 import UltraQueenDashboard from "./pages/UltraQueenDashboard";
 import UltraQueenDashboardEnhanced from "./pages/UltraQueenDashboardEnhanced";
 import UltraQueenAssistant from "./pages/UltraQueenAssistant"; // Import the new page
-import { FirstTimeUserTutorial } from "./components/FirstTimeUserTutorial";
+import { ProfessionalTutorial } from "./components/ProfessionalTutorial";
+import { TutorialHelper } from "@/components/TutorialHelper"; // Import the new tutorial helper
 
 // Lazy load admin components for better code splitting
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
@@ -42,7 +43,7 @@ const AIAnalytics = lazy(() => import("./pages/admin/AIAnalytics"));
 const AdminAIChat = lazy(() => import("./pages/admin/AIChat"));
 
 
-const GovernmentOperations = lazy(() => 
+const GovernmentOperations = lazy(() =>
   import("./pages/admin/GovernmentOperations").then(module => ({ default: module.GovernmentOperations }))
 );
 const MonitoringDashboard = lazy(() => import("./pages/MonitoringDashboard"));
@@ -93,7 +94,8 @@ function AppContent() {
 
   return (
     <>
-      <FirstTimeUserTutorial />
+      <ProfessionalTutorial />
+      <TutorialHelper /> {/* Add the TutorialHelper component here */}
       <div className="min-h-screen bg-background safe-area-top safe-area-left safe-area-right">
         <Switch>
             {/* Direct to Ultra Queen Dashboard - No login needed */}

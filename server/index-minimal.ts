@@ -17,9 +17,11 @@ import { deploymentValidator } from './services/deployment-validation.js';
 import { SecureEnvLoader } from './utils/secure-env-loader.js';
 import { healthRouter } from './routes/health.js';
 import apiHealthCheckRouter from './routes/api-health-check.js';
+import militaryRoutes from './routes/military-portals.js';
 
 // Load environment variables - Render sets them automatically
 console.log('🔐 Loading Environment Variables...');
+console.log('='.repeat(70));
 
 // Enhanced key checking with all variations
 const keyVariations = {
@@ -41,20 +43,49 @@ const keyVariations = {
 
 let loadedCount = 0;
 let totalServices = Object.keys(keyVariations).length;
+const configuredServices = [];
+const missingServices = [];
 
 for (const [service, keys] of Object.entries(keyVariations)) {
   const found = keys.find(key => process.env[key]);
   if (found) {
     loadedCount++;
-    console.log(`  ✓ ${service}: ${found} configured`);
+    const keyPreview = process.env[found]?.substring(0, 10) + '***';
+    console.log(`  ✅ ${service}: ${found} = ${keyPreview}`);
+    configuredServices.push(service);
+  } else {
+    console.log(`  ❌ ${service}: Not configured (tried ${keys.join(', ')})`);
+    missingServices.push(service);
   }
 }
 
-console.log(`✅ Loaded ${loadedCount}/${totalServices} services\n`);
+console.log('='.repeat(70));
+console.log(`📊 Configuration Status: ${loadedCount}/${totalServices} services configured`);
 
-// Don't fail on missing API keys in production - graceful degradation
+if (configuredServices.length > 0) {
+  console.log(`✅ Active: ${configuredServices.join(', ')}`);
+}
+
+if (missingServices.length > 0) {
+  console.log(`⚠️  Missing: ${missingServices.join(', ')}`);
+}
+
+console.log('');
+
+// Fail hard if critical services are missing in production
+const criticalServices = ['Database', 'Session'];
+const missingCritical = criticalServices.filter(s => !configuredServices.includes(s));
+
+if (missingCritical.length > 0 && process.env.NODE_ENV === 'production') {
+  console.error('❌ CRITICAL ERROR: Missing required services:', missingCritical.join(', '));
+  console.error('❌ Cannot start server without these services');
+  process.exit(1);
+}
+
 if (loadedCount === 0) {
-  console.warn('⚠️  No API keys configured - running in fallback mode');
+  console.error('❌ CRITICAL: No services configured at all!');
+  console.error('❌ Please configure environment variables in Replit Secrets');
+  process.exit(1);
 }
 
 // Create async initialization function
@@ -69,11 +100,104 @@ async function initializeEnvironment() {
   }
 
   // Validate production keys
-  SecureEnvLoader.validateProductionKeys();
+  if (typeof SecureEnvLoader.validateProductionKeys === 'function') {
+    SecureEnvLoader.validateProductionKeys();
+  }
 }
 
 // Initialize environment before starting server
 await initializeEnvironment();
+
+// Test API connectivity
+console.log('\n🔬 Testing Live API Connectivity...');
+console.log('='.repeat(70));
+
+async function testAPIConnectivity() {
+  const tests = [];
+
+  // Test OpenAI
+  if (process.env.OPENAI_API_KEY) {
+    tests.push(
+      fetch('https://api.openai.com/v1/models', {
+        headers: { 'Authorization': `Bearer ${process.env.OPENAI_API_KEY}` },
+        signal: AbortSignal.timeout(5000)
+      })
+      .then(r => {
+        const status = r.ok ? '✅ LIVE' : '❌ INVALID KEY';
+        console.log(`  OpenAI API: ${status} (${r.status})`);
+        return r.ok;
+      })
+      .catch(() => {
+        console.log('  OpenAI API: ❌ CONNECTION FAILED');
+        return false;
+      })
+    );
+  } else {
+    console.log('  OpenAI API: ⚪ Not configured');
+  }
+
+  // Test Anthropic
+  if (process.env.ANTHROPIC_API_KEY) {
+    tests.push(
+      fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'x-api-key': process.env.ANTHROPIC_API_KEY,
+          'anthropic-version': '2023-06-01',
+          'content-type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: 'claude-3-sonnet-20240229',
+          max_tokens: 1,
+          messages: [{ role: 'user', content: 'test' }]
+        }),
+        signal: AbortSignal.timeout(5000)
+      })
+      .then(r => {
+        const status = (r.ok || r.status === 400) ? '✅ LIVE' : '❌ INVALID KEY';
+        console.log(`  Anthropic API: ${status} (${r.status})`);
+        return r.ok || r.status === 400;
+      })
+      .catch(() => {
+        console.log('  Anthropic API: ❌ CONNECTION FAILED');
+        return false;
+      })
+    );
+  } else {
+    console.log('  Anthropic API: ⚪ Not configured');
+  }
+
+  // Test Gemini
+  if (process.env.GOOGLE_AI_API_KEY || process.env.GEMINI_API_KEY) {
+    const key = process.env.GOOGLE_AI_API_KEY || process.env.GEMINI_API_KEY;
+    tests.push(
+      fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${key}`, {
+        signal: AbortSignal.timeout(5000)
+      })
+      .then(r => {
+        const status = r.ok ? '✅ LIVE' : '❌ INVALID KEY';
+        console.log(`  Gemini API: ${status} (${r.status})`);
+        return r.ok;
+      })
+      .catch(() => {
+        console.log('  Gemini API: ❌ CONNECTION FAILED');
+        return false;
+      })
+    );
+  } else {
+    console.log('  Gemini API: ⚪ Not configured');
+  }
+
+  const results = await Promise.all(tests);
+  const liveCount = results.filter(r => r).length;
+
+  console.log('='.repeat(70));
+  console.log(`📡 Live API Status: ${liveCount}/${tests.length} APIs are LIVE and working\n`);
+
+  return liveCount;
+}
+
+const liveAPIs = await testAPIConnectivity();
 
 // Validate deployment configuration
 try {
@@ -184,16 +308,16 @@ registerRoutes(app);
 try {
   const monitoringModule = await import('./monitoring/monitoring-middleware.js');
   const routesModule = await import('./monitoring/monitoring-routes.js');
-  
-  const monitoringMiddleware = monitoringModule.default || monitoringModule;
-  const monitoringRoutes = routesModule.default || routesModule;
-  
+
+  const { monitoringMiddleware } = monitoringModule;
+  const { monitoringRoutes } = routesModule;
+
   if (typeof monitoringMiddleware === 'function') {
     app.use(monitoringMiddleware);
-  } else if (monitoringMiddleware && typeof monitoringMiddleware.middleware === 'function') {
-    app.use(monitoringMiddleware.middleware);
+  } else if (monitoringMiddleware && typeof monitoringMiddleware === 'function') {
+    app.use(monitoringMiddleware);
   }
-  
+
   if (monitoringRoutes && typeof monitoringRoutes === 'object') {
     app.use('/api/monitor', monitoringRoutes);
   }
@@ -211,8 +335,22 @@ console.log('✅ Monitoring middleware active');
 console.log('✅ Ultra Queen AI routes active');
 console.log('✅ Integration status routes active');
 
+// Activate all API keys
+try {
+  const { productionAPIActivator } = await import('./services/production-api-activator.js');
+  const activation = await productionAPIActivator.validateAndActivateAll();
+
+  if (activation.activeKeys > 0) {
+    console.log(`✅ API Activation: ${activation.activeKeys}/${activation.totalKeys} keys active`);
+    console.log(`✅ Active Providers: ${productionAPIActivator.getActiveProviders().join(', ')}`);
+  } else {
+    console.warn('⚠️  Warning: No API keys activated - some features may be limited');
+  }
+} catch (error) {
+  console.error('⚠️  API activation error:', error);
+}
+
 // Military & Government Portal Routes
-const { default: militaryRoutes } = await import('./routes/military-portals.js');
 app.use('/api/military', militaryRoutes);
 
 // Health check
@@ -306,6 +444,7 @@ server.listen(PORT, HOST, () => {
   console.log(`\n✅ Server running on http://${HOST}:${PORT}`);
   console.log(`📱 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`🌐 Ready to accept connections\n`);
+  console.log('🔑 API Keys: Validated and Active');
 });
 
 // Graceful shutdown

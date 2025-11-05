@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import type { VerificationResponse } from '@/types/api';
 import { 
   Shield, 
   CheckCircle2, 
@@ -87,7 +88,10 @@ export default function DocumentVerificationPage() {
   // Verify document mutation
   const verifyMutation = useMutation({
     mutationFn: async (code: string) => {
-      const response = await apiRequest("GET", `/api/verify/${code.toUpperCase()}`);
+      const response = await fetch(`/api/verify/${code.toUpperCase()}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+      });
       return response.json();
     },
     onSuccess: (data: VerificationResult) => {
@@ -124,7 +128,11 @@ export default function DocumentVerificationPage() {
   // Log scan attempt mutation
   const scanMutation = useMutation({
     mutationFn: async (data: { code: string; location?: string; deviceInfo?: any }) => {
-      const response = await apiRequest("POST", "/api/verification/scan", data);
+      const response = await fetch("/api/verification/scan", {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
       return response.json();
     }
   });

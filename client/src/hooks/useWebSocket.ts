@@ -24,16 +24,16 @@ interface UseWebSocketReturn {
 }
 
 export function useWebSocket(options: UseWebSocketOptions = {}): UseWebSocketReturn {
-  const { 
-    token: providedToken, 
+  const {
+    token: providedToken,
     autoConnect = true, // FIXED: Enable auto-connect by default for status indicators
     enableToasts = false, // Keep toasts disabled to prevent noise
     enableEventHandlers = true, // FIXED: Enable event handlers for status updates
-    onConnect, 
-    onDisconnect, 
-    onReconnect 
+    onConnect,
+    onDisconnect,
+    onReconnect
   } = options;
-  
+
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
@@ -43,10 +43,10 @@ export function useWebSocket(options: UseWebSocketOptions = {}): UseWebSocketRet
 
   const connect = useCallback(() => {
     // Get authentication token from multiple sources
-    const token = providedToken || 
-                  localStorage.getItem("authToken") || 
+    const token = providedToken ||
+                  localStorage.getItem("authToken") ||
                   localStorage.getItem("auth_token");
-    
+
     // If no token, don't connect
     if (!token) {
       setError("Authentication token not found");
@@ -77,7 +77,7 @@ export function useWebSocket(options: UseWebSocketOptions = {}): UseWebSocketRet
       setIsConnected(true);
       setError(null);
       reconnectAttemptsRef.current = 0;
-      
+
       if (enableToasts) {
         toast({
           title: "Connected",
@@ -85,19 +85,19 @@ export function useWebSocket(options: UseWebSocketOptions = {}): UseWebSocketRet
           className: "border-secure bg-secure/10 text-secure",
         });
       }
-      
+
       onConnect?.();
     });
 
     socketInstance.on("disconnect", (reason: string) => {
       console.log("WebSocket disconnected:", reason);
       setIsConnected(false);
-      
+
       if (reason === "io server disconnect") {
         // Server disconnected, reconnect manually
         socketInstance.connect();
       }
-      
+
       if (enableToasts) {
         toast({
           title: "Connection Lost",
@@ -105,7 +105,7 @@ export function useWebSocket(options: UseWebSocketOptions = {}): UseWebSocketRet
           className: "border-warning bg-warning/10 text-warning",
         });
       }
-      
+
       onDisconnect?.();
     });
 
@@ -113,7 +113,7 @@ export function useWebSocket(options: UseWebSocketOptions = {}): UseWebSocketRet
       console.error("WebSocket connection error:", error);
       setError(error.message);
       reconnectAttemptsRef.current++;
-      
+
       if (reconnectAttemptsRef.current >= maxReconnectAttempts && enableToasts) {
         toast({
           title: "Connection Failed",
@@ -132,7 +132,7 @@ export function useWebSocket(options: UseWebSocketOptions = {}): UseWebSocketRet
     socketInstance.on("error", (error: string) => {
       console.error("WebSocket error:", error);
       setError(error);
-      
+
       if (error === "Authentication failed" && enableToasts) {
         toast({
           title: "Authentication Error",
@@ -150,7 +150,7 @@ export function useWebSocket(options: UseWebSocketOptions = {}): UseWebSocketRet
         const toastClass = severity === "high" ? "border-alert bg-alert/10 text-alert" :
                           severity === "medium" ? "border-warning bg-warning/10 text-warning" :
                           "border-primary bg-primary/10 text-primary";
-        
+
         if (enableToasts) {
           toast({
             title: `System Alert: ${alert.type}`,
@@ -185,10 +185,10 @@ export function useWebSocket(options: UseWebSocketOptions = {}): UseWebSocketRet
       // Biometric result handlers
       socketInstance.on("biometric:result", (result: any) => {
         if (result.type === "verification" && enableToasts) {
-          const className = result.success 
+          const className = result.success
             ? "border-secure bg-secure/10 text-secure"
             : "border-alert bg-alert/10 text-alert";
-          
+
           toast({
             title: result.success ? "Biometric Verified" : "Verification Failed",
             description: `${result.biometricType || result.type} - ${result.confidence}% confidence`,

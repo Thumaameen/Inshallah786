@@ -1,72 +1,72 @@
-modules = ["nodejs-20"]
-run = "npm start"
-hidden = [".config", ".git", "generated-icon.png", "node_modules", "dist"]
+run = "npm run dev"
+entrypoint = "server/index-minimal.ts"
+modules = ["nodejs-20", "web"]
+
+hidden = [".config", ".git", "node_modules", "dist", "package-lock.json"]
 
 [nix]
-channel = "stable-25_05"
-packages = ["libuuid", "cairo", "pango", "giflib", "jq", "python3", "gcc", "pkgconf", "pixman", "gnome-secrets"]
+channel = "stable-23_11"
+
+[unitTest]
+language = "nodejs"
 
 [deployment]
-deploymentTarget = "autoscale"
-run = ["node", "dist/server/index-minimal.js"]
-build = ["bash", "render-build-production.sh"]
+build = ["sh", "-c", "npm run build:production"]
+run = ["sh", "-c", "npm run start:production"]
+deploymentTarget = "cloudrun"
+ignorePorts = false
+name = "DHA Digital Services"
+mode = "parallel"
 
-[[ports]]
-localPort = 5000
-externalPort = 80
+[languages]
+[languages.typescript]
+pattern = "**/{*.ts,*.js,*.tsx,*.jsx}"
+syntax = "typescript"
 
-[[ports]]
-localPort = 10000
-externalPort = 3003
-
-[[ports]]
-localPort = 43165
-externalPort = 3001
-
-[[ports]]
-localPort = 44645
-externalPort = 4200
-
-[[ports]]
-localPort = 45789
-externalPort = 3002
-
-[[ports]]
-localPort = 45993
-externalPort = 6000
-
-[[ports]]
-localPort = 46345
-externalPort = 5000
-
-[[ports]]
-localPort = 46509
-externalPort = 3000
+[languages.typescript.languageServer]
+start = "typescript-language-server --stdio"
 
 [env]
-PORT = "10000"
-NODE_ENV = "production"
-RENDER = "true"
+PATH = "/home/runner/$REPL_SLUG/.config/npm/node_global/bin:/home/runner/$REPL_SLUG/node_modules/.bin"
+npm_config_prefix = "/home/runner/$REPL_SLUG/.config/npm/node_global"
+NODE_ENV = "development"
+PORT = "3000"
+DATABASE_URL = "file:./data/development.sqlite"
+SESSION_SECRET = "development-secret-change-in-production"
+REPLIT = "true"
+NODE_OPTIONS = "--max-old-space-size=4096 --experimental-modules --es-module-specifier-resolution=node"
+SKIP_PREFLIGHT_CHECK = "true"
+TSC_COMPILE_ON_ERROR = "false"
+DISABLE_ESLINT_PLUGIN = "true"
+VITE_DISABLE_OPTIMIZER = "false"
+VITE_MINIFY = "true"
+VITE_SOURCE_MAP = "false"
 
-[agent]
-integrations = ["javascript_database:1.0.0", "javascript_openai:1.0.0", "javascript_websocket:1.0.0", "javascript_object_storage:1.0.0", "github:1.0.0"]
-expertMode = true
+[packager]
+language = "nodejs"
 
-[workflows]
-runButton = "Project"
+[packager.features]
+enabledForHosting = true
+packageSearch = true
+guessImports = true
 
-[[workflows.workflow]]
-name = "Project"
-mode = "parallel"
-author = "agent"
+[[ports]]
+localPort = 3000
+externalPort = 3000
 
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "Server"
+[[ports]]
+localPort = 3001
+externalPort = 3001
 
-[[workflows.workflow]]
-name = "Server"
-author = "agent"
+[gitHubImport]
+requiredFiles = [".replit", "replit.nix", ".config"]
+
+[auth]
+pageEnabled = false
+buttonEnabled = false
+
+[debugger]
+support = true
 
 [workflows.workflow.metadata]
 outputType = "webview"
