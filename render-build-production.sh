@@ -1,87 +1,119 @@
 #!/bin/bash
 set -e
 
-echo "🚀 DHA Digital Services - PRODUCTION BUILD FOR RENDER"
-echo "===================================================="
-echo "📅 Build started: $(date)"
+echo "=========================================="
+echo "🚀 DHA Digital Services - RENDER BUILD"
+echo "=========================================="
+echo "Build started: $(date)"
+echo ""
 
-# Critical error handling
+# Error handler
 handle_error() {
-  echo "❌ Error occurred in build script"
-  echo "Error on line $1"
+  echo ""
+  echo "=========================================="
+  echo "❌ BUILD FAILED at line $1"
+  echo "=========================================="
   exit 1
 }
 
 trap 'handle_error $LINENO' ERR
 
 # Environment setup
+echo "📌 Setting up environment..."
 export NODE_ENV=production
 export VITE_MODE=production
 export CI=false
 export NPM_CONFIG_PRODUCTION=false
-export SKIP_PREFLIGHT_CHECK=true
-export TSC_COMPILE_ON_ERROR=true
-export DISABLE_ESLINT_PLUGIN=true
 
-echo "📌 Environment Check:"
-echo "NODE_ENV: $NODE_ENV"
-echo "Current Node: $(node --version)"
-echo "Current NPM: $(npm --version)"
-
-# Verify Node.js version
-REQUIRED_NODE_VERSION="20.19.1"
-CURRENT_NODE_VERSION=$(node -v | sed 's/v//')
-echo "Required: $REQUIRED_NODE_VERSION"
-echo "Current: $CURRENT_NODE_VERSION"
+echo "Node version: $(node --version)"
+echo "NPM version: $(npm --version)"
+echo "Working directory: $(pwd)"
+echo ""
 
 # Clean previous builds
 echo "🧹 Cleaning previous builds..."
-rm -rf dist client/dist node_modules/.cache client/node_modules/.vite
+rm -rf dist client/dist node_modules/.cache client/node_modules/.vite || true
+echo "✅ Cleaned"
+echo ""
 
 # Install root dependencies
 echo "📦 Installing root dependencies..."
 npm install --legacy-peer-deps --no-audit
+echo "✅ Root dependencies installed"
+echo ""
 
 # Build client
-echo "🎨 Building client..."
-cd client || exit 1
+echo "=========================================="
+echo "🎨 BUILDING CLIENT"
+echo "=========================================="
+
+cd client || {
+  echo "❌ Failed to enter client directory"
+  exit 1
+}
+
+echo "Current directory: $(pwd)"
+echo ""
 
 echo "📦 Installing client dependencies..."
 npm install --legacy-peer-deps --no-audit
+echo "✅ Client dependencies installed"
+echo ""
 
-# Install required Vite dependencies
-echo "📦 Ensuring Vite is installed..."
-npm install --save-dev vite@latest @vitejs/plugin-react@latest typescript
+echo "📦 Installing Vite..."
+npm install --save-dev vite@latest @vitejs/plugin-react@latest typescript || {
+  echo "⚠️ Warning: Vite install had issues, but continuing..."
+}
+echo "✅ Vite ready"
+echo ""
 
-# Clear Vite cache
 echo "🧹 Clearing Vite cache..."
-rm -rf node_modules/.vite
+rm -rf node_modules/.vite || true
+echo "✅ Cache cleared"
+echo ""
 
-# Run production build
-echo "🏗️ Running client production build..."
-export NODE_ENV=production
-export VITE_APP_ENV=production
-npm run build
+echo "🏗️  Running client build..."
+echo "Build command: npm run build"
+npm run build || {
+  echo "❌ Client build failed"
+  echo "Checking if dist directory exists..."
+  ls -la . || true
+  exit 1
+}
+echo ""
 
-# Verify client build
+echo "🔍 Verifying client build..."
 if [ ! -f "dist/index.html" ]; then
-    echo "❌ Client build failed - index.html not found"
-    exit 1
+  echo "❌ Client build failed - index.html not found"
+  echo "Contents of client directory:"
+  ls -la . || true
+  echo "Contents of dist directory (if exists):"
+  ls -la dist || true
+  exit 1
 fi
 
 echo "✅ Client build successful"
-ls -la dist/ | head -20
+echo "Client build contents:"
+ls -la dist/ | head -10
+echo ""
 
 # Return to root
-cd ..
+cd .. || {
+  echo "❌ Failed to return to root directory"
+  exit 1
+}
 
-# Build server
-echo "⚙️ Building server..."
+echo "=========================================="
+echo "⚙️  BUILDING SERVER"
+echo "=========================================="
 
-# Create production TypeScript config if it doesn't exist
+echo "Current directory: $(pwd)"
+echo ""
+
+# Create production TypeScript config if needed
 if [ ! -f "tsconfig.production.json" ]; then
-echo "⚙️ Creating production TypeScript config..."
-cat > tsconfig.production.json << 'EOL'
+  echo "⚙️  Creating production TypeScript config..."
+  cat > tsconfig.production.json << 'TSCONFIG'
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
@@ -102,49 +134,70 @@ cat > tsconfig.production.json << 'EOL'
   "include": ["server/**/*", "shared/**/*"],
   "exclude": ["node_modules", "client", "**/*.test.ts", "**/*.spec.ts"]
 }
-EOL
+TSCONFIG
+  echo "✅ Created tsconfig.production.json"
 fi
 
-# Run server build
-echo "🏗️ Building server with TypeScript..."
+echo "🏗️  Compiling TypeScript..."
 npm run build:server || {
-    echo "⚠️ Standard build failed, trying with permissive flags..."
-    npx tsc -p tsconfig.production.json --skipLibCheck --noEmitOnError false || exit 1
+  echo "⚠️  Standard build failed, trying with permissive flags..."
+  npx tsc -p tsconfig.production.json --skipLibCheck --noEmitOnError false || {
+    echo "❌ Server build failed"
+    exit 1
+  }
 }
+echo "✅ Server compiled"
+echo ""
 
 # Create public directory and copy client build
 echo "📋 Setting up public assets..."
 mkdir -p dist/public
-cp -r client/dist/* dist/public/
+cp -r client/dist/* dist/public/ || {
+  echo "❌ Failed to copy client build to dist/public"
+  exit 1
+}
+echo "✅ Assets copied"
+echo ""
 
-# Verify critical files
-echo "🔍 Verifying build outputs..."
+# Verify build outputs
+echo "=========================================="
+echo "🔍 VERIFYING BUILD"
+echo "=========================================="
+
+echo "Checking for server entry point..."
 if [ ! -f "dist/server/index-minimal.js" ]; then
   echo "❌ Server build failed - dist/server/index-minimal.js not found"
-  ls -la dist/server/ || echo "dist/server directory not found"
+  echo "Contents of dist directory:"
+  ls -la dist || true
+  echo "Contents of dist/server (if exists):"
+  ls -la dist/server || true
   exit 1
 fi
+echo "✅ Server entry point exists"
 
+echo "Checking for client build..."
 if [ ! -f "dist/public/index.html" ]; then
   echo "❌ Client build failed - dist/public/index.html not found"
-  ls -la dist/public/ || echo "dist/public directory not found"
+  echo "Contents of dist/public:"
+  ls -la dist/public || true
   exit 1
 fi
+echo "✅ Client build exists"
+echo ""
 
-# Print build summary
+# Build summary
+echo "=========================================="
+echo "✅ BUILD COMPLETE!"
+echo "=========================================="
+echo "Build finished: $(date)"
 echo ""
-echo "✨ Build Complete! ✨"
-echo "===================="
-echo "📊 Summary:"
-echo "- Node.js version: $(node -v)"
-echo "- npm version: $(npm -v)"
-echo "- Build timestamp: $(date)"
-echo "- Client files in: dist/public/"
-echo "- Server files in: dist/server/"
+echo "📊 Build Summary:"
+echo "  ✅ Client built successfully"
+echo "  ✅ Server built successfully"
+echo "  ✅ Assets copied to dist/public/"
 echo ""
-echo "🔍 Verification:"
-echo "- Client bundle: ✅"
-echo "- Server bundle: ✅"
-echo "- Public assets: ✅"
+echo "📦 Output structure:"
+ls -la dist/ | head -10 || true
 echo ""
-echo "✅ Ready for production deployment!"
+echo "🚀 Ready for deployment!"
+echo "=========================================="
