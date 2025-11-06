@@ -151,12 +151,14 @@ export VITE_APP_ENV=production
 # Clean the dist directory
 rm -rf dist
 
-# Ensure Vite is executable
-chmod +x node_modules/vite/bin/vite.js
+# Reinstall Vite to ensure it's available
+echo "Ensuring Vite is installed..."
+npm install --save-dev vite@latest
+npm install --save-dev @vitejs/plugin-react@latest
 
 # Run build with proper Node.js options
-echo "Building with Vite from node_modules..."
-NODE_OPTIONS="--max-old-space-size=4096" node node_modules/vite/bin/vite.js build --mode production
+echo "Building with Vite..."
+NODE_OPTIONS="--max-old-space-size=4096" npx vite build --mode production --force
 
 # Verify the build
 if [ ! -d "dist" ]; then
