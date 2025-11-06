@@ -110,14 +110,16 @@ fi
 # Create minimal vite config if it doesn't exist
 echo "Creating minimal vite.config.js..."
 cat > vite.config.js << 'EOL'
-/** @type {import('vite').UserConfig} */
-export default {
-    plugins: [require('@vitejs/plugin-react')()],
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+    plugins: [react()],
     build: {
         outDir: 'dist',
         minify: true
     }
-}
+})
 EOL
 
 # Verify and run client build
