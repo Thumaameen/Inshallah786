@@ -70,14 +70,28 @@ npm ci
 
 # Navigate to client directory and install dependencies
 cd client
-rm -rf node_modules package-lock.json
+echo "🔧 Setting up client build environment..."
+
+# Clean installation
+rm -rf node_modules package-lock.json dist
+npm cache clean --force
+
+# Install dependencies with specific versions
 npm install --legacy-peer-deps
-npm install @radix-ui/react-scroll-area@latest --save --legacy-peer-deps
-npm install --save-dev vite@latest @vitejs/plugin-react typescript @types/react @types/react-dom @types/node @babel/plugin-transform-react-jsx
+npm install --save @radix-ui/react-scroll-area@latest
+npm install --save-dev vite@latest @vitejs/plugin-react@latest typescript@latest @types/react@latest @types/react-dom@latest @types/node@latest @babel/plugin-transform-react-jsx@latest
+
+# Verify Vite installation
+if ! [ -f "node_modules/.bin/vite" ]; then
+    echo "❌ Vite not found in node_modules, installing explicitly..."
+    npm install --save-dev vite@latest
+fi
 
 # Build client
-echo "Building client..."
-NODE_ENV=production npm run build
+echo "🏗️ Building client..."
+export VITE_MODE=production
+export NODE_ENV=production
+./node_modules/.bin/vite build --mode production
 
 # Return to root
 cd ..
