@@ -33,7 +33,6 @@ if [ "$(npm -v)" != "$NPM_VERSION" ]; then
     echo "❌ Error: Wrong npm version. Expected $NPM_VERSION, got $(npm -v)"
     exit 1
 fi
-}
 
 # Install global dependencies
 echo "Installing global dependencies..."
