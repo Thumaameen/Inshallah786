@@ -65,41 +65,72 @@ echo "NODE_ENV: $NODE_ENV"
 echo "Current Node: $(node -v)"
 echo "Current NPM: $(npm -v)"
 
-# Install dependencies for root project
-npm ci
+# Clean all previous builds and dependencies
+echo "🧹 Cleaning workspace..."
+rm -rf dist client/dist node_modules client/node_modules package-lock.json client/package-lock.json
 
-# Navigate to client directory and install dependencies
-cd client
-echo "🔧 Setting up client build environment..."
-
-# Clean installation
-rm -rf node_modules package-lock.json dist
-npm cache clean --force
-
-# Install dependencies with specific versions
-npm install --legacy-peer-deps
-npm install --save @radix-ui/react-scroll-area@latest
-npm install --save-dev vite@latest @vitejs/plugin-react@latest typescript@latest @types/react@latest @types/react-dom@latest @types/node@latest @babel/plugin-transform-react-jsx@latest
-
-# Verify Vite installation
-if ! [ -f "node_modules/.bin/vite" ]; then
-    echo "❌ Vite not found in node_modules, installing explicitly..."
-    npm install --save-dev vite@latest
-fi
+# Install root dependencies first
+echo "� Installing root dependencies..."
+npm install --legacy-peer-deps --no-audit
 
 # Build client
+echo "🎨 Building client..."
+cd client || {
+    echo "❌ Failed to enter client directory"
+    exit 1
+}
+
+echo "📦 Installing client dependencies..."
+npm install --legacy-peer-deps --no-audit
+
+# Install specific versions of critical dependencies
+echo "📦 Installing critical dependencies..."
+npm install --save @radix-ui/react-scroll-area@latest
+npm install --save-dev \
+    vite@latest \
+    @vitejs/plugin-react@latest \
+    typescript@latest \
+    @types/react@^18.2.0 \
+    @types/react-dom@^18.2.0 \
+    @types/node@latest \
+    @babel/plugin-transform-react-jsx@latest \
+    react-router-dom@^6.20.0 \
+    @tanstack/react-query@^5.28.0
+
+# Verify and run client build
 echo "🏗️ Building client..."
 export VITE_MODE=production
 export NODE_ENV=production
-./node_modules/.bin/vite build --mode production
+export CI=false
+export VITE_APP_ENV=production
 
-# Return to root
-cd ..
+if [ -f "node_modules/.bin/vite" ]; then
+    echo "Building with local Vite..."
+    ./node_modules/.bin/vite build --mode production || {
+        echo "⚠️ Local Vite build failed, trying with npx..."
+        npx vite build --mode production
+    }
+else
+    echo "Building with npx Vite..."
+    npx vite build --mode production
+fi
+
+# Verify client build
+if [ ! -f "dist/index.html" ]; then
+    echo "❌ Client build failed - index.html not found"
+    exit 1
+fi
+
+# Return to root with verification
+cd .. || {
+    echo "❌ Failed to return to root directory"
+    exit 1
+}
+
+# Set production environment variables
 export NODE_ENV=production
 export RENDER=true
 export RENDER_SERVICE_ID=true
-export NODE_VERSION=20.19.1
-export NPM_VERSION=10.2.3
 export NPM_CONFIG_PRODUCTION=false
 
 # Verify Node.js version - must be 20.19.1
@@ -222,27 +253,33 @@ echo "⚙️ Building server..."
 export TSC_COMPILE_ON_ERROR=true
 export NODE_OPTIONS="--max-old-space-size=4096"
 
-# First attempt - normal build
+# Ensure TypeScript is installed
+npm install -g typescript@latest
+
+# Prepare TypeScript config
+if [ ! -f "tsconfig.production.json" ]; then
+    echo "⚠️ Production TypeScript config not found, using default..."
+    cp tsconfig.json tsconfig.production.json
+fi
+
+# Build with increasing permissiveness
+echo "First build attempt..."
 npx tsc -p tsconfig.production.json --noEmitOnError false || {
-  echo "⚠️ TypeScript compilation had warnings, trying with additional flags..."
-  
-  # Second attempt - with more permissive flags
-  npx tsc -p tsconfig.production.json \
-    --skipLibCheck \
-    --noEmitOnError false \
-    --suppressImplicitAnyIndexErrors \
-    --useUnknownInCatchVariables false || {
-    
-    echo "⚠️ Still having issues, trying final fallback build..."
-    
-    # Final attempt - most permissive
-    TSC_COMPILE_ON_ERROR=true npx tsc -p tsconfig.production.json \
-      --skipLibCheck \
-      --noEmitOnError false \
-      --suppressImplicitAnyIndexErrors \
-      --useUnknownInCatchVariables false \
-      --noImplicitAny false || echo "✅ Build output generated despite warnings"
-  }
+    echo "⚠️ Initial build failed, trying with skipLibCheck..."
+    npx tsc -p tsconfig.production.json \
+        --skipLibCheck \
+        --noEmitOnError false || {
+        echo "⚠️ Second attempt failed, trying with all permissive flags..."
+        TSC_COMPILE_ON_ERROR=true npx tsc -p tsconfig.production.json \
+            --skipLibCheck \
+            --noEmitOnError false \
+            --suppressImplicitAnyIndexErrors \
+            --useUnknownInCatchVariables false \
+            --noImplicitAny false || {
+            echo "⚠️ All TypeScript build attempts failed"
+            exit 1
+        }
+    }
 }
 
 # Fix ES Module imports - add .js only to imports that don't already have an extension
