@@ -60,11 +60,11 @@ npm install --legacy-peer-deps --no-audit
 echo "✅ Client dependencies installed"
 echo ""
 
-echo "📦 Installing Vite..."
-npm install --save-dev vite@latest @vitejs/plugin-react@latest typescript || {
-  echo "⚠️ Warning: Vite install had issues, but continuing..."
+echo "📦 Installing build tools..."
+npm install --save-dev vite@latest @vitejs/plugin-react@latest typescript terser --legacy-peer-deps || {
+  echo "⚠️ Warning: Build tools install had issues, but continuing..."
 }
-echo "✅ Vite ready"
+echo "✅ Build tools ready"
 echo ""
 
 echo "🧹 Clearing Vite cache..."
@@ -72,13 +72,12 @@ rm -rf node_modules/.vite || true
 echo "✅ Cache cleared"
 echo ""
 
-# Build client with optimizations
-echo "📦 Installing terser for production builds..."
-cd client
-npm install --save-dev terser --legacy-peer-deps
-echo "📦 Building client..."
-npm run build
-cd ..
+echo "🏗️ Building client application..."
+npm run build || {
+  echo "❌ Client build failed"
+  exit 1
+}
+echo "✅ Client build complete"
 echo ""
 
 echo "🔍 Verifying client build..."
