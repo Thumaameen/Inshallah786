@@ -73,9 +73,12 @@ echo "✅ Cache cleared"
 echo ""
 
 echo "🏗️ Building client application..."
-npm run build || {
-  echo "❌ Client build failed"
-  exit 1
+NODE_OPTIONS="--max-old-space-size=2048" npm run build || {
+  echo "⚠️ First build attempt failed, trying with reduced memory..."
+  NODE_OPTIONS="--max-old-space-size=1536 --optimize-for-size" npm run build || {
+    echo "❌ Client build failed"
+    exit 1
+  }
 }
 echo "✅ Client build complete"
 echo ""
