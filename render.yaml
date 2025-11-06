@@ -9,17 +9,6 @@ services:
     plan: starter
     buildCommand: bash render-build-production.sh
     startCommand: node dist/server/index-minimal.js
-    envVars:
-      - key: NPM_VERSION
-        value: "10.2.3"
-      - key: NODE_VERSION
-        value: "20.19.1"
-      - key: NODE_ENV
-        value: "production"
-      - key: NPM_CONFIG_PRODUCTION
-        value: "false"
-      - key: CI
-        value: "true"
     healthCheckPath: /api/health
     autoDeploy: true
     healthCheckTimeout: 180
@@ -36,10 +25,16 @@ services:
       enhancedAI: true
       targetCPUPercent: 65
     envVars:
+      - key: NPM_VERSION
+        value: "10.2.3"
       - key: NODE_VERSION
-        value: 20.19.1
+        value: "20.19.1"
       - key: NODE_ENV
-        value: production
+        value: "production"
+      - key: NPM_CONFIG_PRODUCTION
+        value: "false"
+      - key: CI
+        value: "true"
       - key: RENDER
         value: "true"
       - key: PORT
@@ -256,11 +251,11 @@ services:
       - key: CACHE_STRATEGY
         value: "aggressive"
       - key: TARGET_SERVICE
-        value: ultra-queen-ai-raeesa # Updated service name
+        value: ultra-queen-ai-raeesa
       - key: RENDER_EXTERNAL_URL
         fromService:
           type: web
-          name: ultra-queen-ai-raeesa # Updated service name
+          name: ultra-queen-ai-raeesa
           envVarKey: RENDER_EXTERNAL_URL
       - key: DATABASE_URL
         fromDatabase:
