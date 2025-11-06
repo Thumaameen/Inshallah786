@@ -1,0 +1,38 @@
+2025-11-05T21:22:45.408305057Z ==> Downloading cache...
+2025-11-05T21:22:45.44987684Z ==> Cloning from https://github.com/Thumaameen/Inshallah786
+2025-11-05T21:23:13.885022138Z ==> Checking out commit a395a6217c0ed72a60267195d698b8a64455366a in branch main
+2025-11-05T21:23:16.247413992Z ==> Downloaded 46MB in 2s. Extraction took 1s.
+2025-11-05T21:23:16.704164937Z ==> Using Node.js version 20.19.1 via environment variable NODE_VERSION
+2025-11-05T21:23:16.736541756Z ==> Docs on specifying a Node.js version: https://render.com/docs/node-version
+2025-11-05T21:23:16.867253833Z ==> Running build command 'bash render-build-production.sh'...
+2025-11-05T21:23:16.873970937Z 🚀 DHA Digital Services - PRODUCTION BUILD FOR RENDER
+2025-11-05T21:23:16.873983939Z ====================================================
+2025-11-05T21:23:16.876039692Z 📅 Build started: Wed Nov  5 21:23:16 UTC 2025
+2025-11-05T21:23:16.876044222Z 
+2025-11-05T21:23:16.880875375Z 🔍 Environment Check:
+2025-11-05T21:23:16.88088779Z   NODE_ENV=production
+2025-11-05T21:23:16.880890086Z   RENDER=true
+2025-11-05T21:23:16.880892052Z   NODE_VERSION=20.19.1
+2025-11-05T21:23:16.8808937Z 
+2025-11-05T21:23:16.880946022Z 📦 Configuring build system...
+2025-11-05T21:23:16.882863012Z 📌 Environment Check:
+2025-11-05T21:23:16.882867593Z NODE_VERSION: 20.19.1
+2025-11-05T21:23:16.882869961Z NODE_ENV: production
+2025-11-05T21:23:16.887215601Z Current Node: v20.19.1
+2025-11-05T21:23:17.014836256Z Current NPM: 10.8.2
+2025-11-05T21:23:17.019716738Z Required: 20.19.1
+2025-11-05T21:23:17.019729963Z Current: 20.19.1
+2025-11-05T21:23:17.019816554Z ✅ Node.js available and validated
+2025-11-05T21:23:17.019820863Z 🧹 Cleaning previous builds...
+2025-11-05T21:23:17.021315267Z 📦 Installing dependencies...
+2025-11-05T21:23:17.399926675Z npm error code EBADENGINE
+2025-11-05T21:23:17.400141845Z npm error engine Unsupported engine
+2025-11-05T21:23:17.400258002Z npm error engine Not compatible with your version of node/npm: dha-digital-services@2.0.0
+2025-11-05T21:23:17.40031065Z npm error notsup Not compatible with your version of node/npm: dha-digital-services@2.0.0
+2025-11-05T21:23:17.400313499Z npm error notsup Required: {"node":"20.19.1","npm":"10.2.3"}
+2025-11-05T21:23:17.400315633Z npm error notsup Actual:   {"npm":"10.8.2","node":"v20.19.1"}
+2025-11-05T21:23:17.401711987Z npm error A complete log of this run can be found in: /opt/render/.cache/_logs/2025-11-05T21_23_17_097Z-debug-0.log
+2025-11-05T21:23:17.405965632Z ❌ Error occurred in build script
+2025-11-05T21:23:17.405979827Z Error on line 81
+2025-11-05T21:23:17.441702433Z ==> Build failed 😞
+2025-11-05T21:23:17.4417379Z ==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys

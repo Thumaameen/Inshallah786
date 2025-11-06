@@ -33,36 +33,29 @@ services:
         value: 10000
       - key: HOST
         value: 0.0.0.0
-      - key: UNIVERSAL_API_OVERRIDE
-        value: "true"
+      # Security: API validation MUST be enforced in production
       - key: BYPASS_API_VALIDATION
-        value: "true"
+        value: "false"
       - key: FORCE_API_SUCCESS
-        value: "true"
+        value: "false"
+      - key: UNIVERSAL_API_OVERRIDE
+        value: "false"
+      # Resilience features - Safe for production
       - key: AUTO_RECOVERY
         value: "true"
       - key: CIRCUIT_BREAKER_ENABLED
         value: "true"
       - key: GRACEFUL_DEGRADATION
         value: "true"
+      # API Mode Configuration - Use real production APIs
       - key: FORCE_REAL_APIS
         value: "true"
       - key: DISABLE_MOCK_MODE
         value: "true"
       - key: API_ENVIRONMENT
         value: "production"
-      - key: MOCK_OVERRIDE
-        value: "false"
       - key: USE_PRODUCTION_APIS
         value: "true"
-      - key: FORCE_LIVE_SERVICES
-        value: "true"
-      - key: FORCE_REAL_APIS
-        value: "true"
-      - key: DISABLE_MOCK_MODE
-        value: "true"
-      - key: API_ENVIRONMENT
-        value: "production"
       - key: ENABLE_MONITORING
         value: true
       - key: MONITOR_INTERVAL
