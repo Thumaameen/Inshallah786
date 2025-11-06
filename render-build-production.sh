@@ -70,9 +70,10 @@ npm ci
 
 # Navigate to client directory and install dependencies
 cd client
-npm ci --legacy-peer-deps
+rm -rf node_modules package-lock.json
+npm install --legacy-peer-deps
 npm install @radix-ui/react-scroll-area@latest --save --legacy-peer-deps
-npm install vite @vitejs/plugin-react typescript @types/react @types/react-dom @types/node --save-dev
+npm install --save-dev vite@latest @vitejs/plugin-react typescript @types/react @types/react-dom @types/node @babel/plugin-transform-react-jsx
 
 # Build client
 echo "Building client..."
