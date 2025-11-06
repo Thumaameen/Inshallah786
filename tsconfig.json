@@ -7,7 +7,7 @@
     "paths": {
       "@/*": ["client/src/*"]
     },
-    "types": [],
+    "types": ["node"],
     "skipLibCheck": true,
     "moduleResolution": "node",
     "resolveJsonModule": true,
