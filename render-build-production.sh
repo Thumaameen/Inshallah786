@@ -16,6 +16,19 @@ handle_error() {
 trap 'handle_error $LINENO' ERR
 
 # CRITICAL: Production environment setup - FORCE PRODUCTION MODE
+
+# Check Node.js version
+required_node="20.19.1"
+current_node=$(node -v | cut -d "v" -f2)
+if [ "$current_node" != "$required_node" ]; then
+  echo "❌ Wrong Node.js version. Required: $required_node, Current: $current_node"
+  echo "Installing correct version..."
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+  export NVM_DIR="$HOME/.nvm"
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+  nvm install $required_node
+  nvm use $required_node
+fi
 export NODE_ENV=production
 export RENDER=true
 export RENDER_SERVICE_ID=true
