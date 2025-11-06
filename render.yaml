@@ -278,4 +278,4 @@ services:
 
 databases:
   - name: dha-production-db
-    plan: starter
+    plan: free
