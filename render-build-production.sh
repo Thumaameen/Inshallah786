@@ -143,7 +143,9 @@ npm install --save-dev @vitejs/plugin-react@latest
 
 # Run build with proper Node.js options
 echo "Building with Vite..."
-node node_modules/vite/bin/vite.js build
+export NODE_ENV=production
+npm install -g vite
+vite build
 
 # Verify the build
 if [ ! -d "dist" ]; then
