@@ -232,13 +232,8 @@ services:
         value: "50"
       - key: CACHE_STRATEGY
         value: "aggressive"
-      - key: TARGET_SERVICE
-        value: ultra-queen-ai-raeesa
-      - key: RENDER_EXTERNAL_URL
-        fromService:
-          type: web
-          name: ultra-queen-ai-raeesa
-          envVarKey: RENDER_EXTERNAL_URL
+      - key: TARGET_SERVICE_URL
+        value: "https://dha-thisone.onrender.com"
       - key: DATABASE_URL
         fromDatabase:
           name: dha-production-db
