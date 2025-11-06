@@ -1,0 +1,50 @@
+2025-11-06T07:44:48.643976469Z src/pages/admin/AdminDashboard.tsx(2,20): error TS2305: Module '"@tanstack/react-query"' has no exported member 'useMutation'.
+2025-11-06T07:44:48.643979088Z src/pages/admin/AdminDashboard.tsx(318,52): error TS2554: Expected 1-2 arguments, but got 3.
+2025-11-06T07:44:48.643994015Z src/pages/admin/AdminDashboard.tsx(618,65): error TS2339: Property 'lastCheck' does not exist on type 'unknown'.
+2025-11-06T07:44:48.643996091Z src/pages/admin/AdminDashboard.tsx(622,70): error TS2339: Property 'status' does not exist on type 'unknown'.
+2025-11-06T07:44:48.644023934Z src/pages/admin/AdminDashboard.tsx(623,40): error TS2339: Property 'status' does not exist on type 'unknown'.
+2025-11-06T07:44:48.644026066Z src/pages/admin/DocumentManagement.tsx(2,10): error TS2305: Module '"@tanstack/react-query"' has no exported member 'useQuery'.
+2025-11-06T07:44:48.644030231Z src/pages/admin/DocumentManagement.tsx(2,20): error TS2305: Module '"@tanstack/react-query"' has no exported member 'useMutation'.
+2025-11-06T07:44:48.644034278Z src/pages/admin/GovernmentOperations.tsx(2,10): error TS2305: Module '"@tanstack/react-query"' has no exported member 'useQuery'.
+2025-11-06T07:44:48.644058692Z src/pages/admin/GovernmentOperations.tsx(119,9): error TS2554: Expected 1-2 arguments, but got 3.
+2025-11-06T07:44:48.644061655Z src/pages/admin/GovernmentOperations.tsx(140,9): error TS2559: Type '"/api/admin/government-operations/high-availability/failover/test"' has no properties in common with type 'RequestInit'.
+2025-11-06T07:44:48.644073587Z src/pages/admin/MilitaryOperations.tsx(2,10): error TS2305: Module '"@tanstack/react-query"' has no exported member 'useQuery'.
+2025-11-06T07:44:48.644077334Z src/pages/admin/MilitaryOperations.tsx(2,20): error TS2305: Module '"@tanstack/react-query"' has no exported member 'useMutation'.
+2025-11-06T07:44:48.644110146Z src/pages/admin/SecurityCenter.tsx(2,10): error TS2305: Module '"@tanstack/react-query"' has no exported member 'useQuery'.
+2025-11-06T07:44:48.644112403Z src/pages/admin/SecurityCenter.tsx(2,20): error TS2305: Module '"@tanstack/react-query"' has no exported member 'useMutation'.
+2025-11-06T07:44:48.644116612Z src/pages/admin/SystemMonitoring.tsx(2,10): error TS2305: Module '"@tanstack/react-query"' has no exported member 'useQuery'.
+2025-11-06T07:44:48.644120547Z src/pages/admin/UserManagement.tsx(2,10): error TS2305: Module '"@tanstack/react-query"' has no exported member 'useQuery'.
+2025-11-06T07:44:48.644145531Z src/pages/admin/UserManagement.tsx(2,20): error TS2305: Module '"@tanstack/react-query"' has no exported member 'useMutation'.
+2025-11-06T07:44:48.644147544Z src/pages/ai-assistant.tsx(12,10): error TS2305: Module '"@tanstack/react-query"' has no exported member 'useQuery'.
+2025-11-06T07:44:48.644166276Z src/pages/ai-assistant.tsx(12,20): error TS2305: Module '"@tanstack/react-query"' has no exported member 'useMutation'.
+2025-11-06T07:44:48.644168381Z src/pages/ai-assistant.tsx(12,33): error TS2305: Module '"@tanstack/react-query"' has no exported member 'useQueryClient'.
+2025-11-06T07:44:48.644195514Z src/pages/document-generation.tsx(8,10): error TS2305: Module '"@tanstack/react-query"' has no exported member 'useQuery'.
+2025-11-06T07:44:48.644197753Z src/pages/document-generation.tsx(8,20): error TS2305: Module '"@tanstack/react-query"' has no exported member 'useMutation'.
+2025-11-06T07:44:48.6442019Z src/pages/document-generation.tsx(200,9): error TS2554: Expected 1-2 arguments, but got 3.
+2025-11-06T07:44:48.644205877Z src/pages/document-generation.tsx(528,126): error TS2339: Property 'name' does not exist on type 'unknown'.
+2025-11-06T07:44:48.644225202Z src/pages/document-generation.tsx(536,67): error TS2339: Property 'color' does not exist on type 'unknown'.
+2025-11-06T07:44:48.644242316Z src/pages/document-generation.tsx(538,68): error TS2339: Property 'name' does not exist on type 'unknown'.
+2025-11-06T07:44:48.644246872Z src/pages/document-generation.tsx(582,138): error TS2339: Property 'name' does not exist on type 'unknown'.
+2025-11-06T07:44:48.644277241Z src/pages/document-generation.tsx(584,39): error TS2339: Property 'name' does not exist on type 'unknown'.
+2025-11-06T07:44:48.644279315Z src/pages/military-ai-assistant.tsx(12,10): error TS2305: Module '"@tanstack/react-query"' has no exported member 'useQuery'.
+2025-11-06T07:44:48.64428329Z src/pages/military-ai-assistant.tsx(12,20): error TS2305: Module '"@tanstack/react-query"' has no exported member 'useMutation'.
+2025-11-06T07:44:48.644291283Z src/pages/military-ai-assistant.tsx(12,33): error TS2305: Module '"@tanstack/react-query"' has no exported member 'useQueryClient'.
+2025-11-06T07:44:48.644318607Z src/pages/system-status.tsx(1,10): error TS2305: Module '"@tanstack/react-query"' has no exported member 'useQuery'.
+2025-11-06T07:44:48.64432099Z src/pages/system-status.tsx(178,94): error TS2339: Property 'status' does not exist on type 'object'.
+2025-11-06T07:44:48.644344045Z src/pages/ultra-ai.tsx(3,26): error TS2307: Cannot find module 'react-router-dom' or its corresponding type declarations.
+2025-11-06T07:44:48.644346429Z src/pages/verify.tsx(3,10): error TS2305: Module '"@tanstack/react-query"' has no exported member 'useMutation'.
+2025-11-06T07:44:48.644368652Z src/pages/verify.tsx(73,29): error TS2339: Property 'code' does not exist on type 'StringRouteParams<undefined>'.
+2025-11-06T07:44:48.644374197Z src/services/api-client.ts(63,34): error TS2339: Property 'message' does not exist on type 'unknown'.
+2025-11-06T07:44:48.644399946Z src/utils/binary-helpers.ts(4,3): error TS2322: Type 'ArrayBuffer | SharedArrayBuffer' is not assignable to type 'ArrayBuffer'.
+2025-11-06T07:44:48.644402331Z   Type 'SharedArrayBuffer' is not assignable to type 'ArrayBuffer'.
+2025-11-06T07:44:48.644404187Z     Types of property '[Symbol.toStringTag]' are incompatible.
+2025-11-06T07:44:48.644405955Z       Type '"SharedArrayBuffer"' is not assignable to type '"ArrayBuffer"'.
+2025-11-06T07:44:48.690483694Z npm notice
+2025-11-06T07:44:48.690498435Z npm notice New major version of npm available! 10.8.2 -> 11.6.2
+2025-11-06T07:44:48.690501796Z npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.6.2
+2025-11-06T07:44:48.690504497Z npm notice To update run: npm install -g npm@11.6.2
+2025-11-06T07:44:48.690506867Z npm notice
+2025-11-06T07:44:48.694505942Z Client build failed, continuing...
+2025-11-06T07:44:48.694572857Z ❌ Client build failed - index.html not found
+2025-11-06T07:44:48.731293174Z ==> Build failed 😞
+2025-11-06T07:44:48.731309719Z ==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys
