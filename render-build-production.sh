@@ -72,6 +72,7 @@ npm ci
 cd client
 npm ci --legacy-peer-deps
 npm install @radix-ui/react-scroll-area@latest --save --legacy-peer-deps
+npm install vite @vitejs/plugin-react typescript @types/react @types/react-dom @types/node --save-dev
 
 # Build client
 echo "Building client..."
