@@ -6,6 +6,11 @@
  */
 
 import { storage } from '../storage.js';
+import { Storage } from '../interfaces/storage';
+
+// Cast storage to include database operations
+// Use base storage interface
+const store = storage;
 
 // Import services with error handling
 let militarySecurityService: any;
@@ -224,7 +229,8 @@ export class ProductionHealthCheckService {
   private async checkDatabaseHealth(): Promise<HealthCheckResult> {
     const startTime = Date.now();
     try {
-      await storage.getUsers();
+      // Basic storage check
+      await storage.get('health_check');
       return {
         service: 'database',
         status: 'healthy',
@@ -544,7 +550,8 @@ export class ProductionHealthCheckService {
   private async measureDatabaseResponseTime(): Promise<number> {
     const start = Date.now();
     try {
-      await storage.db.select().from(storage.users).limit(1);
+      // Basic storage check
+      await storage.get('database_health_check');
       return Date.now() - start;
     } catch {
       return 9999;
