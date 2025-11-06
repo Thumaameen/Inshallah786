@@ -108,32 +108,17 @@ if ! [ -f "node_modules/vite/bin/vite.js" ]; then
 fi
 
 # Create minimal vite config if it doesn't exist
-if [ ! -f "vite.config.js" ]; then
-    echo "Creating minimal vite.config.js..."
-    cat > vite.config.js << 'EOL'
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import path from 'path';
-
-export default defineConfig({
-    plugins: [react()],
-    resolve: {
-        alias: {
-            '@': path.resolve(__dirname, './src')
-        }
-    },
+echo "Creating minimal vite.config.js..."
+cat > vite.config.js << 'EOL'
+/** @type {import('vite').UserConfig} */
+export default {
+    plugins: [require('@vitejs/plugin-react')()],
     build: {
         outDir: 'dist',
-        sourcemap: false,
-        minify: true,
-        target: 'es2020'
-    },
-    optimizeDeps: {
-        include: ['react', 'react-dom']
+        minify: true
     }
-});
+}
 EOL
-fi
 
 # Verify and run client build
 echo "🏗️ Building client..."
@@ -158,7 +143,7 @@ npm install --save-dev @vitejs/plugin-react@latest
 
 # Run build with proper Node.js options
 echo "Building with Vite..."
-NODE_OPTIONS="--max-old-space-size=4096 --experimental-modules" npx --no-install vite build --mode production
+node node_modules/vite/bin/vite.js build
 
 # Verify the build
 if [ ! -d "dist" ]; then
