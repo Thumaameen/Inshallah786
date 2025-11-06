@@ -308,10 +308,13 @@ class MilitaryGovernmentPortals {
 
   // Quantum encryption
   private quantumEncrypt(data: string): string {
-    const cipher = crypto.createCipher('aes-256-gcm', this.queenRaeesaKey);
+    const iv = crypto.randomBytes(16);
+    const cipher = crypto.createCipheriv('aes-256-gcm', this.queenRaeesaKey, iv);
     let encrypted = cipher.update(data, 'utf8', 'hex');
     encrypted += cipher.final('hex');
-    return encrypted;
+    const authTag = cipher.getAuthTag();
+    // Return IV + encrypted data + auth tag
+    return iv.toString('hex') + encrypted + authTag.toString('hex');
   }
 
   // Fetch data from portal (mock implementation)
