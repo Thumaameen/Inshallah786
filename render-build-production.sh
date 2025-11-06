@@ -41,6 +41,10 @@ nvm use $NODE_VERSION || {
     exit 1
 }
 
+# Install global dependencies
+echo "Installing global dependencies..."
+npm install -g vite typescript @vitejs/plugin-react
+
 # Install correct npm version
 npm install -g npm@$NPM_VERSION
 
