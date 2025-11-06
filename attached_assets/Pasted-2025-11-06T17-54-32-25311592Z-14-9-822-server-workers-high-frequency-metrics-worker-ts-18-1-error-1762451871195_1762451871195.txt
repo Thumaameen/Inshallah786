@@ -1,0 +1,50 @@
+2025-11-06T17:54:32.25311592Z #14 9.822 server/workers/high-frequency-metrics-worker.ts(18,1): error TS6133: 'os' is declared but its value is never read.
+2025-11-06T17:54:32.253120087Z #14 9.822 server/workers/high-frequency-metrics-worker.ts(77,7): error TS2783: 'targetFrequency' is specified more than once, so this usage will be overwritten.
+2025-11-06T17:54:32.25312391Z #14 9.822 server/workers/high-frequency-metrics-worker.ts(78,7): error TS2783: 'maxOverhead' is specified more than once, so this usage will be overwritten.
+2025-11-06T17:54:32.253126852Z #14 9.822 server/workers/high-frequency-metrics-worker.ts(79,7): error TS2783: 'adaptiveThrottling' is specified more than once, so this usage will be overwritten.
+2025-11-06T17:54:32.253139435Z #14 9.822 server/workers/high-frequency-metrics-worker.ts(80,7): error TS2783: 'validationEnabled' is specified more than once, so this usage will be overwritten.
+2025-11-06T17:54:32.25314227Z #14 9.822 server/workers/high-frequency-metrics-worker.ts(222,90): error TS6133: 'overhead' is declared but its value is never read.
+2025-11-06T17:54:32.253148563Z #14 9.822 server/workers/high-frequency-metrics-worker.ts(265,13): error TS6133: 'expectedSamples' is declared but its value is never read.
+2025-11-06T17:54:32.25315116Z #14 9.822 server/workers/service.worker.ts(1,22): error TS6133: 'workerData' is declared but its value is never read.
+2025-11-06T17:54:32.253153843Z #14 9.822 server/workers/service.worker.ts(2,1): error TS6133: 'ultraQueenAI' is declared but its value is never read.
+2025-11-06T17:54:32.253156483Z #14 9.822 server/workers/service.worker.ts(3,10): error TS2305: Module '"../services/military-grade-ai-assistant.js"' has no exported member 'militaryGradeAI'.
+2025-11-06T17:54:32.253158995Z #14 9.822 server/workers/service.worker.ts(3,10): error TS2395: Individual declarations in merged declaration 'militaryGradeAI' must be all exported or all local.
+2025-11-06T17:54:32.253161724Z #14 9.822 server/workers/service.worker.ts(47,14): error TS2395: Individual declarations in merged declaration 'militaryGradeAI' must be all exported or all local.
+2025-11-06T17:54:32.253164529Z #14 9.822 server/workers/service.worker.ts(48,29): error TS6133: 'data' is declared but its value is never read.
+2025-11-06T17:54:32.253170457Z #14 9.822 server/workers/task-scheduler.ts(1,1): error TS6133: 'cron' is declared but its value is never read.
+2025-11-06T17:54:32.253173207Z #14 9.822 server/workers/task-scheduler.ts(1,28): error TS2307: Cannot find module 'node-cron' or its corresponding type declarations.
+2025-11-06T17:54:32.253179286Z #14 9.822 server/workers/task-scheduler.ts(2,26): error TS2307: Cannot find module 'node-cron' or its corresponding type declarations.
+2025-11-06T17:54:32.253182257Z #14 9.822 server/workers/threat-detection-worker.ts(16,10): error TS6133: 'Worker' is declared but its value is never read.
+2025-11-06T17:54:32.253185022Z #14 9.822 server/workers/threat-detection-worker.ts(17,1): error TS6133: 'performance' is declared but its value is never read.
+2025-11-06T17:54:32.253188037Z #14 9.822 server/workers/threat-detection-worker.ts(86,7): error TS2783: 'latencyBudget' is specified more than once, so this usage will be overwritten.
+2025-11-06T17:54:32.253190626Z #14 9.822 server/workers/threat-detection-worker.ts(87,7): error TS2783: 'analysisFrequency' is specified more than once, so this usage will be overwritten.
+2025-11-06T17:54:32.25320583Z #14 9.822 server/workers/threat-detection-worker.ts(88,7): error TS2783: 'maxConcurrentAnalyses' is specified more than once, so this usage will be overwritten.
+2025-11-06T17:54:32.253208015Z #14 9.822 server/workers/threat-detection-worker.ts(89,7): error TS2783: 'emergencyThreshold' is specified more than once, so this usage will be overwritten.
+2025-11-06T17:54:32.253213631Z #14 9.822 server/workers/threat-detection-worker.ts(90,7): error TS2783: 'adaptiveThrottling' is specified more than once, so this usage will be overwritten.
+2025-11-06T17:54:32.253215509Z #14 9.822 server/workers/threat-detection-worker.ts(184,5): error TS6133: 'startTime' is declared but its value is never read.
+2025-11-06T17:54:32.253217201Z #14 9.822 shared/schema/verification-sessions.ts(1,45): error TS6133: 'boolean' is declared but its value is never read.
+2025-11-06T17:54:32.253218949Z #14 9.822 tsconfig.production.json(16,5): error TS5102: Option 'suppressExcessPropertyErrors' has been removed. Please remove it from your configuration.
+2025-11-06T17:54:32.722400349Z #14 ERROR: process "/bin/sh -c npx tsc -p tsconfig.production.json" did not complete successfully: exit code: 1
+2025-11-06T17:54:32.736624149Z ------
+2025-11-06T17:54:32.73663446Z  > [9/9] RUN npx tsc -p tsconfig.production.json:
+2025-11-06T17:54:32.736637574Z 9.822 server/workers/threat-detection-worker.ts(16,10): error TS6133: 'Worker' is declared but its value is never read.
+2025-11-06T17:54:32.736640171Z 9.822 server/workers/threat-detection-worker.ts(17,1): error TS6133: 'performance' is declared but its value is never read.
+2025-11-06T17:54:32.736643717Z 9.822 server/workers/threat-detection-worker.ts(86,7): error TS2783: 'latencyBudget' is specified more than once, so this usage will be overwritten.
+2025-11-06T17:54:32.736646151Z 9.822 server/workers/threat-detection-worker.ts(87,7): error TS2783: 'analysisFrequency' is specified more than once, so this usage will be overwritten.
+2025-11-06T17:54:32.736648966Z 9.822 server/workers/threat-detection-worker.ts(88,7): error TS2783: 'maxConcurrentAnalyses' is specified more than once, so this usage will be overwritten.
+2025-11-06T17:54:32.736651663Z 9.822 server/workers/threat-detection-worker.ts(89,7): error TS2783: 'emergencyThreshold' is specified more than once, so this usage will be overwritten.
+2025-11-06T17:54:32.736654145Z 9.822 server/workers/threat-detection-worker.ts(90,7): error TS2783: 'adaptiveThrottling' is specified more than once, so this usage will be overwritten.
+2025-11-06T17:54:32.736665052Z 9.822 server/workers/threat-detection-worker.ts(184,5): error TS6133: 'startTime' is declared but its value is never read.
+2025-11-06T17:54:32.736667748Z 9.822 shared/schema/verification-sessions.ts(1,45): error TS6133: 'boolean' is declared but its value is never read.
+2025-11-06T17:54:32.736670103Z 9.822 tsconfig.production.json(16,5): error TS5102: Option 'suppressExcessPropertyErrors' has been removed. Please remove it from your configuration.
+2025-11-06T17:54:32.736672761Z ------
+2025-11-06T17:54:32.737745369Z Dockerfile:18
+2025-11-06T17:54:32.737761337Z --------------------
+2025-11-06T17:54:32.737767417Z   16 |     # Build client and server
+2025-11-06T17:54:32.737771696Z   17 |     RUN cd client && npm run build && cd ..
+2025-11-06T17:54:32.737775455Z   18 | >>> RUN npx tsc -p tsconfig.production.json
+2025-11-06T17:54:32.73777896Z   19 |     
+2025-11-06T17:54:32.737781773Z   20 |     # Set production environment
+2025-11-06T17:54:32.737786918Z --------------------
+2025-11-06T17:54:32.737791179Z error: failed to solve: process "/bin/sh -c npx tsc -p tsconfig.production.json" did not complete successfully: exit code: 1
+2025-11-06T17:54:32.75066905Z error: exit status 1
