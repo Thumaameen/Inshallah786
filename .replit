@@ -1,180 +1,34 @@
-run = "npm run dev"
-entrypoint = "server/index-minimal.ts"
-modules = ["nodejs-20", "web"]
+modules = ["nodejs-20"]
+[agent]
+expertMode = true
 
-hidden = [".config", ".git", "node_modules", "dist", "package-lock.json"]
+[workflows]
+runButton = "Project"
 
-[nix]
-channel = "stable-23_11"
-
-[unitTest]
-language = "nodejs"
-
-[deployment]
-build = ["sh", "-c", "npm run build:production"]
-run = ["sh", "-c", "npm run start:production"]
-deploymentTarget = "cloudrun"
-ignorePorts = false
-name = "DHA Digital Services"
+[[workflows.workflow]]
+name = "Project"
 mode = "parallel"
+author = "agent"
 
-[languages]
-[languages.typescript]
-pattern = "**/{*.ts,*.js,*.tsx,*.jsx}"
-syntax = "typescript"
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "dev-server"
 
-[languages.typescript.languageServer]
-start = "typescript-language-server --stdio"
+[[workflows.workflow]]
+name = "dev-server"
+author = "agent"
 
-[env]
-PATH = "/home/runner/$REPL_SLUG/.config/npm/node_global/bin:/home/runner/$REPL_SLUG/node_modules/.bin"
-npm_config_prefix = "/home/runner/$REPL_SLUG/.config/npm/node_global"
-NODE_ENV = "development"
-PORT = "3000"
-DATABASE_URL = "file:./data/development.sqlite"
-SESSION_SECRET = "development-secret-change-in-production"
-REPLIT = "true"
-NODE_OPTIONS = "--max-old-space-size=4096 --experimental-modules --es-module-specifier-resolution=node"
-SKIP_PREFLIGHT_CHECK = "true"
-TSC_COMPILE_ON_ERROR = "false"
-DISABLE_ESLINT_PLUGIN = "true"
-VITE_DISABLE_OPTIMIZER = "false"
-VITE_MINIFY = "true"
-VITE_SOURCE_MAP = "false"
-
-[packager]
-language = "nodejs"
-
-[packager.features]
-enabledForHosting = true
-packageSearch = true
-guessImports = true
-
-[[ports]]
-localPort = 3000
-externalPort = 3000
-
-[[ports]]
-localPort = 3001
-externalPort = 3001
-
-[gitHubImport]
-requiredFiles = [".replit", "replit.nix", ".config"]
-
-[auth]
-pageEnabled = false
-buttonEnabled = false
-
-[debugger]
-support = true
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run replit:dev"
+waitForPort = 5000
 
 [workflows.workflow.metadata]
 outputType = "webview"
 
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npm run dev"
-waitForPort = 5000
+[[ports]]
+localPort = 5000
+externalPort = 80
 
-[[workflows.workflow]]
-name = "Production Build & Start"
-author = 49189426
-mode = "sequential"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "echo \"🚀 DHA Production Build & Deployment\""
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "echo \"=====================================\""
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "echo \"\""
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "echo \"📦 Installing dependencies...\""
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npm install --legacy-peer-deps --no-optional"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "echo \"\""
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "echo \"🔧 Building server with monitoring...\""
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npx tsc -p tsconfig.json --skipLibCheck"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "echo \"\""
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "echo \"🎨 Building client...\""
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd client && npm install --legacy-peer-deps && npm run build && cd .."
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "echo \"\""
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "echo \"✅ Build complete!\""
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "echo \"🚀 Starting production server...\""
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "NODE_ENV=production PORT=5000 HOST=0.0.0.0 npm start"
-
-[[workflows.workflow]]
-name = "Test All API Keys"
-author = 49200153
-mode = "sequential"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "echo \"🧪 Testing All API Keys and Integrations\""
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "echo \"========================================\""
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npx tsx test-all-api-keys.ts"
-
-[[workflows.workflow]]
-name = "Test Render Deployment"
-author = 49200153
-mode = "sequential"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "echo \"🧪 COMPREHENSIVE RENDER DEPLOYMENT TEST\""
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "echo \"========================================\""
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npm install --legacy-peer-deps --no-optional"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npm run test:render"
+[nix]
+channel = "stable-25_05"
