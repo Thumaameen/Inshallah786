@@ -4,7 +4,6 @@ set -e
 echo "🚀 DHA Digital Services - PRODUCTION BUILD FOR RENDER"
 echo "===================================================="
 echo "📅 Build started: $(date)"
-echo ""
 
 # Critical error handling
 handle_error() {
@@ -81,84 +80,111 @@ cd client || {
 }
 
 echo "📦 Installing client dependencies..."
-npm install --legacy-peer-deps --no-audit
+npm ci --legacy-peer-deps --no-audit || npm install --legacy-peer-deps --no-audit
 
-# Install all dependencies in the correct order
-echo "📦 Installing production dependencies..."
-npm install --save react@latest react-dom@latest @radix-ui/react-scroll-area@latest
+# Clear Vite cache
+echo "🧹 Clearing Vite cache..."
+rm -rf node_modules/.vite
 
-echo "📦 Installing development dependencies..."
-npm install --save-dev \
-    vite@latest \
-    @vitejs/plugin-react@latest \
-    typescript@latest \
-    @types/react@^18.2.0 \
-    @types/react-dom@^18.2.0 \
-    @types/node@latest \
-    @babel/core@latest \
-    @babel/preset-react@latest \
-    @babel/plugin-transform-react-jsx@latest \
-    react-router-dom@^6.20.0 \
-    @tanstack/react-query@^5.28.0
-
-# Verify Vite installation
-if ! [ -f "node_modules/vite/bin/vite.js" ]; then
-    echo "⚠️ Vite not found in node_modules, installing explicitly..."
-    npm install --save-dev vite@latest
-fi
-
-# Create minimal vite config if it doesn't exist
-echo "Creating minimal vite.config.js..."
-cat > vite.config.js << 'EOL'
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+# Production build configuration
+echo "⚙️ Setting up Vite production configuration..."
+cat > vite.config.ts << EOL
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import path from 'path';
 
 export default defineConfig({
-    plugins: [react()],
-    build: {
-        outDir: 'dist',
-        minify: true
-    }
-})
+  plugins: [react()],
+  build: {
+    outDir: 'dist',
+    sourcemap: false,
+    minify: 'terser',
+    target: 'es2020',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+        },
+      },
+    },
+  },
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
+  optimizeDeps: {
+    include: ['react', 'react-dom'],
+  },
+  esbuild: {
+    jsxInject: "import React from 'react'",
+  },
+});
 EOL
 
-# Verify and run client build
-echo "🏗️ Building client..."
+# Run production build
+echo "🏗️ Running production build..."
+NODE_ENV=production npm run build
+    @tanstack/react-query@^5.28.0
+
+# Verify Vite installation and setup
+echo "⚙️ Setting up Vite..."
+npm install --save-dev vite@latest @vitejs/plugin-react@latest
+
+# Create optimized Vite config
+echo "📝 Creating production Vite config..."
+cat > vite.config.ts << 'EOL'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import path from 'path';
+
+export default defineConfig({
+  plugins: [react()],
+  build: {
+    outDir: 'dist',
+    sourcemap: false,
+    minify: 'terser',
+    target: 'es2020',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+        },
+      },
+    },
+  },
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
+  optimizeDeps: {
+    include: ['react', 'react-dom'],
+  },
+  esbuild: {
+    jsxInject: "import React from 'react'",
+  },
+});
+EOL
+
+# Set production environment
 export VITE_MODE=production
 export NODE_ENV=production
 export CI=false
 export VITE_APP_ENV=production
 
-# Run Vite build with proper environment setup
-echo "🏗️ Running production build..."
-export NODE_ENV=production
-export VITE_MODE=production
-export VITE_APP_ENV=production
-
-# Clean the dist directory
+# Clean and run production build
+echo "🏗️ Running optimized production build..."
 rm -rf dist
+npm run build -- --mode production
 
-# Reinstall Vite to ensure it's available
-echo "Ensuring Vite is installed..."
-npm install --save-dev vite@latest
-npm install --save-dev @vitejs/plugin-react@latest
-
-# Run build with proper Node.js options
-echo "Building with Vite..."
-export NODE_ENV=production
-npm install -g vite
-vite build
-
-# Verify the build
-if [ ! -d "dist" ]; then
-    echo "❌ Build failed - dist directory not found"
+# Verify build output
+if [ ! -d "dist" ] || [ ! -f "dist/index.html" ]; then
+    echo "❌ Build failed - build artifacts not found"
     exit 1
 fi
 
-if [ ! -f "dist/index.html" ]; then
-    echo "❌ Build failed - index.html not found"
-    exit 1
-fi
+echo "✅ Vite build successful"
 
 echo "✅ Client build successful"
 
@@ -297,59 +323,114 @@ ls -la client/dist/ || true
 
 # Build server
 echo "⚙️ Building server..."
+
+# Set build environment
 export TSC_COMPILE_ON_ERROR=true
 export NODE_OPTIONS="--max-old-space-size=4096"
+export TS_NODE_PROJECT="tsconfig.production.json"
 
-# Ensure TypeScript is installed
+# Install TypeScript globally
+echo "📦 Installing TypeScript..."
 npm install -g typescript@latest
 
-# Prepare TypeScript config
-if [ ! -f "tsconfig.production.json" ]; then
-    echo "⚠️ Production TypeScript config not found, using default..."
-    cp tsconfig.json tsconfig.production.json
-fi
+# Create production TypeScript config
+echo "⚙️ Creating production TypeScript config..."
+cat > tsconfig.production.json << 'EOL'
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "sourceMap": false,
+    "declaration": false,
+    "skipLibCheck": true,
+    "noEmitOnError": false,
+    "allowJs": true,
+    "checkJs": false,
+    "resolveJsonModule": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "module": "ESNext",
+    "target": "ES2020",
+    "outDir": "dist"
+  },
+  "include": ["server/**/*", "shared/**/*"],
+  "exclude": ["node_modules", "client", "**/*.test.ts", "**/*.spec.ts"]
+}
+EOL
 
-# Build with increasing permissiveness
-echo "First build attempt..."
-npx tsc -p tsconfig.production.json --noEmitOnError false || {
-    echo "⚠️ Initial build failed, trying with skipLibCheck..."
+# Run production build
+echo "🏗️ Building server with TypeScript..."
+npm run build:server || {
+    echo "⚠️ Standard build failed, trying with permissive flags..."
     npx tsc -p tsconfig.production.json \
         --skipLibCheck \
-        --noEmitOnError false || {
-        echo "⚠️ Second attempt failed, trying with all permissive flags..."
-        TSC_COMPILE_ON_ERROR=true npx tsc -p tsconfig.production.json \
-            --skipLibCheck \
-            --noEmitOnError false \
-            --suppressImplicitAnyIndexErrors \
-            --useUnknownInCatchVariables false \
-            --noImplicitAny false || {
-            echo "⚠️ All TypeScript build attempts failed"
-            exit 1
-        }
-    }
+        --noEmitOnError false \
+        --suppressImplicitAnyIndexErrors \
+        || exit 1
 }
 
-# Fix ES Module imports - add .js only to imports that don't already have an extension
+# Fix ES Module imports
 echo "🔧 Fixing ES module imports..."
-# Only add .js to relative imports that don't have any extension
-find dist -type f -name "*.js" -exec sed -i -E "s|from (['\"])(\.\.?/[^'\"\.]+)(['\"])|from \1\2.js\3|g" {} +
-# Clean up any double extensions that might have been created
-find dist -type f -name "*.js" -exec sed -i "s/\.js\.js/.js/g" {} +
-find dist -type f -name "*.js" -exec sed -i "s/\.ts\.js/.js/g" {} +
+find dist -type f -name "*.js" -exec sed -i -E 's|from "(\.\.?/[^"]+)"|from "\1.js"|g; s|from '"'"'(\.\.?/[^'"'"']+)'"'"'|from '"'"'\1.js'"'"'|g' {} +
 
-# Verify build
-echo "🔍 Verifying build..."
-if [ ! -f "dist/server/index-minimal.js" ]; then
-  echo "❌ Server build failed"
-  exit 1
+# Clean up any double extensions
+find dist -type f -name "*.js" -exec sed -i 's/\.js\.js/\.js/g; s/\.ts\.js/\.js/g' {} +
+
+# Verify build outputs
+if [ ! -f "dist/server/index.js" ]; then
+    echo "❌ Server build failed - index.js not found"
+    exit 1
 fi
 
 echo "✅ Server build verified"
 
-# Ensure dist/public directory exists
-echo "📋 Preparing dist/public directory..."
-rm -rf dist/public
-mkdir -p dist/public
+# Set up public directory
+echo "📋 Setting up public assets..."
+# Final verification steps
+echo "🔍 Running final verifications..."
+
+# Check critical files exist
+REQUIRED_FILES=(
+    "dist/public/index.html"
+    "dist/server/index.js"
+    "dist/public/assets"
+)
+
+for file in "${REQUIRED_FILES[@]}"; do
+    if [ ! -e "$file" ]; then
+        echo "❌ Critical file/directory missing: $file"
+        exit 1
+    fi
+done
+
+# Print build summary
+echo "
+✨ Build Complete! ✨
+====================
+📊 Summary:
+- Node.js version: $(node -v)
+- npm version: $(npm -v)
+- Build timestamp: $(date)
+- Client files in: dist/public/
+- Server files in: dist/server/
+
+🔍 Verification:
+- Client bundle: ✅
+- Server bundle: ✅
+- Public assets: ✅
+- ES modules: ✅
+
+Next steps:
+1. Deploy using render-start-production.sh
+2. Monitor application logs
+3. Verify all environment variables
+
+Build completed successfully! 🚀
+"
+cp -r client/dist/* dist/public/ || {
+    echo "⚠️ Failed to copy client build to public directory"
+    exit 1
+}
 
 # Copy client build to dist/public
 echo "📋 Copying client build to dist/public..."

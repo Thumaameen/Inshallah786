@@ -1,91 +1,41 @@
 /**
- * 🏛️ PRODUCTION CONFIGURATION FOR QUEEN RAEESA DHA SYSTEM
- * 
- * Optimized for Replit deployment with maximum security and performance
- * Ready for government-grade production use
+ * 🏛️ Production configuration for DHA System
  */
-
-export interface ProductionConfig {
-  environment: 'production';
-  security: {
-    corsOrigin: string[];
-    rateLimiting: boolean;
-    sessionTimeout: number;
-    encryptionLevel: 'military-grade';
-  };
-  performance: {
-    compression: boolean;
-    caching: boolean;
-    optimizedBuilds: boolean;
-    minification: boolean;
-  };
-  deployment: {
-    platform: 'replit';
-    autoScale: boolean;
-    healthChecks: boolean;
-    errorReporting: boolean;
-  };
-  features: {
-    queenAccess: boolean;
-    publicAI: boolean;
-    documentGeneration: boolean;
-    biometricSecurity: boolean;
-    web3Integration: boolean;
-  };
-  server: {
-    port: number;
-    host: string;
-  };
-  database: {
-    url: string;
-    maxConnections: number;
-    ssl: boolean | { rejectUnauthorized: boolean };
-  };
-}
+import { ProductionConfig } from './types';
 
 export const productionConfig: ProductionConfig = {
-  environment: 'production',
-  server: {
-    port: parseInt(process.env.PORT || '10000'),
-    host: '0.0.0.0',
+  monitoring: {
+    enabled: true,
+    interval: 60000, // 1 minute
+    alerts: 10 // Alert after 10 errors
   },
-  database: {
+  encryption: {
+    algorithm: 'aes-256-gcm',
+    keyLength: 32
+  },
+  storage: {
+    type: 'postgres',
+    connectionTimeout: 5000,
     url: process.env.DATABASE_URL || 'postgresql://user:password@localhost:5432/dha_digital_services',
     maxConnections: 20,
     ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
   },
-
   security: {
     corsOrigin: [
+      'https://*.render.com',
+      'https://*.railway.app',
       'https://*.replit.app',
       'https://*.replit.dev',
       'https://localhost:5000'
     ],
     rateLimiting: true,
-    sessionTimeout: 30 * 60 * 1000, // 30 minutes
+    sessionTimeout: 3600,
     encryptionLevel: 'military-grade'
   },
-
-  performance: {
-    compression: true,
-    caching: true,
-    optimizedBuilds: true,
-    minification: true
-  },
-
-  deployment: {
-    platform: 'replit',
-    autoScale: true,
-    healthChecks: true,
-    errorReporting: true
-  },
-
   features: {
-    queenAccess: true,
-    publicAI: true,
     documentGeneration: true,
     biometricSecurity: true,
-    web3Integration: true
+    web3Integration: false
   }
 };
 
