@@ -60,11 +60,11 @@ npm install --legacy-peer-deps --no-audit
 echo "✅ Client dependencies installed"
 echo ""
 
-echo "📦 Installing Vite..."
-npm install --save-dev vite@latest @vitejs/plugin-react@latest typescript || {
-  echo "⚠️ Warning: Vite install had issues, but continuing..."
+echo "📦 Installing build tools..."
+npm install --save-dev vite@latest @vitejs/plugin-react@latest typescript terser --legacy-peer-deps || {
+  echo "⚠️ Warning: Build tools install had issues, but continuing..."
 }
-echo "✅ Vite ready"
+echo "✅ Build tools ready"
 echo ""
 
 echo "🧹 Clearing Vite cache..."
@@ -72,14 +72,12 @@ rm -rf node_modules/.vite || true
 echo "✅ Cache cleared"
 echo ""
 
-echo "🏗️  Running client build..."
-echo "Build command: npm run build"
+echo "🏗️ Building client application..."
 npm run build || {
   echo "❌ Client build failed"
-  echo "Checking if dist directory exists..."
-  ls -la . || true
   exit 1
 }
+echo "✅ Client build complete"
 echo ""
 
 echo "🔍 Verifying client build..."
