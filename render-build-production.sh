@@ -15,9 +15,10 @@ handle_error() {
 
 trap 'handle_error $LINENO' ERR
 
-# CRITICAL: Production environment setup
+# CRITICAL: Production environment setup - FORCE PRODUCTION MODE
 export NODE_ENV=production
 export RENDER=true
+export RENDER_SERVICE_ID=true
 export NODE_VERSION=20.19.1
 export NPM_VERSION=10.2.3
 export NPM_CONFIG_PRODUCTION=false
@@ -106,9 +107,10 @@ npm install --legacy-peer-deps --save-dev \
   @tanstack/react-query@^5.28.0
 
 echo "🔨 Building client with TypeScript skip lib check..."
-NODE_ENV=production \
-CI=false \
-TSC_COMPILE_ON_ERROR=true \
+export NODE_ENV=production
+export VITE_APP_ENV=production
+export CI=false
+export TSC_COMPILE_ON_ERROR=true
 npm run build -- --mode production
 
 # Check if build succeeded
