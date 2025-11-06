@@ -3,6 +3,8 @@
 
 import { OpenAI } from 'openai';
 import { storage } from '../storage.js';
+import { AICompletion, AIStreamResponse } from '../interfaces/ai';
+import { ChatCompletion } from 'openai/resources';
 
 // System configuration - Auto-detect from environment
 const SYSTEM_CONFIG = {
@@ -156,18 +158,19 @@ export class UltraQueenAISimple {
           temperature: options.temperature || 0.7,
           max_tokens: options.maxTokens || 2000,
           stream: options.stream || false
-        });
+        }) as AICompletion;
 
         if (options.stream) {
-          return completion;
+          return completion as AIStreamResponse;
         }
 
+        const chatCompletion = completion as ChatCompletion;
         return {
           success: true,
           provider: 'openai',
-          content: completion.choices[0].message.content,
+          content: chatCompletion.choices[0].message.content,
           model: 'gpt-4-turbo-preview',
-          usage: completion.usage
+          usage: chatCompletion.usage
         };
       } catch (error) {
         console.error('[UltraQueenAI] OpenAI error:', error);
