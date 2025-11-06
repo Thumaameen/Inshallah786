@@ -97,26 +97,36 @@ npm install --save-dev \
     react-router-dom@^6.20.0 \
     @tanstack/react-query@^5.28.0
 
-# Install Vite globally and locally
-echo "📦 Installing Vite..."
-npm install -g vite
-npm install --save-dev vite@latest
+# Ensure all build dependencies are installed properly
+echo "📦 Installing build dependencies..."
+npm install --save-dev vite@latest @vitejs/plugin-react@latest typescript@latest
+npm install --save-dev @types/node@latest @babel/core@latest @babel/preset-react@latest
 
 # Create minimal vite config if it doesn't exist
-if [ ! -f "vite.config.ts" ]; then
-    echo "Creating minimal vite.config.ts..."
-    cat > vite.config.ts << 'EOL'
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+if [ ! -f "vite.config.js" ]; then
+    echo "Creating minimal vite.config.js..."
+    cat > vite.config.js << 'EOL'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import path from 'path';
 
 export default defineConfig({
     plugins: [react()],
+    resolve: {
+        alias: {
+            '@': path.resolve(__dirname, './src')
+        }
+    },
     build: {
         outDir: 'dist',
         sourcemap: false,
-        minify: true
+        minify: true,
+        target: 'es2020'
+    },
+    optimizeDeps: {
+        include: ['react', 'react-dom']
     }
-})
+});
 EOL
 fi
 
@@ -127,23 +137,33 @@ export NODE_ENV=production
 export CI=false
 export VITE_APP_ENV=production
 
-# Run Vite build with fallback options
-if [ -f "node_modules/.bin/vite" ]; then
-    echo "Building with local Vite..."
-    NODE_ENV=production ./node_modules/.bin/vite build --mode production || {
-        echo "⚠️ Local Vite build failed, trying with global Vite..."
-        NODE_ENV=production vite build --mode production || {
-            echo "⚠️ Global Vite build failed, trying with npx..."
-            NODE_ENV=production npx vite build --mode production
-        }
-    }
-else
-    echo "No local Vite found, trying with global..."
-    NODE_ENV=production vite build --mode production || {
-        echo "⚠️ Global Vite build failed, trying with npx..."
-        NODE_ENV=production npx vite build --mode production
-    }
+# Run Vite build with proper environment setup
+echo "🏗️ Running production build..."
+export NODE_ENV=production
+export VITE_MODE=production
+export VITE_APP_ENV=production
+
+# Ensure path is properly set
+export PATH="$PWD/node_modules/.bin:$PATH"
+
+# Clean the dist directory
+rm -rf dist
+
+# Run build with proper Node.js options
+NODE_OPTIONS="--max-old-space-size=4096" npx vite build --mode production
+
+# Verify the build
+if [ ! -d "dist" ]; then
+    echo "❌ Build failed - dist directory not found"
+    exit 1
 fi
+
+if [ ! -f "dist/index.html" ]; then
+    echo "❌ Build failed - index.html not found"
+    exit 1
+fi
+
+echo "✅ Client build successful"
 
 # Verify client build
 if [ ! -f "dist/index.html" ]; then
