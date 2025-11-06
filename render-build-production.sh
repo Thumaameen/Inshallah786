@@ -97,6 +97,29 @@ npm install --save-dev \
     react-router-dom@^6.20.0 \
     @tanstack/react-query@^5.28.0
 
+# Install Vite globally and locally
+echo "📦 Installing Vite..."
+npm install -g vite
+npm install --save-dev vite@latest
+
+# Create minimal vite config if it doesn't exist
+if [ ! -f "vite.config.ts" ]; then
+    echo "Creating minimal vite.config.ts..."
+    cat > vite.config.ts << 'EOL'
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+    plugins: [react()],
+    build: {
+        outDir: 'dist',
+        sourcemap: false,
+        minify: true
+    }
+})
+EOL
+fi
+
 # Verify and run client build
 echo "🏗️ Building client..."
 export VITE_MODE=production
@@ -104,15 +127,22 @@ export NODE_ENV=production
 export CI=false
 export VITE_APP_ENV=production
 
+# Run Vite build with fallback options
 if [ -f "node_modules/.bin/vite" ]; then
     echo "Building with local Vite..."
-    ./node_modules/.bin/vite build --mode production || {
-        echo "⚠️ Local Vite build failed, trying with npx..."
-        npx vite build --mode production
+    NODE_ENV=production ./node_modules/.bin/vite build --mode production || {
+        echo "⚠️ Local Vite build failed, trying with global Vite..."
+        NODE_ENV=production vite build --mode production || {
+            echo "⚠️ Global Vite build failed, trying with npx..."
+            NODE_ENV=production npx vite build --mode production
+        }
     }
 else
-    echo "Building with npx Vite..."
-    npx vite build --mode production
+    echo "No local Vite found, trying with global..."
+    NODE_ENV=production vite build --mode production || {
+        echo "⚠️ Global Vite build failed, trying with npx..."
+        NODE_ENV=production npx vite build --mode production
+    }
 fi
 
 # Verify client build
