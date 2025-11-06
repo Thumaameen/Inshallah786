@@ -22,12 +22,16 @@ export NODE_VERSION=20.19.1
 export NPM_VERSION=10.2.3
 export NPM_CONFIG_PRODUCTION=false
 
-# Enforce Node.js version
-if [ "$(node -v)" != "v$NODE_VERSION" ]; then
-    echo "❌ Error: Required Node.js version v$NODE_VERSION not found"
+# Verify Node.js version (allow 20.x.x versions)
+CURRENT_NODE_MAJOR=$(node -v | cut -d'.' -f1 | sed 's/v//')
+REQUIRED_NODE_MAJOR=$(echo $NODE_VERSION | cut -d'.' -f1)
+
+if [ "$CURRENT_NODE_MAJOR" != "$REQUIRED_NODE_MAJOR" ]; then
+    echo "❌ Error: Required Node.js major version $REQUIRED_NODE_MAJOR not found"
     echo "Current version: $(node -v)"
     exit 1
 fi
+echo "✅ Node.js version compatible: $(node -v)"
 
 echo "🔍 Environment Check:"
 echo "  NODE_ENV=$NODE_ENV"
