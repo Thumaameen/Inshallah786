@@ -14,30 +14,25 @@ handle_error() {
 
 trap 'handle_error $LINENO' ERR
 
-# Force Node.js version
+# Force Node.js and npm versions through environment
 export NODE_VERSION=20.19.1
 export NPM_VERSION=10.2.3
 
-# Install correct Node.js version
-echo "Installing Node.js $NODE_VERSION..."
-export NVM_DIR="/usr/local/share/nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-
-# Retry nvm installation if not available
-if ! command -v nvm &> /dev/null; then
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
-    export NVM_DIR="$HOME/.nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+# Verify Node.js version
+if [ "$(node -v)" != "v$NODE_VERSION" ]; then
+    echo "❌ Error: Wrong Node.js version. Expected v$NODE_VERSION, got $(node -v)"
+    exit 1
 fi
 
-nvm install $NODE_VERSION || {
-    echo "Failed to install Node.js $NODE_VERSION using nvm"
+# Install correct npm version
+echo "Installing npm $NPM_VERSION..."
+npm install -g npm@$NPM_VERSION
+
+# Verify npm version
+if [ "$(npm -v)" != "$NPM_VERSION" ]; then
+    echo "❌ Error: Wrong npm version. Expected $NPM_VERSION, got $(npm -v)"
     exit 1
-}
-nvm use $NODE_VERSION || {
-    echo "Failed to use Node.js $NODE_VERSION"
-    exit 1
+fi
 }
 
 # Install global dependencies
