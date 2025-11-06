@@ -10,20 +10,20 @@ const { EventEmitter } = require('events');
 class MonitoringWorker extends EventEmitter {
     constructor() {
         super();
+        // Get the web service URL from environment
+        const webServiceUrl = process.env.RENDER_EXTERNAL_URL ||
+                            process.env.TARGET_SERVICE_URL ||
+                            'https://dha-thisone.onrender.com';
+        this.targetUrl = webServiceUrl;
+        this.monitorInterval = parseInt(process.env.MONITOR_INTERVAL || '60000', 10);
         this.isRunning = false;
-        this.monitorInterval = parseInt(process.env.MONITOR_INTERVAL || '60000');
-        this.targetService = process.env.TARGET_SERVICE || 'dha-digital-services';
-        // Updated to check RENDER_SERVICE_URL first, then RENDER_EXTERNAL_URL, with a fallback to localhost:10000
-        const RENDER_EXTERNAL_URL = process.env.RENDER_EXTERNAL_URL || process.env.RENDER_SERVICE_URL || 'http://localhost:10000';
-        // Use RENDER_EXTERNAL_URL if available, otherwise construct from service name
-        this.serviceUrl = RENDER_EXTERNAL_URL || 'https://ultra-queen-ai-raeesa.onrender.com';
+        console.log(`🎯 Monitoring worker targeting: ${this.targetUrl}`);
     }
 
     async start() {
         this.isRunning = true;
         console.log('🔍 DHA Monitoring Worker Started');
-        console.log(`   Target: ${this.targetService}`);
-        console.log(`   URL: ${this.serviceUrl}`);
+        console.log(`   URL: ${this.targetUrl}`);
         console.log(`   Interval: ${this.monitorInterval}ms`);
 
         // Run monitoring checks periodically
@@ -38,21 +38,49 @@ class MonitoringWorker extends EventEmitter {
     }
 
     async performHealthCheck() {
-        try {
-            const response = await fetch(`${this.serviceUrl}/api/health`);
-            const data = await response.json();
+        const maxRetries = 3;
+        let lastError;
 
-            if (data.status === 'healthy') {
-                console.log(`✅ Health check passed - ${new Date().toISOString()}`);
-                this.emit('health-check-success', data);
-            } else {
-                console.warn(`⚠️ Health check warning - ${new Date().toISOString()}`);
-                this.emit('health-check-warning', data);
+        for (let attempt = 1; attempt <= maxRetries; attempt++) {
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+                const response = await fetch(`${this.targetUrl}/api/health`, {
+                    method: 'GET',
+                    signal: controller.signal,
+                    headers: {
+                        'User-Agent': 'Render-Monitoring-Worker/1.0'
+                    }
+                });
+
+                clearTimeout(timeoutId);
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log(`✅ Health check passed - ${new Date().toISOString()}`, {
+                        status: data.status,
+                        attempt: attempt
+                    });
+                    this.emit('health-check-success', data);
+                    return true;
+                } else {
+                    console.warn(`⚠️ Health check returned status ${response.status} (attempt ${attempt}/${maxRetries})`);
+                }
+            } catch (error) {
+                lastError = error;
+                console.warn(`⚠️ Health check attempt ${attempt}/${maxRetries} failed: ${error.message}`);
+
+                if (attempt < maxRetries) {
+                    // Wait before retry with exponential backoff
+                    await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+                }
             }
-        } catch (error) {
-            console.error(`❌ Health check failed - ${new Date().toISOString()}:`, error.message);
-            this.emit('health-check-failure', error);
         }
+
+        console.error(`❌ All health check attempts failed. Last error:`, lastError?.message);
+        this.emit('health-check-failure', lastError);
+        return false;
     }
 
     shutdown() {
