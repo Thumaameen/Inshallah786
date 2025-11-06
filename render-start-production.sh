@@ -16,8 +16,10 @@ if [ ! -f "dist/public/index.html" ]; then
   exit 1
 fi
 
-# Set production environment
+# Set production environment - FORCE PRODUCTION MODE
 export NODE_ENV=production
+export RENDER=true
+export RENDER_SERVICE_ID=true
 export NODE_OPTIONS="--max-old-space-size=4096 --experimental-modules --es-module-specifier-resolution=node"
 export PORT=${PORT:-10000}
 export HOST=0.0.0.0

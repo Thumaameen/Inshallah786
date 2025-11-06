@@ -178,16 +178,19 @@ export const environment: Record<string, string | number | boolean> = {
 export function isDevelopment(): boolean {
   const isRender = !!process.env.RENDER || !!process.env.RENDER_SERVICE_ID;
   const isRailway = !!process.env.RAILWAY_ENVIRONMENT;
-  const isReplit = !!process.env.REPL_ID;
   
   // Force production mode on Render and Railway
   if (isRender || isRailway) {
-    process.env.NODE_ENV = 'production'; // Ensure NODE_ENV is set
-    return false; // Not development
+    process.env.NODE_ENV = 'production';
+    return false;
   }
   
-  // Replit runs in development mode for testing
-  return environment.NODE_ENV !== 'production' || isReplit;
+  // Check NODE_ENV first
+  if (process.env.NODE_ENV === 'production') {
+    return false;
+  }
+  
+  return process.env.NODE_ENV !== 'production';
 }
 
 export function isProduction(): boolean {

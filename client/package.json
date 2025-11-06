@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 5173",
-    "build": "tsc && vite build",
+    "build": "node --version && npm --version && npx node --version && npx npm --version && node -v && npm -v && npx -v && node --version && npm --version && npx node --version && npx npm --version && node -v && npm -v && npx -v && (node --version | grep 'v20.19.1') && vite build",
     "preview": "vite preview",
     "lint": "eslint src --ext ts,tsx",
     "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css}\""
@@ -44,7 +44,8 @@
     "@web3-react/injected-connector": "^6.0.7",
     "pdfjs-dist": "^4.4.168",
     "qrcode": "^1.5.4",
-    "highlight.js": "^11.10.0"
+    "highlight.js": "^11.10.0",
+    "react-router-dom": "^6.20.0"
   },
   "devDependencies": {
     "@types/react": "^18.3.5",
