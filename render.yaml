@@ -16,6 +16,10 @@ services:
         value: "20.19.1"
       - key: NODE_ENV
         value: "production"
+      - key: NPM_CONFIG_PRODUCTION
+        value: "false"
+      - key: CI
+        value: "true"
     healthCheckPath: /api/health
     autoDeploy: true
     healthCheckTimeout: 180
