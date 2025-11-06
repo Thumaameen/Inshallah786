@@ -21,11 +21,25 @@ export NPM_VERSION=10.2.3
 
 # Install correct Node.js version
 echo "Installing Node.js $NODE_VERSION..."
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
-export NVM_DIR="$HOME/.nvm"
+export NVM_DIR="/usr/local/share/nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-nvm install $NODE_VERSION
-nvm use $NODE_VERSION
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+# Retry nvm installation if not available
+if ! command -v nvm &> /dev/null; then
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+fi
+
+nvm install $NODE_VERSION || {
+    echo "Failed to install Node.js $NODE_VERSION using nvm"
+    exit 1
+}
+nvm use $NODE_VERSION || {
+    echo "Failed to use Node.js $NODE_VERSION"
+    exit 1
+}
 
 # Install correct npm version
 npm install -g npm@$NPM_VERSION
