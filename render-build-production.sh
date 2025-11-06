@@ -72,14 +72,13 @@ rm -rf node_modules/.vite || true
 echo "✅ Cache cleared"
 echo ""
 
-echo "🏗️  Running client build..."
-echo "Build command: npm run build"
-npm run build || {
-  echo "❌ Client build failed"
-  echo "Checking if dist directory exists..."
-  ls -la . || true
-  exit 1
-}
+# Build client with optimizations
+echo "📦 Installing terser for production builds..."
+cd client
+npm install --save-dev terser --legacy-peer-deps
+echo "📦 Building client..."
+npm run build
+cd ..
 echo ""
 
 echo "🔍 Verifying client build..."
