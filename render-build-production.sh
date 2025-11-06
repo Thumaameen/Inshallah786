@@ -83,9 +83,11 @@ cd client || {
 echo "📦 Installing client dependencies..."
 npm install --legacy-peer-deps --no-audit
 
-# Install specific versions of critical dependencies
-echo "📦 Installing critical dependencies..."
-npm install --save @radix-ui/react-scroll-area@latest
+# Install all dependencies in the correct order
+echo "📦 Installing production dependencies..."
+npm install --save react@latest react-dom@latest @radix-ui/react-scroll-area@latest
+
+echo "📦 Installing development dependencies..."
 npm install --save-dev \
     vite@latest \
     @vitejs/plugin-react@latest \
@@ -93,14 +95,17 @@ npm install --save-dev \
     @types/react@^18.2.0 \
     @types/react-dom@^18.2.0 \
     @types/node@latest \
+    @babel/core@latest \
+    @babel/preset-react@latest \
     @babel/plugin-transform-react-jsx@latest \
     react-router-dom@^6.20.0 \
     @tanstack/react-query@^5.28.0
 
-# Ensure all build dependencies are installed properly
-echo "📦 Installing build dependencies..."
-npm install --save-dev vite@latest @vitejs/plugin-react@latest typescript@latest
-npm install --save-dev @types/node@latest @babel/core@latest @babel/preset-react@latest
+# Verify Vite installation
+if ! [ -f "node_modules/vite/bin/vite.js" ]; then
+    echo "⚠️ Vite not found in node_modules, installing explicitly..."
+    npm install --save-dev vite@latest
+fi
 
 # Create minimal vite config if it doesn't exist
 if [ ! -f "vite.config.js" ]; then
@@ -143,14 +148,15 @@ export NODE_ENV=production
 export VITE_MODE=production
 export VITE_APP_ENV=production
 
-# Ensure path is properly set
-export PATH="$PWD/node_modules/.bin:$PATH"
-
 # Clean the dist directory
 rm -rf dist
 
+# Ensure Vite is executable
+chmod +x node_modules/vite/bin/vite.js
+
 # Run build with proper Node.js options
-NODE_OPTIONS="--max-old-space-size=4096" npx vite build --mode production
+echo "Building with Vite from node_modules..."
+NODE_OPTIONS="--max-old-space-size=4096" node node_modules/vite/bin/vite.js build --mode production
 
 # Verify the build
 if [ ! -d "dist" ]; then
