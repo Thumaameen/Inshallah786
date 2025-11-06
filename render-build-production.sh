@@ -158,7 +158,7 @@ npm install --save-dev @vitejs/plugin-react@latest
 
 # Run build with proper Node.js options
 echo "Building with Vite..."
-NODE_OPTIONS="--max-old-space-size=4096" npx vite build --mode production --force
+NODE_OPTIONS="--max-old-space-size=4096 --experimental-modules" npx --no-install vite build --mode production
 
 # Verify the build
 if [ ! -d "dist" ]; then
