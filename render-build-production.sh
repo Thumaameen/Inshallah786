@@ -15,20 +15,52 @@ handle_error() {
 
 trap 'handle_error $LINENO' ERR
 
+# Force Node.js version
+export NODE_VERSION=20.19.1
+export NPM_VERSION=10.2.3
+
+# Install correct Node.js version
+echo "Installing Node.js $NODE_VERSION..."
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+nvm install $NODE_VERSION
+nvm use $NODE_VERSION
+
+# Install correct npm version
+npm install -g npm@$NPM_VERSION
+
 # CRITICAL: Production environment setup - FORCE PRODUCTION MODE
 
-# Check Node.js version
-required_node="20.19.1"
-current_node=$(node -v | cut -d "v" -f2)
-if [ "$current_node" != "$required_node" ]; then
-  echo "❌ Wrong Node.js version. Required: $required_node, Current: $current_node"
-  echo "Installing correct version..."
-  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
-  export NVM_DIR="$HOME/.nvm"
-  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-  nvm install $required_node
-  nvm use $required_node
-fi
+# Set up environment variables
+export NODE_ENV=production
+export NPM_VERSION=10.2.3
+export NODE_VERSION=20.19.1
+export VITE_MODE=production
+
+# Install correct npm version
+npm install -g npm@$NPM_VERSION
+
+# Verify Node and NPM versions
+echo "NODE_VERSION: $NODE_VERSION"
+echo "NODE_ENV: $NODE_ENV"
+echo "Current Node: $(node -v)"
+echo "Current NPM: $(npm -v)"
+
+# Install dependencies for root project
+npm ci
+
+# Navigate to client directory and install dependencies
+cd client
+npm ci --legacy-peer-deps
+npm install @radix-ui/react-scroll-area@latest --save --legacy-peer-deps
+
+# Build client
+echo "Building client..."
+NODE_ENV=production npm run build
+
+# Return to root
+cd ..
 export NODE_ENV=production
 export RENDER=true
 export RENDER_SERVICE_ID=true
@@ -93,9 +125,16 @@ echo "✅ Node.js available and validated"
 echo "🧹 Cleaning previous builds..."
 rm -rf dist client/dist
 
-# Install dependencies
+# Install dependencies with legacy peer deps
 echo "📦 Installing dependencies..."
-npm install --legacy-peer-deps --no-audit
+npm install --legacy-peer-deps
+
+# Install client dependencies
+echo "📦 Installing client dependencies..."
+cd client
+npm install --legacy-peer-deps @radix-ui/react-scroll-area
+npm install --save-dev vite@latest @vitejs/plugin-react typescript @types/react @types/react-dom @types/node
+cd .. --legacy-peer-deps --no-audit
 export NODE_PATH="$(npm root -g)"
 
 echo "✅ Root dependencies installed"
