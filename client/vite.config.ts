@@ -48,9 +48,19 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
       target: 'esnext',
       rollupOptions: {
         output: {
-          manualChunks: {
-            'react-vendor': ['react', 'react-dom'],
-            'core-vendor': ['@tanstack/react-query']
+          manualChunks: (id) => {
+            if (id.includes('node_modules')) {
+              if (id.includes('react') || id.includes('react-dom')) {
+                return 'react-vendor';
+              }
+              if (id.includes('@tanstack/react-query')) {
+                return 'query-vendor';
+              }
+              if (id.includes('@radix-ui')) {
+                return 'ui-vendor';
+              }
+              return 'vendor';
+            }
           },
         },
         onwarn(warning, warn) {
@@ -58,12 +68,16 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
               warning.code === 'CIRCULAR_DEPENDENCY' ||
               warning.code === 'THIS_IS_UNDEFINED') return;
           warn(warning);
-        }
+        },
+        maxParallelFileOps: 2
       },
       chunkSizeWarningLimit: 2000,
       cssCodeSplit: true,
       assetsInlineLimit: 4096,
-      reportCompressedSize: false
+      reportCompressedSize: false,
+      commonjsOptions: {
+        transformMixedEsModules: true
+      }
     },
     server: {
       host: '0.0.0.0',
