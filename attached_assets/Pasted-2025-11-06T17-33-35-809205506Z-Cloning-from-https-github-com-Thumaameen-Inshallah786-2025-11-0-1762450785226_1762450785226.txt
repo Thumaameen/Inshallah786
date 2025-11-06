@@ -1,0 +1,129 @@
+2025-11-06T17:33:35.809205506Z ==> Cloning from https://github.com/Thumaameen/Inshallah786
+2025-11-06T17:34:06.880200994Z ==> Checking out commit 496f35754508398c121d0a70d4de37c8e95be0ab in branch main
+2025-11-06T17:34:09.212087293Z #1 [internal] load build definition from Dockerfile
+2025-11-06T17:34:09.212155395Z #1 transferring dockerfile: 631B done
+2025-11-06T17:34:09.212159875Z #1 DONE 0.0s
+2025-11-06T17:34:09.212162835Z 
+2025-11-06T17:34:09.212166565Z #2 [internal] load metadata for docker.io/library/node:20.19.1-slim
+2025-11-06T17:34:10.157108111Z #2 ...
+2025-11-06T17:34:10.157135641Z 
+2025-11-06T17:34:10.157140041Z #3 [auth] library/node:pull render-prod/docker-mirror-repository/library/node:pull token for us-west1-docker.pkg.dev
+2025-11-06T17:34:10.157145221Z #3 DONE 0.0s
+2025-11-06T17:34:10.307430093Z 
+2025-11-06T17:34:10.307472304Z #2 [internal] load metadata for docker.io/library/node:20.19.1-slim
+2025-11-06T17:34:14.932004052Z #2 DONE 5.9s
+2025-11-06T17:34:15.066632728Z 
+2025-11-06T17:34:15.066669548Z #4 [internal] load .dockerignore
+2025-11-06T17:34:15.066677928Z #4 transferring context: 2B done
+2025-11-06T17:34:15.066684009Z #4 DONE 0.0s
+2025-11-06T17:34:15.066689799Z 
+2025-11-06T17:34:15.066696439Z #5 [1/9] FROM docker.io/library/node:20.19.1-slim@sha256:83e53269616ca1b22cf7533e5db4e2f1a0c24a8e818b21691d6d4a69ec9e2c6d
+2025-11-06T17:34:15.066702319Z #5 resolve docker.io/library/node:20.19.1-slim@sha256:83e53269616ca1b22cf7533e5db4e2f1a0c24a8e818b21691d6d4a69ec9e2c6d done
+2025-11-06T17:34:21.585538268Z #5 ...
+2025-11-06T17:34:21.585569439Z 
+2025-11-06T17:34:21.585575609Z #6 [internal] load build context
+2025-11-06T17:34:21.585581579Z #6 transferring context: 985.17MB 6.5s done
+2025-11-06T17:34:21.585586629Z #6 DONE 6.6s
+2025-11-06T17:34:21.585591719Z 
+2025-11-06T17:34:21.585597919Z #5 [1/9] FROM docker.io/library/node:20.19.1-slim@sha256:83e53269616ca1b22cf7533e5db4e2f1a0c24a8e818b21691d6d4a69ec9e2c6d
+2025-11-06T17:34:21.734966124Z #5 extracting sha256:254e724d77862dc53abbd3bf0e27f9d2f64293909cdd3d0aad6a8fe5a6680659
+2025-11-06T17:34:23.08589332Z #5 extracting sha256:254e724d77862dc53abbd3bf0e27f9d2f64293909cdd3d0aad6a8fe5a6680659 1.3s done
+2025-11-06T17:34:23.08592491Z #5 extracting sha256:3c889a5e6143de08865ecca8a2a7615b7050daa6f9fa502ce48cf1a5c82e5988
+2025-11-06T17:34:24.135533786Z #5 extracting sha256:3c889a5e6143de08865ecca8a2a7615b7050daa6f9fa502ce48cf1a5c82e5988 1.0s done
+2025-11-06T17:34:25.867780422Z #5 extracting sha256:bcdabde5c430cba279ae277ea741cd8a685e405683c3fdea29abe8344677c9ef
+2025-11-06T17:34:27.573734806Z #5 extracting sha256:bcdabde5c430cba279ae277ea741cd8a685e405683c3fdea29abe8344677c9ef 1.9s done
+2025-11-06T17:34:27.573765137Z #5 DONE 12.6s
+2025-11-06T17:34:27.679554729Z 
+2025-11-06T17:34:27.679589989Z #5 [1/9] FROM docker.io/library/node:20.19.1-slim@sha256:83e53269616ca1b22cf7533e5db4e2f1a0c24a8e818b21691d6d4a69ec9e2c6d
+2025-11-06T17:34:27.679596429Z #5 extracting sha256:e1c750a98ab3c150e621f478236977983066d6c7ab1965d7ecf14c8397daf560 0.1s done
+2025-11-06T17:34:27.67960183Z #5 extracting sha256:322ae2fb7527057ada622ab2f3ab6d57f74cc0210c46112ddeec03f93197112f done
+2025-11-06T17:34:27.67960682Z #5 DONE 12.7s
+2025-11-06T17:34:27.67961249Z 
+2025-11-06T17:34:27.67961828Z #7 [2/9] WORKDIR /app
+2025-11-06T17:34:27.67962331Z #7 DONE 0.0s
+2025-11-06T17:34:27.67962796Z 
+2025-11-06T17:34:27.67963509Z #8 [3/9] COPY package*.json ./
+2025-11-06T17:34:27.67964026Z #8 DONE 0.0s
+2025-11-06T17:34:27.845983939Z 
+2025-11-06T17:34:27.846019009Z #9 [4/9] COPY client/package*.json ./client/
+2025-11-06T17:34:27.846025419Z #9 DONE 0.0s
+2025-11-06T17:34:27.846030489Z 
+2025-11-06T17:34:27.8460357Z #10 [5/9] RUN npm install --legacy-peer-deps
+2025-11-06T17:34:31.699780089Z #10 4.005 npm warn deprecated multer@1.4.5-lts.2: Multer 1.x is impacted by a number of vulnerabilities, which have been patched in 2.x. You should upgrade to the latest 2.x version.
+2025-11-06T17:34:32.851525123Z #10 5.156 npm warn deprecated @esbuild-kit/core-utils@3.3.2: Merged into tsx: https://tsx.is
+2025-11-06T17:34:33.038671279Z #10 5.157 npm warn deprecated @esbuild-kit/esm-loader@2.6.5: Merged into tsx: https://tsx.is
+2025-11-06T17:34:33.03870334Z #10 5.193 npm warn deprecated node-domexception@1.0.0: Use your platform's native DOMException instead
+2025-11-06T17:34:38.105148146Z #10 10.41 
+2025-11-06T17:34:38.105180897Z #10 10.41 added 406 packages, and audited 407 packages in 10s
+2025-11-06T17:34:38.105186737Z #10 10.41 
+2025-11-06T17:34:38.105192787Z #10 10.41 76 packages are looking for funding
+2025-11-06T17:34:38.300890292Z #10 10.41   run `npm fund` for details
+2025-11-06T17:34:38.300922112Z #10 10.45 
+2025-11-06T17:34:38.300927482Z #10 10.45 4 moderate severity vulnerabilities
+2025-11-06T17:34:38.300932452Z #10 10.45 
+2025-11-06T17:34:38.300937772Z #10 10.45 To address all issues (including breaking changes), run:
+2025-11-06T17:34:38.300942623Z #10 10.45   npm audit fix --force
+2025-11-06T17:34:38.300947443Z #10 10.45 
+2025-11-06T17:34:38.300952153Z #10 10.45 Run `npm audit` for details.
+2025-11-06T17:34:38.300957633Z #10 10.46 npm notice
+2025-11-06T17:34:38.300962533Z #10 10.46 npm notice New major version of npm available! 10.8.2 -> 11.6.2
+2025-11-06T17:34:38.300967483Z #10 10.46 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.6.2
+2025-11-06T17:34:38.300972853Z #10 10.46 npm notice To update run: npm install -g npm@11.6.2
+2025-11-06T17:34:38.300978173Z #10 10.46 npm notice
+2025-11-06T17:34:38.351983893Z #10 DONE 10.7s
+2025-11-06T17:34:38.503693366Z 
+2025-11-06T17:34:38.503728486Z #11 [6/9] RUN cd client && npm install --legacy-peer-deps && cd ..
+2025-11-06T17:34:51.253786651Z #11 12.90 
+2025-11-06T17:34:51.253830482Z #11 12.90 added 476 packages, and audited 477 packages in 12s
+2025-11-06T17:34:51.406605527Z #11 12.90 
+2025-11-06T17:34:51.406636627Z #11 12.90 89 packages are looking for funding
+2025-11-06T17:34:51.406642807Z #11 12.90   run `npm fund` for details
+2025-11-06T17:34:51.406648237Z #11 12.90 
+2025-11-06T17:34:51.406653487Z #11 12.90 found 0 vulnerabilities
+2025-11-06T17:34:52.117304259Z #11 DONE 13.8s
+2025-11-06T17:34:52.268601885Z 
+2025-11-06T17:34:52.268634086Z #12 [7/9] COPY . .
+2025-11-06T17:34:55.275859224Z #12 DONE 3.2s
+2025-11-06T17:34:55.427862495Z 
+2025-11-06T17:34:55.427896755Z #13 [8/9] RUN cd client && npm run build && cd ..
+2025-11-06T17:34:55.5897932Z #13 0.312 
+2025-11-06T17:34:55.58983104Z #13 0.312 > dha-digital-services-client@2.0.0 build
+2025-11-06T17:34:55.58983705Z #13 0.312 > node -v && npm -v && vite build --mode production
+2025-11-06T17:34:55.589842361Z #13 0.312 
+2025-11-06T17:34:55.752131023Z #13 0.324 v20.19.1
+2025-11-06T17:34:55.798542392Z #13 0.521 10.8.2
+2025-11-06T17:34:56.293035358Z #13 1.016 vite v7.2.1 building client environment for production...
+2025-11-06T17:34:56.772274875Z #13 1.495 transforming...
+2025-11-06T17:35:11.659202093Z #13 16.38 ✓ 2834 modules transformed.
+2025-11-06T17:35:12.580227341Z #13 17.30 ✗ Build failed in 16.25s
+2025-11-06T17:35:12.730990729Z #13 17.30 error during build:
+2025-11-06T17:35:12.73102574Z #13 17.30 [vite:terser] terser not found. Since Vite v3, terser has become an optional dependency. You need to install it.
+2025-11-06T17:35:12.73103222Z #13 17.30     at loadTerserPath (file:///app/client/node_modules/vite/dist/node/chunks/config.js:33583:8)
+2025-11-06T17:35:12.73103748Z #13 17.30     at Object.renderChunk (file:///app/client/node_modules/vite/dist/node/chunks/config.js:33612:39)
+2025-11-06T17:35:12.73106204Z #13 17.30     at Object.handler (file:///app/client/node_modules/vite/dist/node/chunks/config.js:34355:13)
+2025-11-06T17:35:12.73106618Z #13 17.30     at file:///app/client/node_modules/rollup/dist/es/shared/node-entry.js:22426:40
+2025-11-06T17:35:12.73106938Z #13 17.30     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2025-11-06T17:35:12.760473037Z #13 ERROR: process "/bin/sh -c cd client && npm run build && cd .." did not complete successfully: exit code: 1
+2025-11-06T17:35:12.773147776Z ------
+2025-11-06T17:35:12.773182357Z  > [8/9] RUN cd client && npm run build && cd ..:
+2025-11-06T17:35:12.773190707Z 1.495 transforming...
+2025-11-06T17:35:12.773197917Z 16.38 ✓ 2834 modules transformed.
+2025-11-06T17:35:12.773204387Z 17.30 ✗ Build failed in 16.25s
+2025-11-06T17:35:12.773210557Z 17.30 error during build:
+2025-11-06T17:35:12.773216937Z 17.30 [vite:terser] terser not found. Since Vite v3, terser has become an optional dependency. You need to install it.
+2025-11-06T17:35:12.773224237Z 17.30     at loadTerserPath (file:///app/client/node_modules/vite/dist/node/chunks/config.js:33583:8)
+2025-11-06T17:35:12.773231718Z 17.30     at Object.renderChunk (file:///app/client/node_modules/vite/dist/node/chunks/config.js:33612:39)
+2025-11-06T17:35:12.773237938Z 17.30     at Object.handler (file:///app/client/node_modules/vite/dist/node/chunks/config.js:34355:13)
+2025-11-06T17:35:12.773244628Z 17.30     at file:///app/client/node_modules/rollup/dist/es/shared/node-entry.js:22426:40
+2025-11-06T17:35:12.773250908Z 17.30     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2025-11-06T17:35:12.773257328Z ------
+2025-11-06T17:35:12.775044033Z Dockerfile:17
+2025-11-06T17:35:12.775066363Z --------------------
+2025-11-06T17:35:12.775072404Z   15 |     
+2025-11-06T17:35:12.775078114Z   16 |     # Build client and server
+2025-11-06T17:35:12.775083704Z   17 | >>> RUN cd client && npm run build && cd ..
+2025-11-06T17:35:12.775089084Z   18 |     RUN npx tsc -p tsconfig.production.json
+2025-11-06T17:35:12.775094444Z   19 |     
+2025-11-06T17:35:12.775099754Z --------------------
+2025-11-06T17:35:12.775105254Z error: failed to solve: process "/bin/sh -c cd client && npm run build && cd .." did not complete successfully: exit code: 1
+2025-11-06T17:35:12.816027837Z error: exit status 1
