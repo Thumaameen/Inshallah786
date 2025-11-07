@@ -1,7 +1,7 @@
 /**
  * 🏛️ Production configuration for DHA System
  */
-import { ProductionConfig } from './types';
+import { ProductionConfig } from './types.js';
 
 export const productionConfig: ProductionConfig = {
   monitoring: {

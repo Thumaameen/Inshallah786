@@ -1,6 +1,6 @@
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
-import { env } from '../config/environment';
+import { env } from '../config/environment.js';
 
 // Initialize connection pool only if DATABASE_URL is configured
 let pool: Pool | null = null;

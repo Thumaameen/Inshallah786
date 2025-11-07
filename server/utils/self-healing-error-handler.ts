@@ -155,7 +155,7 @@ export class SelfHealingErrorHandler extends EventEmitter {
     }
   }
 
-  private async logErrorCorrection(correction: Omit<InsertDhaDocumentVerification, 'id' | 'timestamp'>): Promise<void> {
+  private async logErrorCorrection(correction: any): Promise<void> {
     try {
       await storage.set('error_correction_' + Date.now(), correction);
     } catch (error) {
@@ -163,7 +163,7 @@ export class SelfHealingErrorHandler extends EventEmitter {
     }
   }
 
-  private async logHealthCheckResult(result: Omit<InsertDhaDocumentVerification, 'id' | 'timestamp'>): Promise<void> {
+  private async logHealthCheckResult(result: any): Promise<void> {
     try {
       await storage.set('health_check_' + Date.now(), result);
     } catch (error) {

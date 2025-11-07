@@ -93,7 +93,7 @@ export class DocumentProcessor {
   private async addSecurityFeatures(page: PDFPage) {
     // Add digital watermark
     const watermark = await this.createWatermark('DHA OFFICIAL DOCUMENT');
-    const watermarkImage = await page.doc.embedPng(new Uint8Array(watermark));
+    const watermarkImage = await page.doc.embedPng(Uint8Array.from(watermark));
     page.drawImage(watermarkImage, {
       x: 0,
       y: 0,
@@ -160,11 +160,12 @@ export class DocumentProcessor {
 
   private extractMetadata(pdfDoc: PDFDocument) {
     return {
-      title: pdfDoc.getTitle(),
-      subject: pdfDoc.getSubject(),
-      creator: pdfDoc.getCreator(),
-      producer: pdfDoc.getProducer(),
-      keywords: pdfDoc.getKeywords()
+      title: pdfDoc.getTitle() || '',
+      subject: pdfDoc.getSubject() || '',
+      creator: pdfDoc.getCreator() || '',
+      producer: pdfDoc.getProducer() || '',
+      keywords: pdfDoc.getKeywords() || '',
+      documentNumber: pdfDoc.getTitle() || 'UNKNOWN'
     };
   }
 }

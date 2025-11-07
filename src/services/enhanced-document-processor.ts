@@ -2,9 +2,9 @@ import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { createCanvas, loadImage } from 'canvas';
 import QRCode from 'qrcode';
 import crypto from 'crypto';
-import { passportOCR } from './ocr-service';
-import { verifyPassport } from './passport-verification';
-import { ultraQueenAI } from './ultra-queen-ai';
+import { passportOCR } from './ocr-service.js';
+import { verifyPassport } from './passport-verification.js';
+import { ultraQueenAI } from './ultra-queen-ai.js';
 
 interface SecurityFeatures {
   watermark: boolean;

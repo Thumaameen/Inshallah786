@@ -1,9 +1,10 @@
-import express, { type Request, type Response, type NextFunction } from 'express';
+import express from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import helmet from 'helmet';
 import compression from 'compression';
 import cors from 'cors';
-import { errorSelfHealing } from './services/error-self-healing.service';
-import { enhancedAIService } from './services/enhanced-ai.service';
+import { errorSelfHealing } from './services/error-self-healing.service.js';
+import { enhancedAIService } from './services/enhanced-ai.service.js';
 
 const app = express();
 
