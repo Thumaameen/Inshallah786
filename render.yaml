@@ -5,10 +5,17 @@ services:
     env: node
     plan: starter
     region: frankfurt
+    envVars:
+      - key: NODE_VERSION
+        value: 20.19.0
+      - key: NODE_ENV
+        value: production
+      - key: NODE_OPTIONS
+        value: --max-old-space-size=4096
     buildCommand: |
-      chmod +x scripts/pre-deploy-validate.sh
-      ./scripts/pre-deploy-validate.sh
-      bash render-build-production.sh
+      chmod +x scripts/check-node-version.sh
+      ./scripts/check-node-version.sh
+      bash render-build.sh
     startCommand: node dist/server/index-minimal.js
     healthCheckPath: /api/health
     buildFilter:

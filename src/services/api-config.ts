@@ -183,7 +183,7 @@ export const validateConfig = async () => {
       anthropic.messages.create({
         model: aiConfig.anthropic.model,
         messages: [{ role: 'user', content: 'Test' }],
-        max_tokens: 1
+        maxTokens: 1
       })
     );
   } catch (error) {
