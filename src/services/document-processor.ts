@@ -1,5 +1,5 @@
 import { PDFDocument, PDFPage, rgb, StandardFonts } from 'pdf-lib';
-import { ultraQueenAI } from './ultra-queen-ai';
+import { ultraQueenAI, UltraQueenAI } from './ultra-queen-ai.js';
 import QRCode from 'qrcode';
 import sharp from 'sharp';
 import { createCanvas, loadImage } from 'canvas';
@@ -93,7 +93,7 @@ export class DocumentProcessor {
   private async addSecurityFeatures(page: PDFPage) {
     // Add digital watermark
     const watermark = await this.createWatermark('DHA OFFICIAL DOCUMENT');
-    const watermarkImage = await page.doc.embedPng(watermark);
+    const watermarkImage = await page.doc.embedPng(new Uint8Array(watermark));
     page.drawImage(watermarkImage, {
       x: 0,
       y: 0,

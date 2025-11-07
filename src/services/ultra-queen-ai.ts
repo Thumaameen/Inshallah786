@@ -1,6 +1,15 @@
 import { OpenAI } from 'openai';
 import { Anthropic } from '@anthropic-ai/sdk';
-import { aiConfig } from './api-config';
+
+const aiConfig = {
+  openai: {
+    apiKey: process.env.OPENAI_API_KEY || '',
+    organization: process.env.OPENAI_ORG_ID || ''
+  },
+  anthropic: {
+    apiKey: process.env.ANTHROPIC_API_KEY || ''
+  }
+};
 
 export interface AICapability {
   name: string;
@@ -15,7 +24,7 @@ export const AI_CAPABILITIES: AICapability[] = [
     name: 'Ultra Agent',
     description: 'Advanced AI agent with full system control and automation capabilities',
     models: ['gpt-4-turbo', 'claude-3-opus', 'gemini-pro'],
-    maxTokens: 200000,
+    maxTokens: 100,
     features: ['system-control', 'automation', 'self-improvement']
   },
   {
@@ -136,12 +145,8 @@ export class UltraQueenAI {
       model: 'claude-3-opus-20240229',
       messages: [
         {
-          role: 'system',
-          content: 'You are a document validation expert.'
-        },
-        {
           role: 'user',
-          content: `Validate this document: ${document}`
+          content: 'You are a document validation expert.\n\nValidate this document: ' + document
         }
       ],
       max_tokens: 2000

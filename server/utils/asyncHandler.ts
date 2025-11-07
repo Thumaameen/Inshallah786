@@ -1,4 +1,5 @@
-import type { Request, Response, NextFunction } from 'express';
+import type { Request, Response } from 'express';
+import { NextFunction } from 'express-serve-static-core';
 
 /**
  * Async handler wrapper for Express routes

@@ -1,7 +1,7 @@
 /**
  * Enhanced Production Environment Validator for Render
  */
-import { logger } from '../utils/logger';
+import logger from '../utils/logger.js';
 
 interface ValidationResult {
   isValid: boolean;
