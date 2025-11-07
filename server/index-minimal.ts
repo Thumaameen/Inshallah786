@@ -1,4 +1,5 @@
 import express from 'express';
+import type { Request, Response } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
@@ -23,6 +24,8 @@ import militaryRoutes from './routes/military-portals.js';
 console.log('🔐 Loading Environment Variables...');
 console.log('='.repeat(70));
 
+// Import production config
+
 // Enhanced key checking with all variations
 const keyVariations = {
   'OpenAI': ['OPENAI_API_KEY', 'OPENAI_KEY'],
@@ -43,7 +46,7 @@ const keyVariations = {
 
 let loadedCount = 0;
 let totalServices = Object.keys(keyVariations).length;
-const configuredServices = [];
+const configuredServices: string[] = [];
 const missingServices = [];
 
 for (const [service, keys] of Object.entries(keyVariations)) {
@@ -88,25 +91,27 @@ if (loadedCount === 0) {
   process.exit(1);
 }
 
-// Create async initialization function
-async function initializeEnvironment() {
-  // Load environment variables first
-  dotenv.config();
+// Initialize environment synchronously at startup
+dotenv.config();
 
-  // Securely load any additional env files and delete them
-  const envFilePath = process.env.ENV_FILE_PATH;
-  if (envFilePath) {
+// Securely load any additional env files if specified
+const envFilePath = process.env.ENV_FILE_PATH;
+if (envFilePath) {
+  try {
     await SecureEnvLoader.loadAndDeleteEnvFile(envFilePath);
-  }
-
-  // Validate production keys
-  if (typeof SecureEnvLoader.validateProductionKeys === 'function') {
-    SecureEnvLoader.validateProductionKeys();
+  } catch (error) {
+    console.warn('⚠️ Could not load additional env file, continuing with existing environment');
   }
 }
 
-// Initialize environment before starting server
-await initializeEnvironment();
+// Validate production keys
+try {
+  if (typeof SecureEnvLoader.validateProductionKeys === 'function') {
+    SecureEnvLoader.validateProductionKeys();
+  }
+} catch (error) {
+  console.warn('⚠️ Production key validation skipped:', error instanceof Error ? error.message : 'Unknown error');
+}
 
 // Test API connectivity
 console.log('\n🔬 Testing Live API Connectivity...');
@@ -197,7 +202,7 @@ async function testAPIConnectivity() {
   return liveCount;
 }
 
-const liveAPIs = await testAPIConnectivity();
+await testAPIConnectivity();
 
 // Validate deployment configuration
 try {
@@ -353,8 +358,7 @@ try {
 // Military & Government Portal Routes
 app.use('/api/military', militaryRoutes);
 
-// Health check
-app.get('/api/health', (req, res) => {
+app.get('/api/health', (_req: Request, res: Response) => {
   res.status(200).json({
     status: 'UP',
     timestamp: new Date().toISOString(),
@@ -364,7 +368,7 @@ app.get('/api/health', (req, res) => {
     aiEngineStatus: 'OFFLINE', // Placeholder: This should be dynamically checked
     blockchainStatus: 'LIVE', // Placeholder: This should be dynamically checked
     documentTypesCount: 23 // Placeholder: This should be dynamically checked
-  });
+});
 });
 
 // Health check routes
@@ -378,7 +382,7 @@ if (fs.existsSync(clientBuildPath)) {
   // Serve static assets with long cache for hashed files, no cache for HTML
   app.use(express.static(clientBuildPath, {
     maxAge: 0, // No caching by default
-    setHeaders: (res, path) => {
+    setHeaders: (res: { setHeader: (arg0: string, arg1: string) => void; }, path: string) => {
       // Long cache for hashed assets (JS, CSS with hash in filename)
       if (path.match(/\.(js|css)$/) && path.match(/-[a-zA-Z0-9]{8,}\.(js|css)$/)) {
         res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
@@ -392,7 +396,7 @@ if (fs.existsSync(clientBuildPath)) {
   }));
 
   // Serve index.html for all non-API routes (with no-cache headers)
-  app.get('*', (req, res, next) => {
+  app.get('*', (req: { path: string; }, res: { setHeader: (arg0: string, arg1: string) => void; sendFile: (arg0: string) => void; }, next: () => any) => {
     if (req.path.startsWith('/api')) {
       return next();
     }

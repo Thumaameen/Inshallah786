@@ -1,12 +1,10 @@
-import express, { Request, Response } from 'express';
-import { UltraPDFEditorService } from 
-mkdir -p server/services/biometric && touch server/services/biometric/biometric.service.ts
-;
+import express, { type Router, type Request, type Response } from 'express';
+import { UltraPDFEditorService } from '../services/pdf/ultra-pdf-editor.service';
 import { GlobalDocumentVerificationService } from '../services/document/global-document-verification.service';
 import { BlockchainService } from '../services/blockchain/blockchain.service';
 import { BiometricService } from '../services/biometric/biometric.service';
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // Initialize Services
 const pdfEditor = new UltraPDFEditorService();
@@ -37,7 +35,7 @@ router.post('/verify', async (req: { body: { document: any; type: any; }; }, res
 });
 
 // Blockchain Verification Routes
-router.post('/blockchain/verify', async (req: { body: { documentHash: any; }; }, res: { json: (arg0: any) => void; status: (arg0: number) => { (): any; new(): any; json: { (arg0: { error: any; }): void; new(): any; }; }; }) => {
+router.post('/blockchain/verify', async (req: Request, res: Response) => {
   try {
     const { documentHash } = req.body;
     const verification = await blockchain.verifyDocument(documentHash);
@@ -48,7 +46,7 @@ router.post('/blockchain/verify', async (req: { body: { documentHash: any; }; },
 });
 
 // Biometric Verification Routes
-router.post('/biometric/verify', async (req: { body: { biometricData: any; documentId: any; }; }, res: { json: (arg0: any) => void; status: (arg0: number) => { (): any; new(): any; json: { (arg0: { error: any; }): void; new(): any; }; }; }) => {
+router.post('/biometric/verify', async (req: Request, res: Response) => {
   try {
     const { biometricData, documentId } = req.body;
     const verification = await biometric.verifyBiometric(biometricData, documentId);

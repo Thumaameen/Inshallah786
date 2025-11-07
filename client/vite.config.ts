@@ -8,6 +8,7 @@ const __dirname = path.dirname(__filename);
 
 export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
   const env = loadEnv(mode, process.cwd(), '');
+  const apiUrl = process.env.VITE_API_URL || env.VITE_API_URL || 'http://localhost:8000';
 
   return {
     plugins: [
@@ -17,6 +18,45 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
         }
       })
     ],
+    build: {
+      target: 'esnext',
+      outDir: 'dist',
+      emptyOutDir: true,
+      sourcemap: false,
+      minify: 'esbuild',
+      rollupOptions: {
+        output: {
+          manualChunks: (id: string) => {
+            if (id.includes('node_modules')) {
+              if (id.includes('react') || id.includes('react-dom')) {
+                return 'react-vendor';
+              }
+              if (id.includes('@tanstack/react-query')) {
+                return 'query-vendor';
+              }
+              if (id.includes('@radix-ui')) {
+                return 'ui-vendor';
+              }
+              return 'vendor';
+            }
+          }
+        },
+        onwarn(warning, warn) {
+          if (warning.code === 'MODULE_LEVEL_DIRECTIVE' || 
+              warning.code === 'CIRCULAR_DEPENDENCY' ||
+              warning.code === 'THIS_IS_UNDEFINED') return;
+          warn(warning);
+        },
+        maxParallelFileOps: 2
+      },
+      chunkSizeWarningLimit: 2000,
+      cssCodeSplit: true,
+      assetsInlineLimit: 4096,
+      reportCompressedSize: false,
+      commonjsOptions: {
+        transformMixedEsModules: true
+      }
+    },
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src')
@@ -40,48 +80,19 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
       target: 'esnext',
       platform: 'browser'
     },
-    build: {
-      outDir: 'dist',
-      emptyOutDir: true,
-      sourcemap: false,
-      minify: 'esbuild',
-      target: 'esnext',
-      rollupOptions: {
-        output: {
-          manualChunks: {
-            'react-vendor': ['react', 'react-dom'],
-            'core-vendor': ['@tanstack/react-query']
-          },
-        },
-        onwarn(warning, warn) {
-          if (warning.code === 'MODULE_LEVEL_DIRECTIVE' || 
-              warning.code === 'CIRCULAR_DEPENDENCY' ||
-              warning.code === 'THIS_IS_UNDEFINED') return;
-          warn(warning);
-        }
-      },
-      chunkSizeWarningLimit: 2000,
-      cssCodeSplit: true,
-      assetsInlineLimit: 4096,
-      reportCompressedSize: false
-    },
     server: {
       host: '0.0.0.0',
-      port: 5173,
-      strictPort: true,
+      port: 5000,
+      strictPort: false,
       hmr: {
         clientPort: 443
       },
-      allowedHosts: [
-        '.replit.dev',
-        '.repl.co'
-      ],
+      allowedHosts: true,
       proxy: {
         '/api': {
-          target: env.VITE_API_URL || 'https://ultra-queen-ai-raeesa.onrender.com',
+          target: apiUrl,
           changeOrigin: true,
-          secure: true,
-          rewrite: (path: string) => path.replace(/^\/api/, '')
+          secure: false
         }
       }
     }

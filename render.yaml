@@ -1,281 +1,94 @@
 services:
-  # Web Service - Ultra Queen AI Raeesa Platform
+  # Main Web Service
   - type: web
     name: ultra-queen-ai-raeesa
-    runtime: node
     env: node
-    nodeVersion: "20.19.1"
-    region: frankfurt
     plan: starter
-    buildCommand: bash render-build-production.sh
-    startCommand: node dist/server/index-minimal.js
-    envVars:
-      - key: NPM_VERSION
-        value: "10.2.3"
-      - key: NODE_VERSION
-        value: "20.19.1"
-      - key: NODE_ENV
-        value: "production"
-    healthCheckPath: /api/health
-    autoDeploy: true
-    healthCheckTimeout: 180
-    healthCheckInterval: 15
-    pullRequestPreviewsEnabled: true
-    scaling:
-      minInstances: 3
-      maxInstances: 10
-      targetMemoryPercent: 70
-      targetCPUPercent: 65
-    optimization:
-      performance: maximum
-      realData: true
-      enhancedAI: true
-      targetCPUPercent: 65
+    region: frankfurt
     envVars:
       - key: NODE_VERSION
-        value: 20.19.1
+        value: 20.19.0
       - key: NODE_ENV
         value: production
-      - key: RENDER
-        value: "true"
+      - key: NODE_OPTIONS
+        value: --max-old-space-size=4096
+    buildCommand: |
+      chmod +x scripts/check-node-version.sh
+      ./scripts/check-node-version.sh
+      bash render-build.sh
+    startCommand: node dist/server/index-minimal.js
+    healthCheckPath: /api/health
+    buildFilter:
+      paths:
+        - server/**/*.ts
+        - client/**/*
+        - shared/**/*
+        - package.json
+        - tsconfig*.json
+        - render*.sh
+    autoDeploy: false
+    disk:
+      name: temp-uploads
+      mountPath: /tmp
+      sizeGB: 1
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: 20.19.0
+      - key: NPM_VERSION
+        value: 10.5.0
       - key: PORT
         value: 10000
-      - key: HOST
-        value: 0.0.0.0
-      # Security: API validation MUST be enforced in production
-      - key: BYPASS_API_VALIDATION
-        value: "false"
-      - key: FORCE_API_SUCCESS
-        value: "false"
-      - key: UNIVERSAL_API_OVERRIDE
-        value: "false"
-      # Resilience features - Safe for production
-      - key: AUTO_RECOVERY
-        value: "true"
-      - key: CIRCUIT_BREAKER_ENABLED
-        value: "true"
-      - key: GRACEFUL_DEGRADATION
-        value: "true"
-      # API Mode Configuration - Use real production APIs
-      - key: FORCE_REAL_APIS
-        value: "true"
-      - key: DISABLE_MOCK_MODE
-        value: "true"
-      - key: API_ENVIRONMENT
-        value: "production"
-      - key: USE_PRODUCTION_APIS
-        value: "true"
-      - key: ENABLE_MONITORING
-        value: true
-      - key: MONITOR_INTERVAL
-        value: 60000
-      - key: MAX_RETRY_ATTEMPTS
-        value: 3
-      - key: ALERT_THRESHOLD
-        value: 5
-      - key: DATABASE_URL
-        fromDatabase:
-          name: dha-production-db
-          property: connectionString
       - key: SESSION_SECRET
         generateValue: true
       - key: JWT_SECRET
         generateValue: true
       - key: ENCRYPTION_KEY
         generateValue: true
-      - key: QUANTUM_ENCRYPTION_KEY
-        generateValue: true
-      # All 5 AI Providers - Required for Ultra Queen AI
+      - key: DATABASE_URL
+        fromDatabase:
+          name: dha-production-db
+          property: connectionString
       - key: OPENAI_API_KEY
-        sync: true
+        sync: false
       - key: ANTHROPIC_API_KEY
-        sync: true
+        sync: false
       - key: MISTRAL_API_KEY
-        sync: true
-      - key: GEMINI_API_KEY
-        sync: true
-      - key: GOOGLE_API_KEY
-        sync: true
+        sync: false
       - key: PERPLEXITY_API_KEY
-        sync: true
-      # Additional AI Services (Optional)
-      - key: WORKATO_API_KEY
-        sync: true
-      - key: HUGGINGFACE_API_KEY
-        sync: true
-      - key: COHERE_API_KEY
-        sync: true
-      # Government & DHA APIs (Optional - Mock mode if not provided)
-      - key: DHA_NPR_API_KEY
-        sync: true
-      - key: DHA_NPR_BASE_URL
-        value: "https://npr-prod.dha.gov.za/api/v1"
-      - key: DHA_NPR_TIMEOUT
-        value: "45000"
-      - key: DHA_NPR_RETRY_COUNT
-        value: "3"
-      - key: DHA_ABIS_API_KEY
-        sync: true
-      - key: DHA_ABIS_BASE_URL
-        value: "https://abis-prod.dha.gov.za/api/v1"
-      - key: DHA_ABIS_TIMEOUT
-        value: "60000"
-      - key: DHA_ABIS_MAX_BATCH
-        value: "50"
-      - key: DHA_API_VERSION
-        value: "2024-10"
-      - key: SAPS_CRC_API_KEY
-        sync: true
-      - key: SAPS_CRC_BASE_URL
-        value: "https://crc-api.saps.gov.za/v1"
-      - key: ICAO_PKD_API_KEY
-        sync: true
-      - key: ICAO_PKD_BASE_URL
-        value: "https://pkddownloadsg.icao.int"
-      - key: SITA_API_KEY
-        sync: true
-      - key: SITA_API_BASE_URL
-        value: "https://api.sita.co.za"
-      - key: CIPC_API_KEY
-        sync: true
-      - key: CIPC_API_BASE_URL
-        value: "https://api.cipc.co.za/v1"
-      - key: DEL_API_KEY
-        sync: true
-      - key: DEL_API_BASE_URL
-        value: "https://api.labour.gov.za/v1"
-
-      # Additional Security Keys
-      - key: MASTER_ENCRYPTION_KEY
-        generateValue: true
-      - key: BIOMETRIC_ENCRYPTION_KEY
-        generateValue: true
-      - key: DOCUMENT_SIGNING_KEY
-        generateValue: true
-      - key: VITE_ENCRYPTION_KEY
-        generateValue: true
-
-      # Web3/Blockchain (Optional)
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
       - key: ETHEREUM_RPC_URL
-        sync: true
-      - key: POLYGON_RPC_URL
-        sync: true
-      - key: POLYGON_RPC_ENDPOINT
-        sync: true
-      - key: SOLANA_RPC_URL
-        sync: true
-      - key: SOLANA_RPC_ENDPOINT
-        sync: true
-      - key: WEB3_PRIVATE_KEY
-        sync: true
+        sync: false
+      - key: DHA_NPR_API_KEY
+        sync: false
+      - key: DHA_ABIS_API_KEY
+        sync: false
 
-      # External Services (Optional)
-      - key: GITHUB_TOKEN
-        sync: true
-      - key: STRIPE_SECRET_KEY
-        sync: true
-      - key: TWILIO_ACCOUNT_SID
-        sync: true
-      - key: TWILIO_AUTH_TOKEN
-        sync: true
-      - key: SENDGRID_API_KEY
-        sync: true
-      - key: ENABLE_API_FALLBACK
-        value: true
-      - key: API_FALLBACK_TIMEOUT
-        value: 5000
-      - key: MAX_FALLBACK_ATTEMPTS
-        value: 3
-      - key: MAXIMUM_PROTECTION_MODE
-        value: "true"
-      - key: ENABLE_SELF_HEALING
-        value: "true"
-      - key: ENABLE_AUTO_RECOVERY
-        value: "true"
-      - key: ENABLE_ULTRA_MONITORING
-        value: "true"
-      - key: MILITARY_INTEGRATION_ENABLED
-        value: "true"
-      - key: GLOBAL_PORTAL_ACCESS
-        value: "true"
-      - key: CLASSIFIED_DOCUMENT_SUPPORT
-        value: "true"
-      # Chunk size and performance settings
-      - key: MAX_CHUNK_SIZE
-        value: "16777216"  # 16MB for large biometric data
-      - key: OPTIMIZATION_LEVEL
-        value: "maximum"
-      - key: REAL_TIME_VALIDATION
-        value: "true"
-      - key: API_TIMEOUT
-        value: "60000"     # Increased timeout for government APIs
-      - key: RETRY_DELAY
-        value: "3000"      # Faster retry for better responsiveness
-      - key: MAX_PAYLOAD_SIZE
-        value: "20971520"  # 20MB max payload
-      - key: COMPRESSION_LEVEL
-        value: "9"         # Maximum compression
-      - key: CACHE_TTL
-        value: "3600"      # 1 hour cache
-      - key: BATCH_SIZE
-        value: "100"       # Optimized batch processing
-
+  # Monitoring Worker
   - type: worker
     name: dha-monitoring-service
     env: node
     plan: starter
     region: frankfurt
-    nodeVersion: "20.19.1"
     buildCommand: npm install --legacy-peer-deps
     startCommand: node server/workers/monitoring-worker.cjs
     envVars:
       - key: NODE_ENV
         value: production
-      - key: ENABLE_MONITORING
-        value: "true"
-      - key: MONITOR_INTERVAL
-        value: "60000"
-      - key: FORCE_REAL_APIS
-        value: "true"
-      - key: DISABLE_MOCK_MODE
-        value: "true"
-      - key: API_ENVIRONMENT
-        value: "production"
-      - key: USE_PRODUCTION_APIS
-        value: "true"
-      - key: API_VALIDATION_LEVEL
-        value: "strict"
-      - key: REAL_TIME_PROCESSING
-        value: "true"
-      - key: MAX_CONCURRENT_REQUESTS
-        value: "50"
-      - key: CACHE_STRATEGY
-        value: "aggressive"
-      - key: TARGET_SERVICE
-        value: ultra-queen-ai-raeesa # Updated service name
-      - key: RENDER_EXTERNAL_URL
-        fromService:
-          type: web
-          name: ultra-queen-ai-raeesa # Updated service name
-          envVarKey: RENDER_EXTERNAL_URL
       - key: DATABASE_URL
         fromDatabase:
           name: dha-production-db
           property: connectionString
-      - key: ALERT_WEBHOOK_URL
-        sync: true
-      - key: DISABLE_PORT_BINDING
-        value: true
-    autoscaling:
-      min: 1
-      max: 1
 
+  # Scheduled Tasks
   - type: cron
     name: dha-scheduled-tasks
     env: node
     region: frankfurt
     plan: starter
-    nodeVersion: "20.19.1"
     schedule: "*/15 * * * *"
     buildCommand: npm install --legacy-peer-deps
     startCommand: node server/workers/scheduled-tasks.cjs
@@ -286,24 +99,8 @@ services:
         fromDatabase:
           name: dha-production-db
           property: connectionString
-      - key: CRON_SECRET
-        generateValue: true
-      - key: JWT_SECRET
-        generateValue: true
-      - key: ENCRYPTION_KEY
-        generateValue: true
-      - key: FORCE_REAL_APIS
-        value: "true"
-      - key: DISABLE_MOCK_MODE
-        value: "true"
-      - key: API_ENVIRONMENT
-        value: "production"
 
 databases:
   - name: dha-production-db
-    plan: pro
-    ipAllowList: []
-    backups:
-      enabled: true
-      schedule: "0 */4 * * *"  # Every 4 hours
-      retentionPeriodDays: 7   # Keep backups for 7 days
+    plan: starter
+    region: frankfurt

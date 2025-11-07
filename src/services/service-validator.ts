@@ -80,7 +80,6 @@ async function validateAnthropic(): Promise<ValidationResult> {
     return { service: 'Anthropic', status: 'error', error: getErrorMessage(error) };
   }
 }
-}
 
 async function validateGemini(): Promise<ValidationResult> {
   const apiKey = process.env.GOOGLE_AI_API_KEY || process.env.GEMINI_API_KEY;
@@ -107,7 +106,7 @@ async function validateDatabase(): Promise<ValidationResult> {
     if (!url.protocol || !url.host) {
       throw new Error('Invalid database URL format');
     }
-    
+
     // Test connection based on protocol
     if (url.protocol === 'postgresql:' || url.protocol === 'postgres:') {
       const { Pool } = await import('pg');
@@ -120,7 +119,7 @@ async function validateDatabase(): Promise<ValidationResult> {
       db.prepare('SELECT 1').get();
       db.close();
     }
-    
+
     return { service: 'Database', status: 'live' };
   } catch (error) {
     return { 
@@ -134,7 +133,7 @@ async function validateDatabase(): Promise<ValidationResult> {
 export async function validateAllServices(): Promise<ValidationResult[]> {
   // Get blockchain validations
   const blockchainResults = await validateBlockchainServices();
-  
+
   const results = await Promise.all([
     ...blockchainResults,
     validateOpenAI(),
@@ -154,14 +153,14 @@ export async function validateAllServices(): Promise<ValidationResult[]> {
 
   const totalServices = Object.values(summary).reduce((a, b) => a + b, 0);
   const percentageLive = ((summary.live || 0) / totalServices * 100).toFixed(1);
-  
+
   console.log('\n📊 Service Validation Summary');
   console.log('==============================');
   console.log(`Total Services: ${totalServices}`);
   console.log(`✅ Live: ${summary.live || 0} (${percentageLive}%)`);
   console.log(`❌ Errors: ${summary.error || 0}`);
   console.log(`⚪ Not Configured: ${summary.not_configured || 0}`);
-  
+
   if (summary.error > 0) {
     console.log('\n⚠️  Services with Errors:');
     results
@@ -174,10 +173,10 @@ export async function validateAllServices(): Promise<ValidationResult[]> {
 
 export async function validateServicesForProduction(): Promise<boolean> {
   const results = await validateAllServices();
-  
+
   // Required services for production
   const requiredServices = ['Database', 'OpenAI', 'Anthropic'];
-  
+
   const missingRequired = requiredServices.filter(required => {
     const service = results.find(r => r.service === required);
     return !service || service.status !== 'live';

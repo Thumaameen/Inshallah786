@@ -3,11 +3,22 @@
  * @packageDocumentation
  */
 
-import { Router, Request, Response } from 'express';
-import { ENV } from '../config/env';
+import express, { type Router, type Request, type Response } from 'express';
+import process from 'process';
 import { productionHealthCheck } from '../services/production-health-check.js';
 import { authenticate } from '../middleware/auth.js';
 import { integrationManager } from '../services/integration-manager.js';
+
+// Environment configuration
+const ENV = {
+  NODE_ENV: process.env.NODE_ENV || 'production',
+  SYSTEM: {
+    nodeVersion: process.version,
+    platform: process.platform,
+    arch: process.arch
+  },
+  START_TIME: process.env.START_TIME || Date.now().toString()
+};
 
 // Type definitions
 interface HealthResponse {
@@ -35,26 +46,7 @@ interface HealthResponse {
   integrations: Record<string, unknown>;
 }
 
-// Type definitions for health check responses
-  NODE_ENV: process.env.NODE_ENV || 'production',
-  START_TIME: Date.now(),
-  API_KEYS: {
-    OPENAI: process.env.OPENAI_API_KEY,
-    ANTHROPIC: process.env.ANTHROPIC_API_KEY,
-    GOOGLE: process.env.GOOGLE_API_KEY,
-    ABIS: process.env.DHA_ABIS_API_KEY,
-    SAPS: process.env.SAPS_API_KEY,
-    DHA: process.env.DHA_API_KEY,
-    NPR: process.env.DHA_NPR_API_KEY,
-    ICAO: process.env.ICAO_PKD_KEY
-  }
-};
-import { productionHealthCheck } from '../services/production-health-check.js';
-import { authenticate } from '../middleware/auth.js';
-import { integrationManager } from '../services/integration-manager.js';
-import { cpuUsage, memoryUsage, version, uptime, platform, arch } from 'process';
-
-const router = Router();
+const router = express.Router();
 
 /**
  * GET /health - Comprehensive health check endpoint with integration status
@@ -143,7 +135,7 @@ router.get('/health/detailed', authenticate, async (req: Request, res: Response)
       status: 'error',
       timestamp: new Date().toISOString(),
       error: 'Detailed health check failed',
-message: String(error)
+      message: error instanceof Error ? error.message : String(error)
     });
   }
 });
@@ -191,7 +183,7 @@ router.get('/health/readiness', authenticate, async (req: Request, res: Response
       ready: false,
       timestamp: new Date().toISOString(),
       error: 'Readiness check failed',
-message: String(error)
+      message: error instanceof Error ? error.message : String(error)
     });
   }
 });

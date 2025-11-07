@@ -1,4 +1,4 @@
-modules = ["nodejs-20"]
+modules = ["nodejs-20", "bash", "web"]
 [agent]
 expertMode = true
 
@@ -18,17 +18,48 @@ args = "dev-server"
 name = "dev-server"
 author = "agent"
 
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npm run replit:dev"
-waitForPort = 5000
-
 [workflows.workflow.metadata]
 outputType = "webview"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "bash start-dev.sh"
+waitForPort = 5000
+
+[[workflows.workflow]]
+name = "Deployment Test"
+author = 49482864
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "bash scripts/pre-deploy-test.sh"
+
+[[workflows.workflow]]
+name = "Validate Blueprint"
+author = 49482864
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "bash scripts/validate-render-blueprint.sh"
 
 [[ports]]
 localPort = 5000
 externalPort = 80
 
+[[ports]]
+localPort = 8000
+externalPort = 8000
+
+[[ports]]
+localPort = 39489
+externalPort = 3000
+
 [nix]
 channel = "stable-25_05"
+
+[deployment]
+deploymentTarget = "vm"
+run = ["node", "dist/server/index-minimal.js"]
+build = ["bash", "render-build-production.sh"]

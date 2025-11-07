@@ -24,11 +24,37 @@ declare global {
   }
 }
 
-// Load environment variables
-try {
-  config({ path: join(process.cwd(), '.env') });
-} catch (error) {
-  console.warn('Warning: .env file not found, using default environment');
+// Environment configuration types
+interface EnvironmentConfig {
+  NODE_ENV: 'development' | 'production' | 'test';
+  START_TIME?: number;
+  SYSTEM?: {
+    nodeVersion: string;
+    platform: string;
+    arch: string;
+  };
+  apiKeys: {
+    OPENAI?: string;
+    ANTHROPIC?: string;
+    GOOGLE?: string;
+    ABIS?: string;
+    SAPS?: string;
+    DHA?: string;
+    NPR?: string;
+    ICAO?: string;
+  };
+  environment: {
+    nodeVersion: string;
+  };
+}
+
+// Load environment variables in development
+if (process.env.NODE_ENV !== 'production') {
+  try {
+    config({ path: join(process.cwd(), '.env') });
+  } catch (error) {
+    console.warn('Warning: .env file not found, using default environment');
+  }
 }
 
 // Type definitions for environment configuration
@@ -57,7 +83,7 @@ interface EnvironmentConfig {
 }
 
 // Initialize environment configuration
-const environmentConfig: EnvironmentConfig = {
+export const environment: EnvironmentConfig = {
   NODE_ENV: (process.env.NODE_ENV as 'development' | 'production' | 'test') || 'production',
   START_TIME: process.env.START_TIME ? Number(process.env.START_TIME) : Date.now(),
   SYSTEM: {
@@ -88,4 +114,11 @@ if (missingEnvVars.length > 0) {
   throw new Error(`Missing required environment variables: ${missingEnvVars.join(', ')}`);
 }
 
-export { environmentConfig };
+// Add CommonJS default export for compatibility
+export default environment;
+
+// Legacy exports for backward compatibility
+export const ENV_CONFIG = environment;
+export const env = environment;
+export const environmentConfig = environment;
+export { environment as config };

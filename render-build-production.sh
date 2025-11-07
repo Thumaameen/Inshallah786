@@ -1,341 +1,165 @@
 #!/bin/bash
 set -e
 
-echo "🚀 DHA Digital Services - PRODUCTION BUILD FOR RENDER"
-echo "===================================================="
-echo "📅 Build started: $(date)"
+echo "=========================================="
+echo "🚀 DHA Digital Services - RENDER BUILD"
+echo "=========================================="
+echo "Build started: $(date)"
+echo ""
 
-# Critical error handling
+# Error handler
 handle_error() {
-  echo "❌ Error occurred in build script"
-  echo "Error on line $1"
+  echo ""
+  echo "=========================================="
+  echo "❌ BUILD FAILED at line $1"
+  echo "=========================================="
   exit 1
 }
 
 trap 'handle_error $LINENO' ERR
 
-# Force Node.js version
-export NODE_VERSION=20.19.1
-export NPM_VERSION=10.2.3
-
-# Install correct Node.js version
-echo "Installing Node.js $NODE_VERSION..."
-export NVM_DIR="/usr/local/share/nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-
-# Retry nvm installation if not available
-if ! command -v nvm &> /dev/null; then
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
-    export NVM_DIR="$HOME/.nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-fi
-
-nvm install $NODE_VERSION || {
-    echo "Failed to install Node.js $NODE_VERSION using nvm"
-    exit 1
-}
-nvm use $NODE_VERSION || {
-    echo "Failed to use Node.js $NODE_VERSION"
-    exit 1
-}
-
-# Install global dependencies
-echo "Installing global dependencies..."
-npm install -g vite typescript @vitejs/plugin-react
-
-# Install correct npm version
-npm install -g npm@$NPM_VERSION
-
-# CRITICAL: Production environment setup - FORCE PRODUCTION MODE
-
-# Set up environment variables
+# Environment setup
+echo "📌 Setting up environment..."
 export NODE_ENV=production
-export NPM_VERSION=10.2.3
-export NODE_VERSION=20.19.1
 export VITE_MODE=production
+export CI=true
+export NODE_OPTIONS=--max-old-space-size=4096
 
-# Install correct npm version
-npm install -g npm@$NPM_VERSION
+# Print versions
+echo "Required Node.js version: 20.19.0"
+echo "Required npm version: 10.5.0"
+echo "Current Node.js version: $(node --version)"
+echo "Current npm version: $(npm --version)"
 
-# Verify Node and NPM versions
-echo "NODE_VERSION: $NODE_VERSION"
-echo "NODE_ENV: $NODE_ENV"
-echo "Current Node: $(node -v)"
-echo "Current NPM: $(npm -v)"
-
-# Clean all previous builds and dependencies
-echo "🧹 Cleaning workspace..."
-rm -rf dist client/dist node_modules client/node_modules package-lock.json client/package-lock.json
-
-# Install root dependencies first
-echo "� Installing root dependencies..."
-npm install --legacy-peer-deps --no-audit
-
-# Build client
-echo "🎨 Building client..."
-cd client || {
-    echo "❌ Failed to enter client directory"
-    exit 1
-}
-
-echo "📦 Installing client dependencies..."
-npm ci --legacy-peer-deps --no-audit || npm install --legacy-peer-deps --no-audit
-
-# Clear Vite cache
-echo "🧹 Clearing Vite cache..."
-rm -rf node_modules/.vite
-
-# Production build configuration
-echo "⚙️ Setting up Vite production configuration..."
-cat > vite.config.ts << EOL
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import path from 'path';
-
-export default defineConfig({
-  plugins: [react()],
-  build: {
-    outDir: 'dist',
-    sourcemap: false,
-    minify: 'terser',
-    target: 'es2020',
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-        },
-      },
-    },
-  },
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-    },
-  },
-  optimizeDeps: {
-    include: ['react', 'react-dom'],
-  },
-  esbuild: {
-    jsxInject: "import React from 'react'",
-  },
-});
-EOL
-
-# Run production build
-echo "🏗️ Running production build..."
-NODE_ENV=production npm run build
-    @tanstack/react-query@^5.28.0
-
-# Verify Vite installation and setup
-echo "⚙️ Setting up Vite..."
-npm install --save-dev vite@latest @vitejs/plugin-react@latest
-
-# Create optimized Vite config
-echo "📝 Creating production Vite config..."
-cat > vite.config.ts << 'EOL'
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import path from 'path';
-
-export default defineConfig({
-  plugins: [react()],
-  build: {
-    outDir: 'dist',
-    sourcemap: false,
-    minify: 'terser',
-    target: 'es2020',
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-        },
-      },
-    },
-  },
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-    },
-  },
-  optimizeDeps: {
-    include: ['react', 'react-dom'],
-  },
-  esbuild: {
-    jsxInject: "import React from 'react'",
-  },
-});
-EOL
-
-# Set production environment
-export VITE_MODE=production
-export NODE_ENV=production
-export CI=false
-export VITE_APP_ENV=production
-
-# Clean and run production build
-echo "🏗️ Running optimized production build..."
-rm -rf dist
-npm run build -- --mode production
-
-# Verify build output
-if [ ! -d "dist" ] || [ ! -f "dist/index.html" ]; then
-    echo "❌ Build failed - build artifacts not found"
-    exit 1
+# Verify Node.js version compatibility
+node_version=$(node --version | cut -d 'v' -f2)
+if [[ "$node_version" != "20.19.0"* ]]; then
+    echo "⚠️ Warning: Node.js version mismatch. Required: 20.19.0, Current: $node_version"
+    if [[ -n "$CI" ]]; then
+        echo "Running in CI environment, continuing anyway..."
+    fi
 fi
 
-echo "✅ Vite build successful"
+# Install types
+npm install --save-dev @types/node@20.11.0 @types/express@4.17.21 @types/cors@2.8.17 @types/compression@1.7.5 @types/helmet@4.0.0
 
-echo "✅ Client build successful"
-
-# Verify client build
-if [ ! -f "dist/index.html" ]; then
-    echo "❌ Client build failed - index.html not found"
-    exit 1
-fi
-
-# Return to root with verification
-cd .. || {
-    echo "❌ Failed to return to root directory"
-    exit 1
-}
-
-# Set production environment variables
-export NODE_ENV=production
-export RENDER=true
-export RENDER_SERVICE_ID=true
-export NPM_CONFIG_PRODUCTION=false
-
-# Verify Node.js version - must be 20.19.1
-CURRENT_NODE_VERSION=$(node -v | sed 's/v//')
-REQUIRED_NODE_VERSION="20.19.1"
-
-if [ "$CURRENT_NODE_VERSION" != "$REQUIRED_NODE_VERSION" ]; then
-    echo "⚠️ Warning: Expected Node.js $REQUIRED_NODE_VERSION, found $(node -v)"
-    echo "Attempting to continue with current version..."
-fi
-echo "✅ Node.js version: $(node -v)"
-
-echo "🔍 Environment Check:"
-echo "  NODE_ENV=$NODE_ENV"
-echo "  RENDER=$RENDER"
-echo "  NODE_VERSION=$NODE_VERSION"
+echo "Node version: $(node --version)"
+echo "NPM version: $(npm --version)"
+echo "Working directory: $(pwd)"
 echo ""
-
-# Node.js configuration - optimized for production
-export NODE_OPTIONS="--max-old-space-size=4096 --experimental-modules --es-module-specifier-resolution=node"
-export SKIP_PREFLIGHT_CHECK=true
-export TSC_COMPILE_ON_ERROR=false
-export DISABLE_ESLINT_PLUGIN=true
-export VITE_DISABLE_OPTIMIZER=false
-export VITE_MINIFY=true
-export VITE_SOURCE_MAP=false
-export TS_NODE_PROJECT="tsconfig.production.json"
-
-# Ensure ES modules are handled correctly
-echo "📦 Configuring build system..."
-if [ -f "package.json" ]; then
-    sed -i 's/"type": "commonjs"/"type": "module"/g' package.json || true
-fi
-
-# Version check and environment setup
-echo "📌 Environment Check:"
-echo "NODE_VERSION: $NODE_VERSION"
-echo "NODE_ENV: $NODE_ENV"
-echo "Current Node: $(node --version)"
-echo "Current NPM: $(npm --version)"
-
-# Verify Node.js 20.19.1 or compatible
-REQUIRED_NODE_VERSION="20.19.1"
-CURRENT_NODE_VERSION=$(node -v | sed 's/v//')
-
-echo "Required: $REQUIRED_NODE_VERSION"
-echo "Current: $CURRENT_NODE_VERSION"
-
-if ! command -v node &> /dev/null; then
-  echo "❌ Node.js not found"
-  exit 1
-fi
-
-echo "✅ Node.js available and validated"
 
 # Clean previous builds
 echo "🧹 Cleaning previous builds..."
-rm -rf dist client/dist
+rm -rf dist client/dist node_modules/.cache client/node_modules/.vite || true
+echo "✅ Cleaned"
+echo ""
 
-# Install dependencies with legacy peer deps
+# Version check function
+check_version() {
+  if [[ "$1" != "$2" ]]; then
+    echo "⚠️ Version mismatch: Expected $2, got $1"
+    if [[ "$CI" != "true" && "$FORCE_BUILD" != "true" ]]; then
+      echo "To bypass version check, set FORCE_BUILD=true"
+      exit 1
+    else
+      echo "⚠️ Continuing despite version mismatch (CI=$CI, FORCE_BUILD=$FORCE_BUILD)"
+    fi
+  fi
+}
+
+# Verify versions
+echo "Verifying Node.js and npm versions..."
+node_version=$(node --version | cut -d 'v' -f2)
+npm_version=$(npm --version)
+check_version "$node_version" "20.19.0"
+check_version "$npm_version" "10.5.0"
+
+# Verify critical files exist
+echo "🔍 Verifying critical files..."
+for file in package.json tsconfig.production.json client/package.json render.yaml; do
+  if [[ ! -f "$file" ]]; then
+    handle_error ${LINENO} "Missing critical file: $file"
+  fi
+done
+echo "✅ Critical files verified"
+
+# Install root dependencies
 echo "📦 Installing dependencies..."
-npm install --legacy-peer-deps
-
-# Install client dependencies
-echo "📦 Installing client dependencies..."
-cd client
-npm install --legacy-peer-deps @radix-ui/react-scroll-area
-npm install --save-dev vite@latest @vitejs/plugin-react typescript @types/react @types/react-dom @types/node
-cd .. --legacy-peer-deps --no-audit
-export NODE_PATH="$(npm root -g)"
-
+export NPM_CONFIG_PRODUCTION=false
+npm install --no-audit --legacy-peer-deps --prefer-offline || {
+    echo "First install failed, retrying with clean install..."
+    rm -rf node_modules package-lock.json
+    npm install --no-audit --legacy-peer-deps --no-optional
+}
 echo "✅ Root dependencies installed"
+echo ""
 
 # Build client
-echo "🎨 Building client..."
-cd client || mkdir -p client
+echo "=========================================="
+echo "🎨 BUILDING CLIENT"
+echo "=========================================="
 
-echo "📦 Installing client dependencies..."
-if [ ! -f "package.json" ]; then
-  echo "Creating client package.json..."
-  cp -f ../client/package.json . || echo "Failed to copy client package.json"
-fi
+cd client || {
+  echo "❌ Failed to enter client directory"
+  exit 1
+}
 
-# Install dependencies with specific versions to fix TypeScript issues
-npm install --legacy-peer-deps --no-audit
-npm install --legacy-peer-deps --save-dev \
-  @types/react@^18.2.0 \
-  @types/react-dom@^18.2.0 \
-  react-router-dom@^6.20.0 \
-  @types/react-router-dom@^5.3.0 \
-  @tanstack/react-query@^5.28.0
+echo "Current directory: $(pwd)"
+echo ""
 
-echo "🔨 Building client with TypeScript skip lib check..."
-export NODE_ENV=production
-export VITE_APP_ENV=production
-export CI=false
-export TSC_COMPILE_ON_ERROR=true
-npm run build -- --mode production
+echo "📦 Installing client dependencies (including dev tools)..."
+npm ci --legacy-peer-deps || npm install --legacy-peer-deps --no-audit
+echo "✅ Client dependencies installed"
+echo ""
 
-# Check if build succeeded
-if [ $? -ne 0 ]; then
-    echo "⚠️ Client build had errors, attempting alternative build..."
-    # Try building with vite directly
-    npx vite build --mode production --logLevel warn || echo "Alternative build also failed"
-fi
+echo "🧹 Clearing Vite cache..."
+rm -rf node_modules/.vite || true
+echo "✅ Cache cleared"
+echo ""
 
-cd ..
+echo "🏗️ Building client application..."
+NODE_OPTIONS="--max-old-space-size=2048" npm run build || {
+  echo "⚠️ First build attempt failed, trying with reduced memory..."
+  NODE_OPTIONS="--max-old-space-size=1536" npm run build || {
+    echo "❌ Client build failed"
+    exit 1
+  }
+}
+echo "✅ Client build complete"
+echo ""
 
-# Verify client build
-if [ ! -f "client/dist/index.html" ]; then
+echo "🔍 Verifying client build..."
+if [ ! -f "dist/index.html" ]; then
   echo "❌ Client build failed - index.html not found"
+  echo "Contents of client directory:"
+  ls -la . || true
+  echo "Contents of dist directory (if exists):"
+  ls -la dist || true
   exit 1
 fi
 
-echo "✅ Client build verified"
-ls -la client/dist/ || true
+echo "✅ Client build successful"
+echo "Client build contents:"
+ls -la dist/ | head -10
+echo ""
 
-# Build server
-echo "⚙️ Building server..."
+# Return to root
+cd .. || {
+  echo "❌ Failed to return to root directory"
+  exit 1
+}
 
-# Set build environment
-export TSC_COMPILE_ON_ERROR=true
-export NODE_OPTIONS="--max-old-space-size=4096"
-export TS_NODE_PROJECT="tsconfig.production.json"
+echo "=========================================="
+echo "⚙️  BUILDING SERVER"
+echo "=========================================="
 
-# Install TypeScript globally
-echo "📦 Installing TypeScript..."
-npm install -g typescript@latest
+echo "Current directory: $(pwd)"
+echo ""
 
-# Create production TypeScript config
-echo "⚙️ Creating production TypeScript config..."
-cat > tsconfig.production.json << 'EOL'
+# Create production TypeScript config if needed
+if [ ! -f "tsconfig.production.json" ]; then
+  echo "⚙️  Creating production TypeScript config..."
+  cat > tsconfig.production.json << 'TSCONFIG'
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
@@ -356,105 +180,99 @@ cat > tsconfig.production.json << 'EOL'
   "include": ["server/**/*", "shared/**/*"],
   "exclude": ["node_modules", "client", "**/*.test.ts", "**/*.spec.ts"]
 }
-EOL
+TSCONFIG
+  echo "✅ Created tsconfig.production.json"
+fi
 
-# Run production build
-echo "🏗️ Building server with TypeScript..."
-npm run build:server || {
-    echo "⚠️ Standard build failed, trying with permissive flags..."
-    npx tsc -p tsconfig.production.json \
-        --skipLibCheck \
-        --noEmitOnError false \
-        --suppressImplicitAnyIndexErrors \
-        || exit 1
+echo "🏗️  Compiling TypeScript..."
+echo "Verifying TypeScript installation..."
+if [ ! -f "./node_modules/.bin/tsc" ]; then
+    echo "Installing TypeScript..."
+    npm install --no-save typescript@^5.9.3
+fi
+
+echo "Running TypeScript compiler..."
+if ! ./node_modules/.bin/tsc -p tsconfig.production.json --skipLibCheck --noEmit 2>&1 | tee /tmp/tsc-errors.log; then
+  echo "⚠️  TypeScript compilation had errors, but continuing with existing compiled files..."
+  if grep -q "error TS" /tmp/tsc-errors.log; then
+    echo "⚠️  TypeScript errors detected - review logs above"
+  fi
+fi
+
+# Now do the actual compilation (without --noEmit)
+./node_modules/.bin/tsc -p tsconfig.production.json --skipLibCheck || {
+  echo "❌ TypeScript compilation failed critically"
+  exit 1
 }
+echo "✅ Server compiled"
+echo ""
 
-# Fix ES Module imports
-echo "🔧 Fixing ES module imports..."
-find dist -type f -name "*.js" -exec sed -i -E 's|from "(\.\.?/[^"]+)"|from "\1.js"|g; s|from '"'"'(\.\.?/[^'"'"']+)'"'"'|from '"'"'\1.js'"'"'|g' {} +
+# Create public directory and copy client build
+echo "📋 Setting up public assets..."
+mkdir -p dist/public
+cp -r client/dist/* dist/public/ || {
+  echo "❌ Failed to copy client build to dist/public"
+  exit 1
+}
+echo "✅ Assets copied"
+echo ""
 
-# Clean up any double extensions
-find dist -type f -name "*.js" -exec sed -i 's/\.js\.js/\.js/g; s/\.ts\.js/\.js/g' {} +
+# Ensure environment configs are in place
+echo "🔧 Ensuring environment configuration..."
+bash scripts/ensure-env.sh
+echo "✅ Environment configuration ready"
+echo ""
 
 # Verify build outputs
-if [ ! -f "dist/server/index.js" ]; then
-    echo "❌ Server build failed - index.js not found"
-    exit 1
-fi
+echo "=========================================="
+echo "🔍 VERIFYING BUILD"
+echo "=========================================="
 
-echo "✅ Server build verified"
-
-# Set up public directory
-echo "📋 Setting up public assets..."
-# Final verification steps
-echo "🔍 Running final verifications..."
-
-# Check critical files exist
-REQUIRED_FILES=(
-    "dist/public/index.html"
-    "dist/server/index.js"
-    "dist/public/assets"
-)
-
-for file in "${REQUIRED_FILES[@]}"; do
-    if [ ! -e "$file" ]; then
-        echo "❌ Critical file/directory missing: $file"
-        exit 1
-    fi
-done
-
-# Print build summary
-echo "
-✨ Build Complete! ✨
-====================
-📊 Summary:
-- Node.js version: $(node -v)
-- npm version: $(npm -v)
-- Build timestamp: $(date)
-- Client files in: dist/public/
-- Server files in: dist/server/
-
-🔍 Verification:
-- Client bundle: ✅
-- Server bundle: ✅
-- Public assets: ✅
-- ES modules: ✅
-
-Next steps:
-1. Deploy using render-start-production.sh
-2. Monitor application logs
-3. Verify all environment variables
-
-Build completed successfully! 🚀
-"
-cp -r client/dist/* dist/public/ || {
-    echo "⚠️ Failed to copy client build to public directory"
-    exit 1
-}
-
-# Copy client build to dist/public
-echo "📋 Copying client build to dist/public..."
-cp -r client/dist/* dist/public/ || echo "⚠️ Some files may not have copied"
-
-# Verify the copy
-echo "✅ Verifying dist/public..."
-ls -la dist/public/ || true
-
-# Verify critical files
-echo "✅ Verifying build..."
+echo "Checking for server entry point..."
 if [ ! -f "dist/server/index-minimal.js" ]; then
   echo "❌ Server build failed - dist/server/index-minimal.js not found"
-  ls -la dist/server/ || echo "dist/server directory not found"
+  echo "Contents of dist directory:"
+  ls -la dist || true
+  echo "Contents of dist/server (if exists):"
+  ls -la dist/server || true
   exit 1
 fi
+echo "✅ Server entry point exists"
 
+echo "Checking for client build..."
 if [ ! -f "dist/public/index.html" ]; then
   echo "❌ Client build failed - dist/public/index.html not found"
-  ls -la dist/public/ || echo "dist/public directory not found"
+  echo "Contents of dist/public:"
+  ls -la dist/public || true
   exit 1
 fi
+echo "✅ Client build exists"
 
-echo "✅ Build Complete!"
-echo "📦 Server entry point: dist/server/index-minimal.js"
-echo "📦 Client build: dist/public/"
-echo "✅ Ready for production deployment"
+echo "Checking for environment configuration..."
+if [ ! -f "dist/server/config/env.js" ]; then
+  echo "❌ Environment configuration not found"
+  echo "Contents of dist/server/config:"
+  ls -la dist/server/config || true
+  exit 1
+fi
+echo "✅ Environment configuration exists"
+echo ""
+echo ""
+
+# Build summary
+echo "=========================================="
+echo "✅ BUILD COMPLETE!"
+echo "=========================================="
+echo "Build finished: $(date)"
+echo ""
+echo "📊 Build Summary:"
+echo "  ✅ Client built successfully"
+echo "  ✅ Server built successfully"
+echo "  ✅ Assets copied to dist/public/"
+echo "  ✅ Environment config in place"
+echo ""
+echo "📦 Output structure:"
+ls -la dist/ | head -10 || true
+echo ""
+echo "🚀 Ready for deployment!"
+echo "=========================================="

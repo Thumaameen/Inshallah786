@@ -4,7 +4,7 @@
  */
 
 import { Router, Request, Response } from 'express';
-import { environmentConfig } from '../config/env';
+import { environment } from '../config/env.js';
 import { productionHealthCheck } from '../services/production-health-check.js';
 import { authenticate } from '../middleware/auth.js';
 import { integrationManager } from '../services/integration-manager.js';
@@ -14,7 +14,6 @@ const router = Router();
 
 router.get('/health', async (_req: Request, res: Response) => {
   try {
-    const healthResult = await productionHealthCheck.performFullHealthCheck();
     const integrationStatus = await integrationManager.checkAllIntegrations();
     const integrations = Object.fromEntries(integrationStatus);
 
@@ -26,7 +25,7 @@ router.get('/health', async (_req: Request, res: Response) => {
       status: 'healthy',
       timestamp: new Date().toISOString(),
       version: '2.0.0',
-      environment: environmentConfig.NODE_ENV,
+      environment: environment.NODE_ENV || 'development',
       service: 'DHA Digital Services Platform',
       deployment: 'render-production',
       features: {
@@ -40,16 +39,17 @@ router.get('/health', async (_req: Request, res: Response) => {
         active: apiValidation.activeKeys,
         successRate: `${Math.round((apiValidation.activeKeys / apiValidation.totalKeys) * 100)}%`
       },
-      system: environmentConfig.SYSTEM,
+      system: environment.SYSTEM,
       integrations
     };
 
     res.status(200).json(response);
   } catch (error) {
-    res.status(200).json({
-      status: 'healthy',
+    console.error('Health check failed:', error); // Log the error for debugging
+    res.status(500).json({ // Changed status to 500 for actual errors
+      status: 'unhealthy', // Changed status to unhealthy for errors
       timestamp: new Date().toISOString(),
-      errorDetails: { type: 'Health check error' }
+      errorDetails: { type: 'Health check error', message: String(error) }
     });
   }
 });
@@ -60,10 +60,11 @@ router.get('/health/detailed', authenticate, async (_req: Request, res: Response
     res.json({
       status: healthResult.overallHealth,
       timestamp: new Date().toISOString(),
-      environment: environmentConfig.NODE_ENV,
-      system: environmentConfig.SYSTEM
+      environment: environment.NODE_ENV || 'development',
+      system: environment.SYSTEM
     });
   } catch (error) {
+    console.error('Detailed health check failed:', error);
     res.status(500).json({
       status: 'error',
       timestamp: new Date().toISOString(),
@@ -75,7 +76,6 @@ router.get('/health/detailed', authenticate, async (_req: Request, res: Response
 router.get('/health/readiness', authenticate, async (_req: Request, res: Response) => {
   try {
     const readinessResult = await productionHealthCheck.checkDeploymentReadiness();
-    const integrationStatus = await integrationManager.checkAllIntegrations();
     const isAllIntegrationsActive = integrationManager.isAllIntegrationsActive();
 
     const statusCode = (readinessResult.isReady && isAllIntegrationsActive) ? 200 : 503;
@@ -84,9 +84,10 @@ router.get('/health/readiness', authenticate, async (_req: Request, res: Respons
       ready: readinessResult.isReady && isAllIntegrationsActive,
       readinessScore: readinessResult.readinessScore,
       timestamp: new Date().toISOString(),
-      environment: environmentConfig.NODE_ENV
+      environment: environment.NODE_ENV || 'development'
     });
   } catch (error) {
+    console.error('Readiness check failed:', error);
     res.status(500).json({
       ready: false,
       timestamp: new Date().toISOString(),
@@ -112,6 +113,7 @@ router.get('/health/security', authenticate, async (_req: Request, res: Response
       }
     });
   } catch (error) {
+    console.error('Security check failed:', error);
     res.status(500).json({
       timestamp: new Date().toISOString(),
       error: String(error)

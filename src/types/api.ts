@@ -109,17 +109,3 @@ export interface AuthResponse {
   error?: string;
 }
 
-// Export all types
-export type {
-  APIResponse,
-  BlockchainConfig,
-  TransactionResponse,
-  AIConfig,
-  AIResponse,
-  CloudStorageConfig,
-  FileUploadResponse,
-  AnalyticsResponse,
-  DocumentConfig,
-  DocumentResponse,
-  AuthResponse
-};
