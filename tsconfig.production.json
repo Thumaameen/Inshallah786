@@ -6,7 +6,7 @@
     "outDir": "dist",
     "rootDir": ".",
     "moduleResolution": "bundler",
-    "types": ["node", "pdfkit"],
+    "types": ["node"],
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
