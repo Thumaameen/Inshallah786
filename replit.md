@@ -13,6 +13,29 @@ AI Aesthetic: Dark theme with golden Queen Raeesa theme
 
 ## Recent Changes (November 2025)
 
+### Production Build Optimization (November 7, 2025)
+1. **Fixed Vite Installation Issue**: Resolved critical build failure where Vite was not found
+   - Removed global `NPM_CONFIG_PRODUCTION=true` that blocked devDependencies installation
+   - Scoped production-only install to root dependencies only
+   - Client now properly installs Vite and other build tools from devDependencies
+   
+2. **Massive File Cleanup**: Reduced project size from 935MB+ to 522MB (44% reduction)
+   - Removed 935MB `attached_assets/` directory
+   - Deleted all test files, test directories, and debug components
+   - Removed 15+ documentation files not needed for production
+   - Cleaned up unused deployment scripts and validation tools
+   
+3. **Build Script Optimization**: Improved `render-build-production.sh` for reliability and speed
+   - Switched to `npm ci` for faster, more reliable installs
+   - Removed redundant Vite installation step
+   - Optimized memory settings (removed invalid `--optimize-for-size` flag)
+   - Streamlined build process to reduce memory footprint
+   
+4. **Enhanced .gitignore**: Prevent development clutter in future deployments
+   - Blocks test files, debug directories, and large asset folders
+   - Excludes unnecessary documentation and setup scripts
+   - Keeps repository lean for production deployments
+
 ### Render Deployment Fixes (November 6, 2025)
 1. **Fixed Build Script Errors**: Completely rewrote `render-build-production.sh` to fix:
    - npm ci failures due to missing package-lock.json files

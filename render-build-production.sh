@@ -23,7 +23,6 @@ echo "📌 Setting up environment..."
 export NODE_ENV=production
 export VITE_MODE=production
 export CI=true
-export NPM_CONFIG_PRODUCTION=true
 
 echo "Node version: $(node --version)"
 echo "NPM version: $(npm --version)"
@@ -36,9 +35,9 @@ rm -rf dist client/dist node_modules/.cache client/node_modules/.vite || true
 echo "✅ Cleaned"
 echo ""
 
-# Install root dependencies
+# Install root dependencies (production only)
 echo "📦 Installing root dependencies..."
-npm install --legacy-peer-deps --no-audit
+NPM_CONFIG_PRODUCTION=true npm ci --legacy-peer-deps --no-audit || npm install --legacy-peer-deps --no-audit --production
 echo "✅ Root dependencies installed"
 echo ""
 
@@ -55,16 +54,9 @@ cd client || {
 echo "Current directory: $(pwd)"
 echo ""
 
-echo "📦 Installing client dependencies..."
-npm install --legacy-peer-deps --no-audit
+echo "📦 Installing client dependencies (including dev tools)..."
+npm ci --legacy-peer-deps || npm install --legacy-peer-deps --no-audit
 echo "✅ Client dependencies installed"
-echo ""
-
-echo "📦 Installing build tools..."
-npm install --save-dev vite@latest @vitejs/plugin-react@latest typescript terser --legacy-peer-deps || {
-  echo "⚠️ Warning: Build tools install had issues, but continuing..."
-}
-echo "✅ Build tools ready"
 echo ""
 
 echo "🧹 Clearing Vite cache..."
@@ -75,7 +67,7 @@ echo ""
 echo "🏗️ Building client application..."
 NODE_OPTIONS="--max-old-space-size=2048" npm run build || {
   echo "⚠️ First build attempt failed, trying with reduced memory..."
-  NODE_OPTIONS="--max-old-space-size=1536 --optimize-for-size" npm run build || {
+  NODE_OPTIONS="--max-old-space-size=1536" npm run build || {
     echo "❌ Client build failed"
     exit 1
   }
