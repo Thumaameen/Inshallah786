@@ -132,9 +132,15 @@ TSCONFIG
 fi
 
 echo "🏗️  Compiling TypeScript..."
+echo "Verifying TypeScript installation..."
+if ! command -v npx tsc &> /dev/null; then
+    echo "Installing TypeScript..."
+    npm install typescript@^5.9.3
+fi
+
 npm run build:server || {
   echo "⚠️  Standard build failed, trying with permissive flags..."
-  npx tsc -p tsconfig.production.json --skipLibCheck --noEmitOnError false || {
+  ./node_modules/.bin/tsc -p tsconfig.production.json --skipLibCheck --noEmitOnError false || {
     echo "❌ Server build failed"
     exit 1
   }
