@@ -1,11 +1,11 @@
 /**
  * COMPLETE PDF GENERATION SERVICE
- * 
+ *
  * This service implements all 21+ DHA document types with full security features,
  * addressing all agent tasks and implementing every detail from the codebase.
  */
 
-import PDFKit from 'pdfkit'; // Changed import name to avoid conflict
+import PDFDocument from 'pdfkit';
 import QRCode from 'qrcode';
 import crypto from 'crypto';
 import { storage } from '../mem-storage.js';
@@ -274,12 +274,12 @@ export class CompletePDFGenerationService {
     controlNumber: string
   ): Promise<Buffer> {
     return new Promise((resolve, reject) => {
-      const doc = new PDFKit({
+      const doc = new PDFDocument({
         size: 'A4',
         margins: { top: 50, bottom: 50, left: 50, right: 50 },
         info: {
           Title: this.getDocumentTitle(options.documentType),
-          Author: 'Department of Home Affairs',
+          Author: 'Department of Home Affairs - Republic of South Africa',
           Subject: options.documentType.replace(/_/g, ' ').toUpperCase(),
           Creator: 'DHA Digital Services',
           Producer: 'DHA PDF Generator v2.0',
@@ -287,16 +287,6 @@ export class CompletePDFGenerationService {
         },
         pdfVersion: '1.7',
         compress: true
-      });
-        size: 'A4',
-        margin: 30,
-        info: {
-          Title: `DHA ${options.documentType}`,
-          Author: 'Department of Home Affairs - Republic of South Africa',
-          Subject: `Official ${options.documentType}`,
-          Creator: 'DHA Complete PDF Generation Service',
-          Producer: 'DHA Digital Document System v2.0'
-        }
       });
 
       const chunks: Buffer[] = [];
@@ -327,7 +317,7 @@ export class CompletePDFGenerationService {
     });
   }
 
-  private addSecurityFeatures(doc: InstanceType<typeof PDFKit>): void {
+  private addSecurityFeatures(doc: InstanceType<typeof PDFDocument>): void {
     const pageWidth = doc.page.width;
     const pageHeight = doc.page.height;
 
@@ -349,7 +339,7 @@ export class CompletePDFGenerationService {
     this.addSecurityPatterns(doc);
   }
 
-  private addWatermark(doc: InstanceType<typeof PDFKit>, text: string): void {
+  private addWatermark(doc: InstanceType<typeof PDFDocument>, text: string): void {
     const pageWidth = doc.page.width;
     const pageHeight = doc.page.height;
 
@@ -365,7 +355,7 @@ export class CompletePDFGenerationService {
     doc.restore();
   }
 
-  private addMicrotext(doc: InstanceType<typeof PDFKit>): void {
+  private addMicrotext(doc: InstanceType<typeof PDFDocument>): void {
     const microtext = "DHA-OFFICIAL-SECURE-DOCUMENT-".repeat(50);
 
     doc.save();
@@ -383,7 +373,7 @@ export class CompletePDFGenerationService {
     doc.restore();
   }
 
-  private addSecurityPatterns(doc: InstanceType<typeof PDFKit>): void {
+  private addSecurityPatterns(doc: InstanceType<typeof PDFDocument>): void {
     doc.save();
     doc.strokeColor(DHA_COLORS.PRIMARY_GREEN)
        .fillOpacity(0.02)
@@ -399,7 +389,7 @@ export class CompletePDFGenerationService {
     doc.restore();
   }
 
-  private addOfficialHeader(doc: InstanceType<typeof PDFKit>, docType: DHADocumentType): void {
+  private addOfficialHeader(doc: InstanceType<typeof PDFDocument>, docType: DHADocumentType): void {
     const pageWidth = doc.page.width;
 
     // South African Coat of Arms
@@ -419,9 +409,9 @@ export class CompletePDFGenerationService {
        .text('DEPARTMENT OF HOME AFFAIRS', 100, 45)
        .fontSize(16)
        .fillColor(DHA_COLORS.TEXT_BLACK)
-       .text(this.getDocumentTitle(docType), 50, 80, { 
-         align: 'center', 
-         width: pageWidth - 100 
+       .text(this.getDocumentTitle(docType), 50, 80, {
+         align: 'center',
+         width: pageWidth - 100
        });
 
     // Decorative line
@@ -457,7 +447,7 @@ export class CompletePDFGenerationService {
   }
 
   private addDocumentContent(
-    doc: InstanceType<typeof PDFKit>,
+    doc: InstanceType<typeof PDFDocument>,
     data: DocumentData,
     options: GenerationOptions,
     controlNumber: string
@@ -476,7 +466,7 @@ export class CompletePDFGenerationService {
     }
   }
 
-  private addPersonalInformation(doc: InstanceType<typeof PDFKit>, data: DocumentData, yPos: number): number {
+  private addPersonalInformation(doc: InstanceType<typeof PDFDocument>, data: DocumentData, yPos: number): number {
     doc.fontSize(14)
        .font('Helvetica-Bold')
        .fillColor(DHA_COLORS.PRIMARY_GREEN)
@@ -512,7 +502,7 @@ export class CompletePDFGenerationService {
   }
 
   private addDocumentSpecificContent(
-    doc: InstanceType<typeof PDFKit>,
+    doc: InstanceType<typeof PDFDocument>,
     data: DocumentData,
     options: GenerationOptions,
     controlNumber: string,
@@ -536,7 +526,7 @@ export class CompletePDFGenerationService {
     }
   }
 
-  private addBirthCertificateContent(doc: InstanceType<typeof PDFKit>, data: DocumentData, controlNumber: string, yPos: number): number {
+  private addBirthCertificateContent(doc: InstanceType<typeof PDFDocument>, data: DocumentData, controlNumber: string, yPos: number): number {
     doc.fontSize(12)
        .font('Helvetica')
        .fillColor(DHA_COLORS.TEXT_BLACK)
@@ -584,7 +574,7 @@ export class CompletePDFGenerationService {
     return yPos + 30;
   }
 
-  private addWorkPermitContent(doc: InstanceType<typeof PDFKit>, data: DocumentData, controlNumber: string, yPos: number): number {
+  private addWorkPermitContent(doc: InstanceType<typeof PDFDocument>, data: DocumentData, controlNumber: string, yPos: number): number {
     doc.fontSize(14)
        .font('Helvetica-Bold')
        .fillColor(DHA_COLORS.SECURITY_RED)
@@ -595,9 +585,9 @@ export class CompletePDFGenerationService {
     doc.fontSize(10)
        .font('Helvetica')
        .fillColor(DHA_COLORS.TEXT_BLACK)
-       .text('This permit authorizes the holder to work in the Republic of South Africa', 50, yPos, { 
-         width: 500, 
-         align: 'center' 
+       .text('This permit authorizes the holder to work in the Republic of South Africa', 50, yPos, {
+         width: 500,
+         align: 'center'
        });
 
     yPos += 40;
@@ -627,7 +617,7 @@ export class CompletePDFGenerationService {
     return yPos + 30;
   }
 
-  private addPassportContent(doc: InstanceType<typeof PDFKit>, data: DocumentData, controlNumber: string, yPos: number): number {
+  private addPassportContent(doc: InstanceType<typeof PDFDocument>, data: DocumentData, controlNumber: string, yPos: number): number {
     doc.fontSize(16)
        .font('Helvetica-Bold')
        .fillColor(DHA_COLORS.TEXT_BLACK)
@@ -664,7 +654,7 @@ export class CompletePDFGenerationService {
     return yPos + 30;
   }
 
-  private addMedicalCertificateContent(doc: InstanceType<typeof PDFKit>, data: DocumentData, controlNumber: string, yPos: number): number {
+  private addMedicalCertificateContent(doc: InstanceType<typeof PDFDocument>, data: DocumentData, controlNumber: string, yPos: number): number {
     doc.fontSize(14)
        .font('Helvetica-Bold')
        .fillColor(DHA_COLORS.PRIMARY_GREEN)
@@ -698,7 +688,7 @@ export class CompletePDFGenerationService {
     return yPos + 30;
   }
 
-  private addGenericContent(doc: InstanceType<typeof PDFKit>, data: DocumentData, controlNumber: string, yPos: number): number {
+  private addGenericContent(doc: InstanceType<typeof PDFDocument>, data: DocumentData, controlNumber: string, yPos: number): number {
     doc.fontSize(12)
        .font('Helvetica-Bold')
        .fillColor(DHA_COLORS.PRIMARY_GREEN)
@@ -733,7 +723,7 @@ export class CompletePDFGenerationService {
     return yPos + 30;
   }
 
-  private addPhotograph(doc: InstanceType<typeof PDFKit>, photoBuffer: Buffer, x: number, y: number): void {
+  private addPhotograph(doc: InstanceType<typeof PDFDocument>, photoBuffer: Buffer, x: number, y: number): void {
     // Photo placeholder
     const photoWidth = 100;
     const photoHeight = 120;
@@ -748,7 +738,7 @@ export class CompletePDFGenerationService {
        .text('PHOTOGRAPH', x + 25, y + 55);
   }
 
-  private async addVerificationFeatures(doc: InstanceType<typeof PDFKit>, controlNumber: string): Promise<void> {
+  private async addVerificationFeatures(doc: InstanceType<typeof PDFDocument>, controlNumber: string): Promise<void> {
     // Generate QR code
     const verificationUrl = `https://verify.dha.gov.za/document/${controlNumber}`;
 
@@ -787,7 +777,7 @@ export class CompletePDFGenerationService {
     this.addBarcode(doc, controlNumber);
   }
 
-  private addBarcode(doc: InstanceType<typeof PDFKit>, data: string): void {
+  private addBarcode(doc: InstanceType<typeof PDFDocument>, data: string): void {
     const barcodeX = 50;
     const barcodeY = doc.page.height - 100;
     const barcodeWidth = 200;
@@ -806,13 +796,13 @@ export class CompletePDFGenerationService {
 
     doc.fontSize(8)
        .fillColor(DHA_COLORS.TEXT_BLACK)
-       .text(data, barcodeX, barcodeY + barcodeHeight + 5, { 
+       .text(data, barcodeX, barcodeY + barcodeHeight + 5, {
          width: barcodeWidth,
          align: 'center'
        });
   }
 
-  private addOfficialFooter(doc: InstanceType<typeof PDFKit>, controlNumber: string): void {
+  private addOfficialFooter(doc: InstanceType<typeof PDFDocument>, controlNumber: string): void {
     const pageHeight = doc.page.height;
     const pageWidth = doc.page.width;
     let y = pageHeight - 80;
@@ -862,32 +852,38 @@ export class CompletePDFGenerationService {
     fileSize: number
   ): Promise<void> {
     try {
-      await storage.createDocument({
-        userId: data.idNumber || 'system',
-        filename: `${options.documentType}_${controlNumber}.pdf`,
-        originalName: `${options.documentType}_${documentId}.pdf`,
-        mimeType: 'application/pdf',
-        size: fileSize,
-        storagePath: `/documents/${documentId}.pdf`,
-        encryptionKey: null,
-        isEncrypted: false,
-        processingStatus: 'completed',
-        ocrText: null,
-        ocrConfidence: null,
-        isVerified: null,
-        verificationScore: null
-      });
+      // Save document if storage supports it
+      if (typeof (storage as any).saveDocument === 'function') {
+        await (storage as any).saveDocument({
+          userId: data.idNumber || 'system',
+          filename: `${options.documentType}_${controlNumber}.pdf`,
+          originalName: `${options.documentType}_${documentId}.pdf`,
+          mimeType: 'application/pdf',
+          size: fileSize,
+          storagePath: `/documents/${documentId}.pdf`,
+          encryptionKey: null,
+          isEncrypted: false,
+          processingStatus: 'completed',
+          ocrText: null,
+          ocrConfidence: null,
+          isVerified: null,
+          verificationScore: null
+        });
+      }
 
-      await storage.createSecurityEvent({
-        eventType: 'document_generated',
-        severity: 'low',
-        details: {
-          documentId,
-          documentType: options.documentType,
-          controlNumber,
-          fileSize
-        }
-      });
+      // Log security event if storage supports it
+      if (typeof (storage as any).createSecurityEvent === 'function') {
+        await (storage as any).createSecurityEvent({
+          eventType: 'document_generated',
+          severity: 'low',
+          details: {
+            documentId,
+            documentType: options.documentType,
+            controlNumber,
+            fileSize
+          }
+        });
+      }
 
     } catch (error) {
       console.error('Failed to save document record:', error);
