@@ -4,10 +4,14 @@
  */
 
 import { Router, Request, Response } from 'express';
-import { ENV } from '../config/env';
 import { productionHealthCheck } from '../services/production-health-check.js';
 import { authenticate } from '../middleware/auth.js';
 import { integrationManager } from '../services/integration-manager.js';
+
+// Environment configuration
+const ENV = {
+  NODE_ENV: process.env.NODE_ENV || 'production'
+};
 
 // Type definitions
 interface HealthResponse {

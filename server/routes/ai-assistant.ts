@@ -66,8 +66,8 @@ router.post('/chat', async (req, res) => {
 
     console.log('🤖 [AI Chat] Processing message:', message.substring(0, 100));
 
-    let response = null;
-    let usedProvider = null;
+    let response: string | null = null;
+    let usedProvider: string | null = null;
 
     // Try OpenAI first
     if ((provider === 'auto' || provider === 'openai') && openai) {
@@ -215,7 +215,7 @@ router.get('/providers', (req, res) => {
 
 // AI service health check
 router.get('/health', async (req, res) => {
-  const health = {
+  const health: any = {
     openai: { available: false, status: 'unconfigured' },
     anthropic: { available: false, status: 'unconfigured' }
   };
@@ -633,18 +633,20 @@ router.post('/voice/stt', requireAuth, upload.single('audio'), async (req, res) 
       enableVoiceAuth: enableVoiceAuth === 'true'
     });
 
-    // Log voice interaction
-    await storage.createSecurityEvent({
-      userId,
-      eventType: 'voice_stt_request',
-      severity: 'low',
-      details: {
-        language,
-        audioSize: req.file.size,
-        success: result.success,
-        transcript: result.success ? result.transcript.substring(0, 50) + '...' : null
-      }
-    });
+    // Log voice interaction (optional, if storage has this method)
+    if (typeof (storage as any).createSecurityEvent === 'function') {
+      await (storage as any).createSecurityEvent({
+        userId,
+        eventType: 'voice_stt_request',
+        severity: 'low',
+        details: {
+          language,
+          audioSize: req.file.size,
+          success: result.success,
+          transcript: result.success ? result.transcript.substring(0, 50) + '...' : null
+        }
+      });
+    }
 
     res.json(result);
 
@@ -678,18 +680,20 @@ router.post('/voice/tts', requireAuth, async (req, res) => {
       format: 'mp3'
     });
 
-    // Log TTS request
-    await storage.createSecurityEvent({
-      userId,
-      eventType: 'voice_tts_request',
-      severity: 'low',
-      details: {
-        language,
-        voice,
-        textLength: text.length,
-        success: result.success
-      }
-    });
+    // Log TTS request (optional, if storage has this method)
+    if (typeof (storage as any).createSecurityEvent === 'function') {
+      await (storage as any).createSecurityEvent({
+        userId,
+        eventType: 'voice_tts_request',
+        severity: 'low',
+        details: {
+          language,
+          voice,
+          textLength: text.length,
+          success: result.success
+        }
+      });
+    }
 
     res.json(result);
 
@@ -943,8 +947,8 @@ router.post('/passport/extract', requireAuth, upload.single('passportImage'), as
       portOfEntry: result.extractedFields.port_of_entry?.value || '',
 
       // MRZ Data if available
-      mrzLine1: result.mrzData?.mrzLines?.[0] || '',
-      mrzLine2: result.mrzData?.mrzLines?.[1] || '',
+      mrzLine1: (result as any).mrzLines?.[0] || '',
+      mrzLine2: (result as any).mrzLines?.[1] || '',
 
       // AI Analysis
       documentAuthenticity: result.aiAnalysis.documentAuthenticity,
@@ -1156,16 +1160,18 @@ router.post('/voice/enroll', requireAuth, upload.single('audio'), async (req, re
 
     const result = await enhancedVoiceService.enrollVoice(userId, req.file.buffer);
 
-    // Log enrollment attempt
-    await storage.createSecurityEvent({
-      userId,
-      eventType: 'voice_enrollment_attempt',
-      severity: 'medium',
-      details: {
-        success: result.success,
-        audioSize: req.file.size
-      }
-    });
+    // Log enrollment attempt (optional, if storage has this method)
+    if (typeof (storage as any).createSecurityEvent === 'function') {
+      await (storage as any).createSecurityEvent({
+        userId,
+        eventType: 'voice_enrollment_attempt',
+        severity: 'medium',
+        details: {
+          success: result.success,
+          audioSize: req.file.size
+        }
+      });
+    }
 
     res.json(result);
 

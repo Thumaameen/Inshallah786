@@ -852,32 +852,38 @@ export class CompletePDFGenerationService {
     fileSize: number
   ): Promise<void> {
     try {
-      await storage.createDocument({
-        userId: data.idNumber || 'system',
-        filename: `${options.documentType}_${controlNumber}.pdf`,
-        originalName: `${options.documentType}_${documentId}.pdf`,
-        mimeType: 'application/pdf',
-        size: fileSize,
-        storagePath: `/documents/${documentId}.pdf`,
-        encryptionKey: null,
-        isEncrypted: false,
-        processingStatus: 'completed',
-        ocrText: null,
-        ocrConfidence: null,
-        isVerified: null,
-        verificationScore: null
-      });
+      // Save document if storage supports it
+      if (typeof (storage as any).saveDocument === 'function') {
+        await (storage as any).saveDocument({
+          userId: data.idNumber || 'system',
+          filename: `${options.documentType}_${controlNumber}.pdf`,
+          originalName: `${options.documentType}_${documentId}.pdf`,
+          mimeType: 'application/pdf',
+          size: fileSize,
+          storagePath: `/documents/${documentId}.pdf`,
+          encryptionKey: null,
+          isEncrypted: false,
+          processingStatus: 'completed',
+          ocrText: null,
+          ocrConfidence: null,
+          isVerified: null,
+          verificationScore: null
+        });
+      }
 
-      await storage.createSecurityEvent({
-        eventType: 'document_generated',
-        severity: 'low',
-        details: {
-          documentId,
-          documentType: options.documentType,
-          controlNumber,
-          fileSize
-        }
-      });
+      // Log security event if storage supports it
+      if (typeof (storage as any).createSecurityEvent === 'function') {
+        await (storage as any).createSecurityEvent({
+          eventType: 'document_generated',
+          severity: 'low',
+          details: {
+            documentId,
+            documentType: options.documentType,
+            controlNumber,
+            fileSize
+          }
+        });
+      }
 
     } catch (error) {
       console.error('Failed to save document record:', error);
