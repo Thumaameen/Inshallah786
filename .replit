@@ -26,6 +26,24 @@ waitForPort = 5000
 [workflows.workflow.metadata]
 outputType = "webview"
 
+[[workflows.workflow]]
+name = "Deployment Test"
+author = 49482864
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "bash scripts/pre-deploy-test.sh"
+
+[[workflows.workflow]]
+name = "Validate Blueprint"
+author = 49482864
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "bash scripts/validate-render-blueprint.sh"
+
 [[ports]]
 localPort = 5000
 externalPort = 80
