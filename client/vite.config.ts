@@ -89,9 +89,9 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
       allowedHosts: true,
       proxy: {
         '/api': {
-          target: env.VITE_API_URL || 'https://ultra-queen-ai-raeesa.onrender.com',
+          target: env.VITE_API_URL || 'http://localhost:8000',
           changeOrigin: true,
-          secure: true,
+          secure: false,
           rewrite: (path: string) => path.replace(/^\/api/, '')
         }
       }
