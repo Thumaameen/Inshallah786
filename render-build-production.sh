@@ -23,10 +23,21 @@ echo "📌 Setting up environment..."
 export NODE_ENV=production
 export VITE_MODE=production
 export CI=true
+export NODE_VERSION=20.19.0
 export NODE_OPTIONS=--max-old-space-size=4096
+export NPM_VERSION=10.5.0
+
+# Verify versions
+if ! command -v node &> /dev/null; then
+    echo "Node.js is not installed"
+    exit 1
+fi
+
+# Install correct npm version
+npm install -g npm@10.5.0
 
 # Install types
-npm install --save-dev @types/node @types/express @types/cors @types/compression @types/helmet
+npm install --save-dev @types/node@types @types/express @types/cors @types/compression @types/helmet
 
 echo "Node version: $(node --version)"
 echo "NPM version: $(npm --version)"

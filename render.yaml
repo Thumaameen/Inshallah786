@@ -5,22 +5,14 @@ services:
     env: node
     plan: starter
     region: frankfurt
-    buildCommand: |
-      export NODE_VERSION=20.19.5
-      export NODE_ENV=production
-      export VITE_MODE=production
-      npm install --production=false
-      cd client && npm install --production=false && npm run build -- --mode production
-      cd ..
-      npm run build:server
-      npm run copy:client
+    buildCommand: bash render-build-production.sh
     startCommand: node dist/server/index-minimal.js
     healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
         value: production
       - key: NODE_VERSION
-        value: 20.19.5
+        value: 20.19.0
       - key: PORT
         value: 10000
       - key: SESSION_SECRET
