@@ -5,14 +5,32 @@ services:
     env: node
     plan: starter
     region: frankfurt
-    buildCommand: bash render-build-production.sh
+    buildCommand: |
+      chmod +x scripts/pre-deploy-validate.sh
+      ./scripts/pre-deploy-validate.sh
+      bash render-build-production.sh
     startCommand: node dist/server/index-minimal.js
     healthCheckPath: /api/health
+    buildFilter:
+      paths:
+        - server/**/*.ts
+        - client/**/*
+        - shared/**/*
+        - package.json
+        - tsconfig*.json
+        - render*.sh
+    autoDeploy: false
+    disk:
+      name: temp-uploads
+      mountPath: /tmp
+      sizeGB: 1
     envVars:
       - key: NODE_ENV
         value: production
       - key: NODE_VERSION
         value: 20.19.0
+      - key: NPM_VERSION
+        value: 10.5.0
       - key: PORT
         value: 10000
       - key: SESSION_SECRET
