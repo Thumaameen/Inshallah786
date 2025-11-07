@@ -1,4 +1,3 @@
-
 /**
  * Comprehensive API Health Check
  * Tests all API connections to ensure they work on Render
@@ -7,6 +6,7 @@
 import { Router } from 'express';
 import OpenAI from 'openai';
 import { Anthropic } from '@anthropic-ai/sdk';
+import { environment } from '../config/environment.js';
 
 const router = Router();
 
@@ -19,9 +19,9 @@ router.get('/api/health/full', async (req, res) => {
   };
 
   // Test OpenAI
-  if (process.env.OPENAI_API_KEY) {
+  if (environment.OPENAI_API_KEY) {
     try {
-      const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+      const openai = new OpenAI({ apiKey: environment.OPENAI_API_KEY });
       await openai.models.list();
       results.tests.openai = { status: '✅', message: 'Connected' };
     } catch (error) {
@@ -32,9 +32,9 @@ router.get('/api/health/full', async (req, res) => {
   }
 
   // Test Anthropic
-  if (process.env.ANTHROPIC_API_KEY) {
+  if (environment.ANTHROPIC_API_KEY) {
     try {
-      const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+      const anthropic = new Anthropic({ apiKey: environment.ANTHROPIC_API_KEY });
       await anthropic.messages.create({
         model: 'claude-3-haiku-20240307',
         max_tokens: 1,
@@ -49,7 +49,7 @@ router.get('/api/health/full', async (req, res) => {
   }
 
   // Test Database
-  if (process.env.DATABASE_URL) {
+  if (environment.DATABASE_URL) {
     results.tests.database = { status: '✅', message: 'URL configured' };
   } else {
     results.tests.database = { status: '❌', message: 'Not configured' };

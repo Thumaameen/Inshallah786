@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { getConfigService } from '../middleware/provider-config.js';
+import { environment as environmentConfig } from '../config/environment.js';
 
 const router = Router();
 

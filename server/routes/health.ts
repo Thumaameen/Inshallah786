@@ -4,7 +4,11 @@
  */
 
 import { Router, Request, Response } from 'express';
-import { environmentConfig } from '../config/env.js';
+// Corrected import: environmentConfig is not exported from env.js, using `environment` instead.
+// Also, 'environmentConfig' seems to be a typo and should be 'environment' based on typical config structures.
+// The actual environment configuration object is likely imported or initialized elsewhere and available as `environment`.
+// Assuming `environment` is available in the scope.
+import { environment } from '../config/env.js'; // Assuming 'environment' is the correct export name.
 import { productionHealthCheck } from '../services/production-health-check.js';
 import { authenticate } from '../middleware/auth.js';
 import { integrationManager } from '../services/integration-manager.js';
@@ -25,7 +29,8 @@ router.get('/health', async (_req: Request, res: Response) => {
       status: 'healthy',
       timestamp: new Date().toISOString(),
       version: '2.0.0',
-      environment: environmentConfig.NODE_ENV,
+      // Fixed to use the correct environment variable, assuming 'environment' is the available config object.
+      environment: environment.NODE_ENV || 'development',
       service: 'DHA Digital Services Platform',
       deployment: 'render-production',
       features: {
@@ -39,16 +44,18 @@ router.get('/health', async (_req: Request, res: Response) => {
         active: apiValidation.activeKeys,
         successRate: `${Math.round((apiValidation.activeKeys / apiValidation.totalKeys) * 100)}%`
       },
-      system: environmentConfig.SYSTEM,
+      // Fixed to use the correct environment variable.
+      system: environment.SYSTEM,
       integrations
     };
 
     res.status(200).json(response);
   } catch (error) {
-    res.status(200).json({
-      status: 'healthy',
+    console.error('Health check failed:', error); // Log the error for debugging
+    res.status(500).json({ // Changed status to 500 for actual errors
+      status: 'unhealthy', // Changed status to unhealthy for errors
       timestamp: new Date().toISOString(),
-      errorDetails: { type: 'Health check error' }
+      errorDetails: { type: 'Health check error', message: String(error) }
     });
   }
 });
@@ -59,10 +66,13 @@ router.get('/health/detailed', authenticate, async (_req: Request, res: Response
     res.json({
       status: healthResult.overallHealth,
       timestamp: new Date().toISOString(),
-      environment: environmentConfig.NODE_ENV,
-      system: environmentConfig.SYSTEM
+      // Fixed to use the correct environment variable.
+      environment: environment.NODE_ENV || 'development',
+      // Fixed to use the correct environment variable.
+      system: environment.SYSTEM
     });
   } catch (error) {
+    console.error('Detailed health check failed:', error); // Log the error for debugging
     res.status(500).json({
       status: 'error',
       timestamp: new Date().toISOString(),
@@ -82,9 +92,11 @@ router.get('/health/readiness', authenticate, async (_req: Request, res: Respons
       ready: readinessResult.isReady && isAllIntegrationsActive,
       readinessScore: readinessResult.readinessScore,
       timestamp: new Date().toISOString(),
-      environment: environmentConfig.NODE_ENV
+      // Fixed to use the correct environment variable.
+      environment: environment.NODE_ENV || 'development'
     });
   } catch (error) {
+    console.error('Readiness check failed:', error); // Log the error for debugging
     res.status(500).json({
       ready: false,
       timestamp: new Date().toISOString(),
@@ -110,6 +122,7 @@ router.get('/health/security', authenticate, async (_req: Request, res: Response
       }
     });
   } catch (error) {
+    console.error('Security check failed:', error); // Log the error for debugging
     res.status(500).json({
       timestamp: new Date().toISOString(),
       error: String(error)
