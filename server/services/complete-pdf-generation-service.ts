@@ -279,7 +279,7 @@ export class CompletePDFGenerationService {
         margins: { top: 50, bottom: 50, left: 50, right: 50 },
         info: {
           Title: this.getDocumentTitle(options.documentType),
-          Author: 'Department of Home Affairs',
+          Author: 'Department of Home Affairs - Republic of South Africa',
           Subject: options.documentType.replace(/_/g, ' ').toUpperCase(),
           Creator: 'DHA Digital Services',
           Producer: 'DHA PDF Generator v2.0',
@@ -287,16 +287,6 @@ export class CompletePDFGenerationService {
         },
         pdfVersion: '1.7',
         compress: true
-      });
-        size: 'A4',
-        margin: 30,
-        info: {
-          Title: `DHA ${options.documentType}`,
-          Author: 'Department of Home Affairs - Republic of South Africa',
-          Subject: `Official ${options.documentType}`,
-          Creator: 'DHA Complete PDF Generation Service',
-          Producer: 'DHA Digital Document System v2.0'
-        }
       });
 
       const chunks: Buffer[] = [];

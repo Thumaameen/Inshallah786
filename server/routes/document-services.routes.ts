@@ -1,7 +1,5 @@
 import express, { Request, Response } from 'express';
-import { UltraPDFEditorService } from 
-mkdir -p server/services/biometric && touch server/services/biometric/biometric.service.ts
-;
+import { UltraPDFEditorService } from '../services/pdf/ultra-pdf-editor.service';
 import { GlobalDocumentVerificationService } from '../services/document/global-document-verification.service';
 import { BlockchainService } from '../services/blockchain/blockchain.service';
 import { BiometricService } from '../services/biometric/biometric.service';

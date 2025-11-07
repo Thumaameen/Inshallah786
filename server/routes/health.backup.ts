@@ -35,25 +35,6 @@ interface HealthResponse {
   integrations: Record<string, unknown>;
 }
 
-// Type definitions for health check responses
-  NODE_ENV: process.env.NODE_ENV || 'production',
-  START_TIME: Date.now(),
-  API_KEYS: {
-    OPENAI: process.env.OPENAI_API_KEY,
-    ANTHROPIC: process.env.ANTHROPIC_API_KEY,
-    GOOGLE: process.env.GOOGLE_API_KEY,
-    ABIS: process.env.DHA_ABIS_API_KEY,
-    SAPS: process.env.SAPS_API_KEY,
-    DHA: process.env.DHA_API_KEY,
-    NPR: process.env.DHA_NPR_API_KEY,
-    ICAO: process.env.ICAO_PKD_KEY
-  }
-};
-import { productionHealthCheck } from '../services/production-health-check.js';
-import { authenticate } from '../middleware/auth.js';
-import { integrationManager } from '../services/integration-manager.js';
-import { cpuUsage, memoryUsage, version, uptime, platform, arch } from 'process';
-
 const router = Router();
 
 /**

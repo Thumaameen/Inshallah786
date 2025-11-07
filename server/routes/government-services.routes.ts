@@ -41,6 +41,7 @@ interface BackgroundCheckResult {
         details?: string;
         reportId: string;
     };
+}
 
 // ABIS Routes
 router.post('/abis/verify', async (req: { body: { biometricData: any; }; }, res: { json: (arg0: any) => void; status: (arg0: number) => { (): any; new(): any; json: { (arg0: { error: any; }): void; new(): any; }; }; }) => {

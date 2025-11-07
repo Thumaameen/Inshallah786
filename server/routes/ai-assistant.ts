@@ -990,7 +990,7 @@ router.post('/passport/extract', requireAuth, upload.single('passportImage'), as
         
         // Physical characteristics
         height: result.extractedFields.height?.value || '',
-        eyeColor: result.extractedFields.eye_color?.value || ''_color?.value || '',
+        eyeColor: result.extractedFields.eye_color?.value || '',
 
         // Work permit specific fields
         employeeFullName: passportData.fullName,
