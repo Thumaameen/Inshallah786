@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events';
 import { storage } from '../storage.js';
 import { auditTrailService } from './audit-trail-service.js';
-import { type InsertAuditLog, type InsertSystemMetric } from '../shared/schema';
+import { type InsertAuditLog, type InsertSystemMetric } from '../shared/schema.js';
 import { promisify } from 'util';
 
 export interface ServiceNode {

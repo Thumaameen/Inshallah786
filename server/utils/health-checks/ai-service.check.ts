@@ -1,17 +1,17 @@
-import { ServiceCheck, HealthStatus } from '../../types/health.types';
-import { Claude } from 'anthropic';
+import { ServiceCheck, HealthStatus } from '../../types/health.types.js';
+import { Anthropic } from '@anthropic-ai/sdk';
 import OpenAI from 'openai';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export class AIServiceCheck implements ServiceCheck {
-    private claude: Claude;
+    private claude: Anthropic;
     private openai: OpenAI;
     private gemini: GoogleGenerativeAI;
 
     constructor() {
         // Initialize with API keys if available
         if (process.env.ANTHROPIC_API_KEY) {
-            this.claude = new Claude({ apiKey: process.env.ANTHROPIC_API_KEY });
+            this.claude = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
         }
         if (process.env.OPENAI_API_KEY) {
             this.openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });

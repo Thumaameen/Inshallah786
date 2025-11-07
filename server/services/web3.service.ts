@@ -1,6 +1,6 @@
 import { Web3 } from 'web3';
 import { Connection } from '@solana/web3.js';
-import { apiConfig } from '../../config/production-api.config';
+import { apiConfig } from '../../config/production-api.config.js';
 
 export class Web3Service {
   private polygonWeb3: Web3;
