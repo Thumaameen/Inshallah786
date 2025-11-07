@@ -10,7 +10,7 @@
  * - Streaming responses for better UX
  */
 
-import express from 'express';
+import express, { type Request, type Response, type Router } from 'express';
 import multer from 'multer';
 import { Anthropic } from '@anthropic-ai/sdk';
 import { AIAssistantService } from '../services/ai-assistant.js';
@@ -28,10 +28,9 @@ import { aiRateLimit } from '../middleware/enhanced-rate-limit.js';
 import { productionConfig as config } from '../config/production.js';
 
 // *** START EDITED CODE ***
-import { Router } from 'express';
 import OpenAI from 'openai';
 
-const router = express.Router();
+const router: Router = express.Router();
 const aiAssistant = new AIAssistantService();
 const militaryGradeAI = new MilitaryGradeAIAssistant();
 
@@ -53,7 +52,7 @@ console.log('🔑 [AI Assistant] API Keys Status:', {
 });
 
 // Real AI chat endpoint - PRODUCTION READY with fallback
-router.post('/chat', async (req, res) => {
+router.post('/chat', async (req: Request, res: Response) => {
   try {
     const { message, provider = 'auto', conversationHistory = [] } = req.body;
 
@@ -150,7 +149,7 @@ I can assist with:
 Please try rephrasing your question, or I can provide general guidance on DHA services.
 
 Note: AI providers are currently limited. For immediate assistance, contact DHA support.`;
-      
+
       usedProvider = 'fallback';
     }
 
@@ -165,7 +164,7 @@ Note: AI providers are currently limited. For immediate assistance, contact DHA 
 
   } catch (error: any) {
     console.error('AI Assistant error:', error);
-    
+
     // Even if everything fails, provide helpful fallback
     res.json({
       success: true,
@@ -188,7 +187,7 @@ Please try your question again, or navigate to the Documents section to generate
 });
 
 // Get available AI providers
-router.get('/providers', (req, res) => {
+router.get('/providers', (req: Request, res: Response) => {
   const providers = {
     openai: {
       available: !!openai,
@@ -214,7 +213,7 @@ router.get('/providers', (req, res) => {
 });
 
 // AI service health check
-router.get('/health', async (req, res) => {
+router.get('/health', async (req: Request, res: Response) => {
   const health: any = {
     openai: { available: false, status: 'unconfigured' },
     anthropic: { available: false, status: 'unconfigured' }
@@ -256,10 +255,10 @@ router.get('/health', async (req, res) => {
 });
 
 // Fallback chat endpoint for when AI fails
-router.post('/chat/fallback', async (req, res) => {
+router.post('/chat/fallback', async (req: Request, res: Response) => {
   try {
     const { message } = req.body;
-    
+
     // Return helpful fallback response
     res.json({
       success: true,
@@ -280,7 +279,7 @@ router.post('/chat/fallback', async (req, res) => {
 
 // Configure multer for audio and document uploads
 const upload = multer({
-  storage: multer.memoryStorage(),
+  storage:multer.memoryStorage(),
   limits: {
     fileSize: 50 * 1024 * 1024, // 50MB limit
     files: 5
@@ -314,7 +313,7 @@ const upload = multer({
 /**
  * AI Model Health Check Endpoint - Tests real Anthropic connectivity
  */
-router.get('/health', aiRateLimit, asyncHandler(async (req, res) => {
+router.get('/health', aiRateLimit, asyncHandler(async (req: Request, res: Response) => {
   try {
     // Test actual Anthropic API connectivity with minimal request
     const anthropic = new Anthropic({
@@ -355,7 +354,7 @@ router.get('/health', aiRateLimit, asyncHandler(async (req, res) => {
 /**
  * ADMIN-ONLY AI Chat Endpoint with Military-Grade Security
  */
-router.post('/admin/chat', requireAuth, requireRole(['admin']), aiRateLimit, asyncHandler(async (req, res) => {
+router.post('/admin/chat', requireAuth, requireRole(['admin']), aiRateLimit, asyncHandler(async (req: Request, res: Response) => {
   try {
     const { message, conversationId } = req.body;
     const userId = (req as any).user.id;
@@ -404,7 +403,7 @@ router.post('/admin/chat', requireAuth, requireRole(['admin']), aiRateLimit, asy
 /**
  * Regular AI Chat Endpoint (with consent checking and POPIA compliance)
  */
-router.post('/chat', requireAuth, aiRateLimit, asyncHandler(async (req, res) => {
+router.post('/chat', requireAuth, aiRateLimit, asyncHandler(async (req: Request, res: Response) => {
   try {
     const { message, conversationId, includeContext = true, language = 'en' } = req.body;
     const userId = (req as any).user.id;
@@ -454,7 +453,7 @@ router.post('/chat', requireAuth, aiRateLimit, asyncHandler(async (req, res) => 
 /**
  * Military-Grade AI Endpoint (admin-only compatibility route)
  */
-router.post('/military', requireAuth, requireRole(['admin']), aiRateLimit, asyncHandler(async (req, res) => {
+router.post('/military', requireAuth, requireRole(['admin']), aiRateLimit, asyncHandler(async (req: Request, res: Response) => {
   try {
     const { message, conversationId } = req.body;
     const userId = (req as any).user.id;
@@ -616,7 +615,7 @@ router.post('/military', requireAuth, requireRole(['admin']), aiRateLimit, async
 /**
  * POST /api/ai/voice/stt - Speech to Text
  */
-router.post('/voice/stt', requireAuth, upload.single('audio'), async (req, res) => {
+router.post('/voice/stt', requireAuth, upload.single('audio'), async (req: Request, res: Response) => {
   try {
     const { language = 'en', enableVoiceAuth = false } = req.body;
     const userId = (req as any).user.id;
@@ -662,7 +661,7 @@ router.post('/voice/stt', requireAuth, upload.single('audio'), async (req, res) 
 /**
  * POST /api/ai/voice/tts - Text to Speech
  */
-router.post('/voice/tts', requireAuth, async (req, res) => {
+router.post('/voice/tts', requireAuth, async (req: Request, res: Response) => {
   try {
     const { text, language = 'en', voice = 'female' } = req.body;
     const userId = (req as any).user.id;
@@ -709,7 +708,7 @@ router.post('/voice/tts', requireAuth, async (req, res) => {
 /**
  * POST /api/ai/voice/streaming/start - Start streaming STT session
  */
-router.post('/voice/streaming/start', requireAuth, async (req, res) => {
+router.post('/voice/streaming/start', requireAuth, async (req: Request, res: Response) => {
   try {
     const { language = 'en', enableVoiceAuth = false } = req.body;
     const userId = (req as any).user.id;
@@ -738,7 +737,7 @@ router.post('/voice/streaming/start', requireAuth, async (req, res) => {
 /**
  * POST /api/ai/voice/streaming/chunk - Process streaming audio chunk
  */
-router.post('/voice/streaming/chunk', requireAuth, upload.single('audioChunk'), async (req, res) => {
+router.post('/voice/streaming/chunk', requireAuth, upload.single('audioChunk'), async (req: Request, res: Response) => {
   try {
     const { streamId } = req.body;
 
@@ -767,7 +766,7 @@ router.post('/voice/streaming/chunk', requireAuth, upload.single('audioChunk'), 
 /**
  * POST /api/ai/voice/streaming/stop - Stop streaming STT session
  */
-router.post('/voice/streaming/stop', requireAuth, async (req, res) => {
+router.post('/voice/streaming/stop', requireAuth, async (req: Request, res: Response) => {
   try {
     const { streamId } = req.body;
 
@@ -793,7 +792,7 @@ router.post('/voice/streaming/stop', requireAuth, async (req, res) => {
 /**
  * POST /api/ai/document/process - Enhanced document processing with OCR
  */
-router.post('/document/process', requireAuth, upload.single('document'), async (req, res) => {
+router.post('/document/process', requireAuth, upload.single('document'), async (req: Request, res: Response) => {
   try {
     const { documentType, language = 'en', enableAutofill = true } = req.body;
     const userId = (req as any).user.id;
@@ -875,7 +874,7 @@ router.post('/document/process', requireAuth, upload.single('document'), async (
 /**
  * POST /api/ai/passport/extract - Extract data from passport/visa images for auto-fill
  */
-router.post('/passport/extract', requireAuth, upload.single('passportImage'), async (req, res) => {
+router.post('/passport/extract', requireAuth, upload.single('passportImage'), async (req: Request, res: Response) => {
   try {
     const { targetFormType = 'passport_application', enableAutoFill = true } = req.body;
     const userId = (req as any).user.id;
@@ -978,20 +977,20 @@ router.post('/passport/extract', requireAuth, upload.single('passportImage'), as
         nationality: passportData.nationality || 'South African',
         sex: passportData.sex || 'M',
         gender: passportData.sex || 'M',
-        
+
         // Document numbers
         passportNumber: passportData.passportNumber,
         documentNumber: passportData.documentNumber || passportData.passportNumber,
         controlNumber: passportData.controlNumber,
         referenceNumber: passportData.referenceNumber,
-        
+
         // Validity dates
         expiryDate: passportData.dateOfExpiry,
         dateOfExpiry: passportData.dateOfExpiry,
         dateOfIssue: passportData.dateOfIssue || new Date().toISOString().split('T')[0],
         validFrom: passportData.validFrom || new Date().toISOString().split('T')[0],
         validUntil: passportData.validUntil || passportData.dateOfExpiry,
-        
+
         // Physical characteristics
         height: result.extractedFields.height?.value || '',
         eyeColor: result.extractedFields.eye_color?.value || '',
@@ -1004,7 +1003,7 @@ router.post('/passport/extract', requireAuth, upload.single('passportImage'), as
         jobTitle: passportData.jobTitle || result.extractedFields.job_title?.value || '',
         workLocation: passportData.workLocation || result.extractedFields.work_location?.value || 'South Africa',
         occupation: result.extractedFields.occupation?.value || passportData.jobTitle || '',
-        
+
         // Birth certificate fields
         motherFullName: result.extractedFields.mother_name?.value || '',
         motherIdNumber: result.extractedFields.mother_id?.value || '',
@@ -1018,22 +1017,22 @@ router.post('/passport/extract', requireAuth, upload.single('passportImage'), as
         phoneNumber: result.extractedFields.phone?.value || result.extractedFields.contact_number?.value || '',
         emailAddress: result.extractedFields.email?.value || '',
         idNumber: result.extractedFields.id_number?.value || '',
-        
+
         // Issuing authority
         issuingAuthority: passportData.issuingAuthority || 'Department of Home Affairs',
         portOfEntry: passportData.portOfEntry || result.extractedFields.port_of_entry?.value || '',
-        
+
         // MRZ data for verification
         mrzLine1: passportData.mrzLine1,
         mrzLine2: passportData.mrzLine2,
-        
+
         // Marital status
         maritalStatus: result.extractedFields.marital_status?.value || '',
-        
+
         // Spouse details if applicable
         spouseFullName: result.extractedFields.spouse_name?.value || '',
         spouseNationality: result.extractedFields.spouse_nationality?.value || '',
-        
+
         // Document metadata for generation
         documentType: targetFormType,
         extractedFromPassport: true,
@@ -1067,7 +1066,7 @@ router.post('/passport/extract', requireAuth, upload.single('passportImage'), as
 /**
  * POST /api/ai/validate - Real-time form validation
  */
-router.post('/validate', requireAuth, async (req, res) => {
+router.post('/validate', requireAuth, async (req: Request, res: Response) => {
   try {
     const { documentType, fieldName, fieldValue, formData } = req.body;
     const userId = (req as any).user.id;
@@ -1102,7 +1101,7 @@ router.post('/validate', requireAuth, async (req, res) => {
 /**
  * GET /api/ai/languages - Get supported languages with capabilities
  */
-router.get('/languages', (req, res) => {
+router.get('/languages', (req: Request, res: Response) => {
   try {
     const voiceLanguages = enhancedVoiceService.getSupportedLanguages();
     // Get supported languages from the service
@@ -1147,7 +1146,7 @@ router.get('/languages', (req, res) => {
 /**
  * POST /api/ai/voice/enroll - Enroll user voice for authentication
  */
-router.post('/voice/enroll', requireAuth, upload.single('audio'), async (req, res) => {
+router.post('/voice/enroll', requireAuth, upload.single('audio'), async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user.id;
 
@@ -1187,7 +1186,7 @@ router.post('/voice/enroll', requireAuth, upload.single('audio'), async (req, re
 /**
  * GET /api/ai/stats - Get AI assistant statistics
  */
-router.get('/stats', requireAuth, async (req, res) => {
+router.get('/stats', requireAuth, async (req: Request, res: Response) => {
   try {
     const voiceStats = enhancedVoiceService.getSupportedLanguages();
     const validationStats = realTimeValidationService.getValidationStats();

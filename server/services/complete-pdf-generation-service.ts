@@ -1,6 +1,6 @@
 /**
  * COMPLETE PDF GENERATION SERVICE
- * 
+ *
  * This service implements all 21+ DHA document types with full security features,
  * addressing all agent tasks and implementing every detail from the codebase.
  */
@@ -9,6 +9,7 @@ import PDFKit from 'pdfkit'; // Changed import name to avoid conflict
 import QRCode from 'qrcode';
 import crypto from 'crypto';
 import { storage } from '../mem-storage.js';
+import { Buffer } from 'buffer';
 
 // All DHA Document Types - Complete Implementation
 export enum DHADocumentType {
@@ -409,9 +410,9 @@ export class CompletePDFGenerationService {
        .text('DEPARTMENT OF HOME AFFAIRS', 100, 45)
        .fontSize(16)
        .fillColor(DHA_COLORS.TEXT_BLACK)
-       .text(this.getDocumentTitle(docType), 50, 80, { 
-         align: 'center', 
-         width: pageWidth - 100 
+       .text(this.getDocumentTitle(docType), 50, 80, {
+         align: 'center',
+         width: pageWidth - 100
        });
 
     // Decorative line
@@ -585,9 +586,9 @@ export class CompletePDFGenerationService {
     doc.fontSize(10)
        .font('Helvetica')
        .fillColor(DHA_COLORS.TEXT_BLACK)
-       .text('This permit authorizes the holder to work in the Republic of South Africa', 50, yPos, { 
-         width: 500, 
-         align: 'center' 
+       .text('This permit authorizes the holder to work in the Republic of South Africa', 50, yPos, {
+         width: 500,
+         align: 'center'
        });
 
     yPos += 40;
@@ -796,7 +797,7 @@ export class CompletePDFGenerationService {
 
     doc.fontSize(8)
        .fillColor(DHA_COLORS.TEXT_BLACK)
-       .text(data, barcodeX, barcodeY + barcodeHeight + 5, { 
+       .text(data, barcodeX, barcodeY + barcodeHeight + 5, {
          width: barcodeWidth,
          align: 'center'
        });

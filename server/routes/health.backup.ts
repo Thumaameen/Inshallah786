@@ -3,7 +3,8 @@
  * @packageDocumentation
  */
 
-import { Router, Request, Response } from 'express';
+import express, { type Router, type Request, type Response } from 'express';
+import process from 'process';
 import { productionHealthCheck } from '../services/production-health-check.js';
 import { authenticate } from '../middleware/auth.js';
 import { integrationManager } from '../services/integration-manager.js';
@@ -39,7 +40,7 @@ interface HealthResponse {
   integrations: Record<string, unknown>;
 }
 
-const router = Router();
+const router = express.Router();
 
 /**
  * GET /health - Comprehensive health check endpoint with integration status

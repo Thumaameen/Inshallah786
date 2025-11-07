@@ -1,10 +1,10 @@
-import express, { Request, Response } from 'express';
+import express, { type Router, type Request, type Response } from 'express';
 import { UltraPDFEditorService } from '../services/pdf/ultra-pdf-editor.service';
 import { GlobalDocumentVerificationService } from '../services/document/global-document-verification.service';
 import { BlockchainService } from '../services/blockchain/blockchain.service';
 import { BiometricService } from '../services/biometric/biometric.service';
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // Initialize Services
 const pdfEditor = new UltraPDFEditorService();
