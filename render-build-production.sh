@@ -23,6 +23,10 @@ echo "📌 Setting up environment..."
 export NODE_ENV=production
 export VITE_MODE=production
 export CI=true
+export NODE_OPTIONS=--max-old-space-size=4096
+
+# Install types
+npm install --save-dev @types/node @types/express @types/cors @types/compression @types/helmet
 
 echo "Node version: $(node --version)"
 echo "NPM version: $(npm --version)"

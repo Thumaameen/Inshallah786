@@ -6,19 +6,21 @@ services:
     plan: starter
     region: frankfurt
     buildCommand: |
-      echo "Installing dependencies..."
-      npm install --legacy-peer-deps
-      cd client && npm install --legacy-peer-deps && npm install --save-dev terser
+      export NODE_VERSION=20.19.5
+      export NODE_ENV=production
+      export VITE_MODE=production
+      npm install --production=false
+      cd client && npm install --production=false && npm run build -- --mode production
       cd ..
-      echo "Running build script..."
-      bash render-build-production.sh
+      npm run build:server
+      npm run copy:client
     startCommand: node dist/server/index-minimal.js
     healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
         value: production
       - key: NODE_VERSION
-        value: 20.19.3
+        value: 20.19.5
       - key: PORT
         value: 10000
       - key: SESSION_SECRET

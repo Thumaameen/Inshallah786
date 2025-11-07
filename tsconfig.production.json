@@ -6,7 +6,10 @@
     "outDir": "dist",
     "rootDir": ".",
     "moduleResolution": "node",
-    "types": ["node"],
+    "types": ["node", "express", "cors", "compression", "helmet"],
+    "paths": {
+      "*": ["./node_modules/*"]
+    },
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
