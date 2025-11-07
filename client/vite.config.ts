@@ -8,6 +8,7 @@ const __dirname = path.dirname(__filename);
 
 export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
   const env = loadEnv(mode, process.cwd(), '');
+  const apiUrl = process.env.VITE_API_URL || env.VITE_API_URL || 'http://localhost:8000';
 
   return {
     plugins: [
@@ -89,10 +90,9 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
       allowedHosts: true,
       proxy: {
         '/api': {
-          target: env.VITE_API_URL || 'http://localhost:8000',
+          target: apiUrl,
           changeOrigin: true,
-          secure: false,
-          rewrite: (path: string) => path.replace(/^\/api/, '')
+          secure: false
         }
       }
     }

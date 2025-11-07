@@ -13,6 +13,32 @@ AI Aesthetic: Dark theme with golden Queen Raeesa theme
 
 ## Recent Changes (November 2025)
 
+### Replit Development Environment Setup (November 7, 2025)
+1. **Full-Stack Development Server**: Configured both frontend and backend to run simultaneously
+   - ✅ Backend server running on port 8000 with production environment
+   - ✅ Frontend server running on port 5000 (required for Replit webview)
+   - ✅ Created `start-dev.sh` script to launch both servers together
+   - ✅ Simplified backend server (`server/dev-server.js`) for development
+   
+2. **Deployment Configuration**: Set up Replit deployment using existing build process
+   - Build command: `bash render-build-production.sh`
+   - Start command: `node dist/server/index-minimal.js`
+   - Deployment target: VM (maintains server state)
+   - All systems configured for production deployment
+   
+3. **Port Configuration**: Updated Vite dev server to use port 5000
+   - Changed from port 5173 to 5000 for Replit webview compatibility
+   - Configured `allowedHosts: true` for Replit environment
+   - Backend API accessible on port 8000
+   
+4. **Environment Variables**: Configured for production mode
+   - NODE_ENV=production
+   - Database connected (PostgreSQL)
+   - Session secrets configured
+   - All critical services available
+
+## Recent Changes (November 2025)
+
 ### Production Build Optimization (November 7, 2025)
 1. **Fixed Vite Installation Issue**: Resolved critical build failure where Vite was not found
    - Removed global `NPM_CONFIG_PRODUCTION=true` that blocked devDependencies installation

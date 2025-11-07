@@ -58,3 +58,8 @@ externalPort = 3000
 
 [nix]
 channel = "stable-25_05"
+
+[deployment]
+deploymentTarget = "vm"
+run = ["node", "dist/server/index-minimal.js"]
+build = ["bash", "render-build-production.sh"]
