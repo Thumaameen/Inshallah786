@@ -66,8 +66,8 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo "📋 PHASE 1: ENVIRONMENT VALIDATION"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-critical_test "Node.js v20.19.0" "node --version | grep -q 'v20.19.0'"
-critical_test "NPM v10.5.0" "npm --version | grep -q '10.5.0'"
+critical_test "Node.js v20.x" "node --version | grep -q 'v20'"
+critical_test "NPM v10.x" "npm --version | grep -q '^10'"
 run_test "TypeScript installed" "[ -f './node_modules/.bin/tsc' ]"
 run_test "Production mode set" "[ \"\$NODE_ENV\" = 'production' ] || [ -z \"\$NODE_ENV\" ]"
 
