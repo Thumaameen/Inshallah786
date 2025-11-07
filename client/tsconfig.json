@@ -12,7 +12,6 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "noEmitOnError": false,
-    "suppressImplicitAnyIndexErrors": true,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": false,
     "isolatedModules": true,
