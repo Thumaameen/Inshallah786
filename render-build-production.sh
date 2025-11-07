@@ -22,8 +22,8 @@ trap 'handle_error $LINENO' ERR
 echo "📌 Setting up environment..."
 export NODE_ENV=production
 export VITE_MODE=production
-export CI=false
-export NPM_CONFIG_PRODUCTION=false
+export CI=true
+export NPM_CONFIG_PRODUCTION=true
 
 echo "Node version: $(node --version)"
 echo "NPM version: $(npm --version)"

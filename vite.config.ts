@@ -1,7 +1,10 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import path from 'path';
+import * as path from 'path';
+import { fileURLToPath } from 'url';
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+// Production-only optimized configuration
 export default defineConfig({
   plugins: [react()],
   build: {
@@ -10,9 +13,9 @@ export default defineConfig({
     minify: 'terser',
     terserOptions: {
       compress: {
-        drop_console: process.env.NODE_ENV === 'production',
+        drop_console: true,
         drop_debugger: true,
-        pure_funcs: process.env.NODE_ENV === 'production' ? ['console.log', 'console.info', 'console.debug'] : []
+        pure_funcs: ['console.log', 'console.info', 'console.debug']
       }
     },
     manifest: true,
@@ -37,22 +40,10 @@ export default defineConfig({
     }
   },
   server: {
-    port: 5000,
-    proxy: {
-      '/api': {
-        target: 'http://localhost:10000',
-        changeOrigin: true
-      }
-    }
+    port: 3000,
+    strictPort: true
   },
-  optimizeDeps: {
-    include: [
-      'react', 
-      'react-dom',
-      '@solana/web3.js',
-      'ethers',
-      'web3',
-      '@anthropic-ai/sdk'
-    ]
+  preview: {
+    port: 4000
   }
 });
