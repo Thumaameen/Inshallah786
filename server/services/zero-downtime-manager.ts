@@ -274,10 +274,15 @@ export class ZeroDowntimeManager extends EventEmitter {
       
       loadBalancing: {
         algorithm: 'ai_optimized',
-        healthCheckInterval: 1000, // 1 second
+        healthCheckInterval: 1000,
         failureThreshold: 3,
         recoveryThreshold: 2,
         sessionAffinity: true,
+        fastFailover: true,
+        aggressiveHealing: true,
+        gracefulDegradation: true,
+        loadBalancingTimeout: 5000
+      }
         stickySession: false,
         autoScaling: true,
         maxNodes: 10,

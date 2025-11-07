@@ -23,6 +23,25 @@ echo "📌 Setting up environment..."
 export NODE_ENV=production
 export VITE_MODE=production
 export CI=true
+export NODE_OPTIONS=--max-old-space-size=4096
+
+# Print versions
+echo "Required Node.js version: 20.19.0"
+echo "Required npm version: 10.5.0"
+echo "Current Node.js version: $(node --version)"
+echo "Current npm version: $(npm --version)"
+
+# Verify Node.js version compatibility
+node_version=$(node --version | cut -d 'v' -f2)
+if [[ "$node_version" != "20.19.0"* ]]; then
+    echo "⚠️ Warning: Node.js version mismatch. Required: 20.19.0, Current: $node_version"
+    if [[ -n "$CI" ]]; then
+        echo "Running in CI environment, continuing anyway..."
+    fi
+fi
+
+# Install types
+npm install --save-dev @types/node@20.11.0 @types/express@4.17.21 @types/cors@2.8.17 @types/compression@1.7.5 @types/helmet@4.0.0
 
 echo "Node version: $(node --version)"
 echo "NPM version: $(npm --version)"
@@ -35,9 +54,43 @@ rm -rf dist client/dist node_modules/.cache client/node_modules/.vite || true
 echo "✅ Cleaned"
 echo ""
 
-# Install root dependencies (production only)
-echo "📦 Installing root dependencies..."
-NPM_CONFIG_PRODUCTION=true npm ci --legacy-peer-deps --no-audit || npm install --legacy-peer-deps --no-audit --production
+# Version check function
+check_version() {
+  if [[ "$1" != "$2" ]]; then
+    echo "⚠️ Version mismatch: Expected $2, got $1"
+    if [[ "$CI" != "true" && "$FORCE_BUILD" != "true" ]]; then
+      echo "To bypass version check, set FORCE_BUILD=true"
+      exit 1
+    else
+      echo "⚠️ Continuing despite version mismatch (CI=$CI, FORCE_BUILD=$FORCE_BUILD)"
+    fi
+  fi
+}
+
+# Verify versions
+echo "Verifying Node.js and npm versions..."
+node_version=$(node --version | cut -d 'v' -f2)
+npm_version=$(npm --version)
+check_version "$node_version" "20.19.0"
+check_version "$npm_version" "10.5.0"
+
+# Verify critical files exist
+echo "🔍 Verifying critical files..."
+for file in package.json tsconfig.production.json client/package.json render.yaml; do
+  if [[ ! -f "$file" ]]; then
+    handle_error ${LINENO} "Missing critical file: $file"
+  fi
+done
+echo "✅ Critical files verified"
+
+# Install root dependencies
+echo "📦 Installing dependencies..."
+export NPM_CONFIG_PRODUCTION=false
+npm install --no-audit --legacy-peer-deps --prefer-offline || {
+    echo "First install failed, retrying with clean install..."
+    rm -rf node_modules package-lock.json
+    npm install --no-audit --legacy-peer-deps --no-optional
+}
 echo "✅ Root dependencies installed"
 echo ""
 

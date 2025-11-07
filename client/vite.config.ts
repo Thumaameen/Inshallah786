@@ -17,6 +17,27 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
         }
       })
     ],
+    build: {
+      target: 'es2020',
+      outDir: 'dist',
+      emptyOutDir: true,
+      sourcemap: false,
+      minify: 'terser',
+      terserOptions: {
+        compress: {
+          drop_console: true,
+          drop_debugger: true
+        }
+      },
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            vendor: ['react', 'react-dom'],
+            ui: ['@radix-ui/react-*']
+          }
+        }
+      }
+    },
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src')
