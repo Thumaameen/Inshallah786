@@ -18,24 +18,42 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
       })
     ],
     build: {
-      target: 'es2020',
+      target: 'esnext',
       outDir: 'dist',
       emptyOutDir: true,
       sourcemap: false,
-      minify: 'terser',
-      terserOptions: {
-        compress: {
-          drop_console: true,
-          drop_debugger: true
-        }
-      },
+      minify: 'esbuild',
       rollupOptions: {
         output: {
-          manualChunks: {
-            vendor: ['react', 'react-dom'],
-            ui: ['@radix-ui/react-*']
+          manualChunks: (id: string) => {
+            if (id.includes('node_modules')) {
+              if (id.includes('react') || id.includes('react-dom')) {
+                return 'react-vendor';
+              }
+              if (id.includes('@tanstack/react-query')) {
+                return 'query-vendor';
+              }
+              if (id.includes('@radix-ui')) {
+                return 'ui-vendor';
+              }
+              return 'vendor';
+            }
           }
-        }
+        },
+        onwarn(warning, warn) {
+          if (warning.code === 'MODULE_LEVEL_DIRECTIVE' || 
+              warning.code === 'CIRCULAR_DEPENDENCY' ||
+              warning.code === 'THIS_IS_UNDEFINED') return;
+          warn(warning);
+        },
+        maxParallelFileOps: 2
+      },
+      chunkSizeWarningLimit: 2000,
+      cssCodeSplit: true,
+      assetsInlineLimit: 4096,
+      reportCompressedSize: false,
+      commonjsOptions: {
+        transformMixedEsModules: true
       }
     },
     resolve: {
@@ -60,45 +78,6 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
       loader: 'tsx',
       target: 'esnext',
       platform: 'browser'
-    },
-    build: {
-      outDir: 'dist',
-      emptyOutDir: true,
-      sourcemap: false,
-      minify: 'esbuild',
-      target: 'esnext',
-      rollupOptions: {
-        output: {
-          manualChunks: (id) => {
-            if (id.includes('node_modules')) {
-              if (id.includes('react') || id.includes('react-dom')) {
-                return 'react-vendor';
-              }
-              if (id.includes('@tanstack/react-query')) {
-                return 'query-vendor';
-              }
-              if (id.includes('@radix-ui')) {
-                return 'ui-vendor';
-              }
-              return 'vendor';
-            }
-          },
-        },
-        onwarn(warning, warn) {
-          if (warning.code === 'MODULE_LEVEL_DIRECTIVE' || 
-              warning.code === 'CIRCULAR_DEPENDENCY' ||
-              warning.code === 'THIS_IS_UNDEFINED') return;
-          warn(warning);
-        },
-        maxParallelFileOps: 2
-      },
-      chunkSizeWarningLimit: 2000,
-      cssCodeSplit: true,
-      assetsInlineLimit: 4096,
-      reportCompressedSize: false,
-      commonjsOptions: {
-        transformMixedEsModules: true
-      }
     },
     server: {
       host: '0.0.0.0',
