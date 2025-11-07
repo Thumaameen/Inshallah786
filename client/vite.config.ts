@@ -8,6 +8,7 @@ const __dirname = path.dirname(__filename);
 
 export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
   const env = loadEnv(mode, process.cwd(), '');
+  const apiUrl = process.env.VITE_API_URL || env.VITE_API_URL || 'http://localhost:8000';
 
   return {
     plugins: [
@@ -81,21 +82,17 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
     },
     server: {
       host: '0.0.0.0',
-      port: 5173,
-      strictPort: true,
+      port: 5000,
+      strictPort: false,
       hmr: {
         clientPort: 443
       },
-      allowedHosts: [
-        '.replit.dev',
-        '.repl.co'
-      ],
+      allowedHosts: true,
       proxy: {
         '/api': {
-          target: env.VITE_API_URL || 'https://ultra-queen-ai-raeesa.onrender.com',
+          target: apiUrl,
           changeOrigin: true,
-          secure: true,
-          rewrite: (path: string) => path.replace(/^\/api/, '')
+          secure: false
         }
       }
     }
