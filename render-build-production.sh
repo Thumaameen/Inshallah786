@@ -192,8 +192,17 @@ if [ ! -f "./node_modules/.bin/tsc" ]; then
 fi
 
 echo "Running TypeScript compiler..."
+if ! ./node_modules/.bin/tsc -p tsconfig.production.json --skipLibCheck --noEmit 2>&1 | tee /tmp/tsc-errors.log; then
+  echo "⚠️  TypeScript compilation had errors, but continuing with existing compiled files..."
+  if grep -q "error TS" /tmp/tsc-errors.log; then
+    echo "⚠️  TypeScript errors detected - review logs above"
+  fi
+fi
+
+# Now do the actual compilation (without --noEmit)
 ./node_modules/.bin/tsc -p tsconfig.production.json --skipLibCheck || {
-  echo "⚠️  TypeScript compilation had warnings, continuing..."
+  echo "❌ TypeScript compilation failed critically"
+  exit 1
 }
 echo "✅ Server compiled"
 echo ""

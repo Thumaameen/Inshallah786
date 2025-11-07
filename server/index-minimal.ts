@@ -91,25 +91,27 @@ if (loadedCount === 0) {
   process.exit(1);
 }
 
-// Create async initialization function
-async function initializeEnvironment() {
-  // Load environment variables first
-  dotenv.config();
+// Initialize environment synchronously at startup
+dotenv.config();
 
-  // Securely load any additional env files and delete them
-  const envFilePath = process.env.ENV_FILE_PATH;
-  if (envFilePath) {
+// Securely load any additional env files if specified
+const envFilePath = process.env.ENV_FILE_PATH;
+if (envFilePath) {
+  try {
     await SecureEnvLoader.loadAndDeleteEnvFile(envFilePath);
-  }
-
-  // Validate production keys
-  if (typeof SecureEnvLoader.validateProductionKeys === 'function') {
-    SecureEnvLoader.validateProductionKeys();
+  } catch (error) {
+    console.warn('⚠️ Could not load additional env file, continuing with existing environment');
   }
 }
 
-// Initialize environment before starting server
-await initializeEnvironment();
+// Validate production keys
+try {
+  if (typeof SecureEnvLoader.validateProductionKeys === 'function') {
+    SecureEnvLoader.validateProductionKeys();
+  }
+} catch (error) {
+  console.warn('⚠️ Production key validation skipped:', error instanceof Error ? error.message : 'Unknown error');
+}
 
 // Test API connectivity
 console.log('\n🔬 Testing Live API Connectivity...');

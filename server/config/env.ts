@@ -83,7 +83,7 @@ interface EnvironmentConfig {
 }
 
 // Initialize environment configuration
-export const environmentConfig: EnvironmentConfig = {
+export const environment: EnvironmentConfig = {
   NODE_ENV: (process.env.NODE_ENV as 'development' | 'production' | 'test') || 'production',
   START_TIME: process.env.START_TIME ? Number(process.env.START_TIME) : Date.now(),
   SYSTEM: {
@@ -115,4 +115,10 @@ if (missingEnvVars.length > 0) {
 }
 
 // Add CommonJS default export for compatibility
-export default environmentConfig;
+export default environment;
+
+// Legacy exports for backward compatibility
+export const ENV_CONFIG = environment;
+export const env = environment;
+export const environmentConfig = environment;
+export { environment as config };
