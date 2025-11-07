@@ -11,7 +11,13 @@ import { integrationManager } from '../services/integration-manager.js';
 
 // Environment configuration
 const ENV = {
-  NODE_ENV: process.env.NODE_ENV || 'production'
+  NODE_ENV: process.env.NODE_ENV || 'production',
+  SYSTEM: {
+    nodeVersion: process.version,
+    platform: process.platform,
+    arch: process.arch
+  },
+  START_TIME: process.env.START_TIME || Date.now().toString()
 };
 
 // Type definitions
@@ -129,7 +135,7 @@ router.get('/health/detailed', authenticate, async (req: Request, res: Response)
       status: 'error',
       timestamp: new Date().toISOString(),
       error: 'Detailed health check failed',
-message: String(error)
+      message: error instanceof Error ? error.message : String(error)
     });
   }
 });
@@ -177,7 +183,7 @@ router.get('/health/readiness', authenticate, async (req: Request, res: Response
       ready: false,
       timestamp: new Date().toISOString(),
       error: 'Readiness check failed',
-message: String(error)
+      message: error instanceof Error ? error.message : String(error)
     });
   }
 });

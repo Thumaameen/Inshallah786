@@ -35,7 +35,7 @@ router.post('/verify', async (req: { body: { document: any; type: any; }; }, res
 });
 
 // Blockchain Verification Routes
-router.post('/blockchain/verify', async (req: { body: { documentHash: any; }; }, res: { json: (arg0: any) => void; status: (arg0: number) => { (): any; new(): any; json: { (arg0: { error: any; }): void; new(): any; }; }; }) => {
+router.post('/blockchain/verify', async (req: Request, res: Response) => {
   try {
     const { documentHash } = req.body;
     const verification = await blockchain.verifyDocument(documentHash);
@@ -46,7 +46,7 @@ router.post('/blockchain/verify', async (req: { body: { documentHash: any; }; },
 });
 
 // Biometric Verification Routes
-router.post('/biometric/verify', async (req: { body: { biometricData: any; documentId: any; }; }, res: { json: (arg0: any) => void; status: (arg0: number) => { (): any; new(): any; json: { (arg0: { error: any; }): void; new(): any; }; }; }) => {
+router.post('/biometric/verify', async (req: Request, res: Response) => {
   try {
     const { biometricData, documentId } = req.body;
     const verification = await biometric.verifyBiometric(biometricData, documentId);

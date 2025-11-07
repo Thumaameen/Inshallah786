@@ -29,19 +29,15 @@ router.get('/npr/verify/:id', async (req: Request<{ id: any; }>, res: Response) 
 });
 
 // SAPS Routes
-interface BackgroundCheckRequest {
-    id: string;
-    type: 'criminal' | 'verification' | 'clearance';
-}
-
-interface BackgroundCheckResult {
-    status: string;
-    result: {
-        cleared: boolean;
-        details?: string;
-        reportId: string;
-    };
-}
+router.post('/saps/background-check', async (req: Request, res: Response) => {
+  try {
+    const { id, type } = req.body;
+    const result = await saps.performBackgroundCheck(id, type);
+    res.json(result);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 // ABIS Routes
 router.post('/abis/verify', async (req: Request<{}, {}, { biometricData: any; }>, res: Response) => {
