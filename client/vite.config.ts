@@ -81,15 +81,12 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
     },
     server: {
       host: '0.0.0.0',
-      port: 5173,
-      strictPort: true,
+      port: 5000,
+      strictPort: false,
       hmr: {
         clientPort: 443
       },
-      allowedHosts: [
-        '.replit.dev',
-        '.repl.co'
-      ],
+      allowedHosts: true,
       proxy: {
         '/api': {
           target: env.VITE_API_URL || 'https://ultra-queen-ai-raeesa.onrender.com',
