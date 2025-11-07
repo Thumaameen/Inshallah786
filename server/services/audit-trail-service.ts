@@ -18,6 +18,9 @@ export interface AuditContext {
 }
 
 export class AuditTrailService extends EventEmitter {
+  logEvent(arg0: any) {
+    throw new Error('Method not implemented.');
+  }
   private static instance: AuditTrailService;
   
   private constructor() {

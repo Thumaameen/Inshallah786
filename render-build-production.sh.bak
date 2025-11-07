@@ -208,12 +208,6 @@ cp -r client/dist/* dist/public/ || {
 echo "✅ Assets copied"
 echo ""
 
-# Ensure environment configs are in place
-echo "🔧 Ensuring environment configuration..."
-bash scripts/ensure-env.sh
-echo "✅ Environment configuration ready"
-echo ""
-
 # Verify build outputs
 echo "=========================================="
 echo "🔍 VERIFYING BUILD"
@@ -238,16 +232,6 @@ if [ ! -f "dist/public/index.html" ]; then
   exit 1
 fi
 echo "✅ Client build exists"
-
-echo "Checking for environment configuration..."
-if [ ! -f "dist/server/config/env.js" ]; then
-  echo "❌ Environment configuration not found"
-  echo "Contents of dist/server/config:"
-  ls -la dist/server/config || true
-  exit 1
-fi
-echo "✅ Environment configuration exists"
-echo ""
 echo ""
 
 # Build summary
@@ -260,7 +244,6 @@ echo "📊 Build Summary:"
 echo "  ✅ Client built successfully"
 echo "  ✅ Server built successfully"
 echo "  ✅ Assets copied to dist/public/"
-echo "  ✅ Environment config in place"
 echo ""
 echo "📦 Output structure:"
 ls -la dist/ | head -10 || true

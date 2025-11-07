@@ -4,7 +4,7 @@
  */
 
 import { Router, Request, Response } from 'express';
-import { environmentConfig } from '../config/env';
+import { environmentConfig } from '../config/env.js';
 import { productionHealthCheck } from '../services/production-health-check.js';
 import { authenticate } from '../middleware/auth.js';
 import { integrationManager } from '../services/integration-manager.js';
@@ -14,7 +14,6 @@ const router = Router();
 
 router.get('/health', async (_req: Request, res: Response) => {
   try {
-    const healthResult = await productionHealthCheck.performFullHealthCheck();
     const integrationStatus = await integrationManager.checkAllIntegrations();
     const integrations = Object.fromEntries(integrationStatus);
 
@@ -75,7 +74,6 @@ router.get('/health/detailed', authenticate, async (_req: Request, res: Response
 router.get('/health/readiness', authenticate, async (_req: Request, res: Response) => {
   try {
     const readinessResult = await productionHealthCheck.checkDeploymentReadiness();
-    const integrationStatus = await integrationManager.checkAllIntegrations();
     const isAllIntegrationsActive = integrationManager.isAllIntegrationsActive();
 
     const statusCode = (readinessResult.isReady && isAllIntegrationsActive) ? 200 : 503;
