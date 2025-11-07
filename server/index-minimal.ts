@@ -25,7 +25,6 @@ console.log('🔐 Loading Environment Variables...');
 console.log('='.repeat(70));
 
 // Import production config
-import productionConfig from './config/production.js';
 
 // Enhanced key checking with all variations
 const keyVariations = {
