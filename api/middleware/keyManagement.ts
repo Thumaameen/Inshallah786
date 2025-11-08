@@ -1,4 +1,8 @@
+// Vercel API middleware
+// Types imported for potential future use
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+
+export { VercelRequest, VercelResponse };
 
 const API_KEYS = {
   OPENAI_API_KEYS: process.env.OPENAI_API_KEYS?.split(',') || [],

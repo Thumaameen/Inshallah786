@@ -1,10 +1,6 @@
 
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-
-const __filename = fileURLToPath(import.meta.url);
+// Environment loader utility
+// Unused imports removed to clean up codebase
 const __dirname = dirname(__filename);
 
 export class SecureEnvLoader {

@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { writeFileSync, readFileSync, existsSync } from 'fs';
 
 interface Alert {

@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { Pool } from 'pg';
 import { writeFileSync } from 'fs';
 
