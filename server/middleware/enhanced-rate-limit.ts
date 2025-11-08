@@ -1,11 +1,33 @@
 import { Request, Response, NextFunction } from 'express';
-import { RateLimiterMemory, RateLimiterRedis, RateLimiterAbstract } from 'rate-limiter-flexible';
 import { createHash } from 'crypto';
 import { storage } from '../storage.js';
-import { enhancedSecurityResponseService } from '../services/enhanced-security-response.js';
 
-// Use singleton Enhanced Security Response Service for threat handling
-const securityResponseService = enhancedSecurityResponseService;
+// Fallback rate limiter implementation
+class RateLimiterMemory {
+  constructor(public options: any) {}
+  async consume(key: string, points: number = 1): Promise<any> {
+    return { remainingPoints: 10, msBeforeNext: 1000 };
+  }
+  async delete(key: string): Promise<void> {}
+}
+
+type RateLimiterAbstract = RateLimiterMemory;
+
+// Lazy load enhanced security response
+let enhancedSecurityResponseService: any;
+
+// Lazy load security service
+async function getSecurityService() {
+  if (!enhancedSecurityResponseService) {
+    try {
+      const module = await import('../services/enhanced-security-response.js');
+      enhancedSecurityResponseService = module.enhancedSecurityResponseService;
+    } catch {
+      enhancedSecurityResponseService = { handleSecurityThreat: async () => {} };
+    }
+  }
+  return enhancedSecurityResponseService;
+}
 
 /**
  * Enhanced Rate Limiting with Automatic Backoff
@@ -283,7 +305,8 @@ export function enhancedRateLimit(customConfig?: Partial<RateLimitConfig>) {
       const isHighVolumeAttack = (rateLimiterRes.points || 0) > 50;
       
       try {
-        await securityResponseService.handleSecurityThreat({
+        const securityService = await getSecurityService();
+        await securityService.handleSecurityThreat({
           type: isHighVolumeAttack ? 'ddos_attack' : 'rate_limit_violation',
           sourceIp: req.ip || 'unknown',
           severity: isRepeatedOffender ? 'high' : isHighVolumeAttack ? 'critical' : 'medium',

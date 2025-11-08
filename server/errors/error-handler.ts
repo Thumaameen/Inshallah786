@@ -29,7 +29,7 @@ export function handleError(error: any): ErrorResponse {
   if (error instanceof SecurityError) {
     // Log security incidents with higher severity
     if (error.severity === 'high' || error.severity === 'critical') {
-      logger.alert('Security incident detected', { error });
+      logger.error('ALERT: Security incident detected', { error });
     }
     
     return {

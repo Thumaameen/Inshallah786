@@ -6,7 +6,7 @@
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import { Pool } from 'pg';
-import { Database as SQLiteDatabase, open } from 'sqlite3';
+import Database from 'better-sqlite3';
 import { drizzle as drizzleSQLite } from 'drizzle-orm/better-sqlite3';
 import { migrate as migrateSQLite } from 'drizzle-orm/better-sqlite3/migrator';
 
@@ -79,7 +79,7 @@ class DatabaseService {
 
     private async connectSQLite(): Promise<void> {
         try {
-            const sqlite = open(this.config.sqliteFile || 'data/production.sqlite');
+            const sqlite = new Database(this.config.sqliteFile || 'data/production.sqlite');
             this.db = drizzleSQLite(sqlite);
             
             await migrateSQLite(this.db, {
