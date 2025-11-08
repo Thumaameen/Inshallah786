@@ -1,10 +1,14 @@
 import { PDFDocument } from 'pdf-lib';
 import { ultraQueenAI } from '../services/ultra-queen-ai.js';
-import { ErrorCode, VerificationError } from '../types/errors.js';
-import { DHADocumentType } from '../types/documents.js';
-import { NPRService } from '../services/government/npr.service.js';
-import { ABISService } from '../services/government/abis.service.js';
-import { BlockchainService } from '../services/blockchain.service.js';
+import { VerificationError } from '../errors/verification-errors.js';
+
+type DHADocumentType = string;
+
+const ErrorCode = {
+  NPR_VERIFICATION_FAILED: 'NPR_VERIFICATION_FAILED',
+  ABIS_VERIFICATION_FAILED: 'ABIS_VERIFICATION_FAILED',
+  BLOCKCHAIN_VERIFICATION_FAILED: 'BLOCKCHAIN_VERIFICATION_FAILED'
+};
 
 export class DocumentVerificationHelpers {
   static async verifyHologram(doc: PDFDocument): Promise<boolean> {
@@ -110,7 +114,9 @@ export class DocumentVerificationHelpers {
   static async verifyWithDHA(doc: PDFDocument, documentType: DHADocumentType): Promise<boolean> {
     try {
       // Verify with NPR
-      const nprResult = await NPRService.verifyDocument(doc, documentType);
+      const NPRService = (await import('../services/government/npr.service.js')).NPRService;
+      const nprService = new NPRService();
+      const nprResult = await nprService.verifyIdentity(documentType);
       if (!nprResult.valid) {
         throw new VerificationError(
           ErrorCode.NPR_VERIFICATION_FAILED,
@@ -120,7 +126,9 @@ export class DocumentVerificationHelpers {
       }
 
       // Verify with ABIS
-      const abisResult = await ABISService.verifyBiometrics(doc);
+      const ABISService = (await import('../services/government/abis.service.js')).ABISService;
+      const abisService = new ABISService();
+      const abisResult = await abisService.verifyBiometric(doc);
       if (!abisResult.valid) {
         throw new VerificationError(
           ErrorCode.ABIS_VERIFICATION_FAILED,
@@ -139,22 +147,22 @@ export class DocumentVerificationHelpers {
   static async verifyBlockchainRecord(doc: PDFDocument): Promise<boolean> {
     try {
       // Verify on Polygon network
-      const polygonVerification = await blockchainService.verifyOnPolygon(doc);
-      if (!polygonVerification.valid) {
+      const BlockchainService = (await import('../services/blockchain/blockchain.service.js')).BlockchainService;
+      const blockchainService = new BlockchainService();
+      const polygonVerification = await blockchainService.verifyOnBlockchain('polygon');
+      if (!polygonVerification.verified) {
         throw new VerificationError(
-          ErrorCode.BLOCKCHAIN_VERIFICATION_FAILED,
           'Polygon verification failed',
-          true
+          ErrorCode.BLOCKCHAIN_VERIFICATION_FAILED
         );
       }
 
       // Verify on Solana network
-      const solanaVerification = await blockchainService.verifyOnSolana(doc);
-      if (!solanaVerification.valid) {
+      const solanaVerification = await blockchainService.verifyOnBlockchain('solana');
+      if (!solanaVerification.verified) {
         throw new VerificationError(
-          ErrorCode.BLOCKCHAIN_VERIFICATION_FAILED,
           'Solana verification failed',
-          true
+          ErrorCode.BLOCKCHAIN_VERIFICATION_FAILED
         );
       }
 

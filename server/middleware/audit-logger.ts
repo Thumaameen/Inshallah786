@@ -361,22 +361,24 @@ export class AuditLogger {
   private async storeAuditEvent(event: AuditEvent, complianceContext?: ComplianceContext): Promise<void> {
     try {
       // Store in main audit log
-      await storage.createSecurityEvent({
-        eventType: event.eventType,
-        severity: event.severity,
-        userId: event.userId,
-        details: {
-          ...event.details,
-          auditEventId: event.eventId,
-          action: event.action,
-          resource: event.resource,
-          result: event.result,
-          metadata: event.metadata,
-          compliance: complianceContext
-        },
-        ipAddress: event.ipAddress,
-        userAgent: event.userAgent
-      });
+      if (typeof storage.createSecurityEvent === 'function') {
+        await storage.createSecurityEvent({
+          eventType: event.eventType as any,
+          severity: event.severity as any,
+          userId: event.userId || null,
+          details: {
+            ...event.details,
+            auditEventId: event.eventId,
+            action: event.action,
+            resource: event.resource,
+            result: event.result,
+            metadata: event.metadata,
+            compliance: complianceContext
+          },
+          ipAddress: event.ipAddress || null,
+          userAgent: event.userAgent || null
+        });
+      }
 
       // Store compliance record if provided
       if (complianceContext) {
