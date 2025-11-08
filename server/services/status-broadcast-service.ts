@@ -136,7 +136,7 @@ class StatusBroadcastService {
    * Document processing status updates
    */
   async updateDocumentStatus(documentId: string, status: string, details?: any): Promise<void> {
-    const document = await storage.getDocument(documentId);
+    const document = await storage.get(`document:${documentId}`);
     if (!document) return;
 
     const progressMap: Record<string, number> = {
@@ -188,7 +188,7 @@ class StatusBroadcastService {
    * DHA application status updates
    */
   async updateApplicationStatus(applicationId: string, status: string, details?: any): Promise<void> {
-    const application = await storage.getDhaApplication(applicationId);
+    const application = await storage.get(`application:${applicationId}`);
     if (!application) return;
 
     const progressMap: Record<string, number> = {
@@ -313,10 +313,10 @@ class StatusBroadcastService {
     let userId: string | undefined;
 
     if (statusUpdate.entityType === "document") {
-      const document = await storage.getDocument(statusUpdate.entityId);
+      const document = await storage.get(`document:${statusUpdate.entityId}`);
       userId = document?.userId;
     } else if (statusUpdate.entityType === "application") {
-      const application = await storage.getDhaApplication(statusUpdate.entityId);
+      const application = await storage.get(`application:${statusUpdate.entityId}`);
       userId = application?.applicantId; // Assuming applicantId maps to userId
     }
 
@@ -341,10 +341,10 @@ class StatusBroadcastService {
     let userId: string | undefined;
 
     if (statusUpdate.entityType === "document") {
-      const document = await storage.getDocument(statusUpdate.entityId);
+      const document = await storage.get(`document:${statusUpdate.entityId}`);
       userId = document?.userId;
     } else if (statusUpdate.entityType === "application") {
-      const application = await storage.getDhaApplication(statusUpdate.entityId);
+      const application = await storage.get(`application:${statusUpdate.entityId}`);
       userId = application?.applicantId;
     }
 
