@@ -1,10 +1,6 @@
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
-import { createCanvas, loadImage } from 'canvas';
 import QRCode from 'qrcode';
 import crypto from 'crypto';
-import { passportOCR } from './ocr-service.js';
-import { verifyPassport } from './passport-verification.js';
-import { ultraQueenAI } from './ultra-queen-ai.js';
 
 interface SecurityFeatures {
   watermark: boolean;
@@ -34,7 +30,7 @@ export class EnhancedDocumentProcessor {
     try {
       // 1. OCR Passport
       const passportData = await passportOCR(passportImage);
-      
+
       // 2. Verify Passport with ICAO
       const passportVerification = await verifyPassport(passportData.mrz);
       if (!passportVerification.valid) {
@@ -62,7 +58,7 @@ export class EnhancedDocumentProcessor {
 
     // Generate unique document ID
     const documentId = this.generateSecureId();
-    
+
     // Add all security features
     await this.addAllSecurityFeatures(page, data, documentId);
 
@@ -149,7 +145,7 @@ export class EnhancedDocumentProcessor {
       const sapsValidation = await this.validateWithSAPS(documentId);
 
       return {
-        valid: dhaValidation.valid && icaoValidation.valid && 
+        valid: dhaValidation.valid && icaoValidation.valid &&
                interpolValidation.valid && sapsValidation.valid,
         details: {
           dha: dhaValidation,

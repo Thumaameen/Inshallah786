@@ -60,7 +60,7 @@ export class DocumentProcessor {
 
     // Add document content using AI
     const content = await ultraQueenAI.generateDocument('permit', data);
-    
+
     // Add metadata
     const metadata: DocumentMetadata = {
       type: 'DHA-PERMIT',
@@ -112,7 +112,7 @@ export class DocumentProcessor {
   private async createWatermark(text: string) {
     const canvas = createCanvas(400, 100);
     const ctx = canvas.getContext('2d');
-    
+
     ctx.fillStyle = 'rgba(200, 200, 200, 0.5)';
     ctx.font = '20px Arial';
     ctx.rotate(-45 * Math.PI / 180);
@@ -134,7 +134,7 @@ export class DocumentProcessor {
         size: fontSize,
         color: rgb(0, 0, 0)
       });
-      
+
       page.drawText(microprintText, {
         x,
         y: height - 5,
@@ -145,9 +145,9 @@ export class DocumentProcessor {
   }
 
   async validateDocument(pdfBytes: Buffer) {
-    const pdfDoc = await PDFDocument.load(pdfBytes);
+    const pdfDoc = await PDFDocument.load(new Uint8Array(pdfBytes));
     const metadata = this.extractMetadata(pdfDoc);
-    
+
     // Validate using AI
     const validationResult = await ultraQueenAI.validateDocument(metadata.documentNumber);
 

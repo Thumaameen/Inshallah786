@@ -107,3 +107,25 @@ export interface FailoverActionResult {
   status: 'success' | 'failed' | 'in_progress';
   error?: string;
 }
+export interface InsertAuditLog {
+  id?: string;
+  timestamp: Date;
+  eventType: string;
+  category: string;
+  severity: string;
+  description: string;
+  target: string;
+  action: string;
+  trigger: any;
+  status: string;
+  result: any;
+  aiAssisted: boolean;
+}
+
+export interface InsertSystemMetric {
+  id?: string;
+  timestamp: Date;
+  metricType: string;
+  value: number;
+  metadata?: any;
+}

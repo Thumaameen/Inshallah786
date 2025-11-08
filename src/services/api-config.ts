@@ -47,7 +47,7 @@ export const aiConfig = {
   anthropic: {
     apiKey: process.env.ANTHROPIC_API_KEY,
     model: process.env.ANTHROPIC_MODEL || 'claude-3-opus-20240229',
-    maxTokens: 200000,
+    max_tokens: 2048,
     capabilities: ['document-generation', 'system-design', 'security-analysis']
   },
   azure: {
@@ -160,7 +160,7 @@ export const initAIServices = () => {
 // Validate Configuration
 export const validateConfig = async () => {
   const validations = [];
-  
+
   // Check Blockchain Connections
   try {
     const { solana, ethereum, polygon } = initBlockchainConnections();

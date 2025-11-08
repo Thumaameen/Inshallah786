@@ -1,11 +1,11 @@
 import { EventEmitter } from 'events';
 import crypto from 'crypto';
 import {
-  DhaDocumentVerification,
-  InsertDocumentVerificationRecord,
+  dhaDocumentVerifications,
+  InsertDhaDocumentVerification,
 } from '../../shared/schema/index.js';
 
-import { logger } from '../utils/logger.js';
+// Logger is initialized in constructor
 
 // Type definitions for verification service
 type VerificationSession = any;
@@ -45,7 +45,7 @@ const storage = {
   getApiVerificationAccess: async (apiKeyId: string) => { console.log(`Mock storage: Getting API access ${apiKeyId}`); return null; },
   incrementApiUsage: async (apiKeyId: string, isValid: boolean) => { console.log(`Mock storage: Incrementing API usage for ${apiKeyId}`); },
   getDocumentVerificationRecordByCode: async (verificationCode: string) => { console.log(`Mock storage: Getting record by code ${verificationCode}`); return null; },
-  createDhaDocumentVerification: async (record: InsertDocumentVerificationRecord) => { console.log(`Mock storage: Creating DHA verification`); return null; },
+  createDhaDocumentVerification: async (record: InsertDhaDocumentVerification) => { console.log(`Mock storage: Creating DHA verification`); return null; },
   getVerificationHistoryByIp: async (ipAddress: string, hours: number) => { console.log(`Mock storage: Getting history by IP ${ipAddress}`); return []; },
   getVerificationHistory: async (verificationId: string) => { console.log(`Mock storage: Getting history for ${verificationId}`); return []; },
   getDocumentVerificationHistory: async (recordId: string) => { console.log(`Mock storage: Getting document history for ${recordId}`); return []; },
@@ -63,7 +63,7 @@ const fraudDetectionService = {
 };
 
 // --- Global logger instance ---
-const logger = new Logger('verification-service');
+// Logger is initialized in constructor
 
 export interface BaseVerificationRequest {
   ipAddress?: string;
@@ -255,11 +255,17 @@ export class ComprehensiveVerificationService extends EventEmitter {
   private readonly ML_CONFIDENCE_THRESHOLD = 0.75;
   private readonly PATTERN_RECOGNITION_ENABLED = true;
 
+  // Logger instance
+  private logger: any;
+
   constructor() {
     super();
 
     // CRITICAL SECURITY: Strict environment validation for secrets
     this.SECRET_KEY = this.validateRequiredSecret('VERIFICATION_SECRET', 'Document verification secret key');
+
+    // Initialize logger
+    this.logger = console; // Using console as a placeholder logger
 
     this.initializeRealtimeMonitoring();
     this.setupFraudDetectionRules();
@@ -1057,7 +1063,7 @@ export class ComprehensiveVerificationService extends EventEmitter {
     const hashtags = this.generateHashtags(documentType, documentNumber);
 
     // Store in database
-    const verificationRecord: InsertDocumentVerificationRecord = {
+    const verificationRecord: InsertDhaDocumentVerification = {
       verificationCode: code,
       documentId: documentNumber, // Assuming documentNumber can be used as an ID here
       documentNumber,
