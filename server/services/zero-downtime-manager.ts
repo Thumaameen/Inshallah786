@@ -160,7 +160,7 @@ class ZeroDowntimeManager extends EventEmitter {
 
   private async handleHealthAlert(alert: Record<string, unknown>): Promise<void> {
     await this.logAuditEvent({
-      type: 'HEALTH_ALERT',
+      eventType: 'HEALTH_ALERT',
       severity: 'warning',
       details: alert
     });
@@ -168,7 +168,7 @@ class ZeroDowntimeManager extends EventEmitter {
 
   private async handleFailoverEvent(event: FailoverEvent): Promise<void> {
     await this.logAuditEvent({
-      type: 'FAILOVER',
+      eventType: 'FAILOVER',
       severity: 'critical',
       details: event
     });

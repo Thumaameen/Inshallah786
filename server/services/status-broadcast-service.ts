@@ -94,7 +94,7 @@ class StatusBroadcastService {
       const channel = `status:${update.entityType}:${update.entityId}`;
       const io = wsService as any;
       io.io?.to(channel).emit("progress:update", update);
-      
+
       // Also send to admins
       wsService.sendToRole("admin", "progress:update", update);
     }
@@ -302,7 +302,7 @@ class StatusBroadcastService {
    */
   private async sendFailureNotification(statusUpdate: StatusBroadcast): Promise<void> {
     let userId: string | undefined;
-    
+
     if (statusUpdate.entityType === "document") {
       const document = await storage.getDocument(statusUpdate.entityId);
       userId = document?.userId;
@@ -330,7 +330,7 @@ class StatusBroadcastService {
    */
   private async sendSuccessNotification(statusUpdate: StatusBroadcast): Promise<void> {
     let userId: string | undefined;
-    
+
     if (statusUpdate.entityType === "document") {
       const document = await storage.getDocument(statusUpdate.entityId);
       userId = document?.userId;

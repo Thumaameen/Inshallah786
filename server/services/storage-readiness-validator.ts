@@ -1,4 +1,3 @@
-
 import { db } from "../db.js";
 import { storage } from "../storage.js";
 
@@ -32,10 +31,10 @@ export interface StorageReadinessReport {
 }
 
 export class StorageReadinessValidator {
-  
+
   async validateStorageReadiness(): Promise<StorageReadinessReport> {
     console.log('🔍 Validating storage system readiness...');
-    
+
     const report: StorageReadinessReport = {
       ready: false,
       timestamp: new Date(),
@@ -68,21 +67,21 @@ export class StorageReadinessValidator {
     try {
       // Test database connectivity
       await this.validateDatabaseConnection(report);
-      
+
       // Test performance metrics
       await this.validatePerformance(report);
-      
+
       // Check security configuration
       await this.validateSecurity(report);
-      
+
       // Analyze capacity and usage
       await this.validateCapacity(report);
-      
+
       // Overall readiness assessment
       report.ready = this.assessOverallReadiness(report);
-      
+
       console.log(`✅ Storage readiness validation complete: ${report.ready ? 'READY' : 'NOT READY'}`);
-      
+
     } catch (error) {
       report.issues.push(`Storage validation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
       console.error('❌ Storage validation error:', error);
@@ -102,10 +101,10 @@ export class StorageReadinessValidator {
       const start = Date.now();
       const result = await db.execute('SELECT 1 as test');
       const latency = Date.now() - start;
-      
+
       report.database.connected = true;
       report.performance.connectionLatency = latency;
-      
+
       // Get table count
       const tables = await db.execute(`
         SELECT COUNT(*) as count 
@@ -113,11 +112,11 @@ export class StorageReadinessValidator {
         WHERE table_schema = 'public'
       `);
       report.database.tableCount = Number(tables[0]?.count) || 0;
-      
+
       if (report.database.tableCount < 10) {
         report.issues.push('Insufficient database tables configured');
       }
-      
+
     } catch (error) {
       report.issues.push('Database connectivity test failed');
     }

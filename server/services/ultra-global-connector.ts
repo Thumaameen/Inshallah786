@@ -198,7 +198,7 @@ export class UltraGlobalConnector {
       });
 
       // Log global execution
-      await storage.createSecurityEvent({
+      await storage.set('security_event_' + Date.now(), {
         eventType: "ultra_global_command_executed",
         severity: "low",
         details: {
