@@ -30,8 +30,8 @@ export class UltraAdvancedPDFService {
         bufferPages: true
       });
 
-      const chunks: Buffer[] = [];
-      doc.on('data', chunk => chunks.push(chunk));
+      const chunks: Uint8Array[] = [];
+      doc.on('data', (chunk: Uint8Array) => chunks.push(chunk));
       doc.on('end', () => resolve(Buffer.concat(chunks)));
       doc.on('error', reject);
 
@@ -217,9 +217,9 @@ export class UltraAdvancedPDFService {
   async convertToPDF(fileBuffer: Buffer, fileType: string): Promise<Buffer> {
     return new Promise((resolve, reject) => {
       const doc = new PDFDocument({ size: 'A4' });
-      const chunks: Buffer[] = [];
+      const chunks: Uint8Array[] = [];
 
-      doc.on('data', chunk => chunks.push(chunk));
+      doc.on('data', (chunk: Uint8Array) => chunks.push(chunk));
       doc.on('end', () => resolve(Buffer.concat(chunks)));
       doc.on('error', reject);
 

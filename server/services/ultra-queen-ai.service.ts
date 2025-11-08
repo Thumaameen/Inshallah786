@@ -1,6 +1,6 @@
 import OpenAI from 'openai';
 import { Anthropic } from '@anthropic-ai/sdk';
-import { serviceConfig } from '../../config/service-integration';
+import { serviceConfig } from '../../config/service-integration.js';
 
 export enum AI_POWER_LEVEL {
   UNLIMITED = 'UNLIMITED',

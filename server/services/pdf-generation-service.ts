@@ -1826,7 +1826,7 @@ export class PDFGenerationService {
           }
         });
 
-        const chunks: Buffer[] = [];
+        const chunks: Uint8Array[] = [];
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('end', () => resolve(Buffer.concat(chunks)));
         doc.on('error', reject);
@@ -2006,7 +2006,7 @@ export class PDFGenerationService {
           }
         });
 
-        const chunks: Buffer[] = [];
+        const chunks: Uint8Array[] = [];
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('end', () => resolve(Buffer.concat(chunks)));
         doc.on('error', reject);
@@ -2201,7 +2201,7 @@ export class PDFGenerationService {
           }
         });
 
-        const chunks: Buffer[] = [];
+        const chunks: Uint8Array[] = [];
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('end', () => resolve(Buffer.concat(chunks)));
         doc.on('error', reject);
@@ -2386,7 +2386,7 @@ export class PDFGenerationService {
           }
         });
 
-        const chunks: Buffer[] = [];
+        const chunks: Uint8Array[] = [];
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('end', () => resolve(Buffer.concat(chunks)));
         doc.on('error', reject);
@@ -2591,7 +2591,7 @@ export class PDFGenerationService {
           }
         });
 
-        const chunks: Buffer[] = [];
+        const chunks: Uint8Array[] = [];
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('end', () => resolve(Buffer.concat(chunks)));
         doc.on('error', reject);
@@ -3358,7 +3358,7 @@ export class PDFGenerationService {
           }
         });
 
-        const chunks: Buffer[] = [];
+        const chunks: Uint8Array[] = [];
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('end', () => resolve(Buffer.concat(chunks)));
         doc.on('error', reject);
@@ -3599,7 +3599,7 @@ export class PDFGenerationService {
           }
         });
 
-        const chunks: Buffer[] = [];
+        const chunks: Uint8Array[] = [];
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('end', () => resolve(Buffer.concat(chunks)));
         doc.on('error', reject);
@@ -3809,7 +3809,7 @@ export class PDFGenerationService {
           }
         });
 
-        const chunks: Buffer[] = [];
+        const chunks: Uint8Array[] = [];
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('end', () => resolve(Buffer.concat(chunks)));
         doc.on('error', reject);
@@ -4010,7 +4010,7 @@ export class PDFGenerationService {
           }
         });
 
-        const chunks: Buffer[] = [];
+        const chunks: Uint8Array[] = [];
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('end', () => resolve(Buffer.concat(chunks)));
         doc.on('error', reject);
@@ -4184,7 +4184,7 @@ export class PDFGenerationService {
           }
         });
 
-        const chunks: Buffer[] = [];
+        const chunks: Uint8Array[] = [];
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('end', () => resolve(Buffer.concat(chunks)));
         doc.on('error', reject);
@@ -4388,7 +4388,7 @@ export class PDFGenerationService {
           }
         });
 
-        const chunks: Buffer[] = [];
+        const chunks: Uint8Array[] = [];
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('end', () => resolve(Buffer.concat(chunks)));
         doc.on('error', reject);
@@ -4554,7 +4554,7 @@ export class PDFGenerationService {
           }
         });
 
-        const chunks: Buffer[] = [];
+        const chunks: Uint8Array[] = [];
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('end', () => resolve(Buffer.concat(chunks)));
         doc.on('error', reject);
@@ -4695,7 +4695,7 @@ export class PDFGenerationService {
           }
         });
 
-        const chunks: Buffer[] = [];
+        const chunks: Uint8Array[] = [];
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('end', () => resolve(Buffer.concat(chunks)));
         doc.on('error', reject);
@@ -4869,7 +4869,7 @@ export class PDFGenerationService {
           margin: 30
         });
 
-        const chunks: Buffer[] = [];
+        const chunks: Uint8Array[] = [];
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('end', () => resolve(Buffer.concat(chunks)));
         doc.on('error', reject);
@@ -4949,7 +4949,7 @@ export class PDFGenerationService {
           margin: 30
         });
 
-        const chunks: Buffer[] = [];
+        const chunks: Uint8Array[] = [];
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('end', () => resolve(Buffer.concat(chunks)));
         doc.on('error', reject);
@@ -5078,7 +5078,7 @@ export class PDFGenerationService {
           margin: 30
         });
 
-        const chunks: Buffer[] = [];
+        const chunks: Uint8Array[] = [];
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('end', () => resolve(Buffer.concat(chunks)));
         doc.on('error', reject);
@@ -5203,7 +5203,7 @@ export class PDFGenerationService {
           margin: 10
         });
 
-        const chunks: Buffer[] = [];
+        const chunks: Uint8Array[] = [];
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('end', () => resolve(Buffer.concat(chunks)));
         doc.on('error', reject);
@@ -5308,7 +5308,7 @@ export class PDFGenerationService {
           margin: 30
         });
 
-        const chunks: Buffer[] = [];
+        const chunks: Uint8Array[] = [];
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('end', () => resolve(Buffer.concat(chunks)));
         doc.on('error', reject);
@@ -5406,7 +5406,7 @@ export class PDFGenerationService {
           margin: 30
         });
 
-        const chunks: Buffer[] = [];
+        const chunks: Uint8Array[] = [];
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('end', () => resolve(Buffer.concat(chunks)));
         doc.on('error', reject);
@@ -5504,7 +5504,7 @@ export class PDFGenerationService {
           margin: 30
         });
 
-        const chunks: Buffer[] = [];
+        const chunks: Uint8Array[] = [];
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('end', () => resolve(Buffer.concat(chunks)));
         doc.on('error', reject);
@@ -5617,7 +5617,7 @@ export class PDFGenerationService {
           margin: 30
         });
 
-        const chunks: Buffer[] = [];
+        const chunks: Uint8Array[] = [];
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('end', () => resolve(Buffer.concat(chunks)));
         doc.on('error', reject);

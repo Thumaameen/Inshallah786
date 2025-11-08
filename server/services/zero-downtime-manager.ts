@@ -2,7 +2,8 @@ import { EventEmitter } from 'events';
 import { storage } from '../storage.js';
 import { auditTrailService } from './audit-trail-service.js';
 import { db } from '../db/index.js';
-import type { InsertAuditLog, InsertSystemMetric } from '../types/zero-downtime.types.js';
+import type { InsertAuditLog } from '../../shared/schema/index.js';
+import type { InsertSystemMetric } from '../types/zero-downtime.types.js';
 import { promisify } from 'util';
 
 export interface ServiceNode {
@@ -160,17 +161,21 @@ class ZeroDowntimeManager extends EventEmitter {
 
   private async handleHealthAlert(alert: Record<string, unknown>): Promise<void> {
     await this.logAuditEvent({
-      eventType: 'HEALTH_ALERT',
-      severity: 'warning',
-      details: alert
+      action: 'HEALTH_ALERT',
+      actor: 'system',
+      resource: 'health_monitor',
+      result: 'warning',
+      metadata: alert
     });
   }
 
   private async handleFailoverEvent(event: FailoverEvent): Promise<void> {
     await this.logAuditEvent({
-      eventType: 'FAILOVER',
-      severity: 'critical',
-      details: event
+      action: 'FAILOVER',
+      actor: 'system',
+      resource: 'load_balancer',
+      result: 'critical',
+      metadata: event as unknown as Record<string, unknown>
     });
   }
 
@@ -178,9 +183,9 @@ class ZeroDowntimeManager extends EventEmitter {
     try {
       await auditTrailService.logEvent({
         ...event,
-        timestamp: new Date(),
-        service: 'zero-downtime-manager',
-        severity: event.severity || 'info'
+        action: event.action || 'unknown',
+        actor: event.actor || 'system',
+        result: event.result || 'info'
       });
     } catch (error) {
       console.error('Failed to log audit event:', error);
