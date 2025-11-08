@@ -1,20 +1,15 @@
 // Ultra Queen AI Raeesa - API Routes
 // Multi-provider AI system with quantum simulation and self-upgrade capabilities
 
-import express, { Request, Response, Router } from 'express';
+import { Request, Response, Router } from 'express';
 import { ultraQueenAI } from '../services/ultra-queen-ai-simple.js';
 import { ultraQueenAIUnlimited } from '../services/ultra-queen-ai-unlimited.js';
 import { authenticate, requireRole } from '../middleware/auth.js';
 import { z } from 'zod';
-// Assuming ultraAIService is imported and available for the command processing
-// For example: import { ultraAIService } from '../services/ultra-ai-service.js';
-// If ultraAIService is not defined elsewhere, this part might need adjustment or removal.
-// For the purpose of this fix, we assume it exists and works as intended.
-// Mocking ultraAIService for demonstration if it's not provided:
+
 const ultraAIService = {
   processUnlimitedCommand: async (command: string, userId: string, botMode: string, options?: any) => {
     console.log(`Processing command "${command}" for user "${userId}" in mode "${botMode}" with options:`, options);
-    // Simulate a response
     return {
       success: true,
       message: `Command "${command}" processed successfully in unlimited mode.`,
@@ -25,7 +20,6 @@ const ultraAIService = {
     };
   }
 };
-
 
 const router = Router();
 

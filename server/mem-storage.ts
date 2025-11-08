@@ -3,10 +3,10 @@ export interface ApiKey {
   userId: string;
   key: string;
   description: string;
-  lastUsed?: string; // ISO date string
+  lastUsed?: string;
   isActive: boolean;
-  createdAt: string; // ISO date string
-  [x: string]: string | boolean | undefined;
+  createdAt: string;
+  expiresAt?: Date;
 }
 
 export interface User {

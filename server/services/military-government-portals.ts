@@ -4,10 +4,7 @@
 // Global Access to All Military and Government Systems
 // Web2 and Web3 Integration with CAC/PIV Authentication
 
-import { z } from 'zod';
-import axios from 'axios';
 import { ethers } from 'ethers';
-import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 
 // Portal Types

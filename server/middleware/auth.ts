@@ -169,10 +169,9 @@ export async function requireApiKey(req: Request, res: Response, next: NextFunct
 
     // Get all API keys and compare using bcrypt.compare
     const allApiKeys = await storage.getAllApiKeys();
-    let matchedKey = null;
+    let matchedKey: any = null;
 
     for (const storedKey of allApiKeys) {
-      // storedKey may contain `keyHash` or `key` depending on storage implementation
       const hashed = String((storedKey as any).keyHash || (storedKey as any).key || '');
       try {
         const isMatch = await bcryptjs.compare(apiKey, hashed);
@@ -180,8 +179,7 @@ export async function requireApiKey(req: Request, res: Response, next: NextFunct
           matchedKey = storedKey;
           break;
         }
-      } catch (err) {
-        // If compare fails for any reason, continue to next key
+      } catch {
         continue;
       }
     }
@@ -193,14 +191,14 @@ export async function requireApiKey(req: Request, res: Response, next: NextFunct
       });
     }
 
-    if (matchedKey.expiresAt && matchedKey.expiresAt < new Date()) {
+    const expiresAt = matchedKey.expiresAt;
+    if (expiresAt && expiresAt < new Date()) {
       return res.status(401).json({ 
         error: "API key expired",
         message: "API key has expired" 
       });
     }
 
-    // Update last used timestamp
     await storage.updateApiKeyLastUsed(matchedKey.id);
 
     next();

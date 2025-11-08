@@ -129,11 +129,7 @@ export class PDFGeneratorService {
       y: 150,
       size: 40,
       font: fontBold,
-      color: rgb(0.9, 0.9, 0.9),
-      rotate: {
-        angle: -45,
-        type: 'degrees'
-      } as any
+      color: rgb(0.9, 0.9, 0.9)
     });
 
     // Add footer
