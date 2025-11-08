@@ -197,6 +197,11 @@ export function isProduction(): boolean {
   return !isDevelopment();
 }
 
+// Export platform check for use in other modules
+export function isRenderPlatform(): boolean {
+  return !!process.env.RENDER || !!process.env.RENDER_SERVICE_ID;
+}
+
 // PRODUCTION: Validate on Render, Railway, and Replit
 export function validateProductionEnvironment(): void {
   const isProductionEnv = process.env.RENDER || process.env.RAILWAY_ENVIRONMENT || process.env.REPL_ID;

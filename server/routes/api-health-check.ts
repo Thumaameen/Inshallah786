@@ -6,7 +6,7 @@
 import { Router } from 'express';
 import OpenAI from 'openai';
 import { Anthropic } from '@anthropic-ai/sdk';
-import { environment } from '../config/env.js';
+import * as environment from '../config/env.js';
 
 const router = Router();
 

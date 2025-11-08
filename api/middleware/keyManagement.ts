@@ -1,3 +1,4 @@
+// Vercel API middleware
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 const API_KEYS = {

@@ -3,14 +3,12 @@ import { monitoringService } from './monitoring-service.js';
 
 const router = express.Router();
 
-// Get current metrics
-router.get('/metrics', (req, res) => {
+router.get('/metrics', (_req, res) => {
   const metrics = monitoringService.getMetrics();
   res.json(metrics);
 });
 
-// Get system health status
-router.get('/health', (req, res) => {
+router.get('/health', (_req, res) => {
   const metrics = monitoringService.getMetrics();
   const systemMetrics = metrics.system;
 

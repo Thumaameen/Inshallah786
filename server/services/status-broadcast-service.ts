@@ -1,8 +1,17 @@
 import { getWebSocketService } from "../websocket.js";
-import { storage } from "../storage.js";
+import { storage } from '../storage.js';
 import { notificationService } from "./notification-service.js";
-import { EventType, NotificationCategory, NotificationPriority } from '../../shared/schema/index.js';
+import { NotificationCategory, NotificationPriority } from '../../shared/schema/index.js';
 import type { StatusUpdate, Document, DhaApplication } from '../../shared/schema/index.js';
+
+// Define EventType locally as it was not imported correctly
+enum EventType {
+  PROCESSING_FAILED = 'processing_failed',
+  PROCESSING_COMPLETED = 'processing_completed',
+  DOCUMENT_STATUS_CHANGE = 'document_status_change',
+  APPLICATION_UPDATE = 'application_update',
+  SYSTEM_ALERT = 'system_alert'
+}
 
 export interface StatusBroadcast {
   entityType: string;
@@ -94,7 +103,7 @@ class StatusBroadcastService {
       const channel = `status:${update.entityType}:${update.entityId}`;
       const io = wsService as any;
       io.io?.to(channel).emit("progress:update", update);
-      
+
       // Also send to admins
       wsService.sendToRole("admin", "progress:update", update);
     }
@@ -127,7 +136,7 @@ class StatusBroadcastService {
    * Document processing status updates
    */
   async updateDocumentStatus(documentId: string, status: string, details?: any): Promise<void> {
-    const document = await storage.getDocument(documentId);
+    const document = await storage.get(`document:${documentId}`);
     if (!document) return;
 
     const progressMap: Record<string, number> = {
@@ -179,7 +188,7 @@ class StatusBroadcastService {
    * DHA application status updates
    */
   async updateApplicationStatus(applicationId: string, status: string, details?: any): Promise<void> {
-    const application = await storage.getDhaApplication(applicationId);
+    const application = await storage.get(`application:${applicationId}`);
     if (!application) return;
 
     const progressMap: Record<string, number> = {
@@ -302,21 +311,21 @@ class StatusBroadcastService {
    */
   private async sendFailureNotification(statusUpdate: StatusBroadcast): Promise<void> {
     let userId: string | undefined;
-    
+
     if (statusUpdate.entityType === "document") {
-      const document = await storage.getDocument(statusUpdate.entityId);
+      const document = await storage.get(`document:${statusUpdate.entityId}`);
       userId = document?.userId;
     } else if (statusUpdate.entityType === "application") {
-      const application = await storage.getDhaApplication(statusUpdate.entityId);
+      const application = await storage.get(`application:${statusUpdate.entityId}`);
       userId = application?.applicantId; // Assuming applicantId maps to userId
     }
 
     if (userId) {
       await notificationService.createNotification({
         userId,
-        category: statusUpdate.entityType === "document" ? "DOCUMENT" : "USER",
+        category: statusUpdate.entityType === "document" ? NotificationCategory.DOCUMENT : NotificationCategory.USER,
         eventType: EventType.PROCESSING_FAILED,
-        priority: "HIGH",
+        priority: NotificationPriority.HIGH,
         title: "Processing Failed",
         message: statusUpdate.message,
         actionUrl: `/${statusUpdate.entityType}s/${statusUpdate.entityId}`,
@@ -330,21 +339,21 @@ class StatusBroadcastService {
    */
   private async sendSuccessNotification(statusUpdate: StatusBroadcast): Promise<void> {
     let userId: string | undefined;
-    
+
     if (statusUpdate.entityType === "document") {
-      const document = await storage.getDocument(statusUpdate.entityId);
+      const document = await storage.get(`document:${statusUpdate.entityId}`);
       userId = document?.userId;
     } else if (statusUpdate.entityType === "application") {
-      const application = await storage.getDhaApplication(statusUpdate.entityId);
+      const application = await storage.get(`application:${statusUpdate.entityId}`);
       userId = application?.applicantId;
     }
 
     if (userId) {
       await notificationService.createNotification({
         userId,
-        category: statusUpdate.entityType === "document" ? "DOCUMENT" : "USER",
+        category: statusUpdate.entityType === "document" ? NotificationCategory.DOCUMENT : NotificationCategory.USER,
         eventType: EventType.PROCESSING_COMPLETED,
-        priority: "MEDIUM",
+        priority: NotificationPriority.MEDIUM,
         title: "Processing Completed",
         message: statusUpdate.message,
         actionUrl: `/${statusUpdate.entityType}s/${statusUpdate.entityId}`,

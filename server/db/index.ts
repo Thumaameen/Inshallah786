@@ -4,7 +4,7 @@ import { Pool } from 'pg';
 import { ENV_CONFIG } from '../config/environment.js';
 
 const pool = new Pool({
-  connectionString: ENV_CONFIG.DATABASE_URL,
+  connectionString: (ENV_CONFIG as any).DATABASE_URL || process.env.DATABASE_URL,
   ssl: ENV_CONFIG.NODE_ENV === 'production' ? { rejectUnauthorized: false } : undefined,
   max: 20,
   idleTimeoutMillis: 30000,

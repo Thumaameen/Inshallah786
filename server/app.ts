@@ -1,5 +1,4 @@
-import express from 'express';
-import type { Request, Response, NextFunction } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import helmet from 'helmet';
 import compression from 'compression';
 import cors from 'cors';

@@ -10,8 +10,8 @@ import { join } from 'path';
 declare global {
   namespace NodeJS {
     interface ProcessEnv {
-      NODE_ENV: 'development' | 'production' | 'test';
-      NODE_VERSION: string;
+      NODE_ENV?: 'development' | 'production' | 'test';
+      NODE_VERSION?: string;
       OPENAI_API_KEY?: string;
       ANTHROPIC_API_KEY?: string;
       GOOGLE_API_KEY?: string;
@@ -20,6 +20,7 @@ declare global {
       DHA_API_KEY?: string;
       DHA_NPR_API_KEY?: string;
       ICAO_PKD_KEY?: string;
+      START_TIME?: string;
     }
   }
 }

@@ -17,7 +17,7 @@ import { anthropicService } from "./anthropic-integration.js";
 import { storage } from "../storage.js";
 
 // AI Mode type definition
-type AIMode = 'assistant' | 'expert' | 'quantum' | 'unlimited' | 'god';
+type AIMode = 'assistant' | 'expert' | 'quantum' | 'unlimited' | 'god' | 'standard';
 
 // Provider selection types
 export type AIProvider = 'auto' | 'openai' | 'anthropic' | 'perplexity' | 'mistral' | 'quantum';
@@ -73,7 +73,7 @@ class UltraQueenAI {
   private anthropic: Anthropic | null = null;
   private mistralApiKey: string = '';
   private providerStatus: Map<AIProvider, ProviderStatus> = new Map();
-  private queenMode: AIMode = 'unrestricted'; // Default to unrestricted as per request
+  private queenMode: AIMode = 'standard'; // Default to standard as per request
 
   constructor() {
     this.initializeProviders();
@@ -345,9 +345,8 @@ class UltraQueenAI {
         stream: request.streamResponse
       });
 
-      const content = request.streamResponse ? 
-        'Streaming response initiated' : 
-        completion.choices[0].message.content || '';
+      // Fix OpenAI response type handling
+      const content = 'choices' in completion && completion.choices[0]?.message?.content || '';
 
       return {
         success: true,
@@ -355,7 +354,7 @@ class UltraQueenAI {
         provider: 'openai',
         metadata: {
           executionTime: Date.now() - startTime,
-          tokensUsed: completion.usage?.total_tokens,
+          tokensUsed: 'usage' in completion ? completion.usage?.total_tokens : undefined,
           model: 'gpt-4o',
           confidence: 0.95
         }

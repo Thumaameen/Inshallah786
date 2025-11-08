@@ -1,12 +1,7 @@
 import { PDFDocument, PDFPage, PDFFont, StandardFonts, rgb, degrees, PDFImage } from 'pdf-lib';
-import { DOMParser } from '@xmldom/xmldom';
-import fontkit from '@pdf-lib/fontkit';
-import { createCanvas, loadImage } from 'canvas';
 import QRCode from 'qrcode';
-import { enhancedDocumentService } from './enhanced-document.service';
 import { quantumEncryptionService } from './quantum-encryption.js';
-import { governmentAPIService } from './production-government-api.js';
-import { blockchainService } from './blockchain.service';
+import { blockchainService } from './blockchain-service.js';
 import fs from 'fs/promises';
 import path from 'path';
 
@@ -54,8 +49,7 @@ export class UltraPDFEditorService {
   private fonts: Map<string, PDFFont> = new Map();
 
   async loadDocument(pdfBytes: Buffer): Promise<void> {
-    const pdfDoc = await PDFDocument.load(new Uint8Array(pdfBytes));
-    pdfDoc.registerFontkit(fontkit);
+    const pdfDoc = await PDFDocument.load(Uint8Array.from(pdfBytes));
     await this.loadStandardFonts();
     this.pdfDoc = pdfDoc;
   }
@@ -136,19 +130,18 @@ export class UltraPDFEditorService {
     if (options.security) {
       // Note: PDF encryption requires pdf-lib with encryption support
       // For production, use quantum encryption service instead
-      const quantumService = new quantumEncryptionService();
-      const encryptedData = await quantumService.encrypt(Buffer.from(await this.pdfDoc.save()));
+      const encryptedData = await quantumEncryptionService.encrypt(Buffer.from(await this.pdfDoc.save()));
       return encryptedData;
     }
 
     // Add metadata
     if (options.metadata) {
-      this.pdfDoc.setTitle(options.metadata.title);
-      this.pdfDoc.setAuthor(options.metadata.author);
-      this.pdfDoc.setSubject(options.metadata.subject);
-      this.pdfDoc.setKeywords(options.metadata.keywords);
-      this.pdfDoc.setCreator(options.metadata.creator);
-      this.pdfDoc.setProducer(options.metadata.producer);
+      if (options.metadata.title) this.pdfDoc.setTitle(options.metadata.title);
+      if (options.metadata.author) this.pdfDoc.setAuthor(options.metadata.author);
+      if (options.metadata.subject) this.pdfDoc.setSubject(options.metadata.subject);
+      if (options.metadata.keywords) this.pdfDoc.setKeywords([options.metadata.keywords]);
+      if (options.metadata.creator) this.pdfDoc.setCreator(options.metadata.creator);
+      if (options.metadata.producer) this.pdfDoc.setProducer(options.metadata.producer);
     }
 
     // Add verification features
@@ -185,39 +178,16 @@ export class UltraPDFEditorService {
   }
 
   async extractText(): Promise<string[]> {
-    const pages = this.pdfDoc.getPages();
-    const textContent: string[] = [];
-
-    for (const page of pages) {
-      // Note: getTextContent is not available in pdf-lib
-      // Use alternative PDF parsing library for text extraction
-      const textContent = { items: [] };
-      textContent.items = await page.node.getTextContent();
-      textContent.items.map(item => item.str).join(' ');
-    }
-
-    return textContent;
+    // Note: pdf-lib doesn't support text extraction
+    // This would require a different library like pdf-parse
+    console.warn('Text extraction not implemented - use pdf-parse library');
+    return [];
   }
 
   async replaceText(searchText: string, replaceText: string): Promise<void> {
-    const pages = this.pdfDoc.getPages();
-
-    for (const page of pages) {
-      const text = await page.node.getTextContent();
-      const content = text.items.map(item => item.str).join(' ');
-
-      if (content.includes(searchText)) {
-        const newContent = content.replace(searchText, replaceText);
-        // Clear page content and redraw with new text
-        // This is a simplified version - actual implementation would preserve layout
-        page.drawText(newContent, {
-          x: 0,
-          y: 0,
-          size: 12,
-          font: this.fonts.get(StandardFonts.Helvetica)
-        });
-      }
-    }
+    // Note: pdf-lib doesn't support text manipulation
+    // This would require extracting, modifying, and regenerating the PDF
+    console.warn('Text replacement not implemented');
   }
 
   async addDigitalSignature(certificatePath: string, reason: string): Promise<void> {
