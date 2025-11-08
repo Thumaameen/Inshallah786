@@ -1,10 +1,10 @@
 import { PDFDocument } from 'pdf-lib';
-import { ultraQueenAI } from '../services/ultra-queen-ai';
-import { ErrorCode, VerificationError } from '../types/errors';
-import { DHADocumentType } from '../types/documents';
-import { NPRService } from '../services/npr.service';
-import { ABISService } from '../services/abis.service';
-import { BlockchainService } from '../services/blockchain.service';
+import { ultraQueenAI } from '../services/ultra-queen-ai.js';
+import { ErrorCode, VerificationError } from '../types/errors.js';
+import { DHADocumentType } from '../types/documents.js';
+import { NPRService } from '../services/government/npr.service.js';
+import { ABISService } from '../services/government/abis.service.js';
+import { BlockchainService } from '../services/blockchain.service.js';
 
 export class DocumentVerificationHelpers {
   static async verifyHologram(doc: PDFDocument): Promise<boolean> {

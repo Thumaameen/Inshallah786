@@ -3,11 +3,11 @@ import compression from 'compression';
 import helmet from 'helmet';
 import cors from 'cors';
 import { rateLimit } from 'express-rate-limit';
-import { productionConfig } from './config/production';
-import { checkDatabaseConnection } from './db/connection';
-import apiRoutes from './routes/api';
-import { errorHandler } from './middleware/error-handler';
-import { militaryGradeAuth } from './middleware/military-grade-auth';
+import { productionConfig } from './config/production.js';
+import { checkDatabaseConnection } from './db/connection.js';
+import apiRoutes from './routes/api.js';
+import { errorHandler } from './middleware/error-handler.js';
+import { militaryGradeAuth } from './middleware/military-grade-auth.js';
 
 const app = express();
 

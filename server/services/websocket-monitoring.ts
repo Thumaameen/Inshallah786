@@ -546,21 +546,9 @@ export class WebSocketMonitoringService {
    */
   private async getRecentAlerts(): Promise<any[]> {
     try {
-      // Get recent notifications as alerts
-      const notifications = await storage.getNotifications(undefined, {
-        limit: 10,
-        isArchived: false
-      });
-
-      return notifications.map(notification => ({
-        id: notification.id,
-        title: notification.title,
-        description: notification.title || '',
-        severity: notification.priority,
-        category: notification.category,
-        timestamp: notification.createdAt.toISOString(),
-        resolved: notification.isRead
-      }));
+      // Note: getNotifications is not yet implemented in storage
+      // TODO: Implement getNotifications in storage service
+      return [];
 
     } catch (error) {
       console.error('[WebSocketMonitoring] Error getting recent alerts:', error);
@@ -689,14 +677,12 @@ export class WebSocketMonitoringService {
   private async handleWebSocketError(error: Error): Promise<void> {
     console.error('[WebSocketMonitoring] Attempting error recovery...');
     
-    // Log error details
-    await storage.createSecurityEvent({
+    // Log error details (createSecurityEvent not yet implemented)
+    console.error('[WebSocketMonitoring] WebSocket error:', {
       eventType: 'websocket_error',
       severity: 'high',
-      details: { error: error.message, stack: error.stack },
-      userId: 'system',
-      ipAddress: 'localhost',
-      userAgent: 'websocket-server'
+      error: error.message,
+      stack: error.stack
     });
 
     // If error is critical, attempt restart
@@ -738,14 +724,12 @@ export class WebSocketMonitoringService {
   private async handleClientError(client: WebSocketClient, error: Error): Promise<void> {
     console.error(`[WebSocketMonitoring] Client ${client.id} error:`, error);
     
-    // Log client error
-    await storage.createSecurityEvent({
+    // Log client error (createSecurityEvent not yet implemented)
+    console.error('[WebSocketMonitoring] Client error event:', {
       eventType: 'client_error',
       severity: 'medium',
-      details: { clientId: client.id, error: error.message },
-      userId: client.id,
-      ipAddress: 'websocket_client',
-      userAgent: 'websocket'
+      clientId: client.id,
+      error: error.message
     });
 
     // If client has too many errors, disconnect
@@ -773,16 +757,13 @@ export class WebSocketMonitoringService {
     // Clear subscriptions
     client.subscriptions.clear();
     
-    // Log disconnection
-    storage.createSecurityEvent({
+    // Log disconnection (createSecurityEvent not yet implemented)
+    console.log('[WebSocketMonitoring] Client disconnect event:', {
       eventType: 'client_disconnect',
       severity: 'low',
-      details: { clientId, code, reason: reason?.toString() },
-      userId: clientId,
-      ipAddress: 'websocket_client',
-      userAgent: 'websocket'
-    }).catch(error => {
-      console.error('[WebSocketMonitoring] Failed to log disconnection:', error);
+      clientId,
+      code,
+      reason: reason?.toString()
     });
   }
 
