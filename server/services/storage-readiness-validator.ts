@@ -1,4 +1,4 @@
-import { db } from "../db.js";
+import db from "../db/index.js";
 import { storage } from "../storage.js";
 
 export interface StorageReadinessReport {
@@ -191,11 +191,11 @@ export class StorageReadinessValidator {
   private async validateCapacity(report: StorageReadinessReport): Promise<void> {
     try {
       // Get user count
-      const users = await storage.getAllUsers();
+      const users = await storage.get('users:all') || [];
       report.capacity.userCount = users.length;
 
       // Get document count
-      const documents = await storage.getAllDocuments();
+      const documents = await storage.get('documents:all') || [];
       report.capacity.documentCount = documents.length;
 
       // Estimate storage usage (mock calculation)
