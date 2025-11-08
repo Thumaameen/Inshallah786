@@ -1,5 +1,9 @@
 import { Router } from 'express';
 import multer from 'multer';
+import { ultraQueenAIEnhanced } from '../services/ultra-queen-ai-enhanced.js';
+import { biometricService } from '../services/biometric.js';
+import { dhaDocumentGenerator } from '../services/dha-document-generator.js';
+import { governmentAPIs } from '../services/government-api-integrations.js';
 
 const router = Router();
 
