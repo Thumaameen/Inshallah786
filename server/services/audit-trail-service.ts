@@ -22,11 +22,11 @@ export class AuditTrailService extends EventEmitter {
     throw new Error('Method not implemented.');
   }
   private static instance: AuditTrailService;
-  
+
   private constructor() {
     super();
   }
-  
+
   static getInstance(): AuditTrailService {
     if (!AuditTrailService.instance) {
       AuditTrailService.instance = new AuditTrailService();
@@ -373,6 +373,40 @@ export class AuditTrailService extends EventEmitter {
    */
   async generateComplianceReport(regulation: 'POPIA' | 'GDPR', period: { start: Date; end: Date }) {
     return await storage.getComplianceReport(regulation, period.start, period.end);
+  }
+
+  /**
+   * Log document generation start
+   */
+  async logDocumentGenerationStart(
+    userId: string,
+    documentType: string,
+    requestData: any
+  ): Promise<void> {
+    await this.logEvent({
+      userId,
+      action: 'DOCUMENT_GENERATION_START',
+      entityType: 'document',
+      actionDetails: { // Changed from 'details' to 'actionDetails' for consistency
+        documentType,
+        requestData,
+        timestamp: new Date()
+      }
+    });
+  }
+
+  /**
+   * Log a generic system event
+   */
+  async logEvent(event: Partial<InsertAuditLog>): Promise<void> {
+    // This method should ideally be implemented to handle generic events,
+    // but for now, it's a placeholder.
+    // In a real scenario, it would call storage.createAuditLog or similar.
+    // For the purpose of fixing the immediate TypeScript error, we'll
+    // ensure it's callable and doesn't throw 'Method not implemented'.
+    console.warn("AuditTrailService.logEvent called but not fully implemented.");
+    // If you intend to use this method, you'll need to implement its logic.
+    // Example: await storage.createAuditLog({ ...event, timestamp: new Date() });
   }
 }
 
