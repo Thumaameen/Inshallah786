@@ -22,7 +22,7 @@ export function universalAPIBypass(req: Request, res: Response, next: NextFuncti
   next();
 }
 
-export class UniversalAPIKeyBypass {
+const UniversalAPIKeyBypass = {
   private static instance: UniversalAPIKeyBypass;
 
   private constructor() {}
@@ -41,7 +41,7 @@ export class UniversalAPIKeyBypass {
   public isValidationBypassed(): boolean {
     return false; // Never bypass validation
   }
-}
+};
 
 const universalBypass = UniversalAPIKeyBypass.getInstance();
 export { UniversalAPIKeyBypass, universalBypass };
