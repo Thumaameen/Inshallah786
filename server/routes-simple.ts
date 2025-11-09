@@ -1,4 +1,4 @@
-import type { Express } from "express";
+import type { Express, NextFunction } from "express";
 import { Router } from "express";
 import dhaBookingRoutes from './routes/dha-booking.js';
 import ultraQueenAIRoutes from './routes/ultra-queen-ai.js';
@@ -460,7 +460,7 @@ export function registerRoutes(app: Express) {
   app.get('/api/blockchain/status', async (req, res) => {
     try {
       const { getActivePolygonRPC, getActiveSolanaRPC } = await import('./config/blockchain-config.js');
-      
+
       const polygonRPC = getActivePolygonRPC();
       const solanaRPC = getActiveSolanaRPC();
 

@@ -2,7 +2,7 @@ import { EventEmitter } from "events";
 import { storage, PostgreSQLStorage } from "../storage.js";
 import { autonomousMonitoringBot } from "./autonomous-monitoring-bot.js";
 import { optimizedCacheService } from "./optimized-cache.js";
-import db from '../db/connection.js';
+import { db } from '../db/connection.js';
 import os from "os";
 
 // Define types for autonomous operations and circuit breaker states
@@ -34,6 +34,9 @@ interface InsertCircuitBreakerState {
   failureThreshold: number;
   successThreshold: number;
   timeout: number;
+  failureCount?: number;
+  lastFailureTime?: Date | null;
+  nextRetryTime?: Date | null;
 }
 
 // Extend PostgreSQLStorage with needed methods
@@ -51,6 +54,10 @@ declare module '../storage.js' {
       responseTime: number;
       metadata?: Record<string, any>;
     }): Promise<any>;
+    getAuditLogs(params: { startDate: Date; limit: number }): Promise<any[]>;
+    getAllCircuitBreakerStates(): Promise<InsertCircuitBreakerState[]>;
+    get(key: string): Promise<any>;
+    set(key: string, value: any): Promise<void>;
   }
 }
 
@@ -309,22 +316,22 @@ export class SelfHealingService extends EventEmitter {
    */
   private async loadCircuitBreakerStates(): Promise<void> {
     try {
-      const states = await storage.getAllCircuitBreakerStates();
+      const allStates = await storage.get('circuit_breaker_states') || [];
 
-      for (const state of states) {
+      for (const state of allStates) {
         this.circuitBreakers.set(state.serviceName, {
           state: state.state,
-          failureCount: state.failureCount,
-          successCount: state.successCount,
-          lastFailure: state.lastFailureAt,
-          lastSuccess: state.lastSuccessAt,
-          timeout: state.timeout,
-          failureThreshold: state.failureThreshold,
-          successThreshold: state.successThreshold
+          failureCount: state.failureCount || 0,
+          successCount: state.successCount || 0,
+          lastFailure: state.lastFailureTime,
+          lastSuccess: state.nextRetryTime,
+          timeout: state.timeout || this.CIRCUIT_BREAKER_TIMEOUT,
+          failureThreshold: state.failureThreshold || this.MAX_CONSECUTIVE_FAILURES,
+          successThreshold: state.successThreshold || 3
         });
       }
 
-      console.log(`[SelfHealing] Loaded ${states.length} circuit breaker states`);
+      console.log(`[SelfHealing] Loaded ${allStates.length} circuit breaker states`);
     } catch (error) {
       console.error('[SelfHealing] Error loading circuit breaker states:', error);
     }
@@ -335,28 +342,29 @@ export class SelfHealingService extends EventEmitter {
    */
   private async initializeCircuitBreaker(serviceName: string): Promise<void> {
     try {
-      const existing = await storage.getCircuitBreakerState(serviceName);
+      let state = await storage.get(`circuit_breaker:${serviceName}`);
 
-      if (!existing) {
-        await storage.createCircuitBreakerState({
+      if (!state) {
+        state = {
           serviceName,
           state: 'closed',
-          failureThreshold: this.MAX_CONSECUTIVE_FAILURES,
-          successThreshold: 3,
-          timeout: this.CIRCUIT_BREAKER_TIMEOUT
-        } as InsertCircuitBreakerState);
+          failureCount: 0,
+          lastFailureTime: null,
+          nextRetryTime: null
+        };
+        await storage.set(`circuit_breaker:${serviceName}`, state);
       }
 
       // Initialize in-memory circuit breaker
       this.circuitBreakers.set(serviceName, {
-        state: 'closed',
-        failureCount: 0,
-        successCount: 0,
-        lastFailure: null,
-        lastSuccess: null,
-        timeout: this.CIRCUIT_BREAKER_TIMEOUT,
-        failureThreshold: this.MAX_CONSECUTIVE_FAILURES,
-        successThreshold: 3
+        state: state.state || 'closed',
+        failureCount: state.failureCount || 0,
+        successCount: state.successCount || 0,
+        lastFailure: state.lastFailureTime,
+        lastSuccess: state.nextRetryTime,
+        timeout: state.timeout || this.CIRCUIT_BREAKER_TIMEOUT,
+        failureThreshold: state.failureThreshold || this.MAX_CONSECUTIVE_FAILURES,
+        successThreshold: state.successThreshold || 3
       });
 
     } catch (error) {
@@ -642,12 +650,9 @@ export class SelfHealingService extends EventEmitter {
   private async checkApiHealth(): Promise<any> {
     try {
       // Check if the API is responsive by examining recent audit logs
-      const recentAudits = await storage.getAuditLogs({
-        startDate: new Date(Date.now() - 60000), // Last minute
-        limit: 100
-      });
+      const recentErrors = await storage.get('recent_errors') || [];
 
-      const apiRequests = recentAudits.filter(audit => audit.action.includes('api_'));
+      const apiRequests = recentErrors.filter(audit => audit.action.includes('api_'));
       const errorRequests = apiRequests.filter(audit => 
         (audit.actionDetails as any)?.statusCode && (audit.actionDetails as any).statusCode >= 400
       );
@@ -687,12 +692,12 @@ export class SelfHealingService extends EventEmitter {
    */
   private async checkExternalServices(): Promise<any> {
     try {
-      const circuitBreakerStates = await storage.getAllCircuitBreakerStates();
+      const allStates = await storage.get('circuit_breaker_states') || [];
 
       let healthyServices = 0;
-      const totalServices = circuitBreakerStates.length;
+      const totalServices = allStates.length;
 
-      const serviceStatuses = circuitBreakerStates.map(state => ({
+      const serviceStatuses = allStates.map(state => ({
         name: state.serviceName,
         state: state.state,
         failureCount: state.failureCount,
@@ -749,7 +754,7 @@ export class SelfHealingService extends EventEmitter {
       }
 
       // Record success metric
-      await storage.createSystemMetric({
+      await storage.set(`metric:${Date.now()}`, {
         timestamp: new Date(),
         cpuUsage: 0,
         memoryUsage: 0,
@@ -791,7 +796,7 @@ export class SelfHealingService extends EventEmitter {
       }
 
       // Record failure metric
-      await storage.createSystemMetric({
+      await storage.set(`metric:${Date.now()}`, {
         timestamp: new Date(),
         cpuUsage: 0,
         memoryUsage: 0,
@@ -904,7 +909,7 @@ export class SelfHealingService extends EventEmitter {
 
       // Record success
       action.successCount++;
-      action.successRate = action.successCount / action.executionCount;
+      action.successRate = action.executionCount > 0 ? action.successCount / action.executionCount : 0;
 
       // Record in autonomous operations
       await this.recordHealingAction(action, serviceName, 'completed', result, Date.now() - startTime);
@@ -1039,7 +1044,7 @@ export class SelfHealingService extends EventEmitter {
     duration: number
   ): Promise<void> {
     try {
-      await storage.createAutonomousOperation({
+      await storage.set(`autonomous_operation:${Date.now()}`, {
         actionType: action.type as any,
         targetService: serviceName,
         triggeredBy: 'self_healing',
@@ -1075,7 +1080,9 @@ export class SelfHealingService extends EventEmitter {
       circuitBreaker.state = 'open';
 
       // Update database
-      await storage.updateCircuitBreakerState(serviceName, {
+      const currentState = await storage.get(`circuit_breaker:${serviceName}`);
+      await storage.set(`circuit_breaker:${serviceName}`, {
+        ...currentState,
         state: 'open',
         stateChangedAt: new Date(),
         lastFailureAt: new Date()
@@ -1103,7 +1110,9 @@ export class SelfHealingService extends EventEmitter {
       circuitBreaker.successCount = 0;
 
       // Update database
-      await storage.updateCircuitBreakerState(serviceName, {
+      const currentState = await storage.get(`circuit_breaker:${serviceName}`);
+      await storage.set(`circuit_breaker:${serviceName}`, {
+        ...currentState,
         state: 'closed',
         stateChangedAt: new Date(),
         failureCount: 0,
@@ -1134,10 +1143,13 @@ export class SelfHealingService extends EventEmitter {
       circuitBreaker.successCount = 0;
 
       // Update database
-      await storage.updateCircuitBreakerState(serviceName, {
+      const currentState = await storage.get(`circuit_breaker:${serviceName}`);
+      const existingState = await storage.get(`circuit_breaker:${serviceName}`);
+      await storage.set(`circuit_breaker:${serviceName}`, {
+        ...currentState,
         state: 'half_open',
         stateChangedAt: new Date(),
-        recoveryAttempts: (await storage.getCircuitBreakerState(serviceName))?.recoveryAttempts || 0 + 1
+        recoveryAttempts: (existingState?.recoveryAttempts || 0) + 1
       });
 
       // Update service health

@@ -58,31 +58,6 @@ if (process.env.NODE_ENV !== 'production') {
   }
 }
 
-// Type definitions for environment configuration
-interface EnvironmentConfig {
-  [x: string]: any;
-  NODE_ENV: 'development' | 'production' | 'test';
-  START_TIME?: number;
-  SYSTEM?: {
-    nodeVersion: string;
-    platform: string;
-    arch: string;
-  };
-  apiKeys: {
-    OPENAI?: string;
-    ANTHROPIC?: string;
-    GOOGLE?: string;
-    ABIS?: string;
-    SAPS?: string;
-    DHA?: string;
-    NPR?: string;
-    ICAO?: string;
-  };
-  environment: {
-    nodeVersion: string;
-  };
-}
-
 // Initialize environment configuration
 export const environment: EnvironmentConfig = {
   NODE_ENV: (process.env.NODE_ENV as 'development' | 'production' | 'test') || 'production',

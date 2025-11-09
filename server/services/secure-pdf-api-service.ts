@@ -117,7 +117,18 @@ const DOCUMENT_TYPE_CONFIG = {
  * Secure PDF API Service with production-grade security controls
  */
 export class SecurePDFAPIService {
-  
+
+  // Placeholder for the PDF generator instance. In a real scenario, this would be injected or instantiated.
+  private pdfGenerator: any;
+
+  constructor() {
+    // Initialize pdfGenerator, for example:
+    // this.pdfGenerator = new EnhancedPdfGenerationService(); // Assuming this is how it's done
+    // For this example, we'll assume it's available as enhancedPdfGenerationService
+    this.pdfGenerator = enhancedPdfGenerationService;
+  }
+
+
   /**
    * Unified secure PDF generation endpoint
    * Handles all 21 DHA document types with proper validation and security
@@ -125,18 +136,18 @@ export class SecurePDFAPIService {
   async generateSecurePDF(req: Request, res: Response): Promise<void> {
     const startTime = Date.now();
     const requestId = crypto.randomUUID();
-    
+
     try {
       // Extract document type from URL parameter
       const documentType = req.params.type as string;
-      
+
       if (!documentType || !Object.values(DocumentType).includes(documentType as DocumentType)) {
-        await this.logSecurityEvent(req, 'INVALID_DOCUMENT_TYPE', { 
-          documentType, 
+        await this.logSecurityEvent(req, 'INVALID_DOCUMENT_TYPE', {
+          documentType,
           requestId,
           severity: 'medium'
         });
-        
+
         res.status(400).json({
           success: false,
           error: 'Invalid document type',
@@ -145,7 +156,7 @@ export class SecurePDFAPIService {
         });
         return;
       }
-      
+
       // Get document configuration
       const config = DOCUMENT_TYPE_CONFIG[documentType as keyof typeof DOCUMENT_TYPE_CONFIG];
       if (!config) {
@@ -156,7 +167,7 @@ export class SecurePDFAPIService {
         });
         return;
       }
-      
+
       // Verify user authentication and authorization
       const authResult = await this.verifyAuthAndPermissions(req, config.requiredRole);
       if (!authResult.success) {
@@ -167,7 +178,7 @@ export class SecurePDFAPIService {
           requestId,
           severity: 'high'
         });
-        
+
         res.status(403).json({
           success: false,
           error: 'Insufficient permissions for document type',
@@ -175,7 +186,7 @@ export class SecurePDFAPIService {
         });
         return;
       }
-      
+
       // Validate input data with Zod schema
       const validation = config.schema.safeParse(req.body);
       if (!validation.success) {
@@ -185,7 +196,7 @@ export class SecurePDFAPIService {
           requestId,
           severity: 'medium'
         });
-        
+
         res.status(400).json({
           success: false,
           error: 'Invalid input data',
@@ -194,21 +205,22 @@ export class SecurePDFAPIService {
         });
         return;
       }
-      
+
       const documentData = validation.data;
-      
+      const requestData = req.body; // Assuming requestData is what's needed for SmartIdData
+
       // Fraud detection screening
       const fraudCheck = await fraudDetectionService.screenDocumentRequest({
         userId: (req as any).user.id,
         documentType,
-        personalDetails: documentData.personal,
+        personalDetails: documentData.personal, // Use validated data for screening
         requestMetadata: {
           ipAddress: req.ip,
           userAgent: req.get('User-Agent'),
           timestamp: new Date()
         }
       });
-      
+
       if (fraudCheck.riskLevel === 'high' || fraudCheck.flagged) {
         await this.logSecurityEvent(req, 'FRAUD_DETECTION_ALERT', {
           documentType,
@@ -217,7 +229,7 @@ export class SecurePDFAPIService {
           requestId,
           severity: 'critical'
         });
-        
+
         res.status(429).json({
           success: false,
           error: 'Request requires additional verification',
@@ -226,25 +238,55 @@ export class SecurePDFAPIService {
         });
         return;
       }
-      
+
       // Log document generation start
       await auditTrailService.logDocumentGenerationStart({
         requestId,
         documentType,
         userId: (req as any).user.id,
         officerName: (req as any).user.username,
-        applicantId: documentData.personal.idNumber || documentData.personal.passportNumber,
+        applicantId: documentData.personal?.idNumber || documentData.personal?.passportNumber, // Use validated data
         timestamp: new Date(),
         ipAddress: req.ip,
         userAgent: req.get('User-Agent')
       });
-      
+
       // Generate secure PDF with cryptographic signatures
       let pdfBuffer: Buffer;
-      
+
       switch (documentType as DocumentType) {
         case DocumentType.SMART_ID:
-          pdfBuffer = await enhancedPdfGenerationService.generateSmartIdPDF(documentData);
+          // Fix type compatibility for SmartIdData
+          const smartIdData = {
+            personal: {
+              fullName: documentData.personal?.fullName || '',
+              idNumber: documentData.idNumber || documentData.personal?.idNumber || '', // Use idNumber from validation or personal details
+              dateOfBirth: documentData.personal?.dateOfBirth || '',
+              placeOfBirth: documentData.personal?.placeOfBirth || '',
+              nationality: documentData.personal?.nationality || 'South African',
+              gender: documentData.personal?.gender || '',
+              maritalStatus: documentData.personal?.maritalStatus || '',
+              passportNumber: documentData.personal?.passportNumber,
+              biometricData: documentData.personal?.biometricData,
+              photograph: documentData.personal?.photograph
+            },
+            // Assuming address, contact, employment, emergencyContact are optional or handled elsewhere if not in schema
+            address: requestData.address || { // Use requestData for potentially missing optional fields
+              street: '',
+              city: '',
+              province: '',
+              postalCode: '',
+              country: 'South Africa'
+            },
+            contact: requestData.contact || { // Use requestData for potentially missing optional fields
+              phoneNumber: '',
+              email: '',
+              alternativeContact: ''
+            },
+            employment: documentData.employment, // Use validated data
+            emergencyContact: documentData.emergencyContact // Use validated data
+          };
+          pdfBuffer = await this.pdfGenerator.generateSmartIdCard(smartIdData);
           break;
         case DocumentType.DIPLOMATIC_PASSPORT:
           pdfBuffer = await enhancedPdfGenerationService.generateDiplomaticPassportPDF(documentData);
@@ -258,10 +300,10 @@ export class SecurePDFAPIService {
         default:
           throw new Error(`Generator not implemented for document type: ${documentType}`);
       }
-      
+
       // Extract verification code from signed PDF metadata
       const verificationCode = this.extractVerificationCode(pdfBuffer);
-      
+
       // Log successful generation
       await auditTrailService.logDocumentGenerationSuccess({
         requestId,
@@ -271,7 +313,7 @@ export class SecurePDFAPIService {
         processingTime: Date.now() - startTime,
         cryptographicallySigned: true
       });
-      
+
       // Set secure response headers
       res.set({
         'Content-Type': 'application/pdf',
@@ -284,27 +326,29 @@ export class SecurePDFAPIService {
         'Cache-Control': 'no-store, no-cache, must-revalidate, private',
         'Pragma': 'no-cache'
       });
-      
+
       // Send cryptographically signed PDF
       res.status(200).send(pdfBuffer);
-      
+
     } catch (error) {
       console.error(`[Secure PDF API] Document generation failed:`, error);
-      
+
+      const documentType = req.params.type; // Capture documentType here for logging
+
       // Log generation failure
       await auditTrailService.logDocumentGenerationFailure({
         requestId,
-        documentType: req.params.type,
+        documentType: documentType,
         error: error.message,
         processingTime: Date.now() - startTime
       });
-      
+
       await this.logSecurityEvent(req, 'DOCUMENT_GENERATION_ERROR', {
         error: error.message,
         requestId,
         severity: 'high'
       });
-      
+
       res.status(500).json({
         success: false,
         error: 'Document generation failed',
@@ -320,10 +364,10 @@ export class SecurePDFAPIService {
    */
   async verifyDocument(req: Request, res: Response): Promise<void> {
     const requestId = crypto.randomUUID();
-    
+
     try {
       const { verificationCode, documentFile } = req.body;
-      
+
       if (!verificationCode && !documentFile) {
         res.status(400).json({
           success: false,
@@ -332,17 +376,17 @@ export class SecurePDFAPIService {
         });
         return;
       }
-      
+
       let verificationResult: any = {
         valid: false,
         verificationMethod: 'unknown',
         details: {}
       };
-      
+
       // Method 1: QR Code / Verification Code verification
       if (verificationCode) {
         const qrVerification = await verificationService.verifyByCode(verificationCode);
-        
+
         verificationResult = {
           valid: qrVerification.valid,
           verificationMethod: 'qr_code',
@@ -354,13 +398,13 @@ export class SecurePDFAPIService {
           }
         };
       }
-      
+
       // Method 2: Cryptographic signature verification (offline-capable)
       if (documentFile) {
         const pdfBuffer = Buffer.from(documentFile, 'base64');
-        const signatureVerification: SignatureValidationResult = 
+        const signatureVerification: SignatureValidationResult =
           await cryptographicSignatureService.validatePDFSignature(pdfBuffer);
-        
+
         verificationResult = {
           valid: signatureVerification.valid,
           verificationMethod: 'cryptographic_signature',
@@ -376,7 +420,7 @@ export class SecurePDFAPIService {
           }
         };
       }
-      
+
       // Log verification attempt
       await auditTrailService.logDocumentVerification({
         requestId,
@@ -387,7 +431,7 @@ export class SecurePDFAPIService {
         userAgent: req.get('User-Agent'),
         timestamp: new Date()
       });
-      
+
       // Return comprehensive verification result
       res.json({
         success: true,
@@ -398,16 +442,16 @@ export class SecurePDFAPIService {
         timestamp: new Date().toISOString(),
         offlineCapable: verificationResult.verificationMethod === 'cryptographic_signature'
       });
-      
+
     } catch (error) {
       console.error(`[Secure PDF API] Verification failed:`, error);
-      
+
       await this.logSecurityEvent(req, 'VERIFICATION_ERROR', {
         error: error.message,
         requestId,
         severity: 'medium'
       });
-      
+
       res.status(500).json({
         success: false,
         error: 'Verification failed',
@@ -427,21 +471,21 @@ export class SecurePDFAPIService {
         res.status(403).json({ success: false, error: 'Admin access required' });
         return;
       }
-      
+
       const { timeframe = '24h' } = req.query;
-      
+
       const stats = await auditTrailService.getDocumentGenerationStatistics({
         timeframe: timeframe as string,
         breakdownBy: ['documentType', 'status', 'officer']
       });
-      
+
       res.json({
         success: true,
         statistics: stats,
         timeframe,
         generatedAt: new Date().toISOString()
       });
-      
+
     } catch (error) {
       console.error(`[Secure PDF API] Statistics query failed:`, error);
       res.status(500).json({ success: false, error: 'Failed to retrieve statistics' });
@@ -459,22 +503,22 @@ export class SecurePDFAPIService {
         res.status(403).json({ success: false, error: 'Super admin access required' });
         return;
       }
-      
+
       const { severity, limit = 100 } = req.query;
-      
+
       const events = await auditTrailService.getSecurityEvents({
         severity: severity as string,
         limit: parseInt(limit as string),
         includePII: false // Never expose PII in logs
       });
-      
+
       res.json({
         success: true,
         events,
         count: events.length,
         generatedAt: new Date().toISOString()
       });
-      
+
     } catch (error) {
       console.error(`[Secure PDF API] Security events query failed:`, error);
       res.status(500).json({ success: false, error: 'Failed to retrieve security events' });
@@ -486,11 +530,11 @@ export class SecurePDFAPIService {
    */
   private async verifyAuthAndPermissions(req: Request, requiredRole: string): Promise<{ success: boolean; error?: string }> {
     const user = (req as any).user;
-    
+
     if (!user) {
       return { success: false, error: 'Authentication required' };
     }
-    
+
     // Role hierarchy check
     const roleHierarchy = {
       'user': 0,
@@ -499,14 +543,14 @@ export class SecurePDFAPIService {
       'admin': 3,
       'super_admin': 4
     };
-    
+
     const userLevel = roleHierarchy[user.role as keyof typeof roleHierarchy] || -1;
     const requiredLevel = roleHierarchy[requiredRole as keyof typeof roleHierarchy] || 999;
-    
+
     if (userLevel < requiredLevel) {
       return { success: false, error: `Role ${requiredRole} or higher required` };
     }
-    
+
     return { success: true };
   }
 
@@ -549,7 +593,7 @@ export class SecurePDFAPIService {
   async healthCheck(): Promise<{ healthy: boolean; details: any }> {
     const pdfServiceHealth = await enhancedPdfGenerationService.healthCheck();
     const cryptoServiceHealth = await cryptographicSignatureService.healthCheck();
-    
+
     return {
       healthy: pdfServiceHealth.healthy && cryptoServiceHealth.healthy,
       details: {

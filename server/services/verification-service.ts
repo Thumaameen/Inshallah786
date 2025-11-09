@@ -905,7 +905,8 @@ export class ComprehensiveVerificationService extends EventEmitter {
     }
 
     // 4. Document-specific risk factors
-    if (record.verificationCount > 1000) {
+    const verificationData = record.verificationResult as any;
+    if (verificationData?.verificationCount > 100) {
       suspiciousPatterns.push('EXTREMELY_HIGH_VERIFICATION_COUNT');
       riskScore += 15;
     }

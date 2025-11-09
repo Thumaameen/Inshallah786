@@ -24,16 +24,16 @@ export interface UserBehaviorData {
 export class FraudDetectionService extends EventEmitter {
   private realTimeMonitoring = true;
   private behaviorProfiles = new Map<string, any>();
-  
+
   constructor() {
     super();
     this.initializeRealtimeMonitoring();
   }
-  
+
   async analyzeUserBehavior(data: UserBehaviorData): Promise<FraudAnalysisResult> {
     const indicators: string[] = [];
     let riskScore = 0;
-    
+
     // Analyze various risk factors
     riskScore += await this.checkLocationAnomaly(data.userId, indicators, data.location);
     riskScore += await this.checkDeviceFingerprint(data.userId, indicators, data.deviceFingerprint);
@@ -41,10 +41,10 @@ export class FraudDetectionService extends EventEmitter {
     riskScore += await this.checkLoginFrequency(data.userId, indicators);
     riskScore += await this.checkUserAgentAnomaly(data.userId, data.userAgent, indicators);
     riskScore += await this.checkTimePatterns(data.userId, indicators);
-    
+
     const riskLevel = this.calculateRiskLevel(riskScore);
     const shouldBlock = riskScore >= 90;
-    
+
     const result: FraudAnalysisResult = {
       riskScore: Math.min(riskScore, 100),
       riskLevel,
@@ -52,12 +52,12 @@ export class FraudDetectionService extends EventEmitter {
       recommendedAction: this.getRecommendedAction(riskLevel, indicators),
       shouldBlock
     };
-    
+
     // Create fraud alert if risk is medium or higher
     if (riskScore >= 40) {
       await this.createFraudAlert(data.userId, result);
     }
-    
+
     // Log security event and audit trail
     await Promise.all([
       storage.createSecurityEvent({
@@ -93,7 +93,7 @@ export class FraudDetectionService extends EventEmitter {
         }
       )
     ]);
-    
+
     // Add security event to correlation engine
     await securityCorrelationEngine.addSecurityEvent({
       id: `fraud_${Date.now()}_${data.userId}`,
@@ -110,57 +110,57 @@ export class FraudDetectionService extends EventEmitter {
       },
       timestamp: new Date()
     });
-    
+
     // Emit real-time fraud event
     this.emit('fraudAnalysis', {
       userId: data.userId,
       analysis: result,
       timestamp: new Date()
     });
-    
+
     return result;
   }
-  
+
   private async checkLocationAnomaly(userId: string, indicators: string[], currentLocation?: string): Promise<number> {
     if (!currentLocation) return 0;
-    
+
     try {
       // Get recent security events to analyze location patterns
       const recentEvents = await storage.getSecurityEvents(userId, 50);
       const locationEvents = recentEvents
         .filter(event => event.location && event.createdAt > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000))
         .map(event => event.location);
-      
+
       if (locationEvents.length === 0) return 0;
-      
+
       // Check if current location is significantly different from recent locations
       const isNewLocation = !locationEvents.includes(currentLocation);
-      
+
       if (isNewLocation) {
         indicators.push("unusual_location");
-        
+
         // Calculate distance-based risk (simplified)
         // In production, use geolocation APIs for accurate distance calculation
         const isVeryDistant = this.isLocationDistant(currentLocation, locationEvents[0] as string);
-        
+
         if (isVeryDistant) {
           indicators.push("distant_location");
           return 35; // High risk for very distant locations
         }
-        
+
         return 20; // Medium risk for new locations
       }
-      
+
       return 0;
     } catch (error) {
       console.error("Location anomaly check error:", error);
       return 0;
     }
   }
-  
+
   private async checkDeviceFingerprint(userId: string, indicators: string[], deviceFingerprint?: string): Promise<number> {
     if (!deviceFingerprint) return 10; // Slight risk for missing fingerprint
-    
+
     try {
       // Check if this device has been used before
       const recentEvents = await storage.getSecurityEvents(userId, 100);
@@ -169,183 +169,183 @@ export class FraudDetectionService extends EventEmitter {
         typeof event.details === 'object' && 
         'deviceFingerprint' in event.details
       );
-      
+
       const knownDevices = deviceEvents.map(event => 
         (event.details as any).deviceFingerprint
       ).filter(Boolean);
-      
+
       if (knownDevices.length === 0) return 0;
-      
+
       if (!knownDevices.includes(deviceFingerprint)) {
         indicators.push("new_device");
         return 25;
       }
-      
+
       return 0;
     } catch (error) {
       console.error("Device fingerprint check error:", error);
       return 0;
     }
   }
-  
+
   private async checkIPReputation(ipAddress: string, indicators: string[]): Promise<number> {
     try {
       // Check if IP is in blacklist
       // In production, integrate with IP reputation services
       const blacklistedIPs = (process.env.BLACKLISTED_IPS || "").split(",");
-      
+
       if (blacklistedIPs.includes(ipAddress)) {
         indicators.push("blacklisted_ip");
         return 50;
       }
-      
+
       // Check for known proxy/VPN patterns
       if (this.isProxyIP(ipAddress)) {
         indicators.push("proxy_vpn_detected");
         return 30;
       }
-      
+
       // Check recent security events for this IP
       const recentEvents = await storage.getSecurityEvents(undefined, 100);
       const ipEvents = recentEvents.filter(event => 
         event.ipAddress === ipAddress && 
         event.createdAt > new Date(Date.now() - 24 * 60 * 60 * 1000)
       );
-      
+
       // High activity from single IP
       if (ipEvents.length > 20) {
         indicators.push("high_ip_activity");
         return 25;
       }
-      
+
       // Multiple failed attempts from this IP
       const failedAttempts = ipEvents.filter(event => 
         event.eventType.includes("failed") || event.eventType.includes("blocked")
       );
-      
+
       if (failedAttempts.length > 5) {
         indicators.push("multiple_failed_attempts");
         return 35;
       }
-      
+
       return 0;
     } catch (error) {
       console.error("IP reputation check error:", error);
       return 0;
     }
   }
-  
+
   private async checkLoginFrequency(userId: string, indicators: string[]): Promise<number> {
     try {
       const now = new Date();
       const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
       const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-      
+
       const recentEvents = await storage.getSecurityEvents(userId, 50);
       const loginEvents = recentEvents.filter(event => 
         event.eventType.includes("login") || event.eventType.includes("authentication")
       );
-      
+
       const loginsLastHour = loginEvents.filter(event => event.createdAt > oneHourAgo).length;
       const loginsLastDay = loginEvents.filter(event => event.createdAt > oneDayAgo).length;
-      
+
       if (loginsLastHour > 10) {
         indicators.push("excessive_login_frequency");
         return 40;
       }
-      
+
       if (loginsLastDay > 50) {
         indicators.push("unusual_daily_activity");
         return 30;
       }
-      
+
       return 0;
     } catch (error) {
       console.error("Login frequency check error:", error);
       return 0;
     }
   }
-  
+
   private async checkUserAgentAnomaly(userId: string, userAgent: string, indicators: string[]): Promise<number> {
     try {
       if (!userAgent || userAgent.length < 10) {
         indicators.push("suspicious_user_agent");
         return 25;
       }
-      
+
       // Check for bot patterns
       if (/bot|crawler|spider|scraper/i.test(userAgent)) {
         indicators.push("bot_user_agent");
         return 35;
       }
-      
+
       // Check if user agent differs significantly from recent sessions
       const recentEvents = await storage.getSecurityEvents(userId, 20);
       const userAgents = recentEvents
         .map(event => event.userAgent)
         .filter(Boolean);
-      
+
       if (userAgents.length > 0 && !userAgents.includes(userAgent)) {
         // Different user agent - might indicate session hijacking
         indicators.push("changed_user_agent");
         return 20;
       }
-      
+
       return 0;
     } catch (error) {
       console.error("User agent anomaly check error:", error);
       return 0;
     }
   }
-  
+
   private async checkTimePatterns(userId: string, indicators: string[]): Promise<number> {
     try {
       const now = new Date();
       const hour = now.getHours();
-      
+
       // Check if login is at unusual time (very early morning)
       if (hour >= 2 && hour <= 5) {
         indicators.push("unusual_time");
         return 15;
       }
-      
+
       // Analyze user's typical login patterns
       const recentEvents = await storage.getSecurityEvents(userId, 100);
       const loginEvents = recentEvents
         .filter(event => event.eventType.includes("login"))
         .map(event => event.createdAt.getHours());
-      
+
       if (loginEvents.length >= 10) {
         // Calculate if current hour is unusual for this user
         const hourCounts = loginEvents.reduce((acc, h) => {
           acc[h] = (acc[h] || 0) + 1;
           return acc;
         }, {} as Record<number, number>);
-        
+
         const currentHourCount = hourCounts[hour] || 0;
         const totalLogins = loginEvents.length;
-        
+
         // If less than 5% of logins happened at this hour, it's unusual
         if (currentHourCount / totalLogins < 0.05) {
           indicators.push("atypical_login_time");
           return 10;
         }
       }
-      
+
       return 0;
     } catch (error) {
       console.error("Time pattern check error:", error);
       return 0;
     }
   }
-  
+
   private calculateRiskLevel(riskScore: number): "low" | "medium" | "high" | "critical" {
     if (riskScore >= 80) return "critical";
     if (riskScore >= 60) return "high";
     if (riskScore >= 30) return "medium";
     return "low";
   }
-  
+
   private getRecommendedAction(riskLevel: string, indicators: string[]): string {
     switch (riskLevel) {
       case "critical":
@@ -359,7 +359,7 @@ export class FraudDetectionService extends EventEmitter {
         return "Allow access with standard monitoring";
     }
   }
-  
+
   private async createFraudAlert(userId: string, analysis: FraudAnalysisResult): Promise<void> {
     const alert: InsertFraudAlert = {
       userId,
@@ -371,25 +371,25 @@ export class FraudDetectionService extends EventEmitter {
         analysis: analysis
       }
     };
-    
+
     await storage.createFraudAlert(alert);
   }
-  
+
   private isLocationDistant(location1: string, location2: string): boolean {
     // Simplified distance check
     // In production, use proper geolocation services
     const countries1 = this.extractCountry(location1);
     const countries2 = this.extractCountry(location2);
-    
+
     return countries1 !== countries2;
   }
-  
+
   private extractCountry(location: string): string {
     // Simplified country extraction
     // In production, use proper geolocation parsing
     return location.split(",").pop()?.trim() || "";
   }
-  
+
   private isProxyIP(ipAddress: string): boolean {
     // Simplified proxy detection
     // In production, integrate with services like MaxMind or similar
@@ -399,17 +399,17 @@ export class FraudDetectionService extends EventEmitter {
       /^192\.168\./, // Private network
       /^127\./ // Localhost
     ];
-    
+
     return proxyPatterns.some(pattern => pattern.test(ipAddress));
   }
-  
+
   async getFraudAlerts(userId?: string, resolved?: boolean) {
     return await storage.getFraudAlerts(userId, resolved);
   }
-  
+
   async resolveFraudAlert(alertId: string, resolvedBy: string) {
     await storage.resolveFraudAlert(alertId, resolvedBy);
-    
+
     await storage.createSecurityEvent({
       userId: resolvedBy,
       eventType: "fraud_alert_resolved",
@@ -455,7 +455,7 @@ export class FraudDetectionService extends EventEmitter {
     try {
       // Get user's behavior profile
       let profile = await storage.getUserBehaviorProfile(userId);
-      
+
       if (!profile) {
         // Create initial behavior profile
         profile = await this.createInitialBehaviorProfile(userId);
@@ -847,6 +847,136 @@ export class FraudDetectionService extends EventEmitter {
   setRealTimeMonitoring(enabled: boolean) {
     this.realTimeMonitoring = enabled;
     console.log(`Real-time fraud monitoring ${enabled ? 'enabled' : 'disabled'}`);
+  }
+
+  /**
+   * Screen document request for fraud
+   */
+  async screenDocumentRequest(
+    userId: string,
+    documentType: string,
+    requestData: any
+  ): Promise<{ approved: boolean; riskScore: number; flags: string[] }> {
+    const analysis = await this.analyzeDocumentPattern(userId, documentType, requestData);
+
+    return {
+      approved: analysis.riskScore < 70,
+      riskScore: analysis.riskScore,
+      flags: analysis.indicators
+    };
+  }
+
+  /**
+   * Analyze document generation patterns
+   */
+  async analyzeDocumentPattern(
+    userId: string,
+    documentType: string,
+    requestData: any
+  ): Promise<FraudAnalysisResult> {
+    const indicators: string[] = [];
+    let riskScore = 0;
+
+    // Analyze document specific patterns
+    riskScore += await this.checkDocumentContentSensitivity(requestData, indicators);
+    riskScore += await this.checkDocumentAccessPatterns(userId, documentType, requestData, indicators);
+    riskScore += await this.checkDocumentGenerationFrequency(userId, documentType, indicators);
+
+    const riskLevel = this.calculateRiskLevel(riskScore);
+
+    return {
+      riskScore: Math.min(riskScore, 100),
+      riskLevel,
+      indicators,
+      recommendedAction: this.getRecommendedAction(riskLevel, indicators),
+      shouldBlock: riskScore >= 85 // Higher threshold for document generation
+    };
+  }
+
+  private async checkDocumentContentSensitivity(requestData: any, indicators: string[]): Promise<number> {
+    // Placeholder for actual content analysis
+    // In production, integrate with NLP or content scanning tools
+    if (requestData && requestData.content && requestData.content.includes("sensitive_data")) {
+      indicators.push("sensitive_content_detected");
+      return 40;
+    }
+    return 0;
+  }
+
+  private async checkDocumentAccessPatterns(userId: string, documentType: string, requestData: any, indicators: string[]): Promise<number> {
+    // Check for unusual access patterns related to document type
+    const recentDocs = await storage.getSecurityEvents(userId, 50); // Simplified, ideally query document access logs
+    const relevantDocs = recentDocs.filter(event => event.details?.documentType === documentType);
+
+    if (relevantDocs.length > 10 && requestData.accessLevel === 'admin') {
+      indicators.push("admin_access_to_sensitive_doc");
+      return 30;
+    }
+    return 0;
+  }
+
+  private async checkDocumentGenerationFrequency(userId: string, documentType: string, indicators: string[]): Promise<number> {
+    // Check frequency of document generation for this user and type
+    const now = new Date();
+    const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
+    const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+
+    const recentSecurityEvents = await storage.getSecurityEvents(userId, 100);
+    const docGenEvents = recentSecurityEvents.filter(event =>
+      event.eventType === 'document_generation_started' &&
+      event.details?.documentType === documentType &&
+      event.createdAt > oneHourAgo
+    );
+
+    const docGenLastHour = docGenEvents.length;
+    if (docGenLastHour > 5) {
+      indicators.push("excessive_document_generation_hourly");
+      return 35;
+    }
+
+    const docGenLastDay = recentSecurityEvents.filter(event =>
+      event.eventType === 'document_generation_started' &&
+      event.details?.documentType === documentType &&
+      event.createdAt > oneDayAgo
+    ).length;
+
+    if (docGenLastDay > 20) {
+      indicators.push("excessive_document_generation_daily");
+      return 25;
+    }
+
+    return 0;
+  }
+
+  /**
+   * Log document generation start event
+   */
+  async logDocumentGenerationStart(userId: string, documentType: string, requestData: any): Promise<void> {
+    await storage.createSecurityEvent({
+      userId: userId,
+      eventType: "document_generation_started",
+      severity: "info",
+      details: {
+        documentType,
+        requestData,
+        ipAddress: requestData.ipAddress,
+        userAgent: requestData.userAgent,
+        location: requestData.location
+      },
+      ipAddress: requestData.ipAddress,
+      userAgent: requestData.userAgent,
+      location: requestData.location
+    });
+
+    await auditTrailService.logUserAction(
+      'document_generation_initiated',
+      'success',
+      {
+        userId,
+        documentType,
+        requestData
+      }
+    );
   }
 }
 
