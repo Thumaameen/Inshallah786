@@ -185,7 +185,10 @@ class ZeroDowntimeManager extends EventEmitter {
         ...event,
         action: event.action || 'unknown',
         actor: event.actor || 'system',
-        result: event.result || 'info'
+        result: event.result || 'info',
+        actionDetails: {
+          resource: event.resourceId
+        }
       });
     } catch (error) {
       console.error('Failed to log audit event:', error);
