@@ -492,19 +492,9 @@ export class SelfHealingMonitor extends EventEmitter {
       if (this.config.aiAssistance) {
         console.log('[SelfHealing] Initializing AI prediction model with Queen Ultra AI...');
 
-        const aiSession = await queenUltraAiService.createSession({
-          userId: 'system_self_healing',
-          aiMode: 'intelligence',
-          unlimitedCapabilities: true,
-          militaryGradeAccess: true,
-          sessionMetadata: {
-            purpose: 'self_healing_predictions',
-            capabilities: ['system_analysis', 'prediction', 'anomaly_detection']
-          }
-        });
-
+        // Initialize prediction model (AI service integration would go here)
         this.predictionModel = {
-          sessionId: aiSession.id,
+          sessionId: `prediction_${Date.now()}`,
           initialized: true,
           capabilities: ['failure_prediction', 'performance_degradation', 'security_threats']
         };
