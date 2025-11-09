@@ -7,6 +7,17 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // Production-only optimized configuration
 export default defineConfig({
   plugins: [react()],
+  server: {
+    host: '0.0.0.0',
+    port: 5000,
+    hmr: {
+      clientPort: 443,
+    },
+    allowedHosts: [
+      '.replit.dev',
+      '.repl.co',
+    ],
+  },
   build: {
     outDir: 'dist',
     sourcemap: false,
