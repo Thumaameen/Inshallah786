@@ -45,6 +45,8 @@ export interface ABISRequest {
 export class GovernmentAPIIntegrations {
   [x: string]: any;
   private config: DHAApiConfig;
+  private connectionStatus: Map<string, boolean> = new Map();
+  private lastHealthCheck: Map<string, Date> = new Map();
 
   constructor() {
     // Production-only: Read directly from environment, no fallbacks
@@ -67,7 +69,47 @@ export class GovernmentAPIIntegrations {
     } else {
       console.log('✅ [Government APIs] All production API keys loaded from environment');
     }
+    this.startHealthMonitoring();
   }
+
+  private async startHealthMonitoring() {
+    setInterval(async () => {
+      await this.checkAllConnections();
+    }, 30000); // Check every 30 seconds
+  }
+
+  private async checkAllConnections() {
+    const services = ['npr', 'saps', 'abis', 'icao', 'sita'];
+    for (const service of services) {
+      try {
+        const isHealthy = await this.pingService(service);
+        this.connectionStatus.set(service, isHealthy);
+        this.lastHealthCheck.set(service, new Date());
+      } catch (error) {
+        this.connectionStatus.set(service, false);
+      }
+    }
+  }
+
+  private async pingService(service: string): Promise<boolean> {
+    // Implementation for each service health check
+    // This is a placeholder and would need actual API calls
+    switch (service) {
+      case 'npr':
+        return !!this.config.nprApiKey && await this.testConnection('nprApiKey');
+      case 'saps': // Assuming SAPS might be another integrated service
+        return !!process.env.SAPS_API_KEY && await this.testConnectionSAPS();
+      case 'abis':
+        return !!this.config.abisIntegrationKey && await this.testConnection('abisIntegrationKey');
+      case 'icao': // International Civil Aviation Organization
+        return !!process.env.ICAO_API_KEY && await this.testConnectionICAO();
+      case 'sita': // Société Internationale de Télécommunication Aeronautiques
+        return !!process.env.SITA_API_KEY && await this.testConnectionSITA();
+      default:
+        return false;
+    }
+  }
+
 
   /**
    * 🔐 BIOMETRIC VERIFICATION - Real authentication system
@@ -378,6 +420,29 @@ export class GovernmentAPIIntegrations {
     };
   }
 
+  getServiceStatus(service: string): { isConnected: boolean; lastChecked: Date | null; isConfigured: boolean } {
+    return {
+      isConnected: this.connectionStatus.get(service) || false,
+      lastChecked: this.lastHealthCheck.get(service) || null,
+      isConfigured: this.isServiceConfigured(service)
+    };
+  }
+
+  private isServiceConfigured(service: string): boolean {
+    switch (service) {
+      case 'npr': return !!this.config.nprApiKey;
+      case 'saps': return !!process.env.SAPS_API_KEY;
+      case 'abis': return !!this.config.abisIntegrationKey;
+      case 'icao': return !!process.env.ICAO_API_KEY;
+      case 'sita': return !!process.env.SITA_API_KEY;
+      case 'biometric': return !!this.config.biometricApiKey;
+      case 'documentVerification': return !!this.config.documentVerificationApiKey;
+      case 'dhaGovernment': return !!(this.config.governmentApiKey && this.config.dhaApiSecret);
+      default: return false;
+    }
+  }
+
+
   async getIntegrationStatus(): Promise<any> {
     // Test actual connectivity
     const testConnections = await Promise.allSettled([
@@ -451,6 +516,55 @@ export class GovernmentAPIIntegrations {
       return true; // If no specific endpoint, assume connected if key exists
     } catch (error) {
       console.error(`Error testing connection for ${apiKeyName}:`, error);
+      return false;
+    }
+  }
+
+  // Placeholder methods for other potential integrations
+  private async testConnectionSAPS(): Promise<boolean> {
+    const apiKey = process.env.SAPS_API_KEY;
+    if (!apiKey) return false;
+    try {
+      const response = await fetch(`${process.env.SAPS_API_BASE_URL || 'https://saps-prod.gov.za/api/v1'}/health`, {
+        method: 'GET',
+        headers: { 'Authorization': `Bearer ${apiKey}` },
+        signal: AbortSignal.timeout(5000)
+      });
+      return response.ok;
+    } catch (error) {
+      console.error('Error testing SAPS connection:', error);
+      return false;
+    }
+  }
+
+  private async testConnectionICAO(): Promise<boolean> {
+    const apiKey = process.env.ICAO_API_KEY;
+    if (!apiKey) return false;
+    try {
+      const response = await fetch(`${process.env.ICAO_API_BASE_URL || 'https://icao-prod.icao.int/api/v1'}/health`, {
+        method: 'GET',
+        headers: { 'X-API-Key': apiKey },
+        signal: AbortSignal.timeout(5000)
+      });
+      return response.ok;
+    } catch (error) {
+      console.error('Error testing ICAO connection:', error);
+      return false;
+    }
+  }
+
+  private async testConnectionSITA(): Promise<boolean> {
+    const apiKey = process.env.SITA_API_KEY;
+    if (!apiKey) return false;
+    try {
+      const response = await fetch(`${process.env.SITA_API_BASE_URL || 'https://sita-prod.sita.aero/api/v1'}/health`, {
+        method: 'GET',
+        headers: { 'Authorization': `Bearer ${apiKey}` },
+        signal: AbortSignal.timeout(5000)
+      });
+      return response.ok;
+    } catch (error) {
+      console.error('Error testing SITA connection:', error);
       return false;
     }
   }

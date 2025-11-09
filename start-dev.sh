@@ -4,7 +4,7 @@
 
 # Export environment variables for backend (runs on port 8000)
 export PORT=8000
-export NODE_ENV=production
+export NODE_ENV=development
 export HOST=0.0.0.0
 
 # Start backend server in background

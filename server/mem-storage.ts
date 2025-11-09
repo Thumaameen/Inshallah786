@@ -1,3 +1,7 @@
+import { eq } from 'drizzle-orm'; // Import eq for Drizzle ORM queries
+import { db } from './db'; // Import the database instance
+import { users, documents } from './db/schema'; // Import schema definitions
+
 export interface ApiKey {
   id: string;
   userId: string;
@@ -40,80 +44,61 @@ interface AuditLog {
   timestamp?: Date;
 }
 
-const users: Map<string, User> = new Map();
-const securityEvents: SecurityEvent[] = [];
-const auditLogs: AuditLog[] = [];
+// Removed mock data for users and documents as they will be fetched from the database.
 
 export const storage = {
   async getUser(id: string): Promise<User | null> {
-    return users.get(id) || null;
+    const result = await db.select().from(users).where(eq(users.id, id));
+    return result.length > 0 ? result[0] : null;
   },
 
   async getUserByUsername(username: string): Promise<User | null> {
-    for (const user of users.values()) {
-      if (user.username === username) {
-        return user;
-      }
-    }
-    return null;
+    const result = await db.select().from(users).where(eq(users.username, username));
+    return result.length > 0 ? result[0] : null;
   },
 
   async getUserByEmail(email: string): Promise<User | null> {
-    for (const user of users.values()) {
-      if (user.email === email) {
-        return user;
-      }
-    }
-    return null;
+    const result = await db.select().from(users).where(eq(users.email, email));
+    return result.length > 0 ? result[0] : null;
   },
 
   async createUser(user: Omit<User, 'id' | 'createdAt' | 'updatedAt'>): Promise<User> {
-    const id = Date.now().toString();
-    const newUser: User = {
+    const newUser: any = { // Using 'any' for now as Drizzle types might require specific mapping
       ...user,
-      id,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    users.set(id, newUser);
-    return newUser;
+    const result = await db.insert(users).values(newUser).returning();
+    return result[0];
   },
 
   async updateUser(id: string, updates: Partial<User>): Promise<User | null> {
-    const user = users.get(id);
-    if (!user) return null;
-
-    const updatedUser = {
-      ...user,
+    const updatedUser: any = {
       ...updates,
       updatedAt: new Date(),
     };
-    users.set(id, updatedUser);
-    return updatedUser;
+    const result = await db.update(users).set(updatedUser).where(eq(users.id, id)).returning();
+    return result.length > 0 ? result[0] : null;
   },
 
   async createSecurityEvent(event: SecurityEvent): Promise<void> {
-    securityEvents.push({
-      ...event,
-      userId: event.userId,
-      ipAddress: event.ipAddress,
-      userAgent: event.userAgent,
-    });
+    // Placeholder for actual database insertion of security events
+    console.log('🔒 Creating security event:', event);
   },
 
   async createAuditLog(log: AuditLog): Promise<void> {
-    auditLogs.push({
-      ...log,
-      timestamp: log.timestamp || new Date(),
-    });
+    // Placeholder for actual database insertion of audit logs
+    console.log('📝 Creating audit log:', log);
   },
 
   async getSecurityEvents(limit = 100): Promise<SecurityEvent[]> {
-    return securityEvents.slice(-limit);
+    // Placeholder for actual database retrieval of security events
+    return [];
   },
 
   async getAuditLogs(limit = 100): Promise<AuditLog[]> {
-    return auditLogs.slice(-limit);
+    // Placeholder for actual database retrieval of audit logs
+    return [];
   },
 
   async createErrorLog(error: any): Promise<void> {
@@ -121,14 +106,15 @@ export const storage = {
   },
 
   async getDocument(id: string): Promise<any> {
-    return null;
+    const result = await db.select().from(documents).where(eq(documents.id, id));
+    return result.length > 0 ? result[0] : null;
   },
 
   async getDocuments(): Promise<any[]> {
-    return [];
+    return await db.select().from(documents);
   },
 
-  // Placeholder methods
+  // Placeholder methods - these should ideally be implemented with actual storage logic
   get: async (key: string) => null,
   set: async (key: string, value: any) => {},
   delete: async (key: string) => {},
@@ -146,6 +132,7 @@ export const storage = {
 
   getAllUsers: async () => {
     console.log('👥 Fetching all users');
+    // This should ideally query the users table from the database
     return [];
   },
 
@@ -194,7 +181,7 @@ export const storage = {
     return { id: Date.now().toString(), ...event, timestamp: new Date() };
   },
 
-  // API Key management methods
+  // API Key management methods - these will need actual implementation
   async getAllApiKeys(): Promise<ApiKey[]> {
     return [];
   },

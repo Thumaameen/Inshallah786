@@ -72,6 +72,8 @@ export default function AIChatAssistant({
   const [aiMode, setAiMode] = useState<'assistant' | 'agent' | 'bot'>('assistant');
   const [adminMode, setAdminMode] = useState<'standard' | 'uncensored'>('standard');
   const [attachments, setAttachments] = useState<any[]>([]);
+  const [codeContext, setCodeContext] = useState<string>('');
+  const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
