@@ -1,3 +1,4 @@
+
 services:
   # Main Web Service
   - type: web
@@ -5,13 +6,6 @@ services:
     env: node
     plan: starter
     region: frankfurt
-    envVars:
-      - key: NODE_VERSION
-        value: 20.19.0
-      - key: NODE_ENV
-        value: production
-      - key: NODE_OPTIONS
-        value: --max-old-space-size=4096
     buildCommand: |
       chmod +x scripts/check-node-version.sh
       ./scripts/check-node-version.sh
@@ -38,6 +32,8 @@ services:
         value: 20.19.0
       - key: NPM_VERSION
         value: 10.5.0
+      - key: NODE_OPTIONS
+        value: --max-old-space-size=4096
       - key: PORT
         value: 10000
       - key: SESSION_SECRET
