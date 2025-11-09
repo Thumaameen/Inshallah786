@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { apiRequest } from '../lib/queryClient';
+import { useToast } from '../components/ui/use-toast';
 
 interface DocumentFormData {
   name: string;
@@ -9,6 +10,12 @@ interface DocumentFormData {
 }
 
 export function DocumentGenerator() {
+  const { toast } = useToast();
+  const [documentType, setDocumentType] = useState('');
+  const [aiAssistMode, setAiAssistMode] = useState(false);
+  const [templateCustomization, setTemplateCustomization] = useState<any>({});
+  const [batchGeneration, setBatchGeneration] = useState(false);
+
   const [formData, setFormData] = useState<DocumentFormData>({
     name: '',
     passportNumber: '',
@@ -73,6 +80,50 @@ export function DocumentGenerator() {
             required
           />
         </div>
+
+        {/* AI Assist Mode Toggle */}
+        <div className="flex items-center space-x-2">
+          <label className="block">AI Assist Mode</label>
+          <input
+            type="checkbox"
+            checked={aiAssistMode}
+            onChange={(e) => setAiAssistMode(e.target.checked)}
+            className="h-5 w-5 text-blue-600"
+          />
+        </div>
+
+        {/* Template Customization (Example: JSON input for advanced users) */}
+        {aiAssistMode && (
+          <div>
+            <label className="block mb-2">Template Customization (JSON)</label>
+            <textarea
+              value={JSON.stringify(templateCustomization, null, 2)}
+              onChange={(e) => {
+                try {
+                  setTemplateCustomization(JSON.parse(e.target.value));
+                } catch (error) {
+                  console.error("Invalid JSON:", error);
+                  toast({ title: "Invalid JSON format", description: "Please enter valid JSON for template customization." });
+                }
+              }}
+              rows={4}
+              className="w-full p-2 border rounded"
+              placeholder='{"key": "value"}'
+            />
+          </div>
+        )}
+
+        {/* Batch Generation Toggle */}
+        <div className="flex items-center space-x-2">
+          <label className="block">Batch Generation</label>
+          <input
+            type="checkbox"
+            checked={batchGeneration}
+            onChange={(e) => setBatchGeneration(e.target.checked)}
+            className="h-5 w-5 text-blue-600"
+          />
+        </div>
+
         <button
           type="submit"
           disabled={generateMutation.isPending}

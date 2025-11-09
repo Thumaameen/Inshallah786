@@ -23,6 +23,31 @@ type AIMode = 'assistant' | 'expert' | 'quantum' | 'unlimited' | 'god' | 'standa
 export type AIProvider = 'auto' | 'openai' | 'anthropic' | 'perplexity' | 'mistral' | 'quantum';
 export type QueryType = 'general' | 'code' | 'creative' | 'analysis' | 'research' | 'quantum';
 
+// AI Model Configuration with multi-model support
+const AI_MODEL_CONFIG = {
+  // OpenAI Models
+  GPT_4_TURBO: "gpt-4-turbo-preview",
+  GPT_4O: "gpt-4o",
+  GPT_4O_MINI: "gpt-4o-mini",
+  GPT_3_5_TURBO: "gpt-3.5-turbo",
+
+  // Anthropic Models
+  CLAUDE_3_5_SONNET: "claude-3-5-sonnet-20241022",
+  CLAUDE_3_OPUS: "claude-3-opus-20240229",
+  CLAUDE_3_HAIKU: "claude-3-haiku-20240307",
+
+  // Google Models
+  GEMINI_PRO: "gemini-pro",
+  GEMINI_PRO_VISION: "gemini-pro-vision",
+
+  // Mistral Models
+  MISTRAL_LARGE: "mistral-large-latest",
+  MISTRAL_MEDIUM: "mistral-medium-latest",
+
+  // Perplexity Models
+  PERPLEXITY_SONAR: "sonar-medium-online"
+};
+
 // Request/Response interfaces
 export interface UltraQueenAIRequest {
   message: string;
@@ -338,7 +363,7 @@ class UltraQueenAI {
       }
 
       const completion = await this.openai.chat.completions.create({
-        model: 'gpt-4o',
+        model: request.provider === 'auto' ? AI_MODEL_CONFIG.GPT_4O : (request.provider === 'openai' ? AI_MODEL_CONFIG.GPT_4O : AI_MODEL_CONFIG.GPT_4O), // Default to GPT-4o, can be customized
         messages,
         max_tokens: 4000,
         temperature: 0.7,
@@ -355,7 +380,7 @@ class UltraQueenAI {
         metadata: {
           executionTime: Date.now() - startTime,
           tokensUsed: 'usage' in completion ? completion.usage?.total_tokens : undefined,
-          model: 'gpt-4o',
+          model: completion.model,
           confidence: 0.95
         }
       };
@@ -386,9 +411,13 @@ class UltraQueenAI {
     }
 
     try {
+      const modelToUse = request.provider === 'auto' ? AI_MODEL_CONFIG.CLAUDE_3_5_SONNET : 
+                         (request.provider === 'anthropic' ? AI_MODEL_CONFIG.CLAUDE_3_5_SONNET : AI_MODEL_CONFIG.CLAUDE_3_5_SONNET); // Default to Sonnet, can be customized
+
       const result = await anthropicService.generateSecureResponse(
         request.message,
-        request.previousContext?.join('\n')
+        request.previousContext?.join('\n'),
+        modelToUse // Pass the selected model
       );
 
       return {
@@ -397,7 +426,7 @@ class UltraQueenAI {
         provider: 'anthropic',
         metadata: {
           executionTime: Date.now() - startTime,
-          model: 'claude-3-sonnet-20240229',
+          model: modelToUse,
           confidence: result.confidence
         }
       };
@@ -414,7 +443,9 @@ class UltraQueenAI {
     const startTime = Date.now();
 
     try {
-      const result = await perplexityService.getFactualAnswer(request.message);
+      const modelToUse = AI_MODEL_CONFIG.PERPLEXITY_SONAR; // Perplexity uses a specific model name
+
+      const result = await perplexityService.getFactualAnswer(request.message, modelToUse);
 
       return {
         success: true,
@@ -422,7 +453,7 @@ class UltraQueenAI {
         provider: 'perplexity',
         metadata: {
           executionTime: Date.now() - startTime,
-          model: 'llama-3.1-sonar',
+          model: modelToUse,
           confidence: result.confidence
         }
       };
@@ -453,6 +484,9 @@ class UltraQueenAI {
     }
 
     try {
+      const modelToUse = request.provider === 'auto' ? AI_MODEL_CONFIG.MISTRAL_LARGE : 
+                         (request.provider === 'mistral' ? AI_MODEL_CONFIG.MISTRAL_LARGE : AI_MODEL_CONFIG.MISTRAL_LARGE); // Default to Mistral Large, can be customized
+
       const response = await fetch('https://api.mistral.ai/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -460,7 +494,7 @@ class UltraQueenAI {
           'Authorization': `Bearer ${this.mistralApiKey}`
         },
         body: JSON.stringify({
-          model: 'mistral-large-latest',
+          model: modelToUse,
           messages: [
             {
               role: 'system',
@@ -490,7 +524,7 @@ class UltraQueenAI {
         metadata: {
           executionTime: Date.now() - startTime,
           tokensUsed: data.usage?.total_tokens,
-          model: 'mistral-large',
+          model: data.model,
           confidence: 0.88
         }
       };

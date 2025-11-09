@@ -1,6 +1,6 @@
 import OpenAI from 'openai';
 import { Anthropic } from '@anthropic-ai/sdk';
-import { serviceConfig } from '../../config/service-integration';
+import { serviceConfig } from '../../config/service-integration.js';
 import { dhaDocumentGenerator } from './dha-document-generator.js';
 import { governmentAPIs } from './government-api-integrations.js';
 import { perplexityService } from './perplexity-integration.js';

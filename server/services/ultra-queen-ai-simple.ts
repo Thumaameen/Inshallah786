@@ -3,7 +3,7 @@
 
 import { OpenAI } from 'openai';
 import { storage } from '../storage.js';
-import { AICompletion, AIStreamResponse } from '../interfaces/ai';
+import { AICompletion, AIStreamResponse } from '../interfaces/ai.js';
 import { ChatCompletion } from 'openai/resources';
 
 // System configuration - Auto-detect from environment

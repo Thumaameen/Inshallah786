@@ -8,9 +8,10 @@ interface HealthCheck {
 
 const defaultHealthyStatus = async (name = 'service'): Promise<HealthStatus> => ({
   status: 'healthy',
-  message: `${name} check passed`,
   healthy: true,
-  timestamp: new Date().toISOString()
+  timestamp: new Date().toISOString(),
+  environment: process.env.NODE_ENV || 'development',
+  details: { message: `${name} check passed` }
 });
 
 const defaultHealthCheck = (name = 'service'): HealthCheck => ({
@@ -47,20 +48,20 @@ export class ServiceHealthMonitor {
       const isHealthy = await this.performBasicChecks();
       return {
         status: process.env.NODE_ENV === 'production' ? 'healthy' : (isHealthy ? 'healthy' : 'unhealthy'),
-        message: isHealthy ? 'Basic checks passed' : 'Basic checks failed',
         healthy: process.env.NODE_ENV === 'production' ? true : isHealthy,
         timestamp: new Date().toISOString(),
-        environment: process.env.NODE_ENV || 'development'
-      } as HealthStatus;
+        environment: process.env.NODE_ENV || 'development',
+        details: { message: isHealthy ? 'Basic checks passed' : 'Basic checks failed' }
+      };
     } catch (error) {
       // Always return healthy in production
       return {
         status: 'healthy',
-        message: 'Health check completed',
         healthy: true,
         timestamp: new Date().toISOString(),
-        environment: process.env.NODE_ENV || 'development'
-      } as HealthStatus;
+        environment: process.env.NODE_ENV || 'development',
+        details: { message: 'Health check completed' }
+      };
     }
   }
 
