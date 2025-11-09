@@ -2,7 +2,7 @@ import { EventEmitter } from "events";
 import { storage, PostgreSQLStorage } from "../storage.js";
 import { autonomousMonitoringBot } from "./autonomous-monitoring-bot.js";
 import { optimizedCacheService } from "./optimized-cache.js";
-import { getConnectionStatus } from "../db.js";
+import db from '../db/connection.js';
 import os from "os";
 
 // Define types for autonomous operations and circuit breaker states
@@ -121,24 +121,24 @@ export class SelfHealingService extends EventEmitter {
     }
 
     console.log('[SelfHealing] Starting self-healing service...');
-    
+
     try {
       // Initialize services to monitor
       await this.initializeServices();
-      
+
       // Load circuit breaker states from database
       await this.loadCircuitBreakerStates();
-      
+
       // Start continuous health monitoring
       await this.startHealthMonitoring();
-      
+
       // Setup event listeners
       this.setupEventListeners();
-      
+
       this.isActive = true;
       console.log('[SelfHealing] Self-healing service started successfully');
       this.emit('started', { timestamp: new Date() });
-      
+
     } catch (error) {
       console.error('[SelfHealing] Failed to start self-healing service:', error);
       throw error;
@@ -150,12 +150,12 @@ export class SelfHealingService extends EventEmitter {
    */
   public async stop(): Promise<void> {
     console.log('[SelfHealing] Stopping self-healing service...');
-    
+
     if (this.healthCheckInterval) {
       clearInterval(this.healthCheckInterval);
       this.healthCheckInterval = null;
     }
-    
+
     this.isActive = false;
     console.log('[SelfHealing] Self-healing service stopped');
     this.emit('stopped', { timestamp: new Date() });
@@ -210,11 +210,11 @@ export class SelfHealingService extends EventEmitter {
         consecutiveFailures: 0,
         healingActions: service.healingActions
       });
-      
+
       // Initialize circuit breaker for service
       await this.initializeCircuitBreaker(service.name);
     }
-    
+
     console.log(`[SelfHealing] Initialized monitoring for ${services.length} services`);
   }
 
@@ -300,7 +300,7 @@ export class SelfHealingService extends EventEmitter {
     for (const action of actions) {
       this.healingActions.set(action.id, action);
     }
-    
+
     console.log(`[SelfHealing] Setup ${actions.length} default healing actions`);
   }
 
@@ -310,7 +310,7 @@ export class SelfHealingService extends EventEmitter {
   private async loadCircuitBreakerStates(): Promise<void> {
     try {
       const states = await storage.getAllCircuitBreakerStates();
-      
+
       for (const state of states) {
         this.circuitBreakers.set(state.serviceName, {
           state: state.state,
@@ -323,7 +323,7 @@ export class SelfHealingService extends EventEmitter {
           successThreshold: state.successThreshold
         });
       }
-      
+
       console.log(`[SelfHealing] Loaded ${states.length} circuit breaker states`);
     } catch (error) {
       console.error('[SelfHealing] Error loading circuit breaker states:', error);
@@ -336,7 +336,7 @@ export class SelfHealingService extends EventEmitter {
   private async initializeCircuitBreaker(serviceName: string): Promise<void> {
     try {
       const existing = await storage.getCircuitBreakerState(serviceName);
-      
+
       if (!existing) {
         await storage.createCircuitBreakerState({
           serviceName,
@@ -346,7 +346,7 @@ export class SelfHealingService extends EventEmitter {
           timeout: this.CIRCUIT_BREAKER_TIMEOUT
         } as InsertCircuitBreakerState);
       }
-      
+
       // Initialize in-memory circuit breaker
       this.circuitBreakers.set(serviceName, {
         state: 'closed',
@@ -358,7 +358,7 @@ export class SelfHealingService extends EventEmitter {
         failureThreshold: this.MAX_CONSECUTIVE_FAILURES,
         successThreshold: 3
       });
-      
+
     } catch (error) {
       console.error(`[SelfHealing] Error initializing circuit breaker for ${serviceName}:`, error);
     }
@@ -401,7 +401,7 @@ export class SelfHealingService extends EventEmitter {
 
     // Perform initial health check
     await this.performHealthChecks();
-    
+
     console.log(`[SelfHealing] Health monitoring started (interval: ${this.CHECK_INTERVAL}ms)`);
   }
 
@@ -456,12 +456,12 @@ export class SelfHealingService extends EventEmitter {
       }
 
       const responseTime = Date.now() - startTime;
-      
+
       // Update service health
       service.lastCheck = new Date();
       service.responseTime = responseTime;
       service.status = healthResult.status;
-      
+
       // Record success
       if (healthResult.status === 'healthy') {
         await this.recordServiceSuccess(serviceName);
@@ -473,13 +473,13 @@ export class SelfHealingService extends EventEmitter {
 
     } catch (error) {
       const responseTime = Date.now() - startTime;
-      
+
       service.lastCheck = new Date();
       service.responseTime = responseTime;
       service.status = 'failed';
-      
+
       await this.recordServiceFailure(serviceName, error);
-      
+
       // Trigger healing if needed
       await this.evaluateHealingNeeds(serviceName, service);
     }
@@ -490,8 +490,8 @@ export class SelfHealingService extends EventEmitter {
    */
   private async checkDatabaseHealth(): Promise<any> {
     try {
-      const dbStatus = await getConnectionStatus();
-      
+      const dbStatus = await db.getConnectionStatus();
+
       if (!dbStatus.connected) {
         return {
           status: 'critical',
@@ -502,7 +502,7 @@ export class SelfHealingService extends EventEmitter {
 
       // Test database connection
       const testResult = dbStatus.status === 'connected';
-      
+
       const metrics = {
         connectionStatus: dbStatus.status,
         isConnected: dbStatus.connected,
@@ -532,13 +532,13 @@ export class SelfHealingService extends EventEmitter {
       // Test cache operations
       const testKey = 'health_check_' + Date.now();
       const testValue = { timestamp: new Date(), test: true };
-      
+
       await optimizedCacheService.set(testKey, testValue, { ttl: 5000 });
       const retrieved = await optimizedCacheService.get(testKey);
       await optimizedCacheService.delete(testKey);
-      
+
       const cacheWorking = retrieved !== null;
-      
+
       // Get cache statistics
       // Note: This would need to be implemented in optimizedCacheService
       const stats = {
@@ -546,7 +546,7 @@ export class SelfHealingService extends EventEmitter {
         // hitRate: await optimizedCacheService.getHitRate(),
         // memoryUsage: await optimizedCacheService.getMemoryUsage()
       };
-      
+
       return {
         status: cacheWorking ? 'healthy' : 'failed',
         metrics: stats
@@ -569,10 +569,10 @@ export class SelfHealingService extends EventEmitter {
       const memUsage = process.memoryUsage();
       const totalMem = os.totalmem();
       const freeMem = os.freemem();
-      
+
       const heapUsedPercent = (memUsage.heapUsed / memUsage.heapTotal) * 100;
       const systemMemPercent = ((totalMem - freeMem) / totalMem) * 100;
-      
+
       let status: string;
       if (heapUsedPercent > 95 || systemMemPercent > 95) {
         status = 'critical';
@@ -581,7 +581,7 @@ export class SelfHealingService extends EventEmitter {
       } else {
         status = 'healthy';
       }
-      
+
       return {
         status,
         metrics: {
@@ -613,7 +613,7 @@ export class SelfHealingService extends EventEmitter {
         availableSpace: '10GB', // Placeholder
         inodeUsage: Math.random() * 100 // Placeholder
       };
-      
+
       let status: string;
       if (stats.diskUsage > 95) {
         status = 'critical';
@@ -622,7 +622,7 @@ export class SelfHealingService extends EventEmitter {
       } else {
         status = 'healthy';
       }
-      
+
       return {
         status,
         metrics: stats
@@ -646,15 +646,15 @@ export class SelfHealingService extends EventEmitter {
         startDate: new Date(Date.now() - 60000), // Last minute
         limit: 100
       });
-      
+
       const apiRequests = recentAudits.filter(audit => audit.action.includes('api_'));
       const errorRequests = apiRequests.filter(audit => 
         (audit.actionDetails as any)?.statusCode && (audit.actionDetails as any).statusCode >= 400
       );
-      
+
       const errorRate = apiRequests.length > 0 ? 
         (errorRequests.length / apiRequests.length) * 100 : 0;
-      
+
       let status: string;
       if (errorRate > 20) {
         status = 'critical';
@@ -663,7 +663,7 @@ export class SelfHealingService extends EventEmitter {
       } else {
         status = 'healthy';
       }
-      
+
       return {
         status,
         metrics: {
@@ -688,21 +688,21 @@ export class SelfHealingService extends EventEmitter {
   private async checkExternalServices(): Promise<any> {
     try {
       const circuitBreakerStates = await storage.getAllCircuitBreakerStates();
-      
+
       let healthyServices = 0;
       const totalServices = circuitBreakerStates.length;
-      
+
       const serviceStatuses = circuitBreakerStates.map(state => ({
         name: state.serviceName,
         state: state.state,
         failureCount: state.failureCount,
         healthy: state.state === 'closed'
       }));
-      
+
       healthyServices = serviceStatuses.filter(s => s.healthy).length;
-      
+
       const healthPercentage = totalServices > 0 ? (healthyServices / totalServices) * 100 : 100;
-      
+
       let status: string;
       if (healthPercentage < 50) {
         status = 'critical';
@@ -711,7 +711,7 @@ export class SelfHealingService extends EventEmitter {
       } else {
         status = 'healthy';
       }
-      
+
       return {
         status,
         metrics: {
@@ -740,14 +740,14 @@ export class SelfHealingService extends EventEmitter {
       if (circuitBreaker) {
         circuitBreaker.successCount++;
         circuitBreaker.lastSuccess = new Date();
-        
+
         // Reset failure count on success
         if (circuitBreaker.state === 'half_open' && 
             circuitBreaker.successCount >= circuitBreaker.successThreshold) {
           await this.closeCircuitBreaker(serviceName);
         }
       }
-      
+
       // Record success metric
       await storage.createSystemMetric({
         timestamp: new Date(),
@@ -760,7 +760,7 @@ export class SelfHealingService extends EventEmitter {
           type: 'service_success'
         }
       });
-      
+
     } catch (error) {
       console.error(`[SelfHealing] Error recording success for ${serviceName}:`, error);
     }
@@ -776,20 +776,20 @@ export class SelfHealingService extends EventEmitter {
         service.consecutiveFailures++;
         service.retryCount++;
       }
-      
+
       // Update circuit breaker
       const circuitBreaker = this.circuitBreakers.get(serviceName);
       if (circuitBreaker) {
         circuitBreaker.failureCount++;
         circuitBreaker.lastFailure = new Date();
-        
+
         // Open circuit breaker if failure threshold reached
         if (circuitBreaker.state === 'closed' && 
             circuitBreaker.failureCount >= circuitBreaker.failureThreshold) {
           await this.openCircuitBreaker(serviceName);
         }
       }
-      
+
       // Record failure metric
       await storage.createSystemMetric({
         timestamp: new Date(),
@@ -803,9 +803,9 @@ export class SelfHealingService extends EventEmitter {
           error: error instanceof Error ? error.message : String(error)
         }
       });
-      
+
       console.log(`[SelfHealing] Recorded failure for ${serviceName}: ${error}`);
-      
+
     } catch (err) {
       console.error(`[SelfHealing] Error recording failure for ${serviceName}:`, err);
     }
@@ -817,13 +817,13 @@ export class SelfHealingService extends EventEmitter {
   private async evaluateHealingNeeds(serviceName: string, service: ServiceHealth): Promise<void> {
     if (service.consecutiveFailures >= 3) {
       console.log(`[SelfHealing] Service ${serviceName} needs healing (${service.consecutiveFailures} consecutive failures)`);
-      
+
       // Find appropriate healing actions
       const applicableActions = Array.from(this.healingActions.values())
         .filter(action => action.target === serviceName || action.target === 'system')
         .filter(action => this.shouldExecuteAction(action))
         .sort((a, b) => this.getPriorityValue(b.priority) - this.getPriorityValue(a.priority));
-      
+
       if (applicableActions.length > 0) {
         const action = applicableActions[0];
         await this.executeHealingAction(action, serviceName);
@@ -842,17 +842,17 @@ export class SelfHealingService extends EventEmitter {
         return false;
       }
     }
-    
+
     // Check retry limit
     if (action.executionCount >= action.maxRetries) {
       return false;
     }
-    
+
     // Check success rate threshold
     if (action.executionCount > 0 && action.successRate < 0.3) {
       return false; // Action has low success rate
     }
-    
+
     return true;
   }
 
@@ -874,14 +874,14 @@ export class SelfHealingService extends EventEmitter {
    */
   private async executeHealingAction(action: HealingAction, serviceName: string): Promise<void> {
     console.log(`[SelfHealing] Executing healing action: ${action.id} for ${serviceName}`);
-    
+
     const startTime = Date.now();
     action.lastExecuted = new Date();
     action.executionCount++;
-    
+
     try {
       let result: any;
-      
+
       switch (action.type) {
         case 'restart':
           result = await this.performRestart(action, serviceName);
@@ -901,25 +901,25 @@ export class SelfHealingService extends EventEmitter {
         default:
           throw new Error(`Unknown healing action type: ${action.type}`);
       }
-      
+
       // Record success
       action.successCount++;
       action.successRate = action.successCount / action.executionCount;
-      
+
       // Record in autonomous operations
       await this.recordHealingAction(action, serviceName, 'completed', result, Date.now() - startTime);
-      
+
       console.log(`[SelfHealing] Successfully executed ${action.id}: ${JSON.stringify(result)}`);
       this.emit('healingActionCompleted', { action, serviceName, result });
-      
+
     } catch (error) {
       console.error(`[SelfHealing] Healing action failed: ${action.id}`, error);
-      
+
       // Record failure
       await this.recordHealingAction(action, serviceName, 'failed', { 
         error: error instanceof Error ? error.message : String(error) 
       }, Date.now() - startTime);
-      
+
       this.emit('healingActionFailed', { action, serviceName, error });
     }
   }
@@ -934,12 +934,12 @@ export class SelfHealingService extends EventEmitter {
         console.log('[SelfHealing] Restarting database connection pool...');
         // In production, this would restart the connection pool
         return { action: 'database_restart', connections_reset: 5 };
-        
+
       case 'cache':
         console.log('[SelfHealing] Restarting cache service...');
         await optimizedCacheService.clear('all');
         return { action: 'cache_restart', cache_cleared: true };
-        
+
       default:
         console.log(`[SelfHealing] Generic service restart for ${serviceName}`);
         return { action: 'service_restart', service: serviceName };
@@ -955,7 +955,7 @@ export class SelfHealingService extends EventEmitter {
       // Reset connection pool stats
       return { action: 'connection_reset', reset_count: 3 };
     }
-    
+
     if (serviceName === 'external_services') {
       console.log('[SelfHealing] Resetting circuit breakers...');
       // Reset all circuit breakers to closed state
@@ -965,7 +965,7 @@ export class SelfHealingService extends EventEmitter {
       }
       return { action: 'circuit_breaker_reset', services_reset: circuitBreakers.length };
     }
-    
+
     return { action: 'generic_reset', service: serviceName };
   }
 
@@ -978,7 +978,7 @@ export class SelfHealingService extends EventEmitter {
         console.log('[SelfHealing] Performing cache cleanup...');
         await optimizedCacheService.clear('memory');
         return { action: 'cache_cleanup', memory_freed: '50MB' };
-        
+
       case 'memory':
         console.log('[SelfHealing] Performing garbage collection...');
         if (global.gc) {
@@ -986,12 +986,12 @@ export class SelfHealingService extends EventEmitter {
         }
         const memAfter = process.memoryUsage();
         return { action: 'garbage_collection', heap_after: memAfter.heapUsed };
-        
+
       case 'disk':
         console.log('[SelfHealing] Performing disk cleanup...');
         // In production, clean up temp files, logs, etc.
         return { action: 'disk_cleanup', space_freed: '100MB' };
-        
+
       default:
         return { action: 'generic_cleanup', service: serviceName };
     }
@@ -1002,7 +1002,7 @@ export class SelfHealingService extends EventEmitter {
    */
   private async performOptimization(action: HealingAction, serviceName: string): Promise<any> {
     console.log(`[SelfHealing] Performing optimization for ${serviceName}...`);
-    
+
     // Generic optimization actions
     switch (serviceName) {
       case 'database':
@@ -1019,7 +1019,7 @@ export class SelfHealingService extends EventEmitter {
    */
   private async performFailover(action: HealingAction, serviceName: string): Promise<any> {
     console.log(`[SelfHealing] Performing failover for ${serviceName}...`);
-    
+
     // In production, this would implement actual failover logic
     return { 
       action: 'failover', 
@@ -1058,7 +1058,7 @@ export class SelfHealingService extends EventEmitter {
           automated: true
         }
       } as InsertAutonomousOperation);
-      
+
     } catch (error) {
       console.error('[SelfHealing] Error recording healing action:', error);
     }
@@ -1069,23 +1069,23 @@ export class SelfHealingService extends EventEmitter {
    */
   private async openCircuitBreaker(serviceName: string): Promise<void> {
     console.log(`[SelfHealing] Opening circuit breaker for ${serviceName}`);
-    
+
     const circuitBreaker = this.circuitBreakers.get(serviceName);
     if (circuitBreaker) {
       circuitBreaker.state = 'open';
-      
+
       // Update database
       await storage.updateCircuitBreakerState(serviceName, {
         state: 'open',
         stateChangedAt: new Date(),
         lastFailureAt: new Date()
       });
-      
+
       // Schedule half-open attempt
       setTimeout(() => {
         this.setCircuitBreakerHalfOpen(serviceName);
       }, circuitBreaker.timeout);
-      
+
       this.emit('circuitBreakerOpened', { serviceName, failureCount: circuitBreaker.failureCount });
     }
   }
@@ -1095,13 +1095,13 @@ export class SelfHealingService extends EventEmitter {
    */
   private async closeCircuitBreaker(serviceName: string): Promise<void> {
     console.log(`[SelfHealing] Closing circuit breaker for ${serviceName}`);
-    
+
     const circuitBreaker = this.circuitBreakers.get(serviceName);
     if (circuitBreaker) {
       circuitBreaker.state = 'closed';
       circuitBreaker.failureCount = 0;
       circuitBreaker.successCount = 0;
-      
+
       // Update database
       await storage.updateCircuitBreakerState(serviceName, {
         state: 'closed',
@@ -1110,14 +1110,14 @@ export class SelfHealingService extends EventEmitter {
         successCount: 0,
         lastSuccessAt: new Date()
       });
-      
+
       // Update service health
       const service = this.services.get(serviceName);
       if (service) {
         service.circuitBreakerState = 'closed';
         service.consecutiveFailures = 0;
       }
-      
+
       this.emit('circuitBreakerClosed', { serviceName });
     }
   }
@@ -1127,25 +1127,25 @@ export class SelfHealingService extends EventEmitter {
    */
   private async setCircuitBreakerHalfOpen(serviceName: string): Promise<void> {
     console.log(`[SelfHealing] Setting circuit breaker to half-open for ${serviceName}`);
-    
+
     const circuitBreaker = this.circuitBreakers.get(serviceName);
     if (circuitBreaker && circuitBreaker.state === 'open') {
       circuitBreaker.state = 'half_open';
       circuitBreaker.successCount = 0;
-      
+
       // Update database
       await storage.updateCircuitBreakerState(serviceName, {
         state: 'half_open',
         stateChangedAt: new Date(),
         recoveryAttempts: (await storage.getCircuitBreakerState(serviceName))?.recoveryAttempts || 0 + 1
       });
-      
+
       // Update service health
       const service = this.services.get(serviceName);
       if (service) {
         service.circuitBreakerState = 'half_open';
       }
-      
+
       this.emit('circuitBreakerHalfOpen', { serviceName });
     }
   }
@@ -1156,7 +1156,7 @@ export class SelfHealingService extends EventEmitter {
   private async handleHealthCheckResult(data: any): Promise<void> {
     if (data.status === 'critical' || data.status === 'emergency') {
       console.log('[SelfHealing] Critical system state detected, evaluating healing needs');
-      
+
       // Check if immediate healing is needed
       for (const [serviceName, service] of Array.from(this.services)) {
         if (service.status === 'critical' || service.status === 'failed') {
@@ -1171,10 +1171,10 @@ export class SelfHealingService extends EventEmitter {
    */
   private async handleAlert(alert: any): Promise<void> {
     console.log(`[SelfHealing] Received alert: ${alert.type} - ${alert.severity}`);
-    
+
     // Map alert to potential healing actions
     const healingActions = this.mapAlertToHealingActions(alert);
-    
+
     for (const actionId of healingActions) {
       const action = this.healingActions.get(actionId);
       if (action && this.shouldExecuteAction(action)) {
@@ -1188,23 +1188,23 @@ export class SelfHealingService extends EventEmitter {
    */
   private mapAlertToHealingActions(alert: any): string[] {
     const actions: string[] = [];
-    
+
     if (alert.type.includes('cpu') || alert.type.includes('memory')) {
       actions.push('garbage_collection', 'cache_cleanup');
     }
-    
+
     if (alert.type.includes('database')) {
       actions.push('database_connection_reset');
     }
-    
+
     if (alert.type.includes('disk')) {
       actions.push('disk_cleanup');
     }
-    
+
     if (alert.severity === 'critical') {
       actions.push('service_restart');
     }
-    
+
     return actions;
   }
 
@@ -1213,7 +1213,7 @@ export class SelfHealingService extends EventEmitter {
    */
   private async handleSystemError(type: string, error: any): Promise<void> {
     console.error(`[SelfHealing] System error detected: ${type}`, error);
-    
+
     // Trigger appropriate healing actions based on error type
     if (type === 'unhandled_rejection' || type === 'uncaught_exception') {
       const action = this.healingActions.get('garbage_collection');
@@ -1244,20 +1244,20 @@ export class SelfHealingService extends EventEmitter {
       averageSuccessRate: 0,
       actionsByType: {} as Record<string, number>
     };
-    
+
     for (const action of Array.from(this.healingActions.values())) {
       stats.executedActions += action.executionCount;
       stats.successfulActions += action.successCount;
-      
+
       if (!stats.actionsByType[action.type]) {
         stats.actionsByType[action.type] = 0;
       }
       stats.actionsByType[action.type] += action.executionCount;
     }
-    
+
     stats.averageSuccessRate = stats.executedActions > 0 ? 
       (stats.successfulActions / stats.executedActions) * 100 : 0;
-    
+
     return stats;
   }
 
@@ -1273,12 +1273,12 @@ export class SelfHealingService extends EventEmitter {
    */
   public async triggerHealing(serviceName: string, actionType?: string): Promise<void> {
     console.log(`[SelfHealing] Manual healing trigger for ${serviceName}`);
-    
+
     if (actionType) {
       const action = Array.from(this.healingActions.values()).find(a => 
         a.type === actionType && (a.target === serviceName || a.target === 'system')
       );
-      
+
       if (action) {
         await this.executeHealingAction(action, serviceName);
       }

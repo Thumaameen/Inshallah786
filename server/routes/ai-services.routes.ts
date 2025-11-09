@@ -1,8 +1,11 @@
 import { Router, Request, Response } from 'express';
+import express from 'express';
 import { Claude } from '@anthropic-ai/sdk';
+import { RateLimiter } from '../utils/rate-limiter.js';
+import { ErrorLogger } from '../utils/error-logger.js';
 
 // Initialize router
-const router = Router();
+const router = express.Router();
 
 // Initialize rate limiter
 const rateLimiter = {
@@ -27,10 +30,12 @@ declare global {
         }
     }
 }
-import { RateLimiter } from '../utils/rate-limiter';
-import { ErrorLogger } from '../utils/error-logger';
 
-const router = express.Router();
+// Environment variables
+const {
+  ANTHROPIC_API_KEY,
+  NODE_ENV
+} = process.env;
 
 // Initialize Enhanced AI Service
 const enhancedAI = new EnhancedAIService();
@@ -58,7 +63,7 @@ class EnhancedAIService {
         if (!this.ready || !this.claude) {
             throw new Error('AI service not properly initialized');
         }
-        
+
         try {
             return await this.claude.messages.create({
                 model: features.model || 'claude-3',
@@ -89,7 +94,7 @@ class EnhancedAIService {
 router.post('/process', async (req: Request, res: Response) => {
     try {
         const { message, features } = req.body;
-        
+
         if (!message) {
             return res.status(400).json({ error: 'Message is required' });
         }

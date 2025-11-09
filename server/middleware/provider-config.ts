@@ -11,7 +11,6 @@
 
 import { z } from 'zod';
 import crypto from 'crypto';
-import crypto from 'crypto';
 
 // Enhanced Environment detection with extensive logging
 const logEnvironmentState = (context: string) => {
@@ -529,19 +528,19 @@ const initializeProviders = () => {
       enabled: !!process.env.MISTRAL_API_KEY
     },
     google: {
-      apiKey: process.env.GEMINI_API_KEY || 
-              process.env.GOOGLE_AI_API_KEY || 
-              process.env.GOOGLE_GEMINI_API_KEY || 
-              process.env.GOOGLE_API_KEY || 
-              process.env.GOOGLE_KEY || 
+      apiKey: process.env.GEMINI_API_KEY ||
+              process.env.GOOGLE_AI_API_KEY ||
+              process.env.GOOGLE_GEMINI_API_KEY ||
+              process.env.GOOGLE_API_KEY ||
+              process.env.GOOGLE_KEY ||
               process.env.GEMINI_KEY ||
               process.env.GOOGLE_CLOUD_API_KEY ||
               process.env.GCLOUD_API_KEY,
-      enabled: !!(process.env.GEMINI_API_KEY || 
-                  process.env.GOOGLE_AI_API_KEY || 
-                  process.env.GOOGLE_GEMINI_API_KEY || 
-                  process.env.GOOGLE_API_KEY || 
-                  process.env.GOOGLE_KEY || 
+      enabled: !!(process.env.GEMINI_API_KEY ||
+                  process.env.GOOGLE_AI_API_KEY ||
+                  process.env.GOOGLE_GEMINI_API_KEY ||
+                  process.env.GOOGLE_API_KEY ||
+                  process.env.GOOGLE_KEY ||
                   process.env.GEMINI_KEY ||
                   process.env.GOOGLE_CLOUD_API_KEY ||
                   process.env.GCLOUD_API_KEY)
@@ -576,8 +575,8 @@ const initializeProviders = () => {
       enabled: !!(process.env.ETHEREUM_RPC_URL || process.env.INFURA_API_KEY)
     },
     polygon: {
-      rpcUrl: process.env.POLYGON_RPC_ENDPOINT || 
-                        process.env.POLYGON_RPC_URL || 
+      rpcUrl: process.env.POLYGON_RPC_ENDPOINT ||
+                        process.env.POLYGON_RPC_URL ||
                         process.env.MATIC_RPC_URL ||
                         (process.env.POLYGON_API_KEY ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.POLYGON_API_KEY}` : '') ||
                         (process.env.ALCHEMY_API_KEY ? `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}` : '') ||

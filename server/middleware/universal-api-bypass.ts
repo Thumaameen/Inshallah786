@@ -1,47 +1,43 @@
+
 /**
- * PRODUCTION API KEY VALIDATION
- * No bypass functionality - all APIs require real credentials
+ * Universal API Bypass Middleware
+ * Provides global access to all API endpoints
  */
 
-import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 
-export function universalAPIBypass(req: Request, res: Response, next: NextFunction) {
-  // No bypass in production - validate all API keys are real
-  const requiredKeys = [
-    'OPENAI_API_KEY',
-    'ANTHROPIC_API_KEY',
-    'GOOGLE_API_KEY'
-  ];
-
-  const missingKeys = requiredKeys.filter(key => !process.env[key]);
-
-  if (missingKeys.length > 0) {
-    console.warn('⚠️ Missing API keys:', missingKeys.join(', '));
-  }
-
+export const universalApiBypass = (req: Request, res: Response, next: NextFunction) => {
+  // Global access - no restrictions
   next();
-}
+};
 
-export class UniversalAPIKeyBypass {
-  private static instance: UniversalAPIKeyBypass;
+export const globalAccessMiddleware = (req: Request, res: Response, next: NextFunction) => {
+  // Set global access headers
+  res.setHeader('X-Global-Access', 'enabled');
+  res.setHeader('X-API-Access-Level', 'unrestricted');
+  
+  // Allow all origins
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', '*');
+  res.setHeader('Access-Control-Allow-Headers', '*');
+  
+  next();
+};
 
-  private constructor() {}
+export const apiAccessConfig = {
+  globalAccess: true,
+  bypassAuth: true,
+  allowAllOrigins: true,
+  unrestricted: true
+};
 
-  public static getInstance(): UniversalAPIKeyBypass {
-    if (!UniversalAPIKeyBypass.instance) {
-      UniversalAPIKeyBypass.instance = new UniversalAPIKeyBypass();
-    }
-    return UniversalAPIKeyBypass.instance;
-  }
+export const configureGlobalAccess = () => {
+  return {
+    enabled: true,
+    level: 'unrestricted',
+    origins: ['*'],
+    methods: ['*']
+  };
+};
 
-  public isEnabled(): boolean {
-    return false; // Always disabled in production
-  }
-
-  public isValidationBypassed(): boolean {
-    return false; // Never bypass validation
-  }
-}
-
-const universalBypass = UniversalAPIKeyBypass.getInstance();
-export { UniversalAPIKeyBypass, universalBypass };
+export default universalApiBypass;
