@@ -244,7 +244,7 @@ if (fs.existsSync(lockFile)) {
 }
 
 // Create Express app and HTTP server
-const app = express();
+const app = express.default ? express.default() : express();
 const server = createServer(app);
 
 // Initialize WebSocket service for real-time features

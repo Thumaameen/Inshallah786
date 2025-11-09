@@ -1,11 +1,12 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import helmet from 'helmet';
 import compression from 'compression';
 import cors from 'cors';
 import { errorSelfHealing } from './services/error-self-healing.service.js';
 import { enhancedAIService } from './services/enhanced-ai.service.js';
 
-const app = express();
+const app = express.default ? express.default() : express();
 
 // Enhanced Security
 app.use(helmet());
