@@ -63,10 +63,15 @@ export const storage = {
   },
 
   async createUser(user: Omit<User, 'id' | 'createdAt' | 'updatedAt'>): Promise<User> {
-    const newUser: any = { // Using 'any' for now as Drizzle types might require specific mapping
-      ...user,
+    const newUser: User = {
+      email: user.email,
+      name: user.name,
+      username: user.email.split('@')[0],
+      id: crypto.randomUUID(),
+      role: user.role || 'user',
+      isActive: true,
       createdAt: new Date(),
-      updatedAt: new Date(),
+      updatedAt: new Date()
     };
     const result = await db.insert(users).values(newUser).returning();
     return result[0];

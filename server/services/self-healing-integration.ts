@@ -4,7 +4,7 @@ import { instantSecurityResponse } from './instant-security-response.js';
 import { autoErrorCorrection } from './auto-error-correction.js';
 import { healthCheckSystem } from './health-check-system.js';
 import { zeroDowntimeManager } from './zero-downtime-manager.js';
-import { queenUltraAiService } from './queen-ultra-ai.js';
+// queenUltraAiService import removed - not exported from module
 import { auditTrailService } from './audit-trail-service.js';
 import { storage } from '../storage.js';
 import { type InsertAuditLog, type InsertSystemMetric } from '../../shared/schema/index.js';

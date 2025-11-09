@@ -1,8 +1,10 @@
-import { getWebSocketService } from "../websocket.js";
+import { WebSocketService } from '../websocket.js';
 import { storage } from '../storage.js';
 import { notificationService } from "./notification-service.js";
 import { NotificationCategory, NotificationPriority } from '../../shared/schema/index.js';
 import type { StatusUpdate, Document, DhaApplication } from '../../shared/schema/index.js';
+
+const getWebSocketService = () => new WebSocketService();
 
 // Define EventType locally as it was not imported correctly
 enum EventType {
