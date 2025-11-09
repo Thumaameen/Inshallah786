@@ -675,13 +675,15 @@ export class SelfHealingMonitor extends EventEmitter {
   // Utility methods
   private async logAuditEvent(event: Partial<InsertAuditLog>): Promise<void> {
     try {
-      await auditTrailService.logEvent({
-        userId: 'system_self_healing',
-        action: event.action || 'SELF_HEALING_EVENT',
-        entityType: 'system',
-        details: event.details,
-        ...event
-      });
+      await auditTrailService.logUserAction(
+        event.action || 'SELF_HEALING_EVENT',
+        'success',
+        {
+          userId: 'system_self_healing',
+          entityType: 'system',
+          actionDetails: event.actionDetails || {}
+        }
+      );
     } catch (error) {
       console.error('[SelfHealing] Failed to log audit event:', error);
     }
@@ -689,7 +691,8 @@ export class SelfHealingMonitor extends EventEmitter {
 
   private async logSystemMetric(metric: Partial<InsertSystemMetric>): Promise<void> {
     try {
-      await storage.createSystemMetric(metric);
+      // Store metrics in memory storage
+      await storage.set(`metric:${Date.now()}`, metric);
     } catch (error) {
       console.error('[SelfHealing] Failed to log system metric:', error);
     }

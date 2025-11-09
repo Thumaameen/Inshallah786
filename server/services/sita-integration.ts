@@ -103,7 +103,7 @@ export class SitaIntegrationService {
       await this.discoverServices();
 
       // Log successful initialization
-      await storage.createSecurityEvent({
+      await storage.set(`security_event:${Date.now()}`, {
         eventType: "sita_integration_initialized",
         severity: "low",
         details: {
@@ -148,7 +148,7 @@ export class SitaIntegrationService {
         },
         body: JSON.stringify(authPayload)
       });
-      
+
       const responseData = await response.json();
 
       if (response.ok) {
@@ -160,9 +160,9 @@ export class SitaIntegrationService {
           scope: responseData.scope?.split(' ') || [],
           issuedAt: Date.now()
         };
-        
+
         // Log successful authentication
-        await storage.createSecurityEvent({
+        await storage.set(`security_event:${Date.now()}`, {
           eventType: "sita_authentication_success",
           severity: "low",
           details: {
@@ -203,7 +203,7 @@ export class SitaIntegrationService {
 
       if (response.success && response.data) {
         const services: SitaServiceDiscovery[] = response.data.services;
-        
+
         // Cache discovered services
         services.forEach(service => {
           this.serviceCache.set(service.serviceId, service);
@@ -261,7 +261,7 @@ export class SitaIntegrationService {
       );
 
       // Log the API call
-      await storage.createSecurityEvent({
+      await storage.set(`security_event:${Date.now()}`, {
         eventType: "sita_api_call",
         severity: "low",
         details: {
@@ -285,7 +285,7 @@ export class SitaIntegrationService {
       };
 
     } catch (error) {
-      await storage.createSecurityEvent({
+      await storage.set(`security_event:${Date.now()}`, {
         eventType: "sita_api_error",
         severity: "medium",
         details: {
@@ -403,10 +403,10 @@ export class SitaIntegrationService {
    */
   private isTokenExpired(): boolean {
     if (!this.authToken) return true;
-    
+
     const expiryTime = this.authToken.issuedAt + (this.authToken.expiresIn * 1000);
     const bufferTime = 300000; // 5 minutes buffer
-    
+
     return Date.now() > (expiryTime - bufferTime);
   }
 
@@ -618,11 +618,11 @@ export function createSitaIntegration(): SitaIntegrationService {
   const clientId = process.env.SITA_CLIENT_ID || 'dev-sita-client';
   const clientSecret = process.env.SITA_CLIENT_SECRET || 'dev-sita-secret';
   const apiKey = process.env.SITA_API_KEY || 'dev-sita-key';
-  
+
   if (process.env.NODE_ENV === 'production' && (!process.env.SITA_CLIENT_ID || !process.env.SITA_CLIENT_SECRET || !process.env.SITA_API_KEY)) {
     throw new Error('CRITICAL SECURITY ERROR: SITA_CLIENT_ID, SITA_CLIENT_SECRET, and SITA_API_KEY environment variables are required for SITA integration in production');
   }
-  
+
   const credentials: SitaApiCredentials = {
     clientId,
     clientSecret,

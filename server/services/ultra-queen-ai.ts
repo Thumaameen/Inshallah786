@@ -1,3 +1,4 @@
+replit_final_file>
 /**
  * 🔱 ULTRA QUEEN AI SYSTEM - MULTI-PROVIDER INTELLIGENCE
  * 
@@ -371,6 +372,8 @@ class UltraQueenAI {
       });
 
       // Fix OpenAI response type handling
+      const model = 'model' in completion ? completion.model : 'gpt-4';
+      const usage = 'usage' in completion ? completion.usage : { total_tokens: 0 };
       const content = 'choices' in completion && completion.choices[0]?.message?.content || '';
 
       return {
@@ -379,8 +382,8 @@ class UltraQueenAI {
         provider: 'openai',
         metadata: {
           executionTime: Date.now() - startTime,
-          tokensUsed: 'usage' in completion ? completion.usage?.total_tokens : undefined,
-          model: completion.model,
+          tokensUsed: usage.total_tokens,
+          model,
           confidence: 0.95
         }
       };
@@ -840,3 +843,4 @@ class UltraQueenAI {
 
 // Export singleton instance
 export const ultraQueenAI = new UltraQueenAI();
+</replit_final_file>
