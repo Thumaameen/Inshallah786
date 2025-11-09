@@ -7,7 +7,7 @@ import { errorTrackingService } from './error-tracking.js';
 import { auditTrailService } from './audit-trail-service.js';
 import { fraudDetectionService } from './fraud-detection.js';
 import { intelligentAlertingService } from './intelligent-alerting-service.js';
-import { queenUltraAiService } from './queen-ultra-ai.js';
+// queenUltraAiService import removed - not exported from module
 import { type InsertAuditLog, type InsertSystemMetric, type InsertSecurityEvent } from '../../shared/schema/index.js';
 import os from 'os';
 import { performance } from 'perf_hooks';

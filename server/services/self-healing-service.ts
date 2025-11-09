@@ -2,7 +2,7 @@ import { EventEmitter } from "events";
 import { storage, PostgreSQLStorage } from "../storage.js";
 import { autonomousMonitoringBot } from "./autonomous-monitoring-bot.js";
 import { optimizedCacheService } from "./optimized-cache.js";
-import db from '../db/connection.js';
+import { db } from '../db/connection.js';
 import os from "os";
 
 // Define types for autonomous operations and circuit breaker states

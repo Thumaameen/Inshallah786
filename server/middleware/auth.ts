@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import type { Request, Response, NextFunction } from 'express';
 import jwt from "jsonwebtoken";
 import bcryptjs from "bcryptjs";
 import { storage } from "../mem-storage.js";
@@ -62,9 +62,9 @@ export async function authenticate(req: Request, res: Response, next: NextFuncti
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({ 
-        error: "Authentication required", 
-        message: "Please provide a valid Bearer token" 
+      return res.status(401).json({
+        error: "Authentication required",
+        message: "Please provide a valid Bearer token"
       });
     }
 
@@ -72,9 +72,9 @@ export async function authenticate(req: Request, res: Response, next: NextFuncti
     const decoded = verifyToken(token);
 
     if (!decoded) {
-      return res.status(401).json({ 
-        error: "Invalid token", 
-        message: "Token has expired or is invalid" 
+      return res.status(401).json({
+        error: "Invalid token",
+        message: "Token has expired or is invalid"
       });
     }
 
@@ -84,9 +84,9 @@ export async function authenticate(req: Request, res: Response, next: NextFuncti
     // Try to fetch user from storage
     const user = await storage.getUser(decoded.id);
     if (!user || !user.isActive) {
-      return res.status(401).json({ 
-        error: "User not found or inactive", 
-        message: "User account is not active or does not exist" 
+      return res.status(401).json({
+        error: "User not found or inactive",
+        message: "User account is not active or does not exist"
       });
     }
 
@@ -124,9 +124,9 @@ export async function authenticate(req: Request, res: Response, next: NextFuncti
     };
     await storage.createSecurityEvent(privacyProtectionService.anonymizeSecurityEvent(securityEvent) as any);
 
-    res.status(500).json({ 
-      error: "Authentication error", 
-      message: "Internal server error during authentication" 
+    res.status(500).json({
+      error: "Authentication error",
+      message: "Internal server error during authentication"
     });
   }
 }
@@ -139,16 +139,16 @@ export function requireRole(roles: string[]) {
     const user = req.user as AuthenticatedUser | undefined;
 
     if (!user) {
-      return res.status(401).json({ 
+      return res.status(401).json({
         error: "Authentication required",
-        message: "Please authenticate first" 
+        message: "Please authenticate first"
       });
     }
 
     if (!roles.includes(user.role)) {
-      return res.status(403).json({ 
+      return res.status(403).json({
         error: "Insufficient permissions",
-        message: `Role '${user.role}' does not have access to this resource` 
+        message: `Role '${user.role}' does not have access to this resource`
       });
     }
 
@@ -161,9 +161,9 @@ export async function requireApiKey(req: Request, res: Response, next: NextFunct
     const apiKey = req.headers["x-api-key"] as string;
 
     if (!apiKey) {
-      return res.status(401).json({ 
+      return res.status(401).json({
         error: "API key required",
-        message: "Please provide a valid API key in X-API-Key header" 
+        message: "Please provide a valid API key in X-API-Key header"
       });
     }
 
@@ -185,17 +185,17 @@ export async function requireApiKey(req: Request, res: Response, next: NextFunct
     }
 
     if (!matchedKey) {
-      return res.status(401).json({ 
+      return res.status(401).json({
         error: "Invalid API key",
-        message: "API key is not valid or has been revoked" 
+        message: "API key is not valid or has been revoked"
       });
     }
 
     const expiresAt = matchedKey.expiresAt;
     if (expiresAt && expiresAt < new Date()) {
-      return res.status(401).json({ 
+      return res.status(401).json({
         error: "API key expired",
-        message: "API key has expired" 
+        message: "API key has expired"
       });
     }
 
@@ -204,9 +204,9 @@ export async function requireApiKey(req: Request, res: Response, next: NextFunct
     next();
   } catch (error) {
     console.error("API key validation error:", error);
-    res.status(500).json({ 
+    res.status(500).json({
       error: "API key validation error",
-      message: "Internal server error during API key validation" 
+      message: "Internal server error during API key validation"
     });
   }
 }

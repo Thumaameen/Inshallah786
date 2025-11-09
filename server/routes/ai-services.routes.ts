@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import express from 'express';
-import { Claude } from '@anthropic-ai/sdk';
+import Anthropic from '@anthropic-ai/sdk';
 import { RateLimiter } from '../utils/rate-limiter.js';
 import { ErrorLogger } from '../utils/error-logger.js';
 

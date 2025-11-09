@@ -3,7 +3,7 @@ import { Router } from 'express';
 import { aiOrchestrator } from '../services/ai-orchestrator';
 import { internationalVerificationService } from '../services/international-verification.service';
 import { printService } from '../services/print-service';
-import { auth } from '../middleware/auth';
+import { authenticate as auth } from '../middleware/auth.js';
 
 const router = Router();
 

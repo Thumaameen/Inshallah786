@@ -15,7 +15,7 @@ type AsyncHandler = (
   next: NextFunction
 ) => Promise<any>;
 
-export const asyncHandler = (fn: AsyncHandler) => 
+export const asyncHandler = (fn: AsyncHandler) =>
   (req: RequestWithId, res: Response, next: NextFunction) => {
     Promise.resolve(fn(req, res, next)).catch((error) => {
       // Log error if logger is available
