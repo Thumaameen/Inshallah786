@@ -103,37 +103,37 @@ export class SecureCommunicationsService {
 
   private initializeSecureComms(): void {
     console.log('[Secure Comms] Initializing secure communications');
-    
+
     // Start key rotation
     setInterval(() => this.rotateKeys(), 3600000); // Hourly
-    
+
     // Monitor channels
     setInterval(() => this.monitorChannels(), 60000); // Every minute
-    
+
     // Process message queue
     setInterval(() => this.processMessageQueue(), 5000); // Every 5 seconds
   }
 
   private setupCryptoProtocols(): void {
     console.log('[Crypto] Setting up cryptographic protocols');
-    
+
     // Initialize perfect forward secrecy
     this.initializePFS();
-    
+
     // Setup quantum-resistant protocols
     this.initializeQuantumResistant();
   }
 
   private initializeTacticalSystems(): void {
     console.log('[Tactical] Initializing tactical communication systems');
-    
+
     // Setup tactical channels
     this.setupTacticalChannels();
   }
 
   private loadDuressCodes(): void {
     console.log('[Duress] Loading duress code registry');
-    
+
     // Load pre-configured duress codes
     // In production, these would be securely distributed
   }
@@ -154,19 +154,19 @@ export class SecureCommunicationsService {
     expiresAt: Date;
   }> {
     const channelId = `CH-${randomBytes(8).toString('hex').toUpperCase()}`;
-    
+
     // Determine COMSEC level based on classification
     const comsecLevel = this.determineComsecLevel(params.classification);
-    
+
     // Generate ephemeral keys for PFS
     const { publicKey, privateKey, sharedSecret } = await this.generatePFSKeys();
-    
+
     // Create session key
     const sessionKey = await this.deriveSessionKey(sharedSecret, channelId);
-    
+
     // Calculate expiration
     const expiresAt = new Date(Date.now() + 3600000); // 1 hour default
-    
+
     // Store channel information
     this.activeChannels.set(channelId, {
       id: channelId,
@@ -184,7 +184,7 @@ export class SecureCommunicationsService {
       messageCount: 0,
       lastActivity: new Date()
     });
-    
+
     // Store session key
     this.sessionKeys.set(channelId, {
       key: sessionKey,
@@ -192,7 +192,7 @@ export class SecureCommunicationsService {
       createdAt: new Date(),
       rotationCount: 0
     });
-    
+
     // Audit channel creation
     this.auditChannelAction({
       action: 'CHANNEL_CREATED',
@@ -201,7 +201,7 @@ export class SecureCommunicationsService {
       recipient: params.recipient,
       classification: params.classification
     });
-    
+
     return {
       channelId,
       encryptionLevel: comsecLevel.level,
@@ -233,18 +233,18 @@ export class SecureCommunicationsService {
     if (!channel) {
       throw new Error('Channel not found or expired');
     }
-    
+
     const messageId = `MSG-${randomBytes(8).toString('hex').toUpperCase()}`;
-    
+
     // Add classification marking to message
     const markedContent = this.addClassificationMarking(params.content, params.classification);
-    
+
     // Encrypt message
     const encrypted = await this.encryptMessage(markedContent, channel.sessionKey);
-    
+
     // Generate message hash for integrity
     const hash = createHash('sha512').update(encrypted).digest('hex');
-    
+
     // Create message object
     const message = {
       id: messageId,
@@ -258,19 +258,19 @@ export class SecureCommunicationsService {
       timestamp: new Date(),
       status: 'QUEUED'
     };
-    
+
     // Add to priority queue
     this.addToMessageQueue(message);
-    
+
     // Update channel activity
     channel.messageCount++;
     channel.lastActivity = new Date();
-    
+
     // Handle self-destruct setup
     if (params.selfDestruct) {
       this.setupSelfDestruct(messageId, params.selfDestruct);
     }
-    
+
     // Audit message
     this.auditMessageAction({
       action: 'MESSAGE_SENT',
@@ -280,7 +280,7 @@ export class SecureCommunicationsService {
       classification: params.classification,
       priority: params.priority
     });
-    
+
     return {
       messageId,
       encrypted,
@@ -305,21 +305,21 @@ export class SecureCommunicationsService {
     turnServers: string[];
   }> {
     const sessionId = `VOIP-${randomBytes(8).toString('hex').toUpperCase()}`;
-    
+
     // Determine encryption level
     const comsecLevel = this.determineComsecLevel(params.classification);
-    
+
     // Generate SRTP keys
     const srtpKey = randomBytes(32);
     const srtpSalt = randomBytes(14);
-    
+
     // Create SIP URI
     const sipUri = `sips:${sessionId}@secure.mil`;
-    
+
     // Configure STUN/TURN servers
     const stunServers = this.getSTUNServers(params.classification);
     const turnServers = this.getTURNServers(params.classification);
-    
+
     // Create VoIP session
     this.voipSessions.set(sessionId, {
       id: sessionId,
@@ -338,7 +338,7 @@ export class SecureCommunicationsService {
         latency: 0
       }
     });
-    
+
     // Audit VoIP session
     this.auditVoIPAction({
       action: 'VOIP_SESSION_STARTED',
@@ -347,7 +347,7 @@ export class SecureCommunicationsService {
       callee: params.callee,
       classification: params.classification
     });
-    
+
     return {
       sessionId,
       sipUri,
@@ -373,7 +373,7 @@ export class SecureCommunicationsService {
     const chatId = `TAC-${randomBytes(6).toString('hex').toUpperCase()}`;
     const encryptionKey = randomBytes(32);
     const joinCode = randomBytes(4).toString('hex').toUpperCase();
-    
+
     // Create chat room
     this.tacticalChats.set(chatId, {
       id: chatId,
@@ -388,7 +388,7 @@ export class SecureCommunicationsService {
       lastActivity: new Date(),
       status: 'ACTIVE'
     });
-    
+
     // Audit chat creation
     this.auditTacticalChatAction({
       action: 'TACTICAL_CHAT_CREATED',
@@ -397,7 +397,7 @@ export class SecureCommunicationsService {
       classification: params.classification,
       participantCount: params.participants.length
     });
-    
+
     return {
       chatId,
       encryptionKey: encryptionKey.toString('hex'),
@@ -421,20 +421,20 @@ export class SecureCommunicationsService {
     if (!chat) {
       throw new Error('Tactical chat not found');
     }
-    
+
     if (!chat.participants.has(params.sender)) {
       throw new Error('Sender not authorized for this chat');
     }
-    
+
     const messageId = `TACMSG-${randomBytes(6).toString('hex').toUpperCase()}`;
-    
+
     // Encrypt message
     const encrypted = await this.encryptMessage(params.message, chat.encryptionKey);
-    
+
     // Process attachments
     const encryptedAttachments = params.attachments ? 
       await this.encryptAttachments(params.attachments, chat.encryptionKey) : [];
-    
+
     // Create message
     const message = {
       id: messageId,
@@ -443,14 +443,14 @@ export class SecureCommunicationsService {
       attachments: encryptedAttachments,
       timestamp: new Date()
     };
-    
+
     // Add to chat
     chat.messages.push(message);
     chat.lastActivity = new Date();
-    
+
     // Broadcast to participants
     await this.broadcastToParticipants(chat, message);
-    
+
     return {
       messageId,
       timestamp: message.timestamp
@@ -473,26 +473,26 @@ export class SecureCommunicationsService {
       params.hiddenMessage,
       Buffer.from(params.key, 'hex')
     );
-    
+
     // Convert message to binary
     const messageBinary = this.stringToBinary(encryptedMessage);
-    
+
     // Embed in cover data using LSB steganography
     const stegoData = this.embedLSB(params.coverData, messageBinary);
-    
+
     // Generate extraction key
     const extractionKey = createHash('sha256')
       .update(params.key)
       .update(randomBytes(16))
       .digest('hex');
-    
+
     // Cache for extraction
     this.steganographyCache.set(extractionKey, {
       originalLength: messageBinary.length,
       key: params.key,
       timestamp: new Date()
     });
-    
+
     return {
       stegoData,
       extractionKey
@@ -509,22 +509,22 @@ export class SecureCommunicationsService {
     if (!cached) {
       throw new Error('Invalid extraction key');
     }
-    
+
     // Extract binary data
     const extractedBinary = this.extractLSB(params.stegoData, cached.originalLength);
-    
+
     // Convert to string
     const encryptedMessage = this.binaryToString(extractedBinary);
-    
+
     // Decrypt message
     const hiddenMessage = await this.decryptMessage(
       encryptedMessage,
       Buffer.from(cached.key, 'hex')
     );
-    
+
     // Remove from cache after extraction
     this.steganographyCache.delete(params.extractionKey);
-    
+
     return { hiddenMessage };
   }
 
@@ -540,7 +540,7 @@ export class SecureCommunicationsService {
     metadata: any;
   }> {
     let obfuscatedStream: Buffer;
-    
+
     switch (params.pattern) {
       case 'CONSTANT':
         // Constant rate traffic to hide patterns
@@ -549,7 +549,7 @@ export class SecureCommunicationsService {
           params.coverTraffic
         );
         break;
-        
+
       case 'RANDOM':
         // Random padding and timing
         obfuscatedStream = this.createRandomizedTraffic(
@@ -557,7 +557,7 @@ export class SecureCommunicationsService {
           params.coverTraffic
         );
         break;
-        
+
       case 'MIMICRY':
         // Mimic normal traffic patterns
         obfuscatedStream = this.createMimicryTraffic(
@@ -565,18 +565,18 @@ export class SecureCommunicationsService {
           params.coverTraffic
         );
         break;
-        
+
       default:
         obfuscatedStream = params.realTraffic;
     }
-    
+
     const metadata = {
       originalSize: params.realTraffic.length,
       obfuscatedSize: obfuscatedStream.length,
       pattern: params.pattern,
       timestamp: new Date()
     };
-    
+
     return {
       obfuscatedStream,
       metadata
@@ -597,25 +597,25 @@ export class SecureCommunicationsService {
     responseCode: string;
   }> {
     const alertId = `EMRG-${randomBytes(6).toString('hex').toUpperCase()}`;
-    
+
     // Check for duress code
     let actualMessage = params.message;
     let isDuress = false;
-    
+
     if (params.duressCode) {
       const registeredCode = this.duressCodeRegistry.get(params.sender);
       if (registeredCode === params.duressCode) {
         isDuress = true;
         actualMessage = `[DURESS ACTIVATED] ${params.message}`;
-        
+
         // Trigger duress protocols
         await this.triggerDuressProtocols(params.sender, params.location);
       }
     }
-    
+
     // Determine broadcast channels
     const broadcastChannels = this.determineEmergencyChannels(isDuress);
-    
+
     // Create emergency message
     const emergencyMessage = {
       id: alertId,
@@ -626,15 +626,15 @@ export class SecureCommunicationsService {
       timestamp: new Date(),
       priority: 'FLASH'
     };
-    
+
     // Broadcast on all emergency channels
     for (const channel of broadcastChannels) {
       await this.broadcastEmergency(channel, emergencyMessage);
     }
-    
+
     // Generate response code
     const responseCode = randomBytes(3).toString('hex').toUpperCase();
-    
+
     // Audit emergency message
     this.auditEmergencyAction({
       action: 'EMERGENCY_MESSAGE',
@@ -643,7 +643,7 @@ export class SecureCommunicationsService {
       isDuress,
       location: params.location
     });
-    
+
     return {
       alertId,
       broadcastChannels,
@@ -654,7 +654,7 @@ export class SecureCommunicationsService {
   public registerDuressCode(userId: string, code: string): void {
     // Register duress code for user
     this.duressCodeRegistry.set(userId, createHash('sha256').update(code).digest('hex'));
-    
+
     console.log(`[Duress] Code registered for user ${userId}`);
   }
 
@@ -674,16 +674,16 @@ export class SecureCommunicationsService {
     transferKey: string;
   }> {
     const transferId = `XFR-${randomBytes(8).toString('hex').toUpperCase()}`;
-    
+
     // Generate transfer key
     const transferKey = randomBytes(32);
-    
+
     // Encrypt file
     const encryptedFile = await this.encryptFile(params.file, transferKey);
-    
+
     // Generate integrity hash
     const integrityHash = createHash('sha512').update(encryptedFile).digest('hex');
-    
+
     // Create transfer record
     const transfer = {
       id: transferId,
@@ -698,10 +698,10 @@ export class SecureCommunicationsService {
       timestamp: new Date(),
       status: 'PENDING'
     };
-    
+
     // Store transfer record
     // In production, store in secure database
-    
+
     // Audit file transfer
     this.auditFileTransferAction({
       action: 'FILE_TRANSFER_INITIATED',
@@ -711,7 +711,7 @@ export class SecureCommunicationsService {
       recipient: params.recipient,
       classification: params.classification
     });
-    
+
     return {
       transferId,
       encryptedFile,
@@ -739,7 +739,7 @@ export class SecureCommunicationsService {
       'TAC-1', 'TAC-2', 'TAC-3',
       'GUARD', 'EMERGENCY', 'COMMAND'
     ];
-    
+
     for (const channel of tacticalChannels) {
       console.log(`[Tactical] Channel ${channel} initialized`);
     }
@@ -769,7 +769,7 @@ export class SecureCommunicationsService {
     const crypto = require('crypto');
     const dh = crypto.createDiffieHellman(2048);
     dh.generateKeys();
-    
+
     return {
       publicKey: dh.getPublicKey(),
       privateKey: dh.getPrivateKey(),
@@ -792,12 +792,12 @@ export class SecureCommunicationsService {
   private async encryptMessage(message: string, key: Buffer): Promise<string> {
     const iv = randomBytes(16);
     const cipher = createCipheriv('aes-256-gcm', key, iv);
-    
+
     let encrypted = cipher.update(message, 'utf8', 'hex');
     encrypted += cipher.final('hex');
-    
+
     const tag = (cipher as any).getAuthTag();
-    
+
     return iv.toString('hex') + tag.toString('hex') + encrypted;
   }
 
@@ -805,33 +805,33 @@ export class SecureCommunicationsService {
     const iv = Buffer.from(encrypted.slice(0, 32), 'hex');
     const tag = Buffer.from(encrypted.slice(32, 64), 'hex');
     const ciphertext = encrypted.slice(64);
-    
+
     // Fix: Specify authTagLength to prevent authentication tag spoofing vulnerability
     const decipher = createDecipheriv('aes-256-gcm', key, iv, { authTagLength: 16 } as any);
     (decipher as any).setAuthTag(tag);
-    
+
     let decrypted = decipher.update(ciphertext, 'hex', 'utf8');
     decrypted += decipher.final('utf8');
-    
+
     return decrypted;
   }
 
   private async encryptFile(file: Buffer, key: Buffer): Promise<Buffer> {
     const iv = randomBytes(16);
     const cipher = createCipheriv('aes-256-cbc', key, iv);
-    
+
     const encrypted = Buffer.concat([
       iv,
       cipher.update(file),
       cipher.final()
     ]);
-    
+
     return encrypted;
   }
 
   private async encryptAttachments(attachments: any[], key: Buffer): Promise<any[]> {
     const encrypted = [];
-    
+
     for (const attachment of attachments) {
       const encData = await this.encryptFile(attachment.data, key);
       encrypted.push({
@@ -840,23 +840,23 @@ export class SecureCommunicationsService {
         size: encData.length
       });
     }
-    
+
     return encrypted;
   }
 
   private addToMessageQueue(message: any): void {
     const priority = this.PRIORITY_LEVELS[message.priority as keyof typeof this.PRIORITY_LEVELS];
-    
+
     // Get or create queue for priority
     let queue = this.messageQueue.get(message.priority);
     if (!queue) {
       queue = [];
       this.messageQueue.set(message.priority, queue);
     }
-    
+
     // Add message to queue
     queue.push(message);
-    
+
     // Sort by timestamp
     queue.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
   }
@@ -864,7 +864,7 @@ export class SecureCommunicationsService {
   private setupSelfDestruct(messageId: string, selfDestruct: any): void {
     if (selfDestruct.trigger === 'TIME' || selfDestruct.trigger === 'BOTH') {
       const delay = selfDestruct.delay || 300; // Default 5 minutes
-      
+
       setTimeout(() => {
         this.destroyMessage(messageId);
       }, delay * 1000);
@@ -874,7 +874,7 @@ export class SecureCommunicationsService {
   private destroyMessage(messageId: string): void {
     // Securely delete message
     console.log(`[Self-Destruct] Message ${messageId} destroyed`);
-    
+
     // In production, overwrite memory and storage
     militarySecurityService.secureDelete(messageId);
   }
@@ -918,24 +918,24 @@ export class SecureCommunicationsService {
   private embedLSB(coverData: Buffer, messageBinary: string): Buffer {
     const stego = Buffer.from(coverData);
     let messageIndex = 0;
-    
+
     for (let i = 0; i < stego.length && messageIndex < messageBinary.length; i++) {
       // Modify LSB of each byte
       stego[i] = (stego[i] & 0xFE) | parseInt(messageBinary[messageIndex]);
       messageIndex++;
     }
-    
+
     return stego;
   }
 
   private extractLSB(stegoData: Buffer, messageLength: number): string {
     let binary = '';
-    
+
     for (let i = 0; i < Math.min(stegoData.length, messageLength); i++) {
       // Extract LSB of each byte
       binary += (stegoData[i] & 1).toString();
     }
-    
+
     return binary;
   }
 
@@ -944,7 +944,7 @@ export class SecureCommunicationsService {
     // Maintain constant traffic rate
     const targetSize = Math.max(real.length, 1024 * 10); // Minimum 10KB
     const padding = randomBytes(targetSize - real.length);
-    
+
     return Buffer.concat([real, padding]);
   }
 
@@ -963,7 +963,7 @@ export class SecureCommunicationsService {
   // Emergency Methods
   private async triggerDuressProtocols(userId: string, location?: any): Promise<void> {
     console.log(`[DURESS] Protocols activated for ${userId}`);
-    
+
     // Alert security
     await militarySecurityService.logSecurityEvent({
       type: 'DURESS_ACTIVATED',
@@ -972,7 +972,7 @@ export class SecureCommunicationsService {
       severity: 'critical',
       timestamp: new Date()
     });
-    
+
     // Lock down user access
     // Track location
     // Alert response team
@@ -987,7 +987,7 @@ export class SecureCommunicationsService {
 
   private async broadcastEmergency(channel: string, message: any): Promise<void> {
     console.log(`[Emergency] Broadcasting on ${channel}:`, message.id);
-    
+
     // In production, broadcast on actual emergency channels
   }
 
@@ -1006,7 +1006,7 @@ export class SecureCommunicationsService {
 
   private monitorChannels(): void {
     const now = new Date();
-    
+
     // Check for expired channels
     for (const [channelId, channel] of Array.from(this.activeChannels.entries())) {
       if (channel.expiresAt <= now) {
@@ -1018,7 +1018,7 @@ export class SecureCommunicationsService {
   private processMessageQueue(): void {
     // Process messages by priority
     const priorities = ['FLASH', 'IMMEDIATE', 'PRIORITY', 'ROUTINE'];
-    
+
     for (const priority of priorities) {
       const queue = this.messageQueue.get(priority);
       if (queue && queue.length > 0) {
@@ -1034,11 +1034,11 @@ export class SecureCommunicationsService {
     if (channel) {
       // Secure deletion of keys
       militarySecurityService.secureDelete(channel.sessionKey);
-      
+
       // Remove channel
       this.activeChannels.delete(channelId);
       this.sessionKeys.delete(channelId);
-      
+
       console.log(`[Channel] Closed and sanitized: ${channelId}`);
     }
   }
