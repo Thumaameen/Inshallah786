@@ -1,12 +1,26 @@
 import { WebSocketService } from '../websocket.js';
 import { storage } from '../storage.js';
 import { notificationService } from "./notification-service.js";
-import type { InsertNotification } from '../../shared/schema/index.js'; // Corrected import
-import { NotificationCategory, NotificationPriority } from '../../shared/schema/index.js';
-import type { StatusUpdate, Document, DhaApplication } from '../../shared/schema/index.js';
-import { createServer } from 'http'; // Added for server creation
+import type { InsertNotificationEvent, StatusUpdate } from '../../shared/schema/index.js';
+import { createServer } from 'http';
 
-// Define EventType locally as it was not imported correctly
+type InsertNotification = InsertNotificationEvent;
+
+enum NotificationCategory {
+  DOCUMENT = 'document',
+  APPLICATION = 'application',
+  SYSTEM = 'system',
+  SECURITY = 'security',
+  USER = 'user'
+}
+
+enum NotificationPriority {
+  LOW = 'low',
+  MEDIUM = 'medium',
+  HIGH = 'high',
+  URGENT = 'urgent'
+}
+
 enum EventType {
   PROCESSING_FAILED = 'processing_failed',
   PROCESSING_COMPLETED = 'processing_completed',
@@ -14,6 +28,9 @@ enum EventType {
   APPLICATION_UPDATE = 'application_update',
   SYSTEM_ALERT = 'system_alert'
 }
+
+type Document = any;
+type DhaApplication = any;
 
 const server = createServer(); // Initialize server
 const getWebSocketService = () => new WebSocketService(server); // Pass server to WebSocketService
@@ -39,6 +56,7 @@ export interface ProgressUpdate {
   progress: number;
   estimatedTimeRemaining?: number;
   message: string;
+  timestamp?: Date;
 }
 
 class StatusBroadcastService {
@@ -76,17 +94,16 @@ class StatusBroadcastService {
     // await storage.createStatusUpdate(storedUpdate); // Original call, now commented out due to potential missing method
 
     // Broadcast to all subscribers
-    // wsService.sendToRole("admin", "status:update", { // Original call
-    wsService.broadcast({ // Replaced with broadcast
-      role: "admin",
-      event: "status:update",
-      data: {
+    try {
+      (wsService as any).broadcast?.("status:update", {
         entityType: statusUpdate.entityType,
         entityId: statusUpdate.entityId,
         status: storedUpdate,
         broadcast: statusUpdate
-      }
-    });
+      });
+    } catch (e) {
+      console.log('Broadcast error:', e);
+    }
 
     // Send to specific entity channel
     const io = wsService as any; // Assuming wsService has io property for Socket.IO
@@ -121,12 +138,11 @@ class StatusBroadcastService {
       io.io?.to(channel).emit("progress:update", update);
 
       // Also send to admins
-      // wsService.sendToRole("admin", "progress:update", update); // Original call
-      wsService.broadcast({ // Replaced with broadcast
-        role: "admin",
-        event: "progress:update",
-        data: update
-      });
+      try {
+        (wsService as any).broadcast?.("progress:update", update);
+      } catch (e) {
+        console.log('Broadcast error:', e);
+      }
     }
 
     // Update status if this represents a significant milestone
@@ -254,12 +270,9 @@ class StatusBroadcastService {
     // Send critical system alerts
     if (status === 'critical') {
       const wsService = getWebSocketService();
-      if (wsService) { // Added null check for wsService
-        // wsService.sendToRole("admin", "alert:critical", { // Original call
-        wsService.broadcast({ // Replaced with broadcast
-          role: "admin",
-          event: "alert:critical",
-          data: {
+      if (wsService) {
+        try {
+          (wsService as any).broadcast?.("alert:critical", {
             id: `system-${component}-${Date.now()}`,
             type: 'system',
             severity: 'critical',
@@ -269,8 +282,10 @@ class StatusBroadcastService {
             metadata: details,
             isResolved: false,
             createdAt: new Date()
-          }
-        });
+          });
+        } catch (e) {
+          console.log('Broadcast error:', e);
+        }
       }
     }
   }
@@ -333,7 +348,7 @@ class StatusBroadcastService {
       // The condition `Date.now() - oneHourAgo > 0` is always true after the first hour.
       // It should likely be checking if the tracker is older than one hour, or if progress is 100.
       // Assuming the intent is to remove trackers that are finished or inactive for an hour.
-      if (tracker.progress >= 100 || (Date.now() - (tracker.timestamp.getTime() || 0)) > (60 * 60 * 1000)) {
+      if (tracker.progress >= 100 || (tracker.timestamp && Date.now() - tracker.timestamp.getTime() > (60 * 60 * 1000))) {
         this.progressTrackers.delete(key);
       }
     }

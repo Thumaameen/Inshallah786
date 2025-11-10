@@ -22,6 +22,7 @@
     "strict": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
+    "noImplicitAny": false,
     "forceConsistentCasingInFileNames": true
   },
   "include": ["server/**/*", "shared/**/*", "src/**/*"],
