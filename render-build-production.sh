@@ -197,7 +197,6 @@ echo "✅ TypeScript compilation completed (warnings ignored)"
 
 if grep -q "error TS" /tmp/tsc-errors.log; then
     echo "⚠️  TypeScript errors detected - review logs above"
-  fi
 fi
 
 # Now do the actual compilation (without --noEmit)
