@@ -33,7 +33,6 @@
     "noImplicitThis": false,
     "alwaysStrict": false,
     "forceConsistentCasingInFileNames": false,
-    "suppressImplicitAnyIndexErrors": true,
     "noImplicitReturns": false,
     "noFallthroughCasesInSwitch": false
   },
