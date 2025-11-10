@@ -2,8 +2,8 @@ import { EventEmitter } from 'events';
 import { storage } from '../storage.js';
 import { auditTrailService } from './audit-trail-service.js';
 import { db } from '../db/index.js';
-import type { InsertAuditLog } from '../../shared/schema/index.js';
-import type { InsertSystemMetric } from '../types/zero-downtime.types.js';
+import { InsertAuditLog } from '../../shared/schema/index.js';
+import { InsertSystemMetric } from '../types/zero-downtime.types.js';
 import { promisify } from 'util';
 
 export interface ServiceNode {

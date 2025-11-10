@@ -8,7 +8,7 @@
  * - Cryptographic signature integration
  */
 
-import type { Request, Response } from "express";
+import { Request, Response } from "express";
 import { z } from "zod";
 import { enhancedPdfGenerationService, DocumentType } from "./enhanced-pdf-generation-service.js";
 import { cryptographicSignatureService, SignatureValidationResult } from "./cryptographic-signature-service.js";

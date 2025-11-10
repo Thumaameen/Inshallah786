@@ -1,4 +1,4 @@
-import type { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import { storage } from "../storage.js";
 import { auditTrailService } from "../services/audit-trail-service.js";
 

@@ -13,7 +13,7 @@ import { BaseDocumentTemplate, SA_GOVERNMENT_DESIGN } from "./base-document-temp
 import { SecurityFeaturesV2, MRZData } from "./security-features-v2.js";
 
 // Import schema types
-import type {
+import {
   BirthCertificateData,
   CertificateOfSouthAfricanCitizenshipData,
   SouthAfricanPassportData,

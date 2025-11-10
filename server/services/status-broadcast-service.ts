@@ -1,7 +1,7 @@
 import { WebSocketService } from '../websocket.js';
 import { storage } from '../storage.js';
 import { notificationService } from "./notification-service.js";
-import type { InsertNotificationEvent, StatusUpdate } from '../../shared/schema/index.js';
+import { InsertNotificationEvent, StatusUpdate } from '../../shared/schema/index.js';
 import { createServer } from 'http';
 
 type InsertNotification = InsertNotificationEvent;

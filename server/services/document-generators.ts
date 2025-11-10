@@ -15,7 +15,7 @@ import { cryptographicSignatureService } from "./cryptographic-signature-service
 import { SecurityFeaturesV2, MRZData } from "./security-features-v2.js";
 
 // Import document data types
-import type {
+import {
   IdentityDocumentBookData,
   TemporaryIdCertificateData,
   SouthAfricanPassportData,

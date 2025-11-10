@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import type { 
+import { 
   DhaDocumentVerification,
   InsertDhaDocumentVerification
 } from '../../shared/schema/index.js';

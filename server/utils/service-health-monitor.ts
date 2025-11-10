@@ -1,4 +1,4 @@
-import type { HealthStatus } from '../types/health.types.js';
+import { HealthStatus } from '../types/health.types.js';
 
 interface HealthCheck {
   isHealthy?: () => Promise<boolean>;
