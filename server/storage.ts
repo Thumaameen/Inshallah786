@@ -1,4 +1,5 @@
 import { db } from './db/index.js';
+import { sql } from 'drizzle-orm';
 import { 
   securityEvents, auditLogs, systemMetrics, selfHealingActions, fraudAlerts,
   type InsertSecurityEvent, type InsertAuditLog, type InsertSystemMetric, 
@@ -26,25 +27,30 @@ export const storage = {
     await db.insert(auditLogs).values(log);
   },
   
-  createSystemMetric: async (metric: InsertSystemMetric): Promise<void> => {
-    await db.insert(systemMetrics).values(metric);
+  createSystemMetric: async (metric: { metricType: string; value: number; unit?: string }): Promise<void> => {
+    await db.insert(systemMetrics).values({
+      metricName: metric.metricType,
+      metricValue: metric.value,
+      metricType: metric.unit || 'count',
+      source: 'system'
+    });
   },
   
   createSelfHealingAction: async (action: InsertSelfHealingAction): Promise<void> => {
     await db.insert(selfHealingActions).values(action);
   },
   
-  createStatusUpdate: async (update: any): Promise<any> => {
+  createStatusUpdate: async (update: Record<string, any>): Promise<Record<string, any>> => {
     const id = crypto.randomUUID();
     return { id, ...update, timestamp: new Date() };
   },
   
-  createSecurityRule: async (rule: any): Promise<void> => {
-    await db.insert(securityEvents).values({
+  createSecurityRule: async (rule: Record<string, any>): Promise<void> => {
+    const event: InsertSecurityEvent = {
       eventType: rule.ruleType || 'security_rule_created',
       severity: rule.severity || 'medium',
       source: 'security_correlation_engine',
-      metadata: {
+      details: JSON.stringify({
         name: rule.name,
         description: rule.description,
         category: rule.category,
@@ -52,8 +58,9 @@ export const storage = {
         actions: rule.actions,
         isActive: rule.isActive,
         createdBy: rule.createdBy
-      }
-    });
+      })
+    };
+    await db.insert(securityEvents).values(event);
   },
   
   incrementRuleTriggeredCount: async (ruleId: string): Promise<void> => {
