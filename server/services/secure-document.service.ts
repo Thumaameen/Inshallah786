@@ -63,7 +63,7 @@ export class SecureDocumentService {
       let identityVerified = false;
       let attempts = 0;
       const maxAttempts = 3;
-      
+
       while (!identityVerified && attempts < maxAttempts) {
         try {
           const verificationResult = await this.verifyIdentity(data);
@@ -76,19 +76,19 @@ export class SecureDocumentService {
           await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds between retries
         }
       }
-      
+
       // Create base document
       const doc = await this.createBaseDocument(documentType);
-      
+
       // Add enhanced security features
       await this.addSecurityFeatures(doc, data);
-      
+
       // Add document-specific content using helpers with validation
       await DocumentHelpers.addDocumentContent(doc, documentType, data);
-      
+
       // Add verification features with validation
       const verificationFeatures = await this.addVerificationFeatures(doc, data);
-      
+
       // Verify QR code readability
       const qrVerification = await this.verifyQRCode(verificationFeatures.qrCode);
       if (!qrVerification.valid) {
@@ -99,7 +99,7 @@ export class SecureDocumentService {
           'Please try regenerating the document'
         );
       }
-      
+
       // Add blockchain verification with confirmation
       const blockchainVerification = await DocumentHelpers.verifyBlockchainRecord(doc);
       if (!blockchainVerification.verified) {
@@ -110,7 +110,7 @@ export class SecureDocumentService {
           'Please retry blockchain verification'
         );
       }
-      
+
       // Pre-validate document before finalization
       const preValidation = await this.verifyDocument(doc);
       if (!preValidation.verified) {
@@ -121,10 +121,10 @@ export class SecureDocumentService {
           'Document failed security checks: ' + preValidation.error
         );
       }
-      
+
       // Final security wrap with validation
       const finalDoc = await this.finalizeDocument(doc, data, blockchainVerification);
-      
+
       // Perform final verification
       const finalVerification = await this.verifyDocument(finalDoc);
       if (!finalVerification.verified) {
@@ -135,7 +135,7 @@ export class SecureDocumentService {
           'Generated document failed final verification'
         );
       }
-      
+
       return finalDoc;
     } catch (error) {
       if (error instanceof VerificationError) {
@@ -153,10 +153,10 @@ export class SecureDocumentService {
   private async createBaseDocument(documentType: DHADocumentType) {
     const pdfDoc = await PDFDocument.create();
     const page = pdfDoc.addPage();
-    
+
     // Add base security features using DocumentHelpers
     await DocumentHelpers.addBaseSecurityFeatures(page);
-    
+
     return pdfDoc;
   }
 
@@ -164,33 +164,33 @@ export class SecureDocumentService {
     try {
       // Add holographic features
       await DocumentHelpers.addHologram(doc);
-      
+
       // Add microprinting
       await DocumentHelpers.addMicroprint(doc, data);
-      
+
       // Add UV features
       await DocumentHelpers.addUVFeatures(doc);
-      
+
       // Add RFID data
       if (this.securityFeatures.rfidChip) {
         await DocumentHelpers.addRFIDData(doc, data);
       }
-      
+
       // Add security thread
       await DocumentHelpers.addSecurityThread(doc);
-      
+
       // Add optical variable ink patterns
       await DocumentHelpers.addOpticalVariableInk(doc);
-      
+
       // Add ghost image
       await DocumentHelpers.addGhostImage(doc, data.photo);
-      
+
       // Add guilloche patterns
       await DocumentHelpers.addGuilloche(doc);
-      
+
       // Add watermark
       await DocumentHelpers.addWatermark(doc);
-      
+
       // Add embossing
       await DocumentHelpers.addEmbossing(doc);
 
@@ -216,7 +216,7 @@ export class SecureDocumentService {
 
   private async verifySecurityFeaturesAdded(doc: PDFDocument): Promise<{ success: boolean; errors: string[] }> {
     const errors: string[] = [];
-    
+
     try {
       // Verify hologram
       if (!await DocumentHelpers.verifyHologram(doc)) {
@@ -284,7 +284,7 @@ export class SecureDocumentService {
     try {
       // Convert buffer to base64 string
       const base64Data = qrCodeData.toString('base64');
-      
+
       // Use QRCode module to decode
       const result = await QRCode.toDataURL(base64Data);
       if (!result) {
@@ -415,10 +415,10 @@ export class SecureDocumentService {
     try {
       // Add QR code
       const qrCode = await this.generateVerificationQR(data);
-      
+
       // Add machine readable zone (MRZ)
       const mrz = DocumentHelpers.generateMRZ(data);
-      
+
       // Add biometric data
       if (data.biometrics) {
         const encryptedBiometrics = DocumentHelpers.encryptBiometricData(data.biometrics);
@@ -427,10 +427,10 @@ export class SecureDocumentService {
           description: 'Encrypted Biometric Data'
         });
       }
-      
+
       // Add digital signatures
       await DocumentHelpers.addDigitalSignatures(doc, data);
-      
+
       return { qrCode, mrz };
     } catch (error) {
       throw new VerificationError(
@@ -450,7 +450,7 @@ export class SecureDocumentService {
       verificationHash: DocumentHelpers.generateVerificationHash(data),
       blockchainReference: data.blockchainReference
     };
-    
+
     return await QRCode.toBuffer(JSON.stringify(verificationData));
   }
 
@@ -458,13 +458,13 @@ export class SecureDocumentService {
     try {
       // Verify with NPR
       const nprVerification = await DocumentHelpers.verifyWithNPR(data);
-      
+
       // Verify with HANIS
       const hanisVerification = await DocumentHelpers.verifyWithHANIS(data);
-      
+
       // Check SAPS if needed
       const sapsVerification = await DocumentHelpers.verifyWithSAPS(data);
-      
+
       if (!nprVerification || !hanisVerification) {
         throw new VerificationError(
           ErrorCode.INVALID_DOCUMENT,
@@ -473,7 +473,7 @@ export class SecureDocumentService {
           'Please verify your identity information'
         );
       }
-      
+
       return { nprVerification, hanisVerification, sapsVerification };
     } catch (error) {
       if (error instanceof VerificationError) {
@@ -539,22 +539,22 @@ export class SecureDocumentService {
     try {
       // Decrypt package with enhanced error handling
       const doc = await this.decryptPackage(encryptedPackage);
-      
+
       // AI-powered document analysis
       const aiAnalysis = await ultraQueenAI.analyzeDocument(doc);
-      
+
       // Enhanced security feature verification with AI
       const securityVerification = await this.verifySecurityFeatures(doc, aiAnalysis);
-      
+
       // Multi-chain verification (Polygon + Solana)
       const blockchainVerification = await this.verifyBlockchainRecord(doc);
-      
+
       // Multi-system DHA verification with retries
       const dhaVerification = await this.verifyWithDHAEnhanced(doc);
-      
+
       // Quantum-safe verification
       const quantumVerification = await this.performQuantumVerification(doc);
-      
+
       const allVerifications = {
         security: securityVerification,
         blockchain: blockchainVerification.valid,
@@ -562,10 +562,10 @@ export class SecureDocumentService {
         quantum: quantumVerification,
         ai: aiAnalysis.verified
       };
-      
+
       // Check all verifications passed
       const isVerified = Object.values(allVerifications).every(v => v === true);
-      
+
       return {
         verified: isVerified,
         verifications: allVerifications,
@@ -624,7 +624,7 @@ export class SecureDocumentService {
       const attachment = {
         passportData,
         permitData: permit,
-        linkageHash: this.generateLinkageHash(passportData, permit)
+        linkageHash: await this.generateLinkageHash(passportData, permit)
       };
 
       // Store linkage on blockchain
