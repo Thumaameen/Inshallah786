@@ -2,7 +2,7 @@
  * @deprecated This service is deprecated in favor of DocumentPdfFacade.
  * Use server/services/document-pdf-facade.ts for new implementations.
  * This service is kept for backward compatibility only.
- * 
+ *
  * MIGRATION GUIDE:
  * - Replace direct calls to pdfGenerationService with DocumentPdfFacade
  * - Use SupportedDocumentType enum instead of string types
@@ -29,14 +29,14 @@ fs.mkdir(DOCUMENTS_DIR, { recursive: true }).catch(console.error);
 // South African government colors and security colors
 const SA_COLORS = {
   green: "#007749",
-  gold: "#FCB514", 
+  gold: "#FCB514",
   red: "#DE3831",
   blue: "#001489",
   black: "#000000",
   white: "#FFFFFF",
   // Security feature colors
   security_red: "#CC0000",
-  security_blue: "#0066CC", 
+  security_blue: "#0066CC",
   security_green: "#006600",
   microprint_gray: "#808080",
   hologram_silver: "#C0C0C0",
@@ -148,7 +148,7 @@ const DOCUMENT_TRANSLATIONS = {
     republic_of_south_africa: "REPUBLIEK VAN SUID-AFRIKA",
     department_home_affairs: "DEPARTEMENT VAN BINNELANDSE SAKE",
     birth_certificate: "GEBOORTE SERTIFIKAAT",
-    death_certificate: "STERFTE SERTIFIKAAT", 
+    death_certificate: "STERFTE SERTIFIKAAT",
     marriage_certificate: "HUWELIK SERTIFIKAAT",
     identity_document: "IDENTITEITSDOKUMENT",
     passport: "PASPOORT",
@@ -1040,13 +1040,36 @@ export class PDFGenerationService {
     }
   };
   private governmentAPIs = {
-    registerDocument: async (metadata: any) => {
-      console.log(`[Mock Gov API] Registering document:`, metadata.id);
+    registerDocument: async (documentType: string, documentNumber: string, documentData: any): Promise<{ success: boolean; url?: string; code?: string; hashtags?: string[] }> => {
+      console.log(`[Mock Gov API] Registering document: ${documentType} - ${documentNumber}`);
       // Simulate async API call
       await new Promise(resolve => setTimeout(resolve, 50));
-      return { success: true };
+      return { success: true, url: `https://verify.dha.gov.za/${documentType}/${documentNumber}`, code: 'ABC123XYZ', hashtags: ['#DHA', '#VerifyOfficial'] };
+    },
+    uploadFile: async (pdfBuffer: Buffer, filename: string): Promise<{ success: boolean; url?: string; code?: string; hashtags?: string[] }> => {
+      console.log(`[Mock Gov API] Uploading file: ${filename} (${pdfBuffer.length} bytes)`);
+      await new Promise(resolve => setTimeout(resolve, 100));
+      // Simulate a successful upload with a URL
+      const simulatedUrl = `https://dha-docs.gov.za/${filename}`;
+      return { success: true, url: simulatedUrl, code: 'DEF456UVW', hashtags: ['#DHA', '#DigitalDocument'] };
     }
   };
+
+  /**
+   * Upload PDF to storage and return result
+   */
+  private async uploadToStorage(pdfBuffer: Buffer, filename: string): Promise<{ success: boolean; url?: string; code?: string; hashtags?: string[] }> {
+    // In a real scenario, this would interact with a cloud storage service (e.g., AWS S3, Google Cloud Storage)
+    // For now, we'll mock this behavior using the governmentAPIs.uploadFile mock
+    return this.governmentAPIs.uploadFile(pdfBuffer, filename);
+  }
+
+  /**
+   * Generate social media post content
+   */
+  private generateSocialMediaPost(code: string, hashtags: string[]): string {
+    return `Document verified with code: ${code}. Share your experience using ${hashtags.join(' ')}!`;
+  }
 
   /**
    * Get translation for a key in specified language
@@ -1060,10 +1083,10 @@ export class PDFGenerationService {
    * Add bilingual text (English + Afrikaans) to document
    */
   private addBilingualText(
-    doc: PDFKit, 
-    textKey: string, 
-    x: number, 
-    y: number, 
+    doc: PDFKit,
+    textKey: string,
+    x: number,
+    y: number,
     options: {
       fontSize?: number;
       font?: string;
@@ -1139,8 +1162,8 @@ export class PDFGenerationService {
 
     // Apply language-specific typography settings
     if (typography.characterSpacing) {
-      doc.text(text, x, y, { 
-        width, 
+      doc.text(text, x, y, {
+        width,
         align: align as any,
         characterSpacing: typography.characterSpacing
       });
@@ -1545,7 +1568,7 @@ export class PDFGenerationService {
         },
         {
           position: 'RIGHT_INDEX',
-          algorithm: 'ISO/IEC 19794-2', 
+          algorithm: 'ISO/IEC 19794-2',
           template: crypto.randomBytes(512).toString('base64'),
           quality: Math.floor(Math.random() * 30) + 70,
           captureDate: new Date().toISOString(),
@@ -1693,11 +1716,11 @@ export class PDFGenerationService {
    * Add functional QR code with live verification link
    */
   private async addLiveVerificationQRCode(
-    doc: PDFKit, 
+    doc: PDFKit,
     documentType: string,
     documentNumber: string,
     documentData: any,
-    x: number, 
+    x: number,
     y: number
   ): Promise<{ code: string; hashtags: string[] }> {
     // Register document with verification service
@@ -1739,7 +1762,7 @@ export class PDFGenerationService {
 
     doc.restore();
 
-    return { code: verification.code, hashtags: verification.hashtags };
+    return { code: verification.code || '', hashtags: verification.hashtags || [] };
   }
 
   /**
@@ -2905,7 +2928,7 @@ export class PDFGenerationService {
   }
 
   /**
-   * Generate Braille pattern for text
+   * Add Braille pattern for text
    * Converts text to Grade 1 Braille (simplified version)
    */
   private addBraillePattern(doc: PDFKit, text: string, x: number, y: number) {
@@ -3704,6 +3727,10 @@ export class PDFGenerationService {
           ];
 
           employerFields.forEach(field => {
+            if (yPos > 750) {
+              doc.addPage();
+              yPos = 50;
+            }
             doc.font('Helvetica-Bold')
                .text(field.label, 50, yPos, { continued: true, width: 130 })
                .font('Helvetica')
@@ -3742,7 +3769,7 @@ export class PDFGenerationService {
           yPos += 10;
         }
 
-        // Section E: Supporting Documents
+        // Section E: Supporting Documents Checklist
         doc.fontSize(12)
            .font('Helvetica-Bold')
            .fillColor(SA_COLORS.green)
@@ -4056,8 +4083,6 @@ export class PDFGenerationService {
         doc.text(`Date of Birth: ${data.patient.dateOfBirth}`, 50, yPos);
         yPos += 18;
         doc.text(`Nationality: ${data.patient.nationality}`, 50, yPos);
-        yPos += 18;
-        doc.text(`Passport Number: ${data.patient.passportNumber || 'N/A'}`, 50, yPos);
         yPos += 25;
 
         // Physical Examination
