@@ -105,7 +105,7 @@ export class PDFGeneratorService {
     // Issue and expiry dates
     const issueDate = new Date().toISOString().split('T')[0];
     const expiryDate = new Date(Date.now() + 10 * 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-    
+
     page.drawText(`Date of Issue: ${issueDate}`, {
       x: 50,
       y: yPosition,
@@ -318,7 +318,7 @@ export class PDFGeneratorService {
     });
 
     const certNumber = this.generateDocumentNumber('MC');
-    
+
     const marriageInfo = [
       { label: 'Certificate Number:', value: certNumber },
       { label: 'Spouse 1:', value: data.spouse1Name || 'N/A' },
@@ -467,10 +467,10 @@ export class PDFGeneratorService {
         width: 150,
         margin: 1,
       });
-      
+
       const qrImageBytes = Buffer.from(qrDataUrl.split(',')[1], 'base64');
       const qrImage = await pdfDoc.embedPng(qrImageBytes);
-      
+
       page.drawImage(qrImage, {
         x,
         y,
@@ -495,7 +495,7 @@ export class PDFGeneratorService {
     const gender = String(Math.floor(Math.random() * 10000)).padStart(4, '0');
     const citizenship = '0';
     const checksum = String(Math.floor(Math.random() * 10));
-    
+
     return `${year.toString().substring(2)}${month}${day}${gender}${citizenship}8${checksum}`;
   }
 }
