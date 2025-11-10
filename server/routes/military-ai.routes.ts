@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { militaryGradeAIAssistant, MilitaryRole, ClearanceLevel, CommandType, ClassificationLevel, MilitaryAIResponse } from '../services/military-grade-ai-assistant';
-import { validateJWT } from '../middleware/auth';
+import { militaryGradeAIAssistant, MilitaryRole, ClearanceLevel, CommandType, ClassificationLevel, MilitaryAIResponse } from '../services/military-grade-ai-assistant.js';
+import { validateJWT } from '../middleware/auth.js';
 
 const router = Router();
 

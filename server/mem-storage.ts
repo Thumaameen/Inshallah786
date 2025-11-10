@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm';
-import { db } from './db';
-import { users, documents } from './db/schema';
+import { db } from './db/index.js';
+import { users, documents } from './db/schema.js';
 import crypto from 'node:crypto';
 
 export interface ApiKey {

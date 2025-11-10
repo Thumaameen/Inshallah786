@@ -1,8 +1,8 @@
-import { storage } from "../storage.js";
-import { enhancedMonitoringService } from "./enhanced-monitoring-service.js";
-import { auditTrailService } from "./audit-trail-service.js";
-import { securityCorrelationEngine } from "./security-correlation-engine.js";
-import { fraudDetectionService } from "./fraud-detection.js";
+import { storage } from '../storage.js';
+import { enhancedMonitoringService } from './enhanced-monitoring-service.js';
+import { auditTrailService } from './audit-trail-service.js';
+import { securityCorrelationEngine } from './security-correlation-engine.js';
+import { fraudDetectionService } from './fraud-detection.js';
 import { EventEmitter } from "events";
 
 export interface AlertRule {

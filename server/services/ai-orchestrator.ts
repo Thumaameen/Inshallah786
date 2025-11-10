@@ -1,8 +1,8 @@
 
-import { aiAssistantService } from './ai-assistant';
-import { ultraQueenAI } from './ultra-queen-ai';
-import { geminiService } from './gemini-service';
-import { perplexityService } from './perplexity-service';
+import { aiAssistantService } from './ai-assistant.js';
+import { ultraQueenAI } from './ultra-queen-ai.js';
+import { geminiService } from './gemini-service.js';
+import { perplexityService } from './perplexity-service.js';
 
 export class AIOrchestrator {
   async processQuery(query: string, options: {

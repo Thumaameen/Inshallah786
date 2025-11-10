@@ -2,7 +2,7 @@
  * Military Security Service Fallback
  * Provides degraded but functional military security features when main service is unavailable
  */
-import { logger } from '../utils/logger';
+import { logger } from '../utils/logger.js';
 
 export class MilitarySecurityFallback {
   private static instance: MilitarySecurityFallback;

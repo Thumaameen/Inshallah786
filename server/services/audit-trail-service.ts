@@ -1,4 +1,4 @@
-import { storage } from "../storage.js";
+import { storage } from '../storage.js';
 import { type InsertAuditLog, type InsertComplianceEvent, AuditAction, ComplianceEventType } from '../../shared/schema/index.js';
 import { EventEmitter } from "events";
 

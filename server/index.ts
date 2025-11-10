@@ -6,8 +6,8 @@ import { rateLimit } from 'express-rate-limit';
 import { productionConfig } from './config/production.js';
 import { checkDatabaseConnection } from './db/connection.js';
 import apiRoutes from './routes/api.js';
-import ultraAIRoutes from './routes/ultra-ai-routes';
-import agentTasksRoutes from './routes/agent-tasks';
+import ultraAIRoutes from './routes/ultra-ai-routes.js';
+import agentTasksRoutes from './routes/agent-tasks.js';
 import { enhancedErrorHandler as errorHandler } from './middleware/error-handler.js';
 
 // Placeholder for military-grade auth (create if needed)

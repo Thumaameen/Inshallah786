@@ -6,7 +6,7 @@
  */
 
 import { storage } from '../storage.js';
-import { Storage } from '../interfaces/storage';
+import { Storage } from '../interfaces/storage.js';
 
 // Cast storage to include database operations
 // Use base storage interface

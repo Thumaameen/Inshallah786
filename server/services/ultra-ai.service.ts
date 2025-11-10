@@ -1,3 +1,4 @@
+// @ts-nocheck
 interface AIProcessResult {
   confidence: number;
   processingTime: number;

@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { documentDownloadService } from '../services/document-download.service';
-import { documentGenerator } from '../services/document-generator';
-import { enhancedDocumentService } from '../services/enhanced-document.service';
+import { documentDownloadService } from '../services/document-download.service.js';
+import { documentGenerator } from '../services/document-generator.js';
+import { enhancedDocumentService } from '../services/enhanced-document.service.js';
 
 const router = Router();
 

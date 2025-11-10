@@ -188,14 +188,19 @@ export interface InsertSecurityEvent {
   severity: string;
   source: string;
   details?: any;
+  metadata?: any;
+  timestamp?: Date;
 }
 
 export interface InsertAuditLog {
   action: string;
   actor: string;
   result: string;
-  resource?: string;
+  resource?: string | null;
+  resourceId?: string | null;
   metadata?: any;
+  ipAddress?: string | null;
+  userAgent?: string | null;
 }
 
 export interface InsertSystemMetric {
@@ -203,10 +208,20 @@ export interface InsertSystemMetric {
   metricValue: number;
   metricType: string;
   source: string;
+  metadata?: any;
+}
+
+export interface InsertSelfHealingAction {
+  actionType: string;
+  trigger: string;
+  status?: string;
+  result?: string | null;
+  metadata?: any;
+  completedAt?: Date | null;
 }
 
 export type SelfHealingAction = typeof selfHealingActions.$inferSelect;
-export type InsertSelfHealingAction = typeof selfHealingActions.$inferInsert;
+// InsertSelfHealingAction defined above as interface
 
 export type FraudAlert = typeof fraudAlerts.$inferSelect;
 export type InsertFraudAlert = typeof fraudAlerts.$inferInsert;

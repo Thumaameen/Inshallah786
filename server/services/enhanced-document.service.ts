@@ -1,10 +1,10 @@
-import { serviceConfig } from '../../config/service-integration';
-import { DHADocumentType } from '../types/document-types';
+import { serviceConfig } from '../../config/service-integration.js';
+import { DHADocumentType } from '../types/document-types.js';
 import * as crypto from 'crypto';
 import * as forge from 'node-forge';
 import { PDFDocument, StandardFonts } from 'pdf-lib';
 import QRCode from 'qrcode';
-import { advancedSelfHealing } from './advanced-self-healing.service';
+import { advancedSelfHealing } from './advanced-self-healing.service.js';
 
 interface SecurityFeature {
   type: string;

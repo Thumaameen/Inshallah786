@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { storage } from "../mem-storage.js";
+import { storage } from '../mem-storage.js';
 
 /**
  * DHA ABIS (Automated Biometric Identification System) Adapter - PRODUCTION READY

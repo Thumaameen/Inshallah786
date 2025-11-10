@@ -1,6 +1,6 @@
 import express from 'express';
-import { ServiceHealthMonitor } from '../utils/service-health-monitor';
-import { SystemMetrics } from '../utils/system-metrics';
+import { ServiceHealthMonitor } from '../utils/service-health-monitor.js';
+import { SystemMetrics } from '../utils/system-metrics.js';
 import rateLimit from 'express-rate-limit';
 
 const router = express.Router();

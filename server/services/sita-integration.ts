@@ -17,7 +17,7 @@
 
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
-import { storage } from "../storage.js";
+import { storage } from '../storage.js';
 
 export interface SitaApiCredentials {
   clientId: string;

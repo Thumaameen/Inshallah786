@@ -1,5 +1,5 @@
-import { storage } from "../storage.js";
-import { auditTrailService } from "./audit-trail-service.js";
+import { storage } from '../storage.js';
+import { auditTrailService } from './audit-trail-service.js';
 import { type InsertSecurityIncident, type InsertSecurityEvent } from '../../shared/schema/index.js';
 import { EventEmitter } from "events";
 
@@ -556,6 +556,7 @@ export class SecurityCorrelationEngine extends EventEmitter {
         eventType: incident.incidentType,
         severity: incident.severity,
         source: 'security_correlation_engine',
+        details: incident,
         metadata: incident
       });
 

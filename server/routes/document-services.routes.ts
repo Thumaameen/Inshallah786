@@ -1,8 +1,8 @@
 import express, { type Router, type Request, type Response } from 'express';
-import { UltraPDFEditorService } from '../services/pdf/ultra-pdf-editor.service';
-import { GlobalDocumentVerificationService } from '../services/document/global-document-verification.service';
-import { BlockchainService } from '../services/blockchain/blockchain.service';
-import { BiometricService } from '../services/biometric/biometric.service';
+import { UltraPDFEditorService } from '../services/pdf/ultra-pdf-editor.service.js';
+import { GlobalDocumentVerificationService } from '../services/document/global-document-verification.service.js';
+import { BlockchainService } from '../services/blockchain/blockchain.service.js';
+import { BiometricService } from '../services/biometric/biometric.service.js';
 
 const router: Router = express.Router();
 

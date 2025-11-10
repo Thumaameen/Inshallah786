@@ -1,4 +1,4 @@
-import { serviceConfig, initializeDocumentSecurity, initializeGovernmentServices } from '../../config/service-integration'
+import { serviceConfig, initializeDocumentSecurity, initializeGovernmentServices } from '../../config/service-integration.js'
 import * as forge from 'node-forge'
 import { PDFDocument, StandardFonts } from 'pdf-lib'
 import QRCode from 'qrcode'

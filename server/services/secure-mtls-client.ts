@@ -453,6 +453,7 @@ export class SecureMTLSClient {
       await storage.createSecurityEvent({
         eventType,
         severity,
+        source: this.config.serviceName || 'secure-mtls-client',
         details: {
           ...details,
           clientService: this.config.serviceName,
