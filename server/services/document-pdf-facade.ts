@@ -53,7 +53,7 @@ import {
   EnhancedSouthAfricanPassportGenerator
 } from './enhanced-authentic-generators.js';
 
-import type {
+import {
   IdentityDocumentBookData,
   TemporaryIdCertificateData,
   SouthAfricanPassportData,

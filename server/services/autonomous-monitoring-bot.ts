@@ -99,7 +99,7 @@ export class AutonomousMonitoringBot extends EventEmitter {
   private alertRules: Map<string, any> = new Map();
   private incidentCounter = 0;
   private complianceScheduler: NodeJS.Timeout | null = null;
-  
+
   // Adaptive scheduling state
   private currentInterval = 5000; // Current adaptive interval
   private systemLoadHistory: number[] = [];
@@ -229,7 +229,7 @@ export class AutonomousMonitoringBot extends EventEmitter {
     }
 
     console.log('[AutonomousBot] Starting autonomous monitoring and error-fixing bot...');
-    
+
     try {
       // Initialize default monitoring data
       await this.initializeDefaultData();
@@ -252,7 +252,7 @@ export class AutonomousMonitoringBot extends EventEmitter {
       monitoringService.startMonitoring(this.config.healthCheckInterval);
 
       this.isRunning = true;
-      
+
       // Record startup action
       await this.recordAutonomousAction({
         actionType: 'service_restart',
@@ -301,7 +301,7 @@ export class AutonomousMonitoringBot extends EventEmitter {
     monitoringService.stopMonitoring();
 
     this.isRunning = false;
-    
+
     // Record shutdown action
     await this.recordAutonomousAction({
       actionType: 'service_restart',
@@ -443,7 +443,7 @@ export class AutonomousMonitoringBot extends EventEmitter {
         const existing = await storage.getAlertRules({ 
           category: rule.category 
         });
-        
+
         // Only create if doesn't exist
         if (!existing.find(r => r.ruleName === rule.ruleName)) {
           await storage.createAlertRule(rule as InsertAlertRule);
@@ -531,7 +531,7 @@ export class AutonomousMonitoringBot extends EventEmitter {
         const existing = await storage.getMaintenanceTasks({
           taskType: task.taskType
         });
-        
+
         if (!existing.find(t => t.taskName === task.taskName)) {
           await storage.createMaintenanceTask(task as InsertMaintenanceTask);
           console.log(`[AutonomousBot] Created maintenance task: ${task.taskName}`);
@@ -552,7 +552,7 @@ export class AutonomousMonitoringBot extends EventEmitter {
 
     // Initialize adaptive scheduling
     this.currentInterval = this.config.healthCheckInterval;
-    
+
     // Start adaptive monitoring loop
     await this.scheduleNextHealthCheck();
 
@@ -586,7 +586,7 @@ export class AutonomousMonitoringBot extends EventEmitter {
         const startTime = Date.now();
         await this.performHealthCheck();
         this.lastHealthCheckDuration = Date.now() - startTime;
-        
+
         // Schedule next check
         await this.scheduleNextHealthCheck();
       } catch (error) {
@@ -596,7 +596,7 @@ export class AutonomousMonitoringBot extends EventEmitter {
           context: { component: 'health_check' },
           severity: 'high'
         });
-        
+
         // Still schedule next check even on error
         await this.scheduleNextHealthCheck();
       }
@@ -611,16 +611,16 @@ export class AutonomousMonitoringBot extends EventEmitter {
       // Get current system metrics
       const systemHealth = await monitoringService.getSystemHealth();
       const currentLoad = Math.max(systemHealth.cpu, systemHealth.memory);
-      
+
       // Track load history for trend analysis
       this.systemLoadHistory.push(currentLoad);
       if (this.systemLoadHistory.length > 10) {
         this.systemLoadHistory.shift(); // Keep last 10 measurements
       }
-      
+
       // Calculate average load
       const avgLoad = this.systemLoadHistory.reduce((a, b) => a + b, 0) / this.systemLoadHistory.length;
-      
+
       // BACKPRESSURE: Increase interval under high load
       if (this.config.backpressureEnabled) {
         if (avgLoad > 80) {
@@ -631,7 +631,7 @@ export class AutonomousMonitoringBot extends EventEmitter {
             this.config.healthCheckInterval * backoffMultiplier,
             this.config.maxHealthCheckInterval
           );
-          
+
           console.log(`[AutonomousBot] BACKPRESSURE: High load detected (${avgLoad.toFixed(1)}%), increasing interval to ${newInterval}ms`);
           this.adaptiveIntervalAdjustments++;
           return newInterval;
@@ -640,35 +640,35 @@ export class AutonomousMonitoringBot extends EventEmitter {
           this.consecutiveHighLoadCycles = 0;
         }
       }
-      
+
       // ADAPTIVE SCHEDULING: Adjust based on system health and processing time
       let baseInterval = this.config.healthCheckInterval;
-      
+
       // Adjust based on last health check duration
       if (this.lastHealthCheckDuration > 1000) { // If health check took >1s
         baseInterval = Math.min(baseInterval * 1.5, this.config.maxHealthCheckInterval);
       } else if (this.lastHealthCheckDuration < 100 && avgLoad < 40) { // Fast and low load
         baseInterval = Math.max(baseInterval * 0.8, this.config.minHealthCheckInterval);
       }
-      
+
       // Factor in current system load
       const loadFactor = 1 + (avgLoad - 50) / 100; // Scale based on load deviation from 50%
       const adaptiveInterval = Math.round(baseInterval * Math.max(0.5, Math.min(3.0, loadFactor)));
-      
+
       // Constrain to configured bounds
       const finalInterval = Math.max(
         this.config.minHealthCheckInterval,
         Math.min(this.config.maxHealthCheckInterval, adaptiveInterval)
       );
-      
+
       // Log adaptive adjustments for transparency
       if (Math.abs(finalInterval - this.currentInterval) > 1000) {
         console.log(`[AutonomousBot] ADAPTIVE: Interval adjusted from ${this.currentInterval}ms to ${finalInterval}ms (load: ${avgLoad.toFixed(1)}%, duration: ${this.lastHealthCheckDuration}ms)`);
         this.adaptiveIntervalAdjustments++;
       }
-      
+
       return finalInterval;
-      
+
     } catch (error) {
       console.error('[AutonomousBot] Error calculating adaptive interval:', error);
       return this.config.healthCheckInterval; // Fallback to default
@@ -680,13 +680,13 @@ export class AutonomousMonitoringBot extends EventEmitter {
    */
   private async performHealthCheck(): Promise<void> {
     const startTime = Date.now();
-    
+
     try {
       // Get system metrics
       const systemHealth = await monitoringService.getSystemHealth();
       const securityMetrics = await enhancedMonitoringService.getSecurityMetrics();
       const dbStatus = getConnectionStatus();
-      
+
       // Get extended database status for detailed metrics
       const dbExtendedStatus = {
         healthy: dbStatus.healthy,
@@ -696,7 +696,7 @@ export class AutonomousMonitoringBot extends EventEmitter {
         waitingCount: 0,
         lastHealthCheck: dbStatus.lastCheck
       };
-      
+
       // Collect additional health data
       const healthSnapshot: InsertSystemHealthSnapshot = {
         timestamp: new Date(),
@@ -704,13 +704,13 @@ export class AutonomousMonitoringBot extends EventEmitter {
         memoryUsage: systemHealth.memory.toString(),
         diskUsage: systemHealth.storage.toString(),
         networkLatency: Math.round(systemHealth.network),
-        
+
         // Application metrics
         activeConnections: dbExtendedStatus.poolSize,
         responseTime: Date.now() - startTime,
         errorRate: (await this.calculateErrorRate()).toString(),
         throughput: await this.calculateThroughput(),
-        
+
         // Service health
         databaseHealth: {
           connectionPool: dbExtendedStatus.poolSize,
@@ -722,40 +722,40 @@ export class AutonomousMonitoringBot extends EventEmitter {
         cacheHealth: await this.getCacheHealth(),
         apiHealth: await this.getApiHealth(),
         externalServicesHealth: await this.getExternalServicesHealth(),
-        
+
         // Security metrics
         securityScore: this.calculateSecurityScore(securityMetrics),
         threatLevel: this.mapThreatLevel(securityMetrics.fraudScore.average),
         activeSecurityIncidents: await this.getActiveSecurityIncidents(),
         fraudAlertsActive: securityMetrics.fraudScore.high,
-        
+
         // Performance baselines and anomalies
         anomalyScore: await this.calculateAnomalyScore(),
         anomaliesDetected: await this.detectAnomalies(systemHealth),
         performanceBaseline: await this.getCurrentPerformanceBaseline(),
-        
+
         // Government compliance
         complianceScore: await this.calculateComplianceScore(),
         regulatoryViolations: await this.getActiveViolations(),
         uptimePercentage: await this.calculateUptimePercentage()
       };
-      
+
       // Store health snapshot
       await storage.createSystemHealthSnapshot(healthSnapshot);
-      
+
       // Evaluate alert rules
       await this.evaluateAlertRules(healthSnapshot);
-      
+
       // Check for autonomous actions needed
       await this.checkForAutonomousActions(healthSnapshot);
-      
+
       // Emit health update
       this.emit('healthCheck', {
         status: this.determineOverallHealth(healthSnapshot),
         snapshot: healthSnapshot,
         duration: Date.now() - startTime
       });
-      
+
     } catch (error) {
       console.error('[AutonomousBot] Health check failed:', error);
       throw error;
@@ -770,11 +770,11 @@ export class AutonomousMonitoringBot extends EventEmitter {
     if (health.cpu > this.config.alertThresholds.cpu) {
       await this.handleHighCpuUsage(health.cpu);
     }
-    
+
     if (health.memory > this.config.alertThresholds.memory) {
       await this.handleHighMemoryUsage(health.memory);
     }
-    
+
     if (health.storage > this.config.alertThresholds.diskSpace) {
       await this.handleHighDiskUsage(health.storage);
     }
@@ -785,19 +785,19 @@ export class AutonomousMonitoringBot extends EventEmitter {
    */
   private async handleAlert(alert: any): Promise<void> {
     console.log(`[AutonomousBot] Handling alert: ${alert.type} - ${alert.severity}`);
-    
+
     // Check if auto-resolution is enabled for this alert type
     const rule = Array.from(this.alertRules.values()).find(r => 
       r.category === alert.category && r.autoResolution
     );
-    
+
     if (rule && this.config.autoRecoveryEnabled) {
       await this.attemptAutoResolution(alert, rule);
     }
-    
+
     // Always create an incident for tracking
     await this.createIncident(alert);
-    
+
     // Update alert rule statistics
     if (rule) {
       await storage.updateRuleStatistics(rule.id, true, false);
@@ -809,7 +809,7 @@ export class AutonomousMonitoringBot extends EventEmitter {
    */
   private async handleSecurityAlert(alert: any): Promise<void> {
     console.log(`[AutonomousBot] Security alert received: ${alert.level} - ${alert.title}`);
-    
+
     // Security alerts require immediate attention
     await this.createIncident({
       type: 'security_alert',
@@ -819,7 +819,7 @@ export class AutonomousMonitoringBot extends EventEmitter {
       context: alert.context,
       autoResolution: false // Security incidents need manual review
     });
-    
+
     // Take immediate protective actions for critical security alerts
     if (alert.level === 'critical') {
       await this.handleCriticalSecurityAlert(alert);
@@ -831,15 +831,15 @@ export class AutonomousMonitoringBot extends EventEmitter {
    */
   private async handleCriticalError(error: any): Promise<void> {
     console.error(`[AutonomousBot] Critical error detected:`, error);
-    
+
     // Determine error category and appropriate response
     const errorCategory = this.categorizeError(error);
-    
+
     // Attempt autonomous recovery based on error type
     if (this.config.autoRecoveryEnabled) {
       await this.attemptErrorRecovery(error, errorCategory);
     }
-    
+
     // Create incident
     await this.createIncident({
       type: 'critical_error',
@@ -856,7 +856,7 @@ export class AutonomousMonitoringBot extends EventEmitter {
    */
   private async handleFraudAlert(alert: any): Promise<void> {
     console.log(`[AutonomousBot] Fraud alert: Risk Score ${alert.riskScore}`);
-    
+
     if (alert.riskScore >= 80) {
       // High-risk fraud - create incident
       await this.createIncident({
@@ -895,10 +895,10 @@ export class AutonomousMonitoringBot extends EventEmitter {
           governmentReporting: params.actionType.includes('security') || params.actionType.includes('critical')
         }
       };
-      
+
       const result = await storage.createAutonomousOperation(operation);
       console.log(`[AutonomousBot] Recorded autonomous action: ${params.actionType} on ${params.targetService}`);
-      
+
       return result.id;
     } catch (error) {
       console.error('[AutonomousBot] Error recording autonomous action:', error);
@@ -915,10 +915,10 @@ export class AutonomousMonitoringBot extends EventEmitter {
       if (!latestSnapshot) {
         throw new Error('No health data available');
       }
-      
+
       // Calculate service statuses
       const services = await this.getServiceStatuses();
-      
+
       return {
         overall: this.determineOverallHealth(latestSnapshot),
         services,
@@ -982,28 +982,28 @@ export class AutonomousMonitoringBot extends EventEmitter {
   }
 
   // Helper methods continue below...
-  
+
   private async calculateErrorRate(): Promise<number> {
     // Calculate error rate from recent error logs
     const recentErrors = await storage.getErrorLogs({
       startDate: new Date(Date.now() - 15 * 60 * 1000), // Last 15 minutes
       limit: 1000
     });
-    
+
     // This is a simplified calculation - in production you'd want more sophisticated metrics
     return Math.min((recentErrors.length / 100) * 100, 100); // Max 100%
   }
-  
+
   private async calculateThroughput(): Promise<number> {
     // Calculate requests per minute from audit logs
     const recentAudits = await storage.getAuditLogs({
       startDate: new Date(Date.now() - 60 * 1000), // Last minute
       limit: 1000
     });
-    
+
     return recentAudits.length;
   }
-  
+
   private async getCacheHealth(): Promise<any> {
     // Get cache statistics from optimized cache service
     try {
@@ -1017,17 +1017,17 @@ export class AutonomousMonitoringBot extends EventEmitter {
       return { status: 'error' };
     }
   }
-  
+
   private async getApiHealth(): Promise<any> {
     // Calculate API endpoint health
     const recentAudits = await storage.getAuditLogs({
       startDate: new Date(Date.now() - 5 * 60 * 1000), // Last 5 minutes
       limit: 500
     });
-    
+
     const apiCalls = recentAudits.filter(audit => audit.action.includes('api_'));
     const avgResponseTime = apiCalls.length > 0 ? 250 : 0; // Placeholder calculation
-    
+
     return {
       totalEndpoints: 25,
       healthyEndpoints: 24,
@@ -1035,21 +1035,21 @@ export class AutonomousMonitoringBot extends EventEmitter {
       errorRate: this.calculateApiErrorRate(apiCalls)
     };
   }
-  
+
   private calculateApiErrorRate(apiCalls: any[]): number {
     if (apiCalls.length === 0) return 0;
-    
+
     const errors = apiCalls.filter(call => 
       call.metadata?.statusCode && call.metadata.statusCode >= 400
     );
-    
+
     return (errors.length / apiCalls.length) * 100;
   }
-  
+
   private async getExternalServicesHealth(): Promise<any> {
     const circuitBreakerStates = await storage.getAllCircuitBreakerStates();
     const services: Record<string, any> = {};
-    
+
     for (const state of circuitBreakerStates) {
       services[state.serviceName] = {
         status: state.state,
@@ -1060,28 +1060,28 @@ export class AutonomousMonitoringBot extends EventEmitter {
         lastCheck: state.updatedAt
       };
     }
-    
+
     return services;
   }
-  
+
   private calculateSecurityScore(metrics: any): number {
     let score = 100;
-    
+
     // Deduct points based on security issues
     if (metrics.fraudScore.high > 0) score -= metrics.fraudScore.high * 2;
     if (metrics.fraudScore.critical > 0) score -= metrics.fraudScore.critical * 5;
     if (metrics.system.errorRate > 5) score -= 10;
-    
+
     return Math.max(score, 0);
   }
-  
+
   private mapThreatLevel(fraudScore: number): 'low' | 'medium' | 'high' | 'critical' {
     if (fraudScore >= 80) return 'critical';
     if (fraudScore >= 60) return 'high';
     if (fraudScore >= 40) return 'medium';
     return 'low';
   }
-  
+
   private async getActiveSecurityIncidents(): Promise<number> {
     const incidents = await storage.getSecurityIncidents({
       status: 'open',
@@ -1089,16 +1089,16 @@ export class AutonomousMonitoringBot extends EventEmitter {
     });
     return incidents.length;
   }
-  
+
   private async calculateAnomalyScore(): Promise<string> {
     // Simplified anomaly detection - in production this would use ML
     const score = Math.random() * 0.3; // Random score between 0 and 0.3
     return score.toFixed(2);
   }
-  
+
   private async detectAnomalies(systemHealth: any): Promise<any> {
     const anomalies = [];
-    
+
     // Simple threshold-based anomaly detection
     if (systemHealth.cpu > 90) {
       anomalies.push({
@@ -1108,7 +1108,7 @@ export class AutonomousMonitoringBot extends EventEmitter {
         threshold: 90
       });
     }
-    
+
     if (systemHealth.memory > 95) {
       anomalies.push({
         type: 'memory_exhaustion',
@@ -1117,10 +1117,10 @@ export class AutonomousMonitoringBot extends EventEmitter {
         threshold: 95
       });
     }
-    
+
     return anomalies;
   }
-  
+
   private async getCurrentPerformanceBaseline(): Promise<any> {
     // Return current performance baseline data
     return {
@@ -1129,25 +1129,25 @@ export class AutonomousMonitoringBot extends EventEmitter {
       responseTime: { baseline: 250, current: 280, deviation: 1.1 }
     };
   }
-  
+
   private async calculateComplianceScore(): Promise<number> {
     const audits = await storage.getComplianceAudits({
       startDate: new Date(Date.now() - 24 * 60 * 60 * 1000), // Last 24 hours
       limit: 100
     });
-    
+
     if (audits.length === 0) return 100;
-    
+
     const compliant = audits.filter(audit => audit.complianceStatus === 'compliant');
     return Math.round((compliant.length / audits.length) * 100);
   }
-  
+
   private async getActiveViolations(): Promise<any[]> {
     const audits = await storage.getComplianceAudits({
       complianceStatus: 'non_compliant',
       limit: 50
     });
-    
+
     return audits.map(audit => ({
       id: audit.id,
       requirement: audit.complianceRequirement,
@@ -1156,7 +1156,7 @@ export class AutonomousMonitoringBot extends EventEmitter {
       detected: audit.createdAt
     }));
   }
-  
+
   private async calculateUptimePercentage(): Promise<string> {
     // Calculate system uptime percentage over last 24 hours
     const uptime = process.uptime();
@@ -1164,22 +1164,22 @@ export class AutonomousMonitoringBot extends EventEmitter {
     const percentage = Math.min((uptimeHours / 24) * 100, 100);
     return percentage.toFixed(2);
   }
-  
+
   private determineOverallHealth(snapshot: any): 'healthy' | 'warning' | 'critical' | 'emergency' {
     const cpu = parseFloat(snapshot.cpuUsage || '0');
     const memory = parseFloat(snapshot.memoryUsage || '0');
     const securityScore = snapshot.securityScore || 100;
     const complianceScore = snapshot.complianceScore || 100;
-    
+
     if (cpu > 95 || memory > 98 || securityScore < 50) return 'emergency';
     if (cpu > 85 || memory > 90 || securityScore < 70 || complianceScore < 80) return 'critical';
     if (cpu > 75 || memory > 80 || securityScore < 85 || complianceScore < 90) return 'warning';
     return 'healthy';
   }
-  
+
   private async getServiceStatuses(): Promise<Record<string, any>> {
     const services: Record<string, any> = {};
-    
+
     // Check database service
     const dbStatus = getConnectionStatus();
     services.database = {
@@ -1188,7 +1188,7 @@ export class AutonomousMonitoringBot extends EventEmitter {
       errorRate: dbStatus.healthy ? 0 : 100,
       lastCheck: dbStatus.lastCheck
     };
-    
+
     // Check external services via circuit breakers
     const circuitStates = await storage.getAllCircuitBreakerStates();
     for (const state of circuitStates) {
@@ -1199,13 +1199,13 @@ export class AutonomousMonitoringBot extends EventEmitter {
         lastCheck: state.updatedAt
       };
     }
-    
+
     return services;
   }
-  
+
   // Additional helper methods would continue here...
   // For brevity, I'm including the core structure and key methods
-  
+
   private async evaluateAlertRules(snapshot: any): Promise<void> {
     // Evaluate all active alert rules against current metrics
     for (const rule of Array.from(this.alertRules.values())) {
@@ -1216,18 +1216,18 @@ export class AutonomousMonitoringBot extends EventEmitter {
       }
     }
   }
-  
+
   private async evaluateSingleRule(rule: any, snapshot: any): Promise<void> {
     // Extract metric value from snapshot
     const metricValue = this.extractMetricValue(rule.metricName, snapshot);
     if (metricValue === null) return;
-    
+
     // Check if rule condition is met
     const triggered = this.evaluateRuleCondition(rule, metricValue);
-    
+
     if (triggered) {
       console.log(`[AutonomousBot] Alert rule triggered: ${rule.ruleName}`);
-      
+
       // Create alert
       await this.handleAlert({
         type: rule.ruleName,
@@ -1240,7 +1240,7 @@ export class AutonomousMonitoringBot extends EventEmitter {
       });
     }
   }
-  
+
   private extractMetricValue(metricName: string, snapshot: any): number | null {
     switch (metricName) {
       case 'cpu_usage':
@@ -1262,7 +1262,7 @@ export class AutonomousMonitoringBot extends EventEmitter {
         return null;
     }
   }
-  
+
   private evaluateRuleCondition(rule: any, value: number): boolean {
     switch (rule.operator) {
       case 'greater_than':
@@ -1277,27 +1277,27 @@ export class AutonomousMonitoringBot extends EventEmitter {
         return false;
     }
   }
-  
+
   private async checkForAutonomousActions(snapshot: any): Promise<void> {
     const cpu = parseFloat(snapshot.cpuUsage || '0');
     const memory = parseFloat(snapshot.memoryUsage || '0');
-    
+
     // High CPU usage - trigger optimization
     if (cpu > this.config.alertThresholds.cpu) {
       await this.scheduleAutonomousAction('performance_optimization', 'system', 'high_cpu_usage');
     }
-    
+
     // High memory usage - trigger cleanup
     if (memory > this.config.alertThresholds.memory) {
       await this.scheduleAutonomousAction('memory_optimization', 'system', 'high_memory_usage');
     }
-    
+
     // Database connection issues
     if (snapshot.databaseHealth && !snapshot.databaseHealth.healthy) {
       await this.scheduleAutonomousAction('connection_reset', 'database', 'connection_failure');
     }
   }
-  
+
   private async scheduleAutonomousAction(actionType: string, targetService: string, reason: string): Promise<void> {
     try {
       const actionId = await this.recordAutonomousAction({
@@ -1306,29 +1306,29 @@ export class AutonomousMonitoringBot extends EventEmitter {
         triggeredBy: 'health_check',
         triggerDetails: { reason, timestamp: new Date() }
       });
-      
+
       // Execute action asynchronously
       setImmediate(() => this.executeAutonomousAction(actionId, actionType, targetService));
-      
+
     } catch (error) {
       console.error(`[AutonomousBot] Error scheduling autonomous action: ${actionType}`, error);
     }
   }
-  
+
   private async executeAutonomousAction(actionId: string, actionType: string, targetService: string): Promise<void> {
     const startTime = Date.now();
-    
+
     try {
       console.log(`[AutonomousBot] Executing autonomous action: ${actionType} on ${targetService}`);
-      
+
       // Update action status
       await storage.updateAutonomousOperation(actionId, {
         status: 'in_progress',
         startedAt: new Date()
       });
-      
+
       let result: any;
-      
+
       // Execute the appropriate action
       switch (actionType) {
         case 'performance_optimization':
@@ -1346,7 +1346,7 @@ export class AutonomousMonitoringBot extends EventEmitter {
         default:
           throw new Error(`Unknown action type: ${actionType}`);
       }
-      
+
       // Record successful completion
       await storage.updateAutonomousOperation(actionId, {
         status: 'completed',
@@ -1355,13 +1355,13 @@ export class AutonomousMonitoringBot extends EventEmitter {
         executionResults: result,
         impactMetrics: await this.measureActionImpact(actionType)
       });
-      
+
       console.log(`[AutonomousBot] Successfully completed autonomous action: ${actionType}`);
       this.emit('actionCompleted', { actionId, actionType, targetService, result });
-      
+
     } catch (error) {
       console.error(`[AutonomousBot] Autonomous action failed: ${actionType}`, error);
-      
+
       // Record failure
       await storage.updateAutonomousOperation(actionId, {
         status: 'failed',
@@ -1369,12 +1369,12 @@ export class AutonomousMonitoringBot extends EventEmitter {
         duration: Date.now() - startTime,
         errorMessage: error instanceof Error ? error.message : String(error)
       });
-      
+
       // Consider retry if within limits
       await this.handleActionFailure(actionId, actionType, error);
     }
   }
-  
+
   // Placeholder implementation for autonomous actions
   private async performPerformanceOptimization(): Promise<any> {
     // In production, this would perform actual optimization
@@ -1382,34 +1382,34 @@ export class AutonomousMonitoringBot extends EventEmitter {
     await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate work
     return { optimized: true, improvements: ['cpu_throttling', 'process_priority'] };
   }
-  
+
   private async performMemoryOptimization(): Promise<any> {
     console.log('[AutonomousBot] Performing memory optimization...');
-    
+
     // Trigger garbage collection
     if (global.gc) {
       global.gc();
     }
-    
+
     // Clear caches
     await optimizedCacheService.clear('memory');
-    
+
     return { memoryFreed: '50MB', cacheCleared: true };
   }
-  
+
   private async performConnectionReset(): Promise<any> {
     console.log('[AutonomousBot] Performing connection reset...');
     // In production, this would reset database connections
     await new Promise(resolve => setTimeout(resolve, 500));
     return { connectionsReset: 5, poolHealthy: true };
   }
-  
+
   private async performCacheCleanup(): Promise<any> {
     console.log('[AutonomousBot] Performing cache cleanup...');
     await optimizedCacheService.clear('hot');
     return { cacheCleared: true, memoryReclaimed: '25MB' };
   }
-  
+
   private async measureActionImpact(actionType: string): Promise<any> {
     // Measure impact of the autonomous action
     const afterMetrics = await monitoringService.getSystemHealth();
@@ -1420,25 +1420,25 @@ export class AutonomousMonitoringBot extends EventEmitter {
       // In production, compare with before metrics
     };
   }
-  
+
   private async handleActionFailure(actionId: string, actionType: string, error: any): Promise<void> {
     const operation = await storage.getAutonomousOperation(actionId);
     if (!operation) return;
-    
+
     if (operation.retryCount < operation.maxRetries) {
       // Schedule retry
       const nextRetryAt = new Date(Date.now() + Math.pow(2, operation.retryCount) * 60000); // Exponential backoff
-      
+
       await storage.updateAutonomousOperation(actionId, {
         retryCount: operation.retryCount + 1,
         nextRetryAt,
         status: 'initiated'
       });
-      
+
       console.log(`[AutonomousBot] Scheduling retry for action ${actionType} (attempt ${operation.retryCount + 1})`);
     } else {
       console.error(`[AutonomousBot] Action ${actionType} failed permanently after ${operation.maxRetries} attempts`);
-      
+
       // Create incident for failed autonomous action
       await this.createIncident({
         type: 'autonomous_action_failure',
@@ -1450,10 +1450,10 @@ export class AutonomousMonitoringBot extends EventEmitter {
       });
     }
   }
-  
+
   private async handleHighCpuUsage(cpuUsage: number): Promise<void> {
     console.log(`[AutonomousBot] High CPU usage detected: ${cpuUsage}%`);
-    
+
     if (cpuUsage > 95) {
       // Emergency CPU relief
       await this.scheduleAutonomousAction('performance_optimization', 'system', 'emergency_cpu_usage');
@@ -1462,10 +1462,10 @@ export class AutonomousMonitoringBot extends EventEmitter {
       await this.scheduleAutonomousAction('performance_optimization', 'system', 'high_cpu_usage');
     }
   }
-  
+
   private async handleHighMemoryUsage(memoryUsage: number): Promise<void> {
     console.log(`[AutonomousBot] High memory usage detected: ${memoryUsage}%`);
-    
+
     if (memoryUsage > 98) {
       // Emergency memory cleanup
       await this.scheduleAutonomousAction('memory_optimization', 'system', 'emergency_memory_usage');
@@ -1475,23 +1475,23 @@ export class AutonomousMonitoringBot extends EventEmitter {
       await this.scheduleAutonomousAction('memory_optimization', 'system', 'high_memory_usage');
     }
   }
-  
+
   private async handleHighDiskUsage(diskUsage: number): Promise<void> {
     console.log(`[AutonomousBot] High disk usage detected: ${diskUsage}%`);
-    
+
     if (diskUsage > this.config.alertThresholds.diskSpace) {
       // Schedule disk cleanup
       await this.scheduleAutonomousAction('disk_cleanup', 'system', 'high_disk_usage');
     }
   }
-  
+
   private async attemptAutoResolution(alert: any, rule: any): Promise<void> {
     console.log(`[AutonomousBot] Attempting auto-resolution for alert: ${alert.type}`);
-    
+
     // Determine appropriate resolution action based on alert category
     let actionType: string;
     let targetService: string;
-    
+
     switch (rule.category) {
       case 'performance':
         actionType = 'performance_optimization';
@@ -1513,22 +1513,22 @@ export class AutonomousMonitoringBot extends EventEmitter {
         actionType = 'service_restart';
         targetService = 'system';
     }
-    
+
     await this.scheduleAutonomousAction(actionType, targetService, `auto_resolution_${alert.type}`);
   }
-  
+
   private async handleCriticalSecurityAlert(alert: any): Promise<void> {
     console.log(`[AutonomousBot] Taking immediate action for critical security alert`);
-    
+
     // Immediate protective measures
     const actions = [
       this.scheduleAutonomousAction('security_scan', 'security', 'critical_alert_response'),
       // In production, might include: IP blocking, service isolation, backup activation
     ];
-    
+
     await Promise.all(actions);
   }
-  
+
   private categorizeError(error: any): string {
     if (error.error?.message?.includes('database') || error.error?.message?.includes('connection')) {
       return 'database_error';
@@ -1542,10 +1542,10 @@ export class AutonomousMonitoringBot extends EventEmitter {
       return 'system_error';
     }
   }
-  
+
   private async attemptErrorRecovery(error: any, category: string): Promise<void> {
     console.log(`[AutonomousBot] Attempting recovery for ${category}`);
-    
+
     switch (category) {
       case 'database_error':
         await this.scheduleAutonomousAction('connection_reset', 'database', 'error_recovery');
@@ -1563,12 +1563,12 @@ export class AutonomousMonitoringBot extends EventEmitter {
         await this.scheduleAutonomousAction('service_restart', 'system', 'error_recovery');
     }
   }
-  
+
   private async createIncident(alert: any): Promise<void> {
     try {
       this.incidentCounter++;
       const incidentNumber = `INC-${new Date().getFullYear()}-${String(this.incidentCounter).padStart(4, '0')}`;
-      
+
       const incident: InsertIncident = {
         incidentNumber,
         title: alert.title || `${alert.type} Alert`,
@@ -1583,17 +1583,17 @@ export class AutonomousMonitoringBot extends EventEmitter {
         governmentNotificationRequired: this.requiresGovernmentNotification(alert),
         complianceViolation: this.isComplianceViolation(alert)
       };
-      
+
       const createdIncident = await storage.createIncident(incident);
       console.log(`[AutonomousBot] Created incident: ${incidentNumber}`);
-      
+
       this.emit('incidentCreated', createdIncident);
-      
+
     } catch (error) {
       console.error('[AutonomousBot] Error creating incident:', error);
     }
   }
-  
+
   private mapAlertSeverityToIncident(severity: string): 'low' | 'medium' | 'high' | 'critical' | 'emergency' {
     switch (severity) {
       case 'low': return 'low';
@@ -1603,7 +1603,7 @@ export class AutonomousMonitoringBot extends EventEmitter {
       default: return 'medium';
     }
   }
-  
+
   private determineImpactLevel(alert: any): 'low' | 'medium' | 'high' | 'critical' {
     if (alert.category === 'security' && alert.severity === 'critical') return 'critical';
     if (alert.category === 'availability' && alert.severity === 'high') return 'high';
@@ -1611,10 +1611,10 @@ export class AutonomousMonitoringBot extends EventEmitter {
     if (alert.severity === 'high') return 'medium';
     return 'low';
   }
-  
+
   private determineAffectedServices(alert: any): any {
     const services = [];
-    
+
     if (alert.category === 'performance') {
       services.push('system_performance');
     }
@@ -1624,50 +1624,50 @@ export class AutonomousMonitoringBot extends EventEmitter {
     if (alert.category === 'security') {
       services.push('security_services');
     }
-    
+
     if (alert.metricName?.includes('database')) {
       services.push('database');
     }
     if (alert.metricName?.includes('api')) {
       services.push('api_services');
     }
-    
+
     return services;
   }
-  
+
   private requiresGovernmentNotification(alert: any): boolean {
     // Government notification required for:
     return alert.category === 'security' && ['high', 'critical'].includes(alert.severity) ||
            alert.type?.includes('data_breach') ||
            alert.type?.includes('compliance_violation');
   }
-  
+
   private isComplianceViolation(alert: any): boolean {
     return alert.category === 'compliance' ||
            alert.type?.includes('compliance') ||
            alert.context?.complianceImpact === true;
   }
-  
+
   private async handleNewIncident(incident: any): Promise<void> {
     console.log(`[AutonomousBot] New incident created: ${incident.incidentNumber}`);
-    
+
     // Send notifications
     if (incident.governmentNotificationRequired) {
       await this.sendGovernmentNotification(incident);
     }
-    
+
     // Auto-assign based on category
     await this.autoAssignIncident(incident);
-    
+
     // Schedule escalation if needed
     if (['critical', 'emergency'].includes(incident.severity)) {
       setTimeout(() => this.escalateIncident(incident.id), 30 * 60 * 1000); // 30 minutes
     }
   }
-  
+
   private async sendGovernmentNotification(incident: any): Promise<void> {
     console.log(`[AutonomousBot] Sending government notification for incident: ${incident.incidentNumber}`);
-    
+
     // In production, this would integrate with government reporting systems
     // For now, we'll create a compliance audit record
     await storage.createComplianceAudit({
@@ -1693,16 +1693,16 @@ export class AutonomousMonitoringBot extends EventEmitter {
       },
       reportGenerated: false
     } as InsertGovernmentComplianceAudit);
-    
+
     // Mark as notified
     await storage.updateIncident(incident.id, {
       governmentNotifiedAt: new Date()
     });
   }
-  
+
   private async autoAssignIncident(incident: any): Promise<void> {
     let assignedTeam: string;
-    
+
     switch (incident.category) {
       case 'security':
         assignedTeam = 'security_team';
@@ -1716,37 +1716,37 @@ export class AutonomousMonitoringBot extends EventEmitter {
       default:
         assignedTeam = 'general_support';
     }
-    
+
     await storage.updateIncident(incident.id, {
       assignedTeam
     });
-    
+
     console.log(`[AutonomousBot] Auto-assigned incident ${incident.incidentNumber} to ${assignedTeam}`);
   }
-  
+
   private async escalateIncident(incidentId: string): Promise<void> {
     const incident = await storage.getIncident(incidentId);
     if (!incident || ['resolved', 'closed'].includes(incident.status)) {
       return; // Already resolved
     }
-    
+
     console.log(`[AutonomousBot] Escalating incident: ${incident.incidentNumber}`);
-    
+
     await storage.updateIncident(incidentId, {
       priority: 'urgent',
       assignedTeam: 'incident_response_team'
     });
-    
+
     // Send escalation notifications (in production)
   }
-  
+
   private async analyzeActionImpact(action: any): Promise<void> {
     console.log(`[AutonomousBot] Analyzing impact of action: ${action.actionType}`);
-    
+
     // Get metrics before and after the action
     const beforeMetrics = action.impactMetrics?.before;
     const afterMetrics = action.impactMetrics?.after;
-    
+
     if (beforeMetrics && afterMetrics) {
       // Calculate improvement
       const improvement = {
@@ -1754,7 +1754,7 @@ export class AutonomousMonitoringBot extends EventEmitter {
         memory: beforeMetrics.memory - afterMetrics.memory,
         responseTime: beforeMetrics.responseTime - afterMetrics.responseTime
       };
-      
+
       // Store impact analysis
       await storage.updateAutonomousOperation(action.actionId, {
         impactMetrics: {
@@ -1763,26 +1763,26 @@ export class AutonomousMonitoringBot extends EventEmitter {
           effectivenesScore: this.calculateEffectivenessScore(improvement)
         }
       });
-      
+
       // Learn from the action for future improvements
       await this.updateActionLearning(action.actionType, improvement);
     }
   }
-  
+
   private calculateEffectivenessScore(improvement: any): number {
     let score = 50; // Base score
-    
+
     if (improvement.cpu > 0) score += Math.min(improvement.cpu * 2, 20);
     if (improvement.memory > 0) score += Math.min(improvement.memory * 2, 20);
     if (improvement.responseTime > 0) score += Math.min(improvement.responseTime * 0.1, 10);
-    
+
     return Math.min(score, 100);
   }
-  
+
   private async updateActionLearning(actionType: string, improvement: any): Promise<void> {
     // In a production system, this would update ML models or decision trees
     console.log(`[AutonomousBot] Learning from ${actionType} action:`, improvement);
-    
+
     // Store learning data for future analysis
     // This could feed into a machine learning system for better autonomous decision making
   }
@@ -1790,14 +1790,14 @@ export class AutonomousMonitoringBot extends EventEmitter {
   // Maintenance and scheduling methods
   private async startMaintenanceScheduler(): Promise<void> {
     const tasks = await storage.getMaintenanceTasks({ isEnabled: true });
-    
+
     for (const task of tasks) {
       this.scheduleMaintenanceTask(task);
     }
-    
+
     console.log(`[AutonomousBot] Scheduled ${tasks.length} maintenance tasks`);
   }
-  
+
   /**
    * Parse schedule pattern to milliseconds (simplified)
    */
@@ -1812,7 +1812,7 @@ export class AutonomousMonitoringBot extends EventEmitter {
       '0 0 * * *': 24 * 60 * 60 * 1000,  // Daily
       '0 0 * * 0': 7 * 24 * 60 * 60 * 1000, // Weekly
     };
-    
+
     return patterns[pattern] || 5 * 60 * 1000; // Default to 5 minutes for monitoring tasks
   }
 
@@ -1825,19 +1825,19 @@ export class AutonomousMonitoringBot extends EventEmitter {
           await this.executeMaintenanceTask(task);
         }
       }, intervalMs);
-      
+
       // Store the timer ID for cleanup
       this.maintenanceTasks.set(task.id, timerId as any);
-      
+
       console.log(`[AutonomousBot] Scheduled maintenance task: ${task.taskName}`);
     } catch (error) {
       console.error(`[AutonomousBot] Error scheduling maintenance task ${task.taskName}:`, error);
     }
   }
-  
+
   private async executeMaintenanceTask(task: any): Promise<void> {
     console.log(`[AutonomousBot] Executing maintenance task: ${task.taskName}`);
-    
+
     const actionId = await this.recordAutonomousAction({
       actionType: task.taskType,
       targetService: 'maintenance',
@@ -1849,10 +1849,10 @@ export class AutonomousMonitoringBot extends EventEmitter {
       },
       actionParameters: task.taskParameters
     });
-    
+
     try {
       let result: any;
-      
+
       switch (task.taskType) {
         case 'database_vacuum':
           result = await this.performDatabaseVacuum(task.taskParameters);
@@ -1869,7 +1869,7 @@ export class AutonomousMonitoringBot extends EventEmitter {
         default:
           throw new Error(`Unknown maintenance task type: ${task.taskType}`);
       }
-      
+
       // Update task and operation records
       await Promise.all([
         storage.updateMaintenanceTask(task.id, {
@@ -1884,12 +1884,12 @@ export class AutonomousMonitoringBot extends EventEmitter {
           executionResults: result
         })
       ]);
-      
+
       console.log(`[AutonomousBot] Completed maintenance task: ${task.taskName}`);
-      
+
     } catch (error) {
       console.error(`[AutonomousBot] Maintenance task failed: ${task.taskName}`, error);
-      
+
       await Promise.all([
         storage.updateMaintenanceTask(task.id, {
           failureCount: task.failureCount + 1,
@@ -1902,7 +1902,7 @@ export class AutonomousMonitoringBot extends EventEmitter {
       ]);
     }
   }
-  
+
   private async performDatabaseVacuum(params: any): Promise<any> {
     console.log('[AutonomousBot] Performing database vacuum...');
     // In production, this would execute VACUUM commands
@@ -1913,7 +1913,7 @@ export class AutonomousMonitoringBot extends EventEmitter {
       duration: '2.1s'
     };
   }
-  
+
   private async performLogCleanup(params: any): Promise<any> {
     console.log('[AutonomousBot] Performing log cleanup...');
     // In production, this would clean up actual log files
@@ -1924,40 +1924,40 @@ export class AutonomousMonitoringBot extends EventEmitter {
       oldestLogDeleted: new Date(Date.now() - params.retentionDays * 24 * 60 * 60 * 1000)
     };
   }
-  
+
   private async performCacheOptimization(params: any): Promise<any> {
     console.log('[AutonomousBot] Performing cache optimization...');
-    
+
     if (params.clearStale) {
       await optimizedCacheService.clear('memory');
     }
-    
+
     if (params.optimizeMemory && global.gc) {
       global.gc();
     }
-    
+
     return {
       staleEntriesCleared: 150,
       memoryOptimized: params.optimizeMemory,
       hitRateImprovement: '5%'
     };
   }
-  
+
   private async performSecurityScan(params: any): Promise<any> {
     console.log('[AutonomousBot] Performing security scan...');
     // In production, this would run actual security scans
     await new Promise(resolve => setTimeout(resolve, 5000));
-    
+
     const findings = [
       { type: 'info', description: 'All services running latest security patches' },
       { type: 'warning', description: 'Some log files have wide permissions' }
     ];
-    
+
     if (params.generateReport) {
       // Generate security report
       await this.generateSecurityReport(findings);
     }
-    
+
     return {
       scanType: params.scanType,
       vulnerabilitiesFound: 0,
@@ -1965,7 +1965,7 @@ export class AutonomousMonitoringBot extends EventEmitter {
       recommendations: findings
     };
   }
-  
+
   private async generateSecurityReport(findings: any[]): Promise<void> {
     // Create compliance audit for security scan
     await storage.createComplianceAudit({
@@ -1979,11 +1979,11 @@ export class AutonomousMonitoringBot extends EventEmitter {
       evidenceCollected: { scanTimestamp: new Date(), findings }
     } as InsertGovernmentComplianceAudit);
   }
-  
+
   private calculateNextRunTime(cronPattern: string): Date {
     // Simplified next run calculation - in production use proper cron library
     const now = new Date();
-    
+
     if (cronPattern === '0 2 * * *') { // Daily at 2 AM
       const next = new Date(now);
       next.setDate(now.getDate() + 1);
@@ -1994,27 +1994,27 @@ export class AutonomousMonitoringBot extends EventEmitter {
       next.setHours(now.getHours() + 1, 0, 0, 0);
       return next;
     }
-    
+
     // Default: next day at same time
     const next = new Date(now);
     next.setDate(now.getDate() + 1);
     return next;
   }
-  
+
   private async startComplianceScheduler(): Promise<void> {
     this.complianceScheduler = setInterval(async () => {
       await this.performComplianceAudit();
     }, 12 * 60 * 60 * 1000); // Every 12 hours
-    
+
     // Perform initial audit
     setTimeout(() => this.performComplianceAudit(), 60000); // After 1 minute startup
-    
+
     console.log('[AutonomousBot] Compliance auditing scheduler started');
   }
-  
+
   private async performComplianceAudit(): Promise<void> {
     console.log('[AutonomousBot] Performing automated compliance audit...');
-    
+
     try {
       // Check various compliance requirements
       const auditResults = await Promise.all([
@@ -2024,11 +2024,11 @@ export class AutonomousMonitoringBot extends EventEmitter {
         this.auditDataProtection(),
         this.auditAuditTrail()
       ]);
-      
+
       // Consolidate results
       const overallStatus = auditResults.every(r => r.compliant) ? 'compliant' : 
                            auditResults.some(r => !r.compliant && r.critical) ? 'non_compliant' : 'partial';
-      
+
       // Create master compliance audit
       await storage.createComplianceAudit({
         auditId: `COMP-AUDIT-${Date.now()}`,
@@ -2050,14 +2050,14 @@ export class AutonomousMonitoringBot extends EventEmitter {
         auditStartedAt: new Date(),
         auditCompletedAt: new Date()
       } as InsertGovernmentComplianceAudit);
-      
+
       console.log(`[AutonomousBot] Compliance audit completed. Status: ${overallStatus}`);
-      
+
     } catch (error) {
       console.error('[AutonomousBot] Compliance audit failed:', error);
     }
   }
-  
+
   private async auditPopiaCompliance(): Promise<any> {
     // Check POPIA (Protection of Personal Information Act) compliance
     const recentDataAccess = await storage.getAuditLogs({
@@ -2065,11 +2065,11 @@ export class AutonomousMonitoringBot extends EventEmitter {
       startDate: new Date(Date.now() - 24 * 60 * 60 * 1000),
       limit: 1000
     });
-    
+
     const unauthorizedAccess = recentDataAccess.filter(log => 
       (log.actionDetails as any)?.unauthorized === true
     );
-    
+
     return {
       requirement: 'POPIA',
       compliant: unauthorizedAccess.length === 0,
@@ -2081,12 +2081,12 @@ export class AutonomousMonitoringBot extends EventEmitter {
       }
     };
   }
-  
+
   private async auditUptimeRequirements(): Promise<any> {
     // Check government uptime requirements (99.5%)
     const currentUptime = parseFloat(await this.calculateUptimePercentage());
     const required = this.config.governmentCompliance.uptimeRequirement;
-    
+
     return {
       requirement: 'Uptime',
       compliant: currentUptime >= required,
@@ -2098,7 +2098,7 @@ export class AutonomousMonitoringBot extends EventEmitter {
       }
     };
   }
-  
+
   private async auditSecurityIncidentResponse(): Promise<any> {
     // Check if security incidents are being handled within required timeframes
     const recentIncidents = await storage.getIncidents({
@@ -2106,12 +2106,12 @@ export class AutonomousMonitoringBot extends EventEmitter {
       startDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // Last 7 days
       limit: 100
     });
-    
+
     const overdueIncidents = recentIncidents.filter(incident => {
       const ageHours = (Date.now() - incident.createdAt.getTime()) / (1000 * 60 * 60);
       return incident.status === 'open' && ageHours > 24; // Over 24 hours old
     });
-    
+
     return {
       requirement: 'Security Incident Response',
       compliant: overdueIncidents.length === 0,
@@ -2123,13 +2123,13 @@ export class AutonomousMonitoringBot extends EventEmitter {
       }
     };
   }
-  
+
   private async auditDataProtection(): Promise<any> {
     // Check data protection measures
     const encryptionStatus = true; // In production, check actual encryption status
     const backupStatus = true; // In production, check backup status
     const accessControls = true; // In production, check access control configuration
-    
+
     return {
       requirement: 'Data Protection',
       compliant: encryptionStatus && backupStatus && accessControls,
@@ -2142,17 +2142,17 @@ export class AutonomousMonitoringBot extends EventEmitter {
       }
     };
   }
-  
+
   private async auditAuditTrail(): Promise<any> {
     // Check if audit trail is complete and tamper-evident
     const recentAudits = await storage.getAuditLogs({
       startDate: new Date(Date.now() - 24 * 60 * 60 * 1000),
       limit: 1000
     });
-    
+
     // Check for gaps in audit trail
     const auditGaps = this.detectAuditGaps(recentAudits);
-    
+
     return {
       requirement: 'Audit Trail',
       compliant: auditGaps.length === 0,
@@ -2164,34 +2164,34 @@ export class AutonomousMonitoringBot extends EventEmitter {
       }
     };
   }
-  
+
   private calculateOverallComplianceScore(auditResults: any[]): number {
     const totalPossible = auditResults.length * 100;
     const totalActual = auditResults.reduce((sum, result) => {
       return sum + (result.details?.complianceScore || result.details?.overallScore || (result.compliant ? 100 : 0));
     }, 0);
-    
+
     return Math.round((totalActual / totalPossible) * 100);
   }
-  
+
   private calculateAverageResolutionTime(incidents: any[]): number {
     const resolvedIncidents = incidents.filter(i => i.resolvedAt);
     if (resolvedIncidents.length === 0) return 0;
-    
+
     const totalResolutionTime = resolvedIncidents.reduce((sum, incident) => {
       return sum + (incident.resolvedAt.getTime() - incident.createdAt.getTime());
     }, 0);
-    
+
     return Math.round(totalResolutionTime / resolvedIncidents.length / (1000 * 60 * 60)); // Hours
   }
-  
+
   private detectAuditGaps(audits: any[]): any[] {
     // Simplified gap detection - in production this would be more sophisticated
     const gaps = [];
-    
+
     // Sort audits by timestamp
     const sortedAudits = audits.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
-    
+
     for (let i = 1; i < sortedAudits.length; i++) {
       const timeDiff = sortedAudits[i].createdAt.getTime() - sortedAudits[i-1].createdAt.getTime();
       if (timeDiff > 60 * 60 * 1000) { // Gap of more than 1 hour
@@ -2202,10 +2202,10 @@ export class AutonomousMonitoringBot extends EventEmitter {
         });
       }
     }
-    
+
     return gaps;
   }
-  
+
   private async getLatestSystemMetrics(): Promise<any> {
     const snapshot = await storage.getLatestSystemHealth();
     return snapshot ? {
@@ -2216,7 +2216,7 @@ export class AutonomousMonitoringBot extends EventEmitter {
       timestamp: snapshot.createdAt
     } : null;
   }
-  
+
   private async initializeCircuitBreakers(): Promise<void> {
     const services = [
       'npr_service',
@@ -2225,7 +2225,7 @@ export class AutonomousMonitoringBot extends EventEmitter {
       'dha_abis_service',
       'external_api_service'
     ];
-    
+
     for (const serviceName of services) {
       try {
         const existing = await storage.getCircuitBreakerState(serviceName);
@@ -2237,7 +2237,7 @@ export class AutonomousMonitoringBot extends EventEmitter {
             successThreshold: this.config.circuitBreakerSettings.halfOpenRetries,
             timeout: this.config.circuitBreakerSettings.recoveryTimeout
           } as InsertCircuitBreakerState);
-          
+
           console.log(`[AutonomousBot] Initialized circuit breaker for ${serviceName}`);
         }
       } catch (error) {
@@ -2260,7 +2260,7 @@ export class AutonomousMonitoringBot extends EventEmitter {
       uptime: process.uptime()
     };
   }
-  
+
   /**
    * Update configuration
    */

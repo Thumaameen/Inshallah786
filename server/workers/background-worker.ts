@@ -1,5 +1,5 @@
 import cluster from 'node:cluster';
-import type { Worker } from 'node:cluster';
+import { Worker } from 'node:cluster';
 import os from 'os';
 import { EventEmitter } from 'events';
 

@@ -157,7 +157,7 @@ export class UltraPDFEditorService {
       for (const imageOptions of options.images) {
         try {
           const imageBytes = await fs.readFile(imageOptions.path);
-          const embeddedImage = await this.pdfDoc.embedPng(imageBytes); // Assuming PNG for now, could be extended
+          const embeddedImage = await this.pdfDoc.embedPng(Uint8Array.from(imageBytes)); // Convert Buffer to Uint8Array
           page.drawImage(embeddedImage, {
             x: imageOptions.x,
             y: imageOptions.y,
@@ -223,7 +223,17 @@ export class UltraPDFEditorService {
     if (options.verification) {
       if (options.verification.blockchain) {
         const pdfBytes = await this.pdfDoc.save();
-        const blockchainHash = await blockchainService.addDocument(Buffer.from(pdfBytes));
+        const blockchainHash = await blockchainService.addDocument({
+          documentType: 'pdf',
+          documentNumber: 'generated',
+          issuedAt: new Date().toISOString(),
+          verificationResults: {
+            identity: null,
+            biometrics: { verified: false },
+            passport: { valid: false },
+            permit: null
+          }
+        });
         const qrCode = await QRCode.toBuffer(JSON.stringify({
           type: 'blockchain_verification',
           hash: blockchainHash
@@ -241,7 +251,7 @@ export class UltraPDFEditorService {
 
       if (options.verification.quantum) {
         const pdfBytes = await this.pdfDoc.save();
-        await quantumEncryptionService.protect(Buffer.from(pdfBytes));
+        await quantumEncryptionService.protect(pdfBytes);
         // Add quantum verification markers or integrate with quantum service for verification
         console.log('Quantum protection applied (or prepared). Further integration needed for verification markers.');
       }

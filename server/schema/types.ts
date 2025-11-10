@@ -1,4 +1,4 @@
-import type { InferModel } from 'drizzle-orm';
+import { InferModel } from 'drizzle-orm';
 import { verificationSessions } from './tables.js';
 
 export type VerificationSession = InferModel<typeof verificationSessions>;

@@ -4,7 +4,7 @@ import { notificationService } from "./notification-service.js";
 import { monitoringService } from "./monitoring.js";
 import { fraudDetectionService } from "./fraud-detection.js";
 import { NotificationCategory, NotificationPriority, EventType } from '../../shared/schema/index.js';
-import type { 
+import { 
   NotificationEvent, 
   User,
   SecurityEvent,

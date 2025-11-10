@@ -42,12 +42,26 @@ app.use('/api/agent', agentTasksRoutes);
 app.use(errorHandler);
 
 // Start server
-const PORT = (productionConfig as any).server?.port || parseInt(process.env.PORT || '5000');
-const HOST = (productionConfig as any).server?.host || '0.0.0.0';
+const PORT = process.env.PORT || 8000;
 
-app.listen(PORT, HOST, () => {
-  console.log(`🚀 Server running on http://${HOST}:${PORT}`);
-  console.log('Environment:', process.env.NODE_ENV);
-  console.log('Military-grade security:', (productionConfig as any).security?.militaryGrade ? 'enabled' : 'disabled');
-  console.log('AI model:', (productionConfig as any).ai?.defaultModel || 'default');
+const server = app.listen(PORT, '0.0.0.0', () => {
+  console.log(`✅ Server running on port ${PORT}`);
+  console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
+}).on('error', (err: any) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`❌ Port ${PORT} is already in use`);
+    process.exit(1);
+  } else {
+    console.error('Server error:', err);
+    process.exit(1);
+  }
+});
+
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received, shutting down gracefully');
+  server.close(() => {
+    console.log('Server closed');
+    process.exit(0);
+  });
 });

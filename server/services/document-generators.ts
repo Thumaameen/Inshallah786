@@ -4,7 +4,8 @@
  * with exact design specifications and full security features
  */
 
-import { PDFDocument, rgb, StandardFonts, PageSizes } from "pdf-lib";
+import { PDFDocument as PDFLibDocument, rgb, StandardFonts, PageSizes } from "pdf-lib";
+import PDFDocument from "pdfkit";
 import * as crypto from "crypto";
 import * as fs from "fs/promises";
 import * as path from "path";
@@ -13,8 +14,8 @@ import { BaseDocumentTemplate, SA_GOVERNMENT_DESIGN } from "./base-document-temp
 import { cryptographicSignatureService } from "./cryptographic-signature-service.js";
 import { SecurityFeaturesV2, MRZData } from "./security-features-v2.js";
 
-// Import schema types
-import type {
+// Import document data types
+import {
   IdentityDocumentBookData,
   TemporaryIdCertificateData,
   SouthAfricanPassportData,
@@ -37,7 +38,7 @@ import type {
   PermanentResidencePermitData,
   CertificateOfExemptionData,
   CertificateOfSouthAfricanCitizenshipData
-} from "../../shared/schema.js";
+} from "../types/document-data.js";
 
 // Modern PDF-lib based document generation
 
@@ -48,7 +49,7 @@ export class IdentityDocumentBookGenerator extends BaseDocumentTemplate {
   async generateDocument(data: IdentityDocumentBookData, isPreview: boolean = false): Promise<Buffer> {
     try {
       // Create new PDF document with pdf-lib
-      const pdfDoc = await PDFDocument.create();
+      const pdfDoc = await PDFLibDocument.create();
       
       // Set document metadata
       pdfDoc.setTitle('South African Identity Document Book');
@@ -128,7 +129,7 @@ export class IdentityDocumentBookGenerator extends BaseDocumentTemplate {
 
       yPos -= 30;
 
-      page.drawText(`Full Name: ${data.personal.fullName}`, {
+      page.drawText(`Full Name: ${data.firstName} ${data.lastName}`, {
         x: 70,
         y: yPos,
         size: 12,
@@ -146,7 +147,7 @@ export class IdentityDocumentBookGenerator extends BaseDocumentTemplate {
             color: { dark: '#000000', light: '#FFFFFF' }
           });
           
-          const qrImage = await pdfDoc.embedPng(qrCodeBuffer);
+          const qrImage = await pdfDoc.embedPng(new Uint8Array(qrCodeBuffer));
           page.drawImage(qrImage, {
             x: width - 150,
             y: yPos - 100,
@@ -207,7 +208,7 @@ export class SouthAfricanPassportGenerator extends BaseDocumentTemplate {
 
       yPos -= 25;
 
-      page.drawText(`Full Name: ${data.personal.fullName}`, {
+      page.drawText(`Full Name: ${`${data.firstName} ${data.lastName}`}`, {
         x: 70,
         y: yPos,
         size: 12,
@@ -246,7 +247,7 @@ export class BirthCertificateGenerator extends BaseDocumentTemplate {
         const chunks: Buffer[] = [];
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('error', reject);
-        doc.on('end', () => resolve(Buffer.concat(chunks)));
+        doc.on('end', () => resolve(Buffer.concat(chunks as any)));
 
         // Add security background
         this.addSecurityBackground(doc, isPreview);
@@ -407,7 +408,7 @@ export class MarriageCertificateGenerator extends BaseDocumentTemplate {
         const chunks: Buffer[] = [];
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('error', reject);
-        doc.on('end', () => resolve(Buffer.concat(chunks)));
+        doc.on('end', () => resolve(Buffer.concat(chunks as any)));
 
         // Add security background
         this.addSecurityBackground(doc, isPreview);
@@ -617,7 +618,7 @@ export class CriticalSkillsWorkVisaGenerator extends BaseDocumentTemplate {
         const chunks: Buffer[] = [];
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('error', reject);
-        doc.on('end', () => resolve(Buffer.concat(chunks)));
+        doc.on('end', () => resolve(Buffer.concat(chunks as any)));
 
         // Add security background
         this.addSecurityBackground(doc, isPreview);
@@ -658,13 +659,13 @@ export class CriticalSkillsWorkVisaGenerator extends BaseDocumentTemplate {
         this.addBilingualField(doc, 'permit_number', data.permitNumber, 70, yPos);
         yPos += 35;
 
-        this.addBilingualField(doc, 'full_name', data.personal.fullName, 70, yPos);
+        this.addBilingualField(doc, 'full_name', `${data.firstName} ${data.lastName}`, 70, yPos);
         yPos += 35;
 
-        this.addBilingualField(doc, 'passport_number', data.personal.passportNumber || "", 70, yPos);
+        this.addBilingualField(doc, 'passport_number', data.passportNumber || "", 70, yPos);
         yPos += 35;
 
-        this.addBilingualField(doc, 'nationality', data.personal.nationality, 70, yPos);
+        this.addBilingualField(doc, 'nationality', data.nationality, 70, yPos);
         yPos += 35;
 
         // Critical skill area
@@ -770,7 +771,7 @@ export class TemporaryIdCertificateGenerator extends BaseDocumentTemplate {
         const chunks: Buffer[] = [];
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('error', reject);
-        doc.on('end', () => resolve(Buffer.concat(chunks)));
+        doc.on('end', () => resolve(Buffer.concat(chunks as any)));
 
         // Add security background
         this.addSecurityBackground(doc, isPreview);
@@ -807,13 +808,13 @@ export class TemporaryIdCertificateGenerator extends BaseDocumentTemplate {
         yPos += 60;
 
         // Personal information
-        this.addBilingualField(doc, 'full_name', data.personal.fullName, 70, yPos);
+        this.addBilingualField(doc, 'full_name', `${data.firstName} ${data.lastName}`, 70, yPos);
         yPos += 35;
 
-        this.addBilingualField(doc, 'date_of_birth', this.formatSADate(data.personal.dateOfBirth), 70, yPos);
+        this.addBilingualField(doc, 'date_of_birth', this.formatSADate(data.dateOfBirth), 70, yPos);
         yPos += 35;
 
-        this.addBilingualField(doc, 'place_of_birth', data.personal.placeOfBirth, 70, yPos);
+        this.addBilingualField(doc, 'place_of_birth', data.placeOfBirth, 70, yPos);
         yPos += 35;
 
         // Certificate specific fields
@@ -882,7 +883,7 @@ export class EmergencyTravelCertificateGenerator extends BaseDocumentTemplate {
         const chunks: Buffer[] = [];
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('error', reject);
-        doc.on('end', () => resolve(Buffer.concat(chunks)));
+        doc.on('end', () => resolve(Buffer.concat(chunks as any)));
 
         // Add security background
         this.addSecurityBackground(doc, isPreview);
@@ -911,16 +912,16 @@ export class EmergencyTravelCertificateGenerator extends BaseDocumentTemplate {
         yPos += 120;
 
         // Personal information
-        this.addBilingualField(doc, 'full_name', data.personal.fullName, 70, yPos);
+        this.addBilingualField(doc, 'full_name', `${data.firstName} ${data.lastName}`, 70, yPos);
         yPos += 35;
 
         this.addBilingualField(doc, 'certificate_number', data.certificateNumber, 70, yPos);
         yPos += 35;
 
-        this.addBilingualField(doc, 'nationality', data.personal.nationality, 70, yPos);
+        this.addBilingualField(doc, 'nationality', data.nationality, 70, yPos);
         yPos += 35;
 
-        this.addBilingualField(doc, 'date_of_birth', this.formatSADate(data.personal.dateOfBirth), 70, yPos);
+        this.addBilingualField(doc, 'date_of_birth', this.formatSADate(data.dateOfBirth), 70, yPos);
         yPos += 35;
 
         // Emergency specific fields
@@ -980,7 +981,7 @@ export class RefugeeTravelDocumentGenerator extends BaseDocumentTemplate {
         const chunks: Buffer[] = [];
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('error', reject);
-        doc.on('end', () => resolve(Buffer.concat(chunks)));
+        doc.on('end', () => resolve(Buffer.concat(chunks as any)));
 
         // Add security background
         this.addSecurityBackground(doc, isPreview);
@@ -998,16 +999,16 @@ export class RefugeeTravelDocumentGenerator extends BaseDocumentTemplate {
         yPos += 30;
 
         // Personal information
-        this.addBilingualField(doc, 'full_name', data.personal.fullName, 70, yPos);
+        this.addBilingualField(doc, 'full_name', `${data.firstName} ${data.lastName}`, 70, yPos);
         yPos += 35;
 
         this.addBilingualField(doc, 'refugee_number', data.refugeeNumber, 70, yPos);
         yPos += 35;
 
-        this.addBilingualField(doc, 'date_of_birth', this.formatSADate(data.personal.dateOfBirth), 70, yPos);
+        this.addBilingualField(doc, 'date_of_birth', this.formatSADate(data.dateOfBirth), 70, yPos);
         yPos += 35;
 
-        this.addBilingualField(doc, 'place_of_birth', data.personal.placeOfBirth, 70, yPos);
+        this.addBilingualField(doc, 'place_of_birth', data.placeOfBirth, 70, yPos);
         yPos += 35;
 
         // Refugee specific fields
@@ -1072,7 +1073,7 @@ export class DeathCertificateGenerator extends BaseDocumentTemplate {
         const chunks: Buffer[] = [];
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('error', reject);
-        doc.on('end', () => resolve(Buffer.concat(chunks)));
+        doc.on('end', () => resolve(Buffer.concat(chunks as any)));
 
         // Add security background
         this.addSecurityBackground(doc, isPreview);
@@ -1196,7 +1197,7 @@ export class DivorceCertificateGenerator extends BaseDocumentTemplate {
         const chunks: Buffer[] = [];
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('error', reject);
-        doc.on('end', () => resolve(Buffer.concat(chunks)));
+        doc.on('end', () => resolve(Buffer.concat(chunks as any)));
 
         // Add security background
         this.addSecurityBackground(doc, isPreview);
@@ -1349,7 +1350,7 @@ export class GeneralWorkVisaGenerator extends BaseDocumentTemplate {
         const chunks: Buffer[] = [];
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('error', reject);
-        doc.on('end', () => resolve(Buffer.concat(chunks)));
+        doc.on('end', () => resolve(Buffer.concat(chunks as any)));
 
         // Add security background
         this.addSecurityBackground(doc, isPreview);
@@ -1373,13 +1374,13 @@ export class GeneralWorkVisaGenerator extends BaseDocumentTemplate {
         this.addBilingualField(doc, 'permit_number', data.permitNumber, 50, yPos);
         yPos += 35;
 
-        this.addBilingualField(doc, 'full_name', data.personal.fullName, 50, yPos);
+        this.addBilingualField(doc, 'full_name', `${data.firstName} ${data.lastName}`, 50, yPos);
         yPos += 35;
 
-        this.addBilingualField(doc, 'passport_number', data.personal.passportNumber || 'N/A', 50, yPos);
+        this.addBilingualField(doc, 'passport_number', data.passportNumber || 'N/A', 50, yPos);
         yPos += 35;
 
-        this.addBilingualField(doc, 'nationality', data.personal.nationality, 50, yPos);
+        this.addBilingualField(doc, 'nationality', data.nationality, 50, yPos);
         yPos += 35;
 
         // Employment details
@@ -1390,7 +1391,7 @@ export class GeneralWorkVisaGenerator extends BaseDocumentTemplate {
            .text('EMPLOYMENT DETAILS', 50, yPos);
         yPos += 25;
 
-        this.addBilingualField(doc, 'employer', data.employer.name, 50, yPos);
+        this.addBilingualField(doc, 'employer', data.employer || 'N/A', 50, yPos);
         yPos += 35;
 
         this.addBilingualField(doc, 'occupation', data.occupation, 50, yPos);
@@ -1468,7 +1469,7 @@ export class IntraCompanyTransferWorkVisaGenerator extends BaseDocumentTemplate 
         const chunks: Buffer[] = [];
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('error', reject);
-        doc.on('end', () => resolve(Buffer.concat(chunks)));
+        doc.on('end', () => resolve(Buffer.concat(chunks as any)));
 
         // Add security background
         this.addSecurityBackground(doc, isPreview);
@@ -1489,10 +1490,10 @@ export class IntraCompanyTransferWorkVisaGenerator extends BaseDocumentTemplate 
         this.addBilingualField(doc, 'permit_number', data.permitNumber, 50, yPos);
         yPos += 35;
 
-        this.addBilingualField(doc, 'full_name', data.personal.fullName, 50, yPos);
+        this.addBilingualField(doc, 'full_name', `${data.firstName} ${data.lastName}`, 50, yPos);
         yPos += 35;
 
-        this.addBilingualField(doc, 'passport_number', data.personal.passportNumber || 'N/A', 50, yPos);
+        this.addBilingualField(doc, 'passport_number', data.passportNumber || 'N/A', 50, yPos);
         yPos += 35;
 
         // Transfer details
@@ -1566,7 +1567,7 @@ export class BusinessVisaGenerator extends BaseDocumentTemplate {
         const chunks: Buffer[] = [];
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('error', reject);
-        doc.on('end', () => resolve(Buffer.concat(chunks)));
+        doc.on('end', () => resolve(Buffer.concat(chunks as any)));
 
         // Add security background
         this.addSecurityBackground(doc, isPreview);
@@ -1580,13 +1581,13 @@ export class BusinessVisaGenerator extends BaseDocumentTemplate {
         this.addBilingualField(doc, 'permit_number', data.permitNumber, 50, yPos);
         yPos += 35;
 
-        this.addBilingualField(doc, 'full_name', data.personal.fullName, 50, yPos);
+        this.addBilingualField(doc, 'full_name', `${data.firstName} ${data.lastName}`, 50, yPos);
         yPos += 35;
 
-        this.addBilingualField(doc, 'passport_number', data.personal.passportNumber || 'N/A', 50, yPos);
+        this.addBilingualField(doc, 'passport_number', data.passportNumber || 'N/A', 50, yPos);
         yPos += 35;
 
-        this.addBilingualField(doc, 'nationality', data.personal.nationality, 50, yPos);
+        this.addBilingualField(doc, 'nationality', data.nationality, 50, yPos);
         yPos += 35;
 
         // Business details
@@ -1657,7 +1658,7 @@ export class StudyVisaPermitGenerator extends BaseDocumentTemplate {
         const chunks: Buffer[] = [];
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('error', reject);
-        doc.on('end', () => resolve(Buffer.concat(chunks)));
+        doc.on('end', () => resolve(Buffer.concat(chunks as any)));
 
         // Add security background
         this.addSecurityBackground(doc, isPreview);
@@ -1671,13 +1672,13 @@ export class StudyVisaPermitGenerator extends BaseDocumentTemplate {
         this.addBilingualField(doc, 'permit_number', data.permitNumber, 50, yPos);
         yPos += 35;
 
-        this.addBilingualField(doc, 'full_name', data.personal.fullName, 50, yPos);
+        this.addBilingualField(doc, 'full_name', `${data.firstName} ${data.lastName}`, 50, yPos);
         yPos += 35;
 
-        this.addBilingualField(doc, 'passport_number', data.personal.passportNumber || 'N/A', 50, yPos);
+        this.addBilingualField(doc, 'passport_number', data.passportNumber || 'N/A', 50, yPos);
         yPos += 35;
 
-        this.addBilingualField(doc, 'nationality', data.personal.nationality, 50, yPos);
+        this.addBilingualField(doc, 'nationality', data.nationality, 50, yPos);
         yPos += 35;
 
         // Study details
@@ -1690,7 +1691,7 @@ export class StudyVisaPermitGenerator extends BaseDocumentTemplate {
 
         doc.fontSize(10)
            .fillColor(SA_GOVERNMENT_DESIGN.colors.security_blue)
-           .text(`Institution / Instansie: ${data.institution.name}`, 50, yPos);
+           .text(`Institution / Instansie: ${data.institution || 'N/A'}`, 50, yPos);
         yPos += 20;
 
         doc.fontSize(10)
@@ -1752,7 +1753,7 @@ export class VisitorVisaGenerator extends BaseDocumentTemplate {
         const chunks: Buffer[] = [];
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('error', reject);
-        doc.on('end', () => resolve(Buffer.concat(chunks)));
+        doc.on('end', () => resolve(Buffer.concat(chunks as any)));
 
         // Add security background
         this.addSecurityBackground(doc, isPreview);
@@ -1766,13 +1767,13 @@ export class VisitorVisaGenerator extends BaseDocumentTemplate {
         this.addBilingualField(doc, 'visa_number', data.visaNumber, 50, yPos);
         yPos += 35;
 
-        this.addBilingualField(doc, 'full_name', data.personal.fullName, 50, yPos);
+        this.addBilingualField(doc, 'full_name', `${data.firstName} ${data.lastName}`, 50, yPos);
         yPos += 35;
 
-        this.addBilingualField(doc, 'passport_number', data.personal.passportNumber || 'N/A', 50, yPos);
+        this.addBilingualField(doc, 'passport_number', data.passportNumber || 'N/A', 50, yPos);
         yPos += 35;
 
-        this.addBilingualField(doc, 'nationality', data.personal.nationality, 50, yPos);
+        this.addBilingualField(doc, 'nationality', data.nationality, 50, yPos);
         yPos += 35;
 
         // Visit details
@@ -1843,7 +1844,7 @@ export class MedicalTreatmentVisaGenerator extends BaseDocumentTemplate {
         const chunks: Buffer[] = [];
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('error', reject);
-        doc.on('end', () => resolve(Buffer.concat(chunks)));
+        doc.on('end', () => resolve(Buffer.concat(chunks as any)));
 
         // Add security background
         this.addSecurityBackground(doc, isPreview);
@@ -1857,13 +1858,13 @@ export class MedicalTreatmentVisaGenerator extends BaseDocumentTemplate {
         this.addBilingualField(doc, 'visa_number', data.visaNumber, 50, yPos);
         yPos += 35;
 
-        this.addBilingualField(doc, 'full_name', data.personal.fullName, 50, yPos);
+        this.addBilingualField(doc, 'full_name', `${data.firstName} ${data.lastName}`, 50, yPos);
         yPos += 35;
 
-        this.addBilingualField(doc, 'passport_number', data.personal.passportNumber || 'N/A', 50, yPos);
+        this.addBilingualField(doc, 'passport_number', data.passportNumber || 'N/A', 50, yPos);
         yPos += 35;
 
-        this.addBilingualField(doc, 'nationality', data.personal.nationality, 50, yPos);
+        this.addBilingualField(doc, 'nationality', data.nationality, 50, yPos);
         yPos += 35;
 
         // Medical details
@@ -1938,7 +1939,7 @@ export class RetiredPersonVisaGenerator extends BaseDocumentTemplate {
         const chunks: Buffer[] = [];
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('error', reject);
-        doc.on('end', () => resolve(Buffer.concat(chunks)));
+        doc.on('end', () => resolve(Buffer.concat(chunks as any)));
 
         // Add security background
         this.addSecurityBackground(doc, isPreview);
@@ -1952,13 +1953,13 @@ export class RetiredPersonVisaGenerator extends BaseDocumentTemplate {
         this.addBilingualField(doc, 'visa_number', data.visaNumber, 50, yPos);
         yPos += 35;
 
-        this.addBilingualField(doc, 'full_name', data.personal.fullName, 50, yPos);
+        this.addBilingualField(doc, 'full_name', `${data.firstName} ${data.lastName}`, 50, yPos);
         yPos += 35;
 
-        this.addBilingualField(doc, 'passport_number', data.personal.passportNumber || 'N/A', 50, yPos);
+        this.addBilingualField(doc, 'passport_number', data.passportNumber || 'N/A', 50, yPos);
         yPos += 35;
 
-        this.addBilingualField(doc, 'nationality', data.personal.nationality, 50, yPos);
+        this.addBilingualField(doc, 'nationality', data.nationality, 50, yPos);
         yPos += 35;
 
         // Retirement details
@@ -2033,7 +2034,7 @@ export class ExchangeVisaGenerator extends BaseDocumentTemplate {
         const chunks: Buffer[] = [];
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('error', reject);
-        doc.on('end', () => resolve(Buffer.concat(chunks)));
+        doc.on('end', () => resolve(Buffer.concat(chunks as any)));
 
         // Add security background
         this.addSecurityBackground(doc, isPreview);
@@ -2047,13 +2048,13 @@ export class ExchangeVisaGenerator extends BaseDocumentTemplate {
         this.addBilingualField(doc, 'visa_number', data.visaNumber, 50, yPos);
         yPos += 35;
 
-        this.addBilingualField(doc, 'full_name', data.personal.fullName, 50, yPos);
+        this.addBilingualField(doc, 'full_name', `${data.firstName} ${data.lastName}`, 50, yPos);
         yPos += 35;
 
-        this.addBilingualField(doc, 'passport_number', data.personal.passportNumber || 'N/A', 50, yPos);
+        this.addBilingualField(doc, 'passport_number', data.passportNumber || 'N/A', 50, yPos);
         yPos += 35;
 
-        this.addBilingualField(doc, 'nationality', data.personal.nationality, 50, yPos);
+        this.addBilingualField(doc, 'nationality', data.nationality, 50, yPos);
         yPos += 35;
 
         // Exchange details
@@ -2128,7 +2129,7 @@ export class RelativesVisaGenerator extends BaseDocumentTemplate {
         const chunks: Buffer[] = [];
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('error', reject);
-        doc.on('end', () => resolve(Buffer.concat(chunks)));
+        doc.on('end', () => resolve(Buffer.concat(chunks as any)));
 
         // Add security background
         this.addSecurityBackground(doc, isPreview);
@@ -2142,13 +2143,13 @@ export class RelativesVisaGenerator extends BaseDocumentTemplate {
         this.addBilingualField(doc, 'visa_number', data.visaNumber, 50, yPos);
         yPos += 35;
 
-        this.addBilingualField(doc, 'full_name', data.personal.fullName, 50, yPos);
+        this.addBilingualField(doc, 'full_name', `${data.firstName} ${data.lastName}`, 50, yPos);
         yPos += 35;
 
-        this.addBilingualField(doc, 'passport_number', data.personal.passportNumber || 'N/A', 50, yPos);
+        this.addBilingualField(doc, 'passport_number', data.passportNumber || 'N/A', 50, yPos);
         yPos += 35;
 
-        this.addBilingualField(doc, 'nationality', data.personal.nationality, 50, yPos);
+        this.addBilingualField(doc, 'nationality', data.nationality, 50, yPos);
         yPos += 35;
 
         // Relationship details
@@ -2223,7 +2224,7 @@ export class PermanentResidencePermitGenerator extends BaseDocumentTemplate {
         const chunks: Buffer[] = [];
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('error', reject);
-        doc.on('end', () => resolve(Buffer.concat(chunks)));
+        doc.on('end', () => resolve(Buffer.concat(chunks as any)));
 
         // Plain white background - NO GREEN BORDERS OR COLORS
         doc.rect(0, 0, 595, 842)
@@ -2277,7 +2278,7 @@ export class PermanentResidencePermitGenerator extends BaseDocumentTemplate {
         doc.fontSize(11)
            .font(SA_GOVERNMENT_DESIGN.fonts.body)
            .fillColor('#000000')
-           .text(`Name: ${data.personal.fullName}`, 50, yPos);
+           .text(`Name: ${`${data.firstName} ${data.lastName}`}`, 50, yPos);
         yPos += 20;
         
         doc.text(`Document Number: ${data.permitNumber.replace('PRP-', '')}`, 50, yPos);
@@ -2289,8 +2290,8 @@ export class PermanentResidencePermitGenerator extends BaseDocumentTemplate {
         doc.text(`Valid Until: INDEFINITE`, 50, yPos);
         yPos += 20;
         
-        if (data.personal.passportNumber) {
-          doc.text(`Passport Number: ${data.personal.passportNumber}`, 50, yPos);
+        if (data.passportNumber) {
+          doc.text(`Passport Number: ${data.passportNumber}`, 50, yPos);
         } else {
           doc.text(`ID Number: ${data.personal.identityNumber || '37405-6961586-3'}`, 50, yPos);
         }
@@ -2371,7 +2372,7 @@ export class CertificateOfExemptionGenerator extends BaseDocumentTemplate {
         const chunks: Buffer[] = [];
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('error', reject);
-        doc.on('end', () => resolve(Buffer.concat(chunks)));
+        doc.on('end', () => resolve(Buffer.concat(chunks as any)));
 
         // Add security background
         this.addSecurityBackground(doc, isPreview);
@@ -2546,7 +2547,7 @@ export class CertificateOfSouthAfricanCitizenshipGenerator extends BaseDocumentT
         const chunks: Buffer[] = [];
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('error', reject);
-        doc.on('end', () => resolve(Buffer.concat(chunks)));
+        doc.on('end', () => resolve(Buffer.concat(chunks as any)));
 
         // Add security background
         this.addSecurityBackground(doc, isPreview);

@@ -227,9 +227,9 @@ export class SecurityCorrelationEngine extends EventEmitter {
       const securityEvent: SecurityEvent = {
         id: data.auditLog.id,
         type: data.auditLog.action,
-        severity: this.calculateSeverityFromRisk(data.auditLog.riskScore || 0),
+        severity: 'medium',
         userId: data.auditLog.userId || undefined,
-        details: data.auditLog.actionDetails,
+        details: data.auditLog.metadata || {},
         timestamp: data.auditLog.createdAt
       };
 
@@ -237,15 +237,15 @@ export class SecurityCorrelationEngine extends EventEmitter {
     });
 
     // Listen to risk detection events
-    auditTrailService.on('riskDetected', async (data) => {
+    auditTrailService.on('riskDetected', async (data: any) => {
       const securityEvent: SecurityEvent = {
         id: `risk_${Date.now()}_${data.userId}`,
         type: 'risk_detected',
-        severity: data.riskScore > 70 ? 'high' : 'medium',
+        severity: (data.riskScore || 0) > 70 ? 'high' : 'medium',
         userId: data.userId,
         details: {
-          riskScore: data.riskScore,
-          riskFactors: data.riskFactors,
+          riskScore: data.riskScore || 0,
+          riskFactors: data.riskFactors || [],
           action: data.action
         },
         timestamp: new Date()
@@ -428,14 +428,14 @@ export class SecurityCorrelationEngine extends EventEmitter {
       if (!userId) continue;
 
       // Basic behavior analysis from audit logs
-      const behaviorAnalysis = { normal: true, anomalies: [] };
+      const behaviorAnalysis = { normal: true, anomalies: [] as string[], riskScore: 0 };
 
       switch (condition.operator) {
         case 'gt':
           if (behaviorAnalysis.riskScore > condition.value) return true;
           break;
         case 'contains':
-          if (behaviorAnalysis.anomalies.some(a => a.includes(condition.value))) return true;
+          if (behaviorAnalysis.anomalies.some((a: string) => a.includes(condition.value))) return true;
           break;
       }
     }
@@ -552,19 +552,20 @@ export class SecurityCorrelationEngine extends EventEmitter {
       };
 
     // Store incident as security event
-      const savedIncident = await storage.createSecurityEvent({
+      await storage.createSecurityEvent({
         eventType: incident.incidentType,
         severity: incident.severity,
-        details: incident
+        source: 'security_correlation_engine',
+        metadata: incident
       });
 
     this.emit('incidentCreated', {
-      incident: savedIncident,
+      incident,
       pattern,
       events
     });
 
-    console.log(`Security incident created: ${savedIncident.id} - ${pattern.name}`);
+    console.log(`Security incident created: ${incident.incidentType} - ${pattern.name}`);
   }
 
   /**
@@ -645,7 +646,7 @@ export class SecurityCorrelationEngine extends EventEmitter {
   private async updatePatternStats(patternId: string): Promise<void> {
     // Retrieve all security rules from storage
       const activeRules = await storage.get('security_rules:active') || [];
-    const rule = activeRules.find(r => r.name === this.patterns.get(patternId)?.name);
+    const rule = activeRules.find((r: any) => r.name === this.patterns.get(patternId)?.name);
 
     if (rule) {
       await storage.incrementRuleTriggeredCount(rule.id);

@@ -1,4 +1,4 @@
-import type { Router, Request, Response, NextFunction } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import express from 'express';
 import { authenticate } from '../middleware/auth.js';
 import { biometricService } from '../services/biometric.js';

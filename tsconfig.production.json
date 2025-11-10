@@ -45,6 +45,7 @@
     "**/*.test.js",
     "**/*.spec.js",
     "server/workers",
+    "server/services/archived",
     "dist"
   ]
 }
