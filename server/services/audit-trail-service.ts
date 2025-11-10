@@ -378,20 +378,104 @@ export class AuditTrailService extends EventEmitter {
   /**
    * Log document generation start
    */
-  async logDocumentGenerationStart(
-    userId: string,
-    documentType: string,
-    requestData: any
-  ): Promise<void> {
+  async logDocumentGenerationStart(data: {
+    requestId: string;
+    documentType: string;
+    userId: string;
+    officerName: string;
+    applicantId: string;
+    timestamp: Date;
+    ipAddress?: string;
+    userAgent?: string;
+  }): Promise<void> {
     await this.logEvent({
-      userId,
+      userId: data.userId,
       action: 'DOCUMENT_GENERATION_START',
       entityType: 'document',
-      actionDetails: { // Changed from 'details' to 'actionDetails' for consistency
-        documentType,
-        requestData,
-        timestamp: new Date()
+      actionDetails: {
+        requestId: data.requestId,
+        documentType: data.documentType,
+        officerName: data.officerName,
+        applicantId: data.applicantId,
+        timestamp: data.timestamp,
+        ipAddress: data.ipAddress,
+        userAgent: data.userAgent
       }
+    });
+  }
+
+  /**
+   * Log document generation success
+   */
+  async logDocumentGenerationSuccess(data: {
+    requestId: string;
+    documentType: string;
+    verificationCode: string;
+    documentSize: number;
+    processingTime: number;
+    cryptographicallySigned: boolean;
+  }): Promise<void> {
+    await this.logEvent({
+      action: 'DOCUMENT_GENERATION_SUCCESS',
+      entityType: 'document',
+      actionDetails: data
+    });
+  }
+
+  /**
+   * Log document generation failure
+   */
+  async logDocumentGenerationFailure(data: {
+    requestId: string;
+    documentType: string;
+    error: string;
+    processingTime: number;
+  }): Promise<void> {
+    await this.logEvent({
+      action: 'DOCUMENT_GENERATION_FAILURE',
+      entityType: 'document',
+      actionDetails: data
+    });
+  }
+
+  /**
+   * Log document verification
+   */
+  async logDocumentVerification(data: {
+    requestId: string;
+    verificationCode: string;
+    verificationMethod: string;
+    result: boolean;
+    ipAddress?: string;
+    userAgent?: string;
+    timestamp: Date;
+  }): Promise<void> {
+    await this.logEvent({
+      action: 'DOCUMENT_VERIFICATION',
+      entityType: 'document',
+      actionDetails: data
+    });
+  }
+
+  /**
+   * Log security event
+   */
+  async logSecurityEvent(data: {
+    eventType: string;
+    severity: string;
+    userId?: string;
+    ipAddress?: string;
+    userAgent?: string;
+    timestamp: Date;
+    details: any;
+  }): Promise<void> {
+    await storage.createSecurityEvent({
+      eventType: data.eventType,
+      severity: data.severity,
+      source: 'audit_trail_service',
+      ipAddress: data.ipAddress,
+      userAgent: data.userAgent,
+      metadata: data.details
     });
   }
 
