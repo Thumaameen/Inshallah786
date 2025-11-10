@@ -414,8 +414,10 @@ export class AuditTrailService extends EventEmitter {
     documentSize: number;
     processingTime: number;
     cryptographicallySigned: boolean;
+    userId?: string;
   }): Promise<void> {
     await this.logEvent({
+      userId: data.userId,
       action: 'DOCUMENT_GENERATION_SUCCESS',
       entityType: 'document',
       actionDetails: data
@@ -430,8 +432,10 @@ export class AuditTrailService extends EventEmitter {
     documentType: string;
     error: string;
     processingTime: number;
+    userId?: string;
   }): Promise<void> {
     await this.logEvent({
+      userId: data.userId,
       action: 'DOCUMENT_GENERATION_FAILURE',
       entityType: 'document',
       actionDetails: data
@@ -449,8 +453,10 @@ export class AuditTrailService extends EventEmitter {
     ipAddress?: string;
     userAgent?: string;
     timestamp: Date;
+    userId?: string;
   }): Promise<void> {
     await this.logEvent({
+      userId: data.userId,
       action: 'DOCUMENT_VERIFICATION',
       entityType: 'document',
       actionDetails: data

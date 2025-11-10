@@ -150,7 +150,7 @@ export class DocumentProcessorService {
       // Test OCR pipeline with sample data
       await this.checkOCRPipelineHealth(healthCheck.dependencies.ocrPipeline);
 
-      healthCheck.success = healthCheck.dependencies.tesseract.available && 
+      healthCheck.success = healthCheck.dependencies.tesseract.available &&
                            healthCheck.dependencies.sharp.available &&
                            healthCheck.dependencies.ocrPipeline.working;
 
@@ -195,7 +195,7 @@ export class DocumentProcessorService {
       const healthCheckPromise = (async () => {
         // Create a small test image buffer and process it
         const testBuffer = Buffer.from([
-          0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, 
+          0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D,
           0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01,
           0x08, 0x06, 0x00, 0x00, 0x00, 0x1F, 0x15, 0xC4, 0x89, 0x00, 0x00, 0x00,
           0x0A, 0x49, 0x44, 0x41, 0x54, 0x78, 0x9C, 0x63, 0x00, 0x01, 0x00, 0x00,
@@ -303,35 +303,35 @@ export class DocumentProcessorService {
           ocrResult = aiEnhancedOCRResult;
         } else {
           // Use enhanced SA OCR for SA permit documents
-          const isSAPermitDocument = classifiedDocumentType && 
+          const isSAPermitDocument = classifiedDocumentType &&
             ['work_permit', 'residence_permit', 'temporary_permit', 'permanent_visa'].includes(classifiedDocumentType);
 
           if (isSAPermitDocument && options.enableSAValidation) {
-          const saOCROptions: SAOCROptions = {
-            documentType: options.documentType as any,
-            enablePreprocessing: true,
-            enableMultiLanguage: true,
-            extractFields: options.enableFieldExtraction || false,
-            validateExtractedData: true,
-            enhanceImageQuality: true
-          };
-
-          saOCRResult = await enhancedSAOCR.processDocument(file.path, file.mimetype, saOCROptions);
-
-          if (saOCRResult.success) {
-            ocrResult = {
-              success: true,
-              text: saOCRResult.fullText,
-              confidence: saOCRResult.confidence
+            const saOCROptions: SAOCROptions = {
+              documentType: options.documentType as any,
+              enablePreprocessing: true,
+              enableMultiLanguage: true,
+              extractFields: options.enableFieldExtraction || false,
+              validateExtractedData: true,
+              enhanceImageQuality: true
             };
+
+            saOCRResult = await enhancedSAOCR.processDocument(file.path, file.mimetype, saOCROptions);
+
+            if (saOCRResult.success) {
+              ocrResult = {
+                success: true,
+                text: saOCRResult.fullText,
+                confidence: saOCRResult.confidence
+              };
+            } else {
+              // Fallback to basic OCR if SA OCR fails
+              ocrResult = await this.performOCR(file.path, file.mimetype);
+            }
           } else {
-            // Fallback to basic OCR if SA OCR fails
+            // Use basic OCR for general documents
             ocrResult = await this.performOCR(file.path, file.mimetype);
           }
-        } else {
-          // Use basic OCR for general documents
-          ocrResult = await this.performOCR(file.path, file.mimetype);
-        }
         }
 
         if (ocrResult.success) {
@@ -436,18 +436,18 @@ export class DocumentProcessorService {
 
         // Create enhanced SA validation result
         result.saValidationResult = {
-          isValidSADocument: permitValidationResult ? 
-            permitValidationResult.isValid : 
+          isValidSADocument: permitValidationResult ?
+            permitValidationResult.isValid :
             (saOCRResult.validationResults.formatValid && saOCRResult.validationResults.requiredFieldsPresent),
           documentCategory: saOCRResult.documentType,
           permitNumber,
           issueDate: saOCRResult.extractedFields.find(f => f.name === 'issueDate')?.value,
           expiryDate: saOCRResult.extractedFields.find(f => f.name === 'validUntil')?.value,
           issuingOffice: saOCRResult.extractedFields.find(f => f.name === 'dhaOffice')?.value,
-          validationErrors: permitValidationResult ? 
+          validationErrors: permitValidationResult ?
             permitValidationResult.issuesFound.map(issue => issue.description) :
             saOCRResult.validationResults.issuesFound,
-          complianceScore: permitValidationResult ? 
+          complianceScore: permitValidationResult ?
             permitValidationResult.validationScore :
             Math.round(
               (saOCRResult.validationResults.formatValid ? 25 : 0) +
