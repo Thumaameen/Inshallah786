@@ -179,20 +179,26 @@ class ZeroDowntimeManager extends EventEmitter {
     });
   }
 
-  private async logAuditEvent(event: Partial<InsertAuditLog>): Promise<void> {
+  private async logAuditEvent(event: InsertAuditLog): Promise<void> {
     try {
       await auditTrailService.logEvent({
-        ...event,
-        action: event.action || 'unknown',
-        actor: event.actor || 'system',
-        result: event.result || 'info',
-        actionDetails: {
-          resource: event.resourceId
-        }
+        action: event.action,
+        actor: event.actor,
+        result: event.result,
+        resource: event.resource,
+        metadata: event.metadata
       });
     } catch (error) {
       console.error('Failed to log audit event:', error);
     }
+  }
+  
+  public async start(): Promise<void> {
+    await this.initialize();
+  }
+  
+  public async stop(): Promise<void> {
+    await this.shutdown();
   }
 
   private async logSystemMetric(metric: Partial<InsertSystemMetric>): Promise<void> {

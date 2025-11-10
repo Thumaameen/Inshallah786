@@ -55,9 +55,10 @@ class CoreSelfHealingService extends EventEmitter {
       
       // Log initial system state
       await this.logSystemMetric({
-        metricType: 'self_healing_startup',
-        value: 1,
-        unit: 'count'
+        source: 'core_self_healing',
+        metricName: 'self_healing_startup',
+        metricValue: 1,
+        metricType: 'count'
       });
 
       console.log('✅ Core Self-Healing Service started successfully');
@@ -81,9 +82,10 @@ class CoreSelfHealingService extends EventEmitter {
       }
 
       await this.logSystemMetric({
-        metricType: 'self_healing_shutdown',
-        value: 1,
-        unit: 'count'
+        source: 'core_self_healing',
+        metricName: 'self_healing_shutdown',
+        metricValue: 1,
+        metricType: 'count'
       });
 
       console.log('✅ Core Self-Healing Service stopped');
@@ -144,9 +146,10 @@ class CoreSelfHealingService extends EventEmitter {
       
       // Log the health check
       await this.logSystemMetric({
-        metricType: 'health_check',
-        value: healthData.status === 'healthy' ? 1 : 0,
-        unit: 'count'
+        source: 'core_self_healing',
+        metricName: 'health_check',
+        metricValue: healthData.status === 'healthy' ? 1 : 0,
+        metricType: 'status'
       });
 
       return healthData;
@@ -166,16 +169,20 @@ class CoreSelfHealingService extends EventEmitter {
     }
 
     await this.logSelfHealingAction({
-      type: 'reactive',
-      category: 'performance',
-      severity: 'medium',
-      description: 'Memory optimization triggered due to high usage',
-      target: 'core_self_healing',
-      action: 'Triggered garbage collection',
-      trigger: { memory_usage_percent: usagePercent, threshold: '80%' },
-      status: 'completed',
-      result: { success: true },
-      aiAssisted: false
+      actionType: 'memory_optimization',
+      trigger: `High memory usage: ${usagePercent.toFixed(2)}% (threshold: 80%)`,
+      metadata: {
+        type: 'reactive',
+        category: 'performance',
+        severity: 'medium',
+        description: 'Memory optimization triggered due to high usage',
+        target: 'core_self_healing',
+        memory_usage_percent: usagePercent,
+        threshold: '80%',
+        aiAssisted: false,
+        status: 'completed',
+        result: 'Triggered garbage collection - success'
+      }
     });
 
     this.emit('self_healing_action', { type: 'memory_optimization', success: true });
@@ -198,29 +205,25 @@ class CoreSelfHealingService extends EventEmitter {
       const recoveryLatency = Date.now() - startTime;
 
       await this.logSelfHealingAction({
-        type: 'reactive',
-        category: 'availability',
-        severity: 'high',
-        description: 'Database connection recovery with exponential backoff',
-        target: 'database_connection',
-        action: correctionResult.action,
-        trigger: { condition: 'Database connection lost', detected_at: new Date().toISOString() },
+        actionType: 'database_recovery',
+        trigger: 'Database connection lost',
         status: correctionResult.success ? 'completed' : 'failed',
-        result: {
-          success: correctionResult.success,
+        result: `${correctionResult.action} - ${correctionResult.success ? 'success' : 'failed'}`,
+        metadata: {
+          type: 'reactive',
+          category: 'availability',
+          severity: 'high',
+          description: 'Database connection recovery with exponential backoff',
+          target: 'database_connection',
           recovery_time_ms: correctionResult.correctionTimeMs,
           total_latency_ms: recoveryLatency,
           fallback_mode: !correctionResult.success,
-          details: correctionResult.details
+          connection_restored: correctionResult.success,
+          details: correctionResult.details,
+          aiAssisted: false,
+          confidence: 85
         },
-        metrics: {
-          recovery_time_ms: correctionResult.correctionTimeMs,
-          total_latency_ms: recoveryLatency,
-          connection_restored: correctionResult.success
-        },
-        aiAssisted: false,
-        confidence: 85,
-        endTime: new Date()
+        completedAt: new Date()
       });
 
       this.emit('database_recovery_completed', {
@@ -240,22 +243,22 @@ class CoreSelfHealingService extends EventEmitter {
       console.error(`❌ Database recovery failed in ${recoveryLatency}ms:`, error);
 
       await this.logSelfHealingAction({
-        type: 'reactive',
-        category: 'availability',
-        severity: 'critical',
-        description: 'Database connection recovery failed',
-        target: 'database_connection',
-        action: 'DATABASE_RECOVERY_FAILED',
-        trigger: { condition: 'Database connection lost', error: error instanceof Error ? error.message : String(error) },
+        actionType: 'database_recovery',
+        trigger: `Database connection lost - ${error instanceof Error ? error.message : String(error)}`,
         status: 'failed',
-        result: {
-          success: false,
+        result: 'DATABASE_RECOVERY_FAILED',
+        metadata: {
+          type: 'reactive',
+          category: 'availability',
+          severity: 'critical',
+          description: 'Database connection recovery failed',
+          target: 'database_connection',
           recovery_time_ms: recoveryLatency,
-          error: error instanceof Error ? error.message : String(error)
+          error: error instanceof Error ? error.message : String(error),
+          aiAssisted: false,
+          confidence: 0
         },
-        aiAssisted: false,
-        confidence: 0,
-        endTime: new Date()
+        completedAt: new Date()
       });
 
       this.emit('database_recovery_failed', { error, recoveryLatency });
@@ -267,10 +270,12 @@ class CoreSelfHealingService extends EventEmitter {
 
     await this.logAuditEvent({
       action: 'SYSTEM_ALERT',
-      entityType: 'self_healing_system',
-      actionDetails: { alert_message: alertData.message || 'Unknown alert' },
-      outcome: 'alert_logged',
-      details: alertData
+      actor: 'self_healing_system',
+      result: 'alert_logged',
+      metadata: {
+        alert_message: alertData.message || 'Unknown alert',
+        alertData: alertData
+      }
     });
   }
 
@@ -293,36 +298,28 @@ class CoreSelfHealingService extends EventEmitter {
 
       // Log comprehensive error correction results
       await this.logSelfHealingAction({
-        type: 'reactive',
-        category: 'performance',
-        severity: errorData.severity || 'medium',
-        description: `Enhanced error correction: ${errorData.type || 'unknown'}`,
-        target: errorData.component || 'unknown',
-        action: correctionResult.action,
-        trigger: { 
-          error: errorData.message || 'Unknown error', 
-          type: errorData.type,
-          component: errorData.component,
-          detection_time: startTime
-        },
+        actionType: 'error_correction',
+        trigger: `${errorData.type || 'unknown'} error: ${errorData.message || 'Unknown error'}`,
         status: correctionResult.success ? 'completed' : 'failed',
-        result: {
-          success: correctionResult.success,
+        result: `${correctionResult.action} - ${correctionResult.success ? 'success' : 'failed'}`,
+        metadata: {
+          type: 'reactive',
+          category: 'performance',
+          severity: errorData.severity || 'medium',
+          description: `Enhanced error correction: ${errorData.type || 'unknown'}`,
+          target: errorData.component || 'unknown',
+          error_type: errorData.type,
+          component: errorData.component,
           correction_time_ms: correctionResult.correctionTimeMs,
           total_latency_ms: totalLatency,
           needs_restart: correctionResult.needsRestart || false,
           rollback_required: correctionResult.rollbackRequired || false,
-          details: correctionResult.details
-        },
-        metrics: {
-          correction_time_ms: correctionResult.correctionTimeMs,
-          total_latency_ms: totalLatency,
           recovery_effective: correctionResult.success,
-          restart_required: correctionResult.needsRestart || false
+          details: correctionResult.details,
+          aiAssisted: false,
+          confidence: 85
         },
-        aiAssisted: false,
-        confidence: 85,
-        endTime: new Date()
+        completedAt: new Date()
       });
 
       // Emit enhanced error correction event
@@ -347,26 +344,24 @@ class CoreSelfHealingService extends EventEmitter {
 
       // Log failed error correction
       await this.logSelfHealingAction({
-        type: 'reactive',
-        category: 'performance',
-        severity: 'high',
-        description: `Failed error correction: ${errorData.type || 'unknown'}`,
-        target: errorData.component || 'unknown',
-        action: 'ERROR_CORRECTION_FAILED',
-        trigger: { 
-          error: errorData.message || 'Unknown error', 
-          type: errorData.type,
-          correction_error: error instanceof Error ? error.message : String(error)
-        },
+        actionType: 'error_correction',
+        trigger: `${errorData.type || 'unknown'} error correction failed: ${error instanceof Error ? error.message : String(error)}`,
         status: 'failed',
-        result: {
-          success: false,
+        result: 'ERROR_CORRECTION_FAILED',
+        metadata: {
+          type: 'reactive',
+          category: 'performance',
+          severity: 'high',
+          description: `Failed error correction: ${errorData.type || 'unknown'}`,
+          target: errorData.component || 'unknown',
+          error_type: errorData.type,
+          error_message: errorData.message || 'Unknown error',
           total_latency_ms: totalLatency,
-          error: error instanceof Error ? error.message : String(error)
+          correction_error: error instanceof Error ? error.message : String(error),
+          aiAssisted: false,
+          confidence: 0
         },
-        aiAssisted: false,
-        confidence: 0,
-        endTime: new Date()
+        completedAt: new Date()
       });
 
       this.emit('error_correction_failed', { errorData, error, totalLatency });
@@ -394,44 +389,39 @@ class CoreSelfHealingService extends EventEmitter {
 
       // Log the actual security response with performance metrics
       await this.logSelfHealingAction({
-        type: 'reactive',
-        category: 'security',
-        severity: threatData.severity || 'medium',
-        description: `Security threat mitigation: ${threatData.type}`,
-        target: 'security_system',
-        action: securityResponse.action,
-        trigger: { 
+        actionType: 'security_mitigation',
+        trigger: `${threatData.type || 'unknown_threat'} from ${threatData.sourceIp || 'unknown'}`,
+        status: securityResponse.success ? 'completed' : 'failed',
+        result: `${securityResponse.action} - ${securityResponse.success ? 'success' : 'failed'}`,
+        metadata: {
+          type: 'reactive',
+          category: 'security',
+          severity: threatData.severity || 'medium',
+          description: `Security threat mitigation: ${threatData.type}`,
+          target: 'security_system',
           threat_type: threatData.type,
           source_ip: threatData.sourceIp,
-          detection_time: startTime
-        },
-        status: securityResponse.success ? 'completed' : 'failed',
-        result: {
-          success: securityResponse.success,
           response_time_ms: securityResponse.responseTimeMs,
           total_latency_ms: responseLatency,
           ip_blocked: securityResponse.blockingActive || false,
           ip_quarantined: securityResponse.quarantineActive || false,
-          details: securityResponse.details
+          latency_target_met: responseLatency < 100,
+          mitigation_effective: securityResponse.success,
+          details: securityResponse.details,
+          aiAssisted: false,
+          confidence: threatData.confidence || 85
         },
-        metrics: {
-          response_time_ms: securityResponse.responseTimeMs,
-          total_latency_ms: responseLatency,
-          latency_target_met: responseLatency < 100, // <100ms requirement
-          mitigation_effective: securityResponse.success
-        },
-        aiAssisted: false,
-        confidence: threatData.confidence || 85,
-        endTime: new Date()
+        completedAt: new Date()
       });
 
       // Log security event
       await this.logSecurityEvent({
         eventType: 'threat_mitigated',
         severity: threatData.severity || 'medium',
-        details: {
+        source: 'security_system',
+        metadata: {
           threat_type: threatData.type || 'unknown',
-          description: threatData.description || 'Security threat detected and mitigated',
+          threat_description: threatData.description || 'Security threat detected and mitigated',
           response_time_ms: securityResponse.responseTimeMs,
           latency_ms: responseLatency,
           action_taken: securityResponse.action,
@@ -457,26 +447,24 @@ class CoreSelfHealingService extends EventEmitter {
 
       // Log failed security response
       await this.logSelfHealingAction({
-        type: 'reactive',
-        category: 'security',
-        severity: 'high',
-        description: `Failed security threat mitigation: ${threatData.type}`,
-        target: 'security_system',
-        action: 'SECURITY_MITIGATION_FAILED',
-        trigger: { 
+        actionType: 'security_mitigation',
+        trigger: `${threatData.type} from ${threatData.sourceIp} - mitigation failed: ${error instanceof Error ? error.message : String(error)}`,
+        status: 'failed',
+        result: 'SECURITY_MITIGATION_FAILED',
+        metadata: {
+          type: 'reactive',
+          category: 'security',
+          severity: 'high',
+          description: `Failed security threat mitigation: ${threatData.type}`,
+          target: 'security_system',
           threat_type: threatData.type,
           source_ip: threatData.sourceIp,
-          error: error instanceof Error ? error.message : String(error)
-        },
-        status: 'failed',
-        result: {
-          success: false,
           response_time_ms: responseLatency,
-          error: error instanceof Error ? error.message : String(error)
+          error: error instanceof Error ? error.message : String(error),
+          aiAssisted: false,
+          confidence: 0
         },
-        aiAssisted: false,
-        confidence: 0,
-        endTime: new Date()
+        completedAt: new Date()
       });
 
       this.emit('security_response_failed', { threatData, error, responseLatency });
@@ -532,7 +520,13 @@ class CoreSelfHealingService extends EventEmitter {
   private async logAuditEvent(event: InsertAuditLog) {
     try {
       if (storage.createAuditLog) {
-        await storage.createAuditLog(event);
+        const fullEvent: InsertAuditLog = {
+          action: event.action,
+          actor: event.actor,
+          result: event.result,
+          metadata: event.metadata
+        };
+        await storage.createAuditLog(fullEvent);
       } else {
         console.log('📝 AUDIT:', event);
       }
@@ -544,7 +538,15 @@ class CoreSelfHealingService extends EventEmitter {
   private async logSelfHealingAction(action: InsertSelfHealingAction) {
     try {
       if (storage.createSelfHealingAction) {
-        await storage.createSelfHealingAction(action);
+        const fullAction: InsertSelfHealingAction = {
+          actionType: action.actionType,
+          trigger: action.trigger,
+          status: action.status,
+          result: action.result,
+          metadata: action.metadata,
+          completedAt: action.completedAt
+        };
+        await storage.createSelfHealingAction(fullAction);
       } else {
         console.log('🔧 SELF-HEALING:', action);
       }
