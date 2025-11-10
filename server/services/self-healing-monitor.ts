@@ -263,7 +263,9 @@ export class SelfHealingMonitor extends EventEmitter {
 
       await this.logAuditEvent({
         action: 'SELF_HEALING_STARTED',
-        details: {
+        actor: 'system',
+        result: 'success',
+        metadata: {
           config: this.config,
           environment: this.config.deploymentEnvironment,
           zeroDefectMode: this.config.zeroDefectMode
@@ -298,7 +300,9 @@ export class SelfHealingMonitor extends EventEmitter {
 
     await this.logAuditEvent({
       action: 'SELF_HEALING_STOPPED',
-      details: { stats: this.stats }
+      actor: 'system',
+      result: 'success',
+      metadata: { stats: this.stats }
     });
 
     console.log('[SelfHealing] Self-healing monitor stopped');
@@ -378,9 +382,10 @@ export class SelfHealingMonitor extends EventEmitter {
 
       // Log health check performance
       await this.logSystemMetric({
-        metricType: 'health_check_duration',
-        value: Math.round(duration),
-        unit: 'milliseconds'
+        source: 'self_healing_monitor',
+        metricName: 'health_check_duration',
+        metricValue: Math.round(duration),
+        metricType: 'milliseconds'
       });
 
       return healthProfile;
@@ -423,7 +428,9 @@ export class SelfHealingMonitor extends EventEmitter {
       // Log action initiation
       await this.logAuditEvent({
         action: 'SELF_HEALING_ACTION_INITIATED',
-        details: healingAction
+        actor: 'system',
+        result: 'initiated',
+        metadata: healingAction
       });
 
       healingAction.status = 'executing';
@@ -443,10 +450,12 @@ export class SelfHealingMonitor extends EventEmitter {
 
       await this.logAuditEvent({
         action: 'SELF_HEALING_ACTION_COMPLETED',
-        details: {
+        actor: 'system',
+        result: 'success',
+        metadata: {
           id: healingAction.id,
           duration: healingAction.endTime.getTime() - healingAction.startTime.getTime(),
-          result
+          actionResult: result
         }
       });
 
@@ -468,7 +477,9 @@ export class SelfHealingMonitor extends EventEmitter {
 
       await this.logAuditEvent({
         action: 'SELF_HEALING_ACTION_FAILED',
-        details: {
+        actor: 'system',
+        result: 'failed',
+        metadata: {
           id: healingAction.id,
           error: error.message,
           stack: error.stack
@@ -673,17 +684,14 @@ export class SelfHealingMonitor extends EventEmitter {
   }
 
   // Utility methods
-  private async logAuditEvent(event: Partial<InsertAuditLog>): Promise<void> {
+  private async logAuditEvent(event: InsertAuditLog): Promise<void> {
     try {
-      await auditTrailService.logUserAction(
-        event.action || 'SELF_HEALING_EVENT',
-        'success',
-        {
-          userId: 'system_self_healing',
-          entityType: 'system',
-          actionDetails: event.actionDetails || {}
-        }
-      );
+      await auditTrailService.logEvent({
+        action: event.action,
+        actor: event.actor,
+        result: event.result,
+        metadata: event.metadata
+      });
     } catch (error) {
       console.error('[SelfHealing] Failed to log audit event:', error);
     }

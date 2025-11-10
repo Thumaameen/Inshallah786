@@ -45,7 +45,7 @@ import {
 } from "./document-generators.js";
 
 // Import schema types
-import type {
+import {
   DocumentGenerationRequest,
   SmartIdCardData,
   IdentityDocumentBookData,

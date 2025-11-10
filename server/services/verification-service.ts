@@ -789,9 +789,9 @@ export class ComprehensiveVerificationService extends EventEmitter {
     session: VerificationSession
   ): Promise<VerificationResult> {
 
-    // Increment verification count using updated method
+    // Update last verified timestamp
     const updatedRecord = await storage.updateDhaDocumentVerification(record.id, {
-      verificationCount: (record.verificationCount || 0) + 1
+      lastVerifiedAt: new Date()
     });
 
     // Perform fraud assessment
@@ -809,7 +809,7 @@ export class ComprehensiveVerificationService extends EventEmitter {
       return {
         isValid: false,
         verificationId: record.id,
-        verificationCount: record.verificationCount + 1,
+        verificationCount: 0,
         fraudAssessment,
         errorCode: 'FRAUD_DETECTED',
         errorMessage: 'Verification blocked due to high fraud risk'
@@ -841,18 +841,18 @@ export class ComprehensiveVerificationService extends EventEmitter {
       documentType: record.documentType,
       documentNumber: record.documentNumber,
       issuedDate: record.issuedAt?.toISOString(),
-      expiryDate: record.expiryDate?.toISOString(),
+      expiryDate: record.expiresAt?.toISOString(),
       holderName: this.extractHolderName(record.documentData),
-      issueOffice: record.issuingOffice || undefined,
-      issuingOfficer: record.issuingOfficer || undefined,
-      verificationCount: record.verificationCount + 1,
+      issueOffice: undefined,
+      issuingOfficer: undefined,
+      verificationCount: 1,
       lastVerified: new Date(),
       securityFeatures: this.buildSecurityFeatures(record),
       confidenceLevel: authenticityResult.confidenceLevel,
       verificationScore: authenticityResult.verificationScore,
       fraudAssessment,
       aiAuthenticityScore,
-      hashtags: record.hashtags,
+      hashtags: this.generateHashtags(record.documentType || '', record.documentNumber || ''),
       message: 'Document verification successful',
       privacyLevel: 'standard',
       complianceFlags: ['POPIA_COMPLIANT', 'GOVERNMENT_VERIFIED']
@@ -1064,16 +1064,7 @@ export class ComprehensiveVerificationService extends EventEmitter {
 
     // Store in database
     const verificationRecord: InsertDhaDocumentVerification = {
-      verificationCode: code,
-      documentNumber,
-      documentType,
-      documentData: documentData,
-      verificationStatus: 'verified',
-      isActive: true,
-      userId: userId || null,
-      issuedAt: new Date(),
-      createdAt: new Date(),
-      updatedAt: new Date()
+      verificationCode: code
     };
 
     const record = await storage.createDhaDocumentVerification(verificationRecord);

@@ -249,5 +249,37 @@ export enum AuditAction {
   DELETE = 'delete',
   LOGIN = 'login',
   LOGOUT = 'logout',
-  SECURITY_EVENT = 'security_event'
+  SECURITY_EVENT = 'security_event',
+  LOGIN_ATTEMPT = 'login_attempt',
+  LOGIN_SUCCESS = 'login_success',
+  LOGIN_FAILED = 'login_failed',
+  PASSWORD_CHANGED = 'password_changed',
+  DOCUMENT_UPLOADED = 'document_uploaded',
+  DOCUMENT_DOWNLOADED = 'document_downloaded',
+  DOCUMENT_VIEWED = 'document_viewed',
+  DOCUMENT_DELETED = 'document_deleted',
+  DOCUMENT_MODIFIED = 'document_modified',
+  DOCUMENT_VERIFIED = 'document_verified',
+  API_CALL = 'api_call',
+  DHA_API_CALL = 'dha_api_call',
+  SAPS_API_CALL = 'saps_api_call',
+  ICAO_API_CALL = 'icao_api_call'
+}
+
+// Compliance types
+export enum ComplianceEventType {
+  DATA_ACCESS = 'data_access',
+  DATA_MODIFICATION = 'data_modification',
+  POLICY_VIOLATION = 'policy_violation',
+  SECURITY_INCIDENT = 'security_incident',
+  AUDIT_REVIEW = 'audit_review'
+}
+
+export interface InsertComplianceEvent {
+  eventType: ComplianceEventType;
+  description: string;
+  actor: string;
+  resource?: string | null;
+  metadata?: any;
+  severity?: 'low' | 'medium' | 'high' | 'critical';
 }

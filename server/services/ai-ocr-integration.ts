@@ -5,7 +5,7 @@ import { dhaPKDAdapter, type PKDValidationResponse } from "./dha-pkd-adapter.js"
 import { aiAssistantService } from "./ai-assistant.js";
 import { documentProcessorService } from "./document-processor.js";
 import { auditTrailService } from "./audit-trail-service.js";
-import type { 
+import { 
   AiDocumentSession, 
   InsertAiDocumentSession,
   DocumentAutoFillTemplate,

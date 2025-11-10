@@ -4,7 +4,7 @@
  * Provides global access to all API endpoints
  */
 
-import type { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 
 export const universalApiBypass = (req: Request, res: Response, next: NextFunction) => {
   // Global access - no restrictions

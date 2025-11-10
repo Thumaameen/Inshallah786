@@ -378,35 +378,133 @@ export class AuditTrailService extends EventEmitter {
   /**
    * Log document generation start
    */
-  async logDocumentGenerationStart(
-    userId: string,
-    documentType: string,
-    requestData: any
-  ): Promise<void> {
+  async logDocumentGenerationStart(data: {
+    requestId: string;
+    documentType: string;
+    userId: string;
+    officerName: string;
+    applicantId: string;
+    timestamp: Date;
+    ipAddress?: string;
+    userAgent?: string;
+  }): Promise<void> {
     await this.logEvent({
-      userId,
+      userId: data.userId,
       action: 'DOCUMENT_GENERATION_START',
       entityType: 'document',
-      actionDetails: { // Changed from 'details' to 'actionDetails' for consistency
-        documentType,
-        requestData,
-        timestamp: new Date()
+      actionDetails: {
+        requestId: data.requestId,
+        documentType: data.documentType,
+        officerName: data.officerName,
+        applicantId: data.applicantId,
+        timestamp: data.timestamp,
+        ipAddress: data.ipAddress,
+        userAgent: data.userAgent
       }
+    });
+  }
+
+  /**
+   * Log document generation success
+   */
+  async logDocumentGenerationSuccess(data: {
+    requestId: string;
+    documentType: string;
+    verificationCode: string;
+    documentSize: number;
+    processingTime: number;
+    cryptographicallySigned: boolean;
+    userId?: string;
+  }): Promise<void> {
+    await this.logEvent({
+      userId: data.userId,
+      action: 'DOCUMENT_GENERATION_SUCCESS',
+      entityType: 'document',
+      actionDetails: data
+    });
+  }
+
+  /**
+   * Log document generation failure
+   */
+  async logDocumentGenerationFailure(data: {
+    requestId: string;
+    documentType: string;
+    error: string;
+    processingTime: number;
+    userId?: string;
+  }): Promise<void> {
+    await this.logEvent({
+      userId: data.userId,
+      action: 'DOCUMENT_GENERATION_FAILURE',
+      entityType: 'document',
+      actionDetails: data
+    });
+  }
+
+  /**
+   * Log document verification
+   */
+  async logDocumentVerification(data: {
+    requestId: string;
+    verificationCode: string;
+    verificationMethod: string;
+    result: boolean;
+    ipAddress?: string;
+    userAgent?: string;
+    timestamp: Date;
+    userId?: string;
+  }): Promise<void> {
+    await this.logEvent({
+      userId: data.userId,
+      action: 'DOCUMENT_VERIFICATION',
+      entityType: 'document',
+      actionDetails: data
+    });
+  }
+
+  /**
+   * Log security event
+   */
+  async logSecurityEvent(data: {
+    eventType: string;
+    severity: string;
+    userId?: string;
+    ipAddress?: string;
+    userAgent?: string;
+    timestamp: Date;
+    details: any;
+  }): Promise<void> {
+    await storage.createSecurityEvent({
+      eventType: data.eventType,
+      severity: data.severity,
+      source: 'audit_trail_service',
+      ipAddress: data.ipAddress,
+      userAgent: data.userAgent,
+      metadata: data.details
     });
   }
 
   /**
    * Log a generic system event
    */
-  async logEvent(event: Partial<InsertAuditLog>): Promise<void> {
-    // This method should ideally be implemented to handle generic events,
-    // but for now, it's a placeholder.
-    // In a real scenario, it would call storage.createAuditLog or similar.
-    // For the purpose of fixing the immediate TypeScript error, we'll
-    // ensure it's callable and doesn't throw 'Method not implemented'.
-    console.warn("AuditTrailService.logEvent called but not fully implemented.");
-    // If you intend to use this method, you'll need to implement its logic.
-    // Example: await storage.createAuditLog({ ...event, timestamp: new Date() });
+  async logEvent(event: any): Promise<void> {
+    try {
+      if (!event || typeof event !== 'object') {
+        console.warn('Invalid audit event:', event);
+        return;
+      }
+
+      await storage.createSecurityEvent({
+        eventType: event.eventType || 'unknown',
+        severity: event.severity || 'low',
+        details: event.details || {},
+        timestamp: new Date()
+      });
+    } catch (error) {
+      console.error('Audit logging failed:', error);
+      // Don't throw - audit failures shouldn't break the application
+    }
   }
 }
 

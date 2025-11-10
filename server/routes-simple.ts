@@ -1,4 +1,4 @@
-import type { Express, NextFunction } from "express";
+import { Express, NextFunction } from "express";
 import { Router } from "express";
 import dhaBookingRoutes from './routes/dha-booking.js';
 import ultraQueenAIRoutes from './routes/ultra-queen-ai.js';
