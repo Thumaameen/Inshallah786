@@ -1,8 +1,8 @@
 
 import { Router } from 'express';
-import { aiOrchestrator } from '../services/ai-orchestrator';
-import { internationalVerificationService } from '../services/international-verification.service';
-import { printService } from '../services/print-service';
+import { aiOrchestrator } from '../services/ai-orchestrator.js';
+import { internationalVerificationService } from '../services/international-verification.service.js';
+import { printService } from '../services/print-service.js';
 import { authenticate as auth } from '../middleware/auth.js';
 
 const router = Router();

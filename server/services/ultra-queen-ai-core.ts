@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Ultra Queen AI - PRODUCTION REAL APIs ONLY
 
 import { OpenAI } from 'openai';

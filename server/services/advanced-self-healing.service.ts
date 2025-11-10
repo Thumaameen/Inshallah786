@@ -1,4 +1,4 @@
-import { serviceConfig } from '../../config/service-integration';
+import { serviceConfig } from '../../config/service-integration.js';
 import { EventEmitter } from 'events';
 import * as fs from 'fs/promises';
 import * as path from 'path';

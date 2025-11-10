@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { UniversalAPIKeyBypass } from './enhanced-universal-bypass';
+import { UniversalAPIKeyBypass } from './enhanced-universal-bypass.js';
 
 /**
  * Enhanced Health Check Middleware

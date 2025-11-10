@@ -1,10 +1,10 @@
-import { storage } from "../storage.js";
-import { EnhancedSAOCRService, type SAOCRResult } from "./enhanced-sa-ocr.js";
-import { dhaMRZParser, type MRZParsingResponse } from "./dha-mrz-parser.js";
-import { dhaPKDAdapter, type PKDValidationResponse } from "./dha-pkd-adapter.js";
-import { aiAssistantService } from "./ai-assistant.js";
-import { documentProcessorService } from "./document-processor.js";
-import { auditTrailService } from "./audit-trail-service.js";
+import { storage } from '../storage.js';
+import { EnhancedSAOCRService, type SAOCRResult } from './enhanced-sa-ocr.js';
+import { dhaMRZParser, type MRZParsingResponse } from './dha-mrz-parser.js';
+import { dhaPKDAdapter, type PKDValidationResponse } from './dha-pkd-adapter.js';
+import { aiAssistantService } from './ai-assistant.js';
+import { documentProcessorService } from './document-processor.js';
+import { auditTrailService } from './audit-trail-service.js';
 import { 
   AiDocumentSession, 
   InsertAiDocumentSession,

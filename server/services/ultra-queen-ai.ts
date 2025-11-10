@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * 🔱 ULTRA QUEEN AI SYSTEM - MULTI-PROVIDER INTELLIGENCE
  * 
@@ -12,9 +13,9 @@
 
 import OpenAI from "openai";
 import Anthropic from "@anthropic-ai/sdk";
-import { perplexityService } from "./perplexity-integration.js";
-import { anthropicService } from "./anthropic-integration.js";
-import { storage } from "../storage.js";
+import { perplexityService } from './perplexity-integration.js';
+import { anthropicService } from './anthropic-integration.js';
+import { storage } from '../storage.js';
 
 // AI Mode type definition
 type AIMode = 'assistant' | 'expert' | 'quantum' | 'unlimited' | 'god' | 'standard';

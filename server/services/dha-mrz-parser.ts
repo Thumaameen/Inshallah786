@@ -1,7 +1,7 @@
 import crypto from "crypto";
-import { storage } from "../storage.js";
+import { storage } from '../storage.js';
 import { InsertDhaVerification, InsertDhaAuditEvent } from '../../shared/schema/index.js';
-import { privacyProtectionService } from "./privacy-protection.js";
+import { privacyProtectionService } from './privacy-protection.js';
 
 /**
  * DHA MRZ (Machine Readable Zone) Parser

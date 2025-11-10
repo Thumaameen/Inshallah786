@@ -1,5 +1,5 @@
-import { apiConfig } from '../../config/production-api.config';
-import { DHADocument, VerificationResult } from '../types';
+import { apiConfig } from '../../config/production-api.config.js';
+import { DHADocument, VerificationResult } from '../types.js';
 
 interface GovernmentVerificationRequest {
   documentId: string;

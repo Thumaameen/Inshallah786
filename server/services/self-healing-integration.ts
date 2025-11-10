@@ -149,8 +149,8 @@ export class SelfHealingIntegration extends EventEmitter {
       };
 
       // Determine overall status
-      const hasErrors = Object.values(components).some(status => status === 'error');
-      const hasStopped = Object.values(components).some(status => status === 'stopped');
+      const hasErrors = Object.values(components).some((status: any) => status === 'error');
+      const hasStopped = Object.values(components).some((status: any) => status === 'stopped');
       
       let overall: 'active' | 'degraded' | 'critical' | 'offline';
       if (hasErrors) {

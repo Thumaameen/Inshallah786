@@ -1,11 +1,11 @@
 import { Router, Request, Response } from 'express';
-import { sapsCRCService } from '../services/saps-crc';
-import { validateIdNumber } from '../utils/validators';
-import { asyncHandler } from '../middleware/async-handler';
-import { rateLimit } from '../middleware/rate-limit';
-import { requireAuth } from '../middleware/auth';
-import { validateRequestSchema } from '../middleware/validate-schema';
-import { logger } from '../utils/logger';
+import { sapsCRCService } from '../services/saps-crc.js';
+import { validateIdNumber } from '../utils/validators.js';
+import { asyncHandler } from '../middleware/async-handler.js';
+import { rateLimit } from '../middleware/rate-limit.js';
+import { requireAuth } from '../middleware/auth.js';
+import { validateRequestSchema } from '../middleware/validate-schema.js';
+import { logger } from '../utils/logger.js';
 
 interface CRCRequest extends Request {
   body: {

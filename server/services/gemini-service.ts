@@ -2,8 +2,8 @@
  * Google Gemini AI Integration
  * Optional AI provider that gracefully degrades when not configured
  */
-import { config } from '../config/ai-config';
-import { logger } from '../utils/logger';
+import { config } from '../config/ai-config.js';
+import { logger } from '../utils/logger.js';
 
 interface GeminiResponse {
   candidates: Array<{

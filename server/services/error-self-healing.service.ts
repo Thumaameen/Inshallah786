@@ -1,4 +1,4 @@
-import { serviceConfig } from '../../config/service-integration';
+import { serviceConfig } from '../../config/service-integration.js';
 
 export class ErrorSelfHealingService {
   private static instance: ErrorSelfHealingService;

@@ -1,6 +1,6 @@
-import { storage } from "../storage.js";
-import { aiOCRIntegrationService } from "./ai-ocr-integration.js";
-import { aiAssistantService } from "./ai-assistant.js";
+import { storage } from '../storage.js';
+import { aiOCRIntegrationService } from './ai-ocr-integration.js';
+import { aiAssistantService } from './ai-assistant.js';
 
 export interface AutoFillMapping {
   sourceField: string;

@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import https from "https";
-import { storage } from "../mem-storage.js";
+import { storage } from '../mem-storage.js';
 
 /**
  * DHA NPR (National Population Register) Adapter - PRODUCTION READY

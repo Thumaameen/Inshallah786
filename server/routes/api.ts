@@ -1,11 +1,11 @@
 import express from 'express';
-import { aiAssistantService } from '../services/ai-assistant';
-import { ultraQueenAI } from '../services/ultra-queen-ai';
-import { militaryGradeAuth } from '../middleware/military-grade-auth';
-import { rateLimiter } from '../middleware/rate-limiter';
-import { errorHandler } from '../middleware/error-handler';
+import { aiAssistantService } from '../services/ai-assistant.js';
+import { ultraQueenAI } from '../services/ultra-queen-ai.js';
+import { militaryGradeAuth } from '../middleware/military-grade-auth.js';
+import { rateLimiter } from '../middleware/rate-limiter.js';
+import { errorHandler } from '../middleware/error-handler.js';
 import { healthRouter } from './health.js';
-import documentRoutes from './documents.js.cjs';
+import documentRoutes from './documents.js.cjs.js';
 import { apiActivationRouter } from './api-activation.js';
 
 const router = express.Router();

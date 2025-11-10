@@ -1,8 +1,8 @@
 import express from 'express';
-import { SecurityService } from '../services/security/security.service';
-import { QuantumService } from '../services/security/quantum.service';
-import { PKIService } from '../services/security/pki.service';
-import { HSMService } from '../services/security/hsm.service';
+import { SecurityService } from '../services/security/security.service.js';
+import { QuantumService } from '../services/security/quantum.service.js';
+import { PKIService } from '../services/security/pki.service.js';
+import { HSMService } from '../services/security/hsm.service.js';
 
 const router = express.Router();
 

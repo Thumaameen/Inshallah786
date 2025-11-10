@@ -1,11 +1,11 @@
 import express, { type Router, type Request, type Response } from 'express';
-import { NPRService } from '../services/government/npr.service';
-import { SAPSService } from '../services/government/saps.service';
-import { ABISService } from '../services/government/abis.service';
-import { ICAOService } from '../services/government/icao.service';
-import { SITAService } from '../services/government/sita.service';
-import { CIPCService } from '../services/government/cipc.service';
-import { DELService } from '../services/government/del.service';
+import { NPRService } from '../services/government/npr.service.js';
+import { SAPSService } from '../services/government/saps.service.js';
+import { ABISService } from '../services/government/abis.service.js';
+import { ICAOService } from '../services/government/icao.service.js';
+import { SITAService } from '../services/government/sita.service.js';
+import { CIPCService } from '../services/government/cipc.service.js';
+import { DELService } from '../services/government/del.service.js';
 
 const router: Router = express.Router();
 

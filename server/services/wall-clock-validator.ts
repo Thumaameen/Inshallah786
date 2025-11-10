@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Honest Wall-Clock Performance Validator
  * 

@@ -55,10 +55,9 @@ class CoreSelfHealingService extends EventEmitter {
       
       // Log initial system state
       await this.logSystemMetric({
-        source: 'core_self_healing',
-        metricName: 'self_healing_startup',
-        metricValue: 1,
-        metricType: 'count'
+        metricType: 'self_healing_startup',
+        value: 1,
+        unit: 'count'
       });
 
       console.log('✅ Core Self-Healing Service started successfully');
@@ -82,10 +81,9 @@ class CoreSelfHealingService extends EventEmitter {
       }
 
       await this.logSystemMetric({
-        source: 'core_self_healing',
-        metricName: 'self_healing_shutdown',
-        metricValue: 1,
-        metricType: 'count'
+        metricType: 'self_healing_shutdown',
+        value: 1,
+        unit: 'count'
       });
 
       console.log('✅ Core Self-Healing Service stopped');
@@ -146,10 +144,9 @@ class CoreSelfHealingService extends EventEmitter {
       
       // Log the health check
       await this.logSystemMetric({
-        source: 'core_self_healing',
-        metricName: 'health_check',
-        metricValue: healthData.status === 'healthy' ? 1 : 0,
-        metricType: 'status'
+        metricType: 'health_check',
+        value: healthData.status === 'healthy' ? 1 : 0,
+        unit: 'status'
       });
 
       return healthData;
@@ -171,6 +168,8 @@ class CoreSelfHealingService extends EventEmitter {
     await this.logSelfHealingAction({
       actionType: 'memory_optimization',
       trigger: `High memory usage: ${usagePercent.toFixed(2)}% (threshold: 80%)`,
+      status: 'completed',
+      result: 'Triggered garbage collection - success',
       metadata: {
         type: 'reactive',
         category: 'performance',
@@ -179,9 +178,7 @@ class CoreSelfHealingService extends EventEmitter {
         target: 'core_self_healing',
         memory_usage_percent: usagePercent,
         threshold: '80%',
-        aiAssisted: false,
-        status: 'completed',
-        result: 'Triggered garbage collection - success'
+        aiAssisted: false
       }
     });
 
@@ -426,9 +423,9 @@ class CoreSelfHealingService extends EventEmitter {
           latency_ms: responseLatency,
           action_taken: securityResponse.action,
           success: securityResponse.success,
+          sourceIp: threatData.sourceIp || 'unknown',
           ...threatData
-        },
-        ipAddress: threatData.sourceIp || 'unknown'
+        }
       });
 
       // Emit enhanced security response
@@ -493,7 +490,7 @@ class CoreSelfHealingService extends EventEmitter {
   }
 
   // Logging methods with fallback to console if database unavailable
-  private async logSystemMetric(metric: InsertSystemMetric) {
+  private async logSystemMetric(metric: { metricType: string; value: number; unit?: string }) {
     try {
       if (storage.createSystemMetric) {
         await storage.createSystemMetric(metric);
