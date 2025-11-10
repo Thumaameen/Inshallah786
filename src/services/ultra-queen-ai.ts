@@ -1,5 +1,7 @@
 import { OpenAI } from 'openai';
 import { Anthropic } from '@anthropic-ai/sdk';
+import { Request, Response } from 'express';
+import { AI_CONFIG } from '../config/ai-config';
 
 const aiConfig = {
   openai: {
@@ -64,10 +66,24 @@ export const AI_CAPABILITIES: AICapability[] = [
   }
 ];
 
+interface AIServiceConfig {
+  model: string;
+  temperature: number;
+  maxTokens: number;
+}
+
+interface AIResponse {
+  success: boolean;
+  data?: any;
+  error?: string;
+}
+
+// Main AI service class
 export class UltraQueenAI {
   private openai: OpenAI;
   private anthropic: Anthropic;
   private capabilities: Map<string, AICapability>;
+  private config: AIServiceConfig;
 
   constructor() {
     this.openai = new OpenAI({
@@ -82,6 +98,59 @@ export class UltraQueenAI {
     this.capabilities = new Map(
       AI_CAPABILITIES.map(cap => [cap.name, cap])
     );
+
+    this.config = {
+      model: AI_CONFIG.defaultModel,
+      temperature: 0.7,
+      maxTokens: 2048
+    };
+  }
+
+  // Main handler for AI requests
+  public async handleRequest(req: Request, res: Response): Promise<AIResponse> {
+    try {
+      const { prompt, options } = req.body;
+      
+      // Validate request
+      if (!prompt) {
+        return {
+          success: false,
+          error: 'No prompt provided'
+        };
+      }
+
+      // Process the request through selected AI model
+      const result = await this.processAIRequest(prompt, options);
+      
+      return {
+        success: true,
+        data: result
+      };
+
+    } catch (error) {
+      console.error('AI Service Error:', error);
+      return {
+        success: false,
+        error: 'Internal AI service error'
+      };
+    }
+  }
+
+  // Process AI requests through different models
+  private async processAIRequest(prompt: string, options?: any) {
+    // Implementation for different AI models
+    const modelConfig = {
+      ...this.config,
+      ...options
+    };
+
+    // Add your AI model implementation here
+    // This could be OpenAI, Claude, Gemini, etc.
+
+    return {
+      result: 'AI Response',
+      model: modelConfig.model
+    };
   }
 
   async process(input: string, capability: string) {
@@ -164,4 +233,8 @@ export class UltraQueenAI {
   }
 }
 
-export const ultraQueenAI = new UltraQueenAI();
+// Export service instance
+export const ultraQueenAIService = new UltraQueenAI();
+
+// Export types for use in other files
+export type { AIServiceConfig, AIResponse };
