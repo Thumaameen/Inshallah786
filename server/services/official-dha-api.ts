@@ -31,6 +31,7 @@ export interface IdentityVerificationRequest {
 export interface IdentityVerificationResponse {
   verified: boolean;
   citizen: boolean;
+  success: boolean; // Added required property
   details?: {
     fullName: string;
     idNumber: string;
@@ -58,6 +59,7 @@ export interface BiometricValidationResponse {
   validated: boolean;
   matchScore: number;
   confidence: number;
+  success: boolean; // Added required property
   details?: {
     biometricType: string;
     qualityScore: number;
@@ -119,6 +121,7 @@ export interface DocumentNumberGenerationResponse {
 const identityResponseSchema = z.object({
   verified: z.boolean(),
   citizen: z.boolean(),
+  success: z.boolean(), // Added schema for success
   details: z.object({
     fullName: z.string(),
     idNumber: z.string(),
@@ -132,6 +135,7 @@ const biometricResponseSchema = z.object({
   validated: z.boolean(),
   matchScore: z.number(),
   confidence: z.number(),
+  success: z.boolean(), // Added schema for success
 });
 
 // ==================== DHA API CLIENT ====================
@@ -210,7 +214,7 @@ export class OfficialDHAAPIClient {
         const timestamp = Date.now().toString();
         const payload = JSON.stringify(config.data || {});
         const signature = this.generateSignature(payload, timestamp);
-        
+
         config.headers = {
           ...config.headers,
           'X-Timestamp': timestamp,
@@ -237,36 +241,34 @@ export class OfficialDHAAPIClient {
 
   private encryptData(data: string): string {
     if (!this.encryptionKey) return data;
-    
+
     const iv = crypto.randomBytes(16);
     const cipher = crypto.createCipheriv(
       'aes-256-cbc',
       Buffer.from(this.encryptionKey, 'hex'),
       iv
     );
-    
+
     let encrypted = cipher.update(data, 'utf8', 'hex');
     encrypted += cipher.final('hex');
-    
+
     return iv.toString('hex') + ':' + encrypted;
   }
 
   private decryptData(encryptedData: string): string {
     if (!this.encryptionKey) return encryptedData;
-    
+
     const parts = encryptedData.split(':');
     const iv = Buffer.from(parts[0], 'hex');
     const encrypted = parts[1];
-    
-    const decipher = crypto.createDecipheriv(
-      'aes-256-cbc',
-      Buffer.from(this.encryptionKey, 'hex'),
-      iv
-    );
-    
+    const key = Buffer.from(this.encryptionKey, 'hex');
+
+
+    const decipher = crypto.createDecipheriv('aes-256-cbc', key as crypto.CipherKey, iv);
+
     let decrypted = decipher.update(encrypted, 'hex', 'utf8');
     decrypted += decipher.final('utf8');
-    
+
     return decrypted;
   }
 
@@ -287,23 +289,23 @@ export class OfficialDHAAPIClient {
     context: string
   ): Promise<T> {
     let lastError: Error | null = null;
-    
+
     for (let attempt = 1; attempt <= this.retryAttempts; attempt++) {
       try {
         await this.checkRateLimit();
         return await operation();
       } catch (error) {
         lastError = error as Error;
-        
+
         if (axios.isAxiosError(error)) {
           const axiosError = error as AxiosError;
-          
+
           // Don't retry on client errors (4xx)
           if (axiosError.response?.status && axiosError.response.status >= 400 && axiosError.response.status < 500) {
             throw error;
           }
         }
-        
+
         if (attempt < this.retryAttempts) {
           const delay = this.retryDelay * Math.pow(2, attempt - 1);
           console.log(`[DHA API] ${context} failed (attempt ${attempt}), retrying in ${delay}ms...`);
@@ -311,7 +313,7 @@ export class OfficialDHAAPIClient {
         }
       }
     }
-    
+
     throw lastError || new Error(`${context} failed after ${this.retryAttempts} attempts`);
   }
 
@@ -352,22 +354,22 @@ export class OfficialDHAAPIClient {
     additionalData?: Partial<IdentityVerificationRequest>
   ): Promise<IdentityVerificationResponse> {
     const startTime = Date.now();
-    
+
     try {
       const response = await this.withRetry(async () => {
         const encryptedId = this.encryptData(idNumber);
-        
+
         const result = await this.nprClient.post('/identity/verify', {
           idNumber: encryptedId,
           ...additionalData,
         });
-        
+
         return result.data;
       }, 'Identity verification');
 
       // Validate response
       const validated = identityResponseSchema.parse(response);
-      
+
       // Audit log
       await this.logAuditEvent(
         'DHA_NPR_VERIFY',
@@ -379,10 +381,14 @@ export class OfficialDHAAPIClient {
         'success'
       );
 
+      // Construct the response object to match the interface
       return {
-        ...validated,
         timestamp: new Date().toISOString(),
-      };
+        details: validated.details,
+        citizen: validated.citizen,
+        verified: validated.verified,
+        success: true, // Set success to true
+      } as IdentityVerificationResponse;
     } catch (error) {
       await this.logAuditEvent(
         'DHA_NPR_VERIFY',
@@ -393,7 +399,7 @@ export class OfficialDHAAPIClient {
         },
         'failure'
       );
-      
+
       throw new Error(`Identity verification failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
@@ -406,12 +412,12 @@ export class OfficialDHAAPIClient {
     referenceId?: string
   ): Promise<BiometricValidationResponse> {
     const startTime = Date.now();
-    
+
     try {
       const response = await this.withRetry(async () => {
         // Encrypt biometric data
         const encryptedBiometrics = this.encryptData(biometricData.data);
-        
+
         const result = await this.abisClient.post('/biometric/validate', {
           biometricData: {
             ...biometricData,
@@ -419,13 +425,13 @@ export class OfficialDHAAPIClient {
           },
           referenceId,
         });
-        
+
         return result.data;
       }, 'Biometric validation');
 
       // Validate response
       const validated = biometricResponseSchema.parse(response);
-      
+
       // Audit log
       await this.logAuditEvent(
         'DHA_ABIS_VALIDATE',
@@ -438,15 +444,15 @@ export class OfficialDHAAPIClient {
         'success'
       );
 
+      // Construct the response object to match the interface
       return {
-        ...validated,
-        details: {
-          biometricType: biometricData.type,
-          qualityScore: biometricData.quality || 0,
-          ...response.details,
-        },
+        details: validated.details,
         timestamp: new Date().toISOString(),
-      };
+        confidence: validated.confidence,
+        matchScore: validated.matchScore,
+        validated: validated.validated,
+        success: true, // Set success to true
+      } as BiometricValidationResponse;
     } catch (error) {
       await this.logAuditEvent(
         'DHA_ABIS_VALIDATE',
@@ -457,7 +463,7 @@ export class OfficialDHAAPIClient {
         },
         'failure'
       );
-      
+
       throw new Error(`Biometric validation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
@@ -470,7 +476,7 @@ export class OfficialDHAAPIClient {
     options?: Partial<DocumentTemplateRequest>
   ): Promise<DocumentTemplateResponse> {
     const startTime = Date.now();
-    
+
     try {
       const response = await this.withRetry(async () => {
         const result = await this.dhaClient.get(`/templates/${documentType}`, {
@@ -479,7 +485,7 @@ export class OfficialDHAAPIClient {
             format: options?.format || 'pdf',
           },
         });
-        
+
         return result.data;
       }, 'Get document template');
 
@@ -505,7 +511,7 @@ export class OfficialDHAAPIClient {
         },
         'failure'
       );
-      
+
       throw new Error(`Failed to get document template: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
@@ -517,7 +523,7 @@ export class OfficialDHAAPIClient {
     document: DocumentRegistrationRequest
   ): Promise<DocumentRegistrationResponse> {
     const startTime = Date.now();
-    
+
     try {
       // Encrypt sensitive document data
       const encryptedDocument = {
@@ -556,7 +562,7 @@ export class OfficialDHAAPIClient {
         },
         'failure'
       );
-      
+
       throw new Error(`Document registration failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
@@ -569,7 +575,7 @@ export class OfficialDHAAPIClient {
     options?: Partial<DocumentNumberGenerationRequest>
   ): Promise<DocumentNumberGenerationResponse> {
     const startTime = Date.now();
-    
+
     try {
       const response = await this.withRetry(async () => {
         const result = await this.dhaClient.post('/documents/generate-number', {
@@ -577,7 +583,7 @@ export class OfficialDHAAPIClient {
           applicantId: options?.applicantId,
           year: options?.year || new Date().getFullYear(),
         });
-        
+
         return result.data;
       }, 'Generate document number');
 
@@ -603,7 +609,7 @@ export class OfficialDHAAPIClient {
         },
         'failure'
       );
-      
+
       throw new Error(`Failed to generate document number: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
@@ -618,14 +624,14 @@ export class OfficialDHAAPIClient {
     documentType: string
   ): Promise<{ valid: boolean; details?: any }> {
     const startTime = Date.now();
-    
+
     try {
       const response = await this.withRetry(async () => {
         const result = await this.dhaClient.post('/documents/validate', {
           documentNumber: this.encryptData(documentNumber),
           documentType,
         });
-        
+
         return result.data;
       }, 'Document validation');
 
@@ -650,7 +656,7 @@ export class OfficialDHAAPIClient {
         },
         'failure'
       );
-      
+
       throw error;
     }
   }
@@ -662,13 +668,13 @@ export class OfficialDHAAPIClient {
     idNumber: string
   ): Promise<{ clearance: boolean; details?: any }> {
     const startTime = Date.now();
-    
+
     try {
       const response = await this.withRetry(async () => {
         const result = await this.dhaClient.post('/saps/criminal-check', {
           idNumber: this.encryptData(idNumber),
         });
-        
+
         return result.data;
       }, 'Criminal record check');
 
@@ -691,7 +697,7 @@ export class OfficialDHAAPIClient {
         },
         'failure'
       );
-      
+
       throw error;
     }
   }
@@ -704,14 +710,14 @@ export class OfficialDHAAPIClient {
     countryCode: string
   ): Promise<{ verified: boolean; details?: any }> {
     const startTime = Date.now();
-    
+
     try {
       const response = await this.withRetry(async () => {
         const result = await this.dhaClient.post('/icao/verify', {
           passportNumber: this.encryptData(passportNumber),
           countryCode,
         });
-        
+
         return result.data;
       }, 'International document verification');
 
@@ -736,7 +742,7 @@ export class OfficialDHAAPIClient {
         },
         'failure'
       );
-      
+
       throw error;
     }
   }
@@ -791,18 +797,18 @@ export const DHA_DOCUMENT_TYPES = {
   SMART_ID: 'smart_id_card',
   ID_BOOK: 'identity_document_book',
   TEMP_ID: 'temporary_id_certificate',
-  
+
   // Travel Documents
   PASSPORT: 'south_african_passport',
   EMERGENCY_TRAVEL: 'emergency_travel_certificate',
   REFUGEE_TRAVEL: 'refugee_travel_document',
-  
+
   // Civil Documents
   BIRTH_CERT: 'birth_certificate',
   DEATH_CERT: 'death_certificate',
   MARRIAGE_CERT: 'marriage_certificate',
   DIVORCE_CERT: 'divorce_certificate',
-  
+
   // Immigration Documents
   PRP: 'permanent_residence_permit',
   TRV: 'temporary_residence_visa',
@@ -814,7 +820,7 @@ export const DHA_DOCUMENT_TYPES = {
   RELATIVES_VISA: 'relatives_visa',
   MEDICAL_VISA: 'medical_treatment_visa',
   RETIRED_VISA: 'retired_person_visa',
-  
+
   // Special Documents
   REFUGEE_STATUS: 'refugee_status_permit',
   ASYLUM_SEEKER: 'asylum_seeker_permit',
