@@ -193,11 +193,12 @@ fi
 
 echo "Running TypeScript compiler with relaxed checks..."
 ./node_modules/.bin/tsc -p tsconfig.production.json --skipLibCheck --noEmitOnError false 2>&1 | tee /tmp/tsc-errors.log || true
-echo "✅ TypeScript compilation completed (warnings ignored)"
 
 if grep -q "error TS" /tmp/tsc-errors.log; then
     echo "⚠️  TypeScript errors detected - review logs above"
 fi
+
+echo "✅ TypeScript compilation completed (warnings ignored)"
 
 # Now do the actual compilation (without --noEmit)
 ./node_modules/.bin/tsc -p tsconfig.production.json --skipLibCheck || {
