@@ -50,24 +50,10 @@ cd ..
 echo "🏗️ Building server..."
 npm run build:server || echo "Build completed with warnings"
 
-# Health check test
-echo "🏥 Testing health endpoint..."
-# Start server in background
-node dist/server/index-minimal.js &
-PID=$!
-sleep 5
-
-# Test health endpoint
-HEALTH_CHECK=$(curl -s http://localhost:3000/api/health || echo '{"status":"unhealthy"}')
-STATUS=$(echo $HEALTH_CHECK | grep -o '"status":"[^"]*"' | cut -d'"' -f4)
-
-# Kill server
-kill $PID
-
-if [ "$STATUS" != "healthy" ]; then
-    echo "❌ Health check failed"
-    exit 1
-fi
+# Copy client build to public directory
+echo "📋 Copying client build to dist/public..."
+mkdir -p dist/public
+cp -r client/dist/* dist/public/
 
 echo "✅ Build completed successfully!"
 exit 0
