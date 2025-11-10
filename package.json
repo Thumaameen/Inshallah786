@@ -13,6 +13,7 @@
     "build": "tsc --project tsconfig.production.json",
     "build:client": "cd client && NODE_ENV=production npm run build",
     "build:server": "tsc -p tsconfig.production.json --skipLibCheck || echo 'TypeScript compilation completed with warnings'",
+    "verify:build": "bash scripts/verify-build.sh",
     "prestart": "node -e \"if(process.version.slice(1).localeCompare('20.19.0', undefined, { numeric: true }) !== 0) process.exit(1)\"",
     "start": "NODE_ENV=production node dist/server/index-minimal.js",
     "migrate": "drizzle-kit generate && drizzle-kit push",

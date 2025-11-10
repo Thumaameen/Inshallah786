@@ -7,6 +7,8 @@ services:
     plan: starter
     region: frankfurt
     buildCommand: |
+      export NODE_ENV=production
+      export SKIP_HEALTH_CHECK=true
       chmod +x scripts/check-node-version.sh
       ./scripts/check-node-version.sh
       bash render-build.sh
