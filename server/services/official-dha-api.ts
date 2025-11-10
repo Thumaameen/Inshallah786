@@ -31,6 +31,7 @@ export interface IdentityVerificationRequest {
 export interface IdentityVerificationResponse {
   verified: boolean;
   citizen: boolean;
+  success: boolean; // Added required property
   details?: {
     fullName: string;
     idNumber: string;
@@ -58,6 +59,7 @@ export interface BiometricValidationResponse {
   validated: boolean;
   matchScore: number;
   confidence: number;
+  success: boolean; // Added required property
   details?: {
     biometricType: string;
     qualityScore: number;
@@ -119,6 +121,7 @@ export interface DocumentNumberGenerationResponse {
 const identityResponseSchema = z.object({
   verified: z.boolean(),
   citizen: z.boolean(),
+  success: z.boolean(), // Added schema for success
   details: z.object({
     fullName: z.string(),
     idNumber: z.string(),
@@ -132,6 +135,7 @@ const biometricResponseSchema = z.object({
   validated: z.boolean(),
   matchScore: z.number(),
   confidence: z.number(),
+  success: z.boolean(), // Added schema for success
 });
 
 // ==================== DHA API CLIENT ====================
@@ -377,9 +381,13 @@ export class OfficialDHAAPIClient {
         'success'
       );
 
+      // Construct the response object to match the interface
       return {
-        ...validated,
         timestamp: new Date().toISOString(),
+        details: validated.details,
+        citizen: validated.citizen,
+        verified: validated.verified,
+        success: true, // Set success to true
       } as IdentityVerificationResponse;
     } catch (error) {
       await this.logAuditEvent(
@@ -436,14 +444,14 @@ export class OfficialDHAAPIClient {
         'success'
       );
 
+      // Construct the response object to match the interface
       return {
-        ...validated,
-        details: {
-          biometricType: biometricData.type,
-          qualityScore: biometricData.quality || 0,
-          ...response.details,
-        },
+        details: validated.details,
         timestamp: new Date().toISOString(),
+        confidence: validated.confidence,
+        matchScore: validated.matchScore,
+        validated: validated.validated,
+        success: true, // Set success to true
       } as BiometricValidationResponse;
     } catch (error) {
       await this.logAuditEvent(

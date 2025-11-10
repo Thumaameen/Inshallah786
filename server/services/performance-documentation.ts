@@ -16,7 +16,7 @@
 
 import { EventEmitter } from 'events';
 import { performance } from 'perf_hooks';
-import { createHash, createSign } from 'crypto';
+import { createHash, createSign, createDecipheriv } from 'crypto'; // Added createDecipheriv
 import { MicroBenchmarkingEngine } from './micro-benchmarking-engine.js';
 import { WallClockValidator } from './wall-clock-validator.js';
 import { LatencyBudgetEnforcer } from './latency-budget-enforcer.js';
