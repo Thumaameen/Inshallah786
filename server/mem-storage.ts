@@ -1,6 +1,7 @@
-import { eq } from 'drizzle-orm'; // Import eq for Drizzle ORM queries
-import { db } from './db'; // Import the database instance
-import { users, documents } from './db/schema'; // Import schema definitions
+import { eq } from 'drizzle-orm';
+import { db } from './db';
+import { users, documents } from './db/schema';
+import crypto from 'node:crypto';
 
 export interface ApiKey {
   id: string;
@@ -49,32 +50,68 @@ interface AuditLog {
 export const storage = {
   async getUser(id: string): Promise<User | null> {
     const result = await db.select().from(users).where(eq(users.id, id));
-    return result.length > 0 ? result[0] : null;
+    if (result.length === 0) return null;
+    const user = result[0];
+    return {
+      id: user.id,
+      username: (user as any).username || user.email.split('@')[0],
+      email: user.email,
+      role: user.role,
+      isActive: (user as any).isActive !== undefined ? (user as any).isActive : true,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt
+    };
   },
 
   async getUserByUsername(username: string): Promise<User | null> {
-    const result = await db.select().from(users).where(eq(users.username, username));
-    return result.length > 0 ? result[0] : null;
+    const result = await db.select().from(users).where(eq((users as any).username, username));
+    if (result.length === 0) return null;
+    const user = result[0];
+    return {
+      id: user.id,
+      username: (user as any).username || user.email.split('@')[0],
+      email: user.email,
+      role: user.role,
+      isActive: (user as any).isActive !== undefined ? (user as any).isActive : true,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt
+    };
   },
 
   async getUserByEmail(email: string): Promise<User | null> {
     const result = await db.select().from(users).where(eq(users.email, email));
-    return result.length > 0 ? result[0] : null;
+    if (result.length === 0) return null;
+    const user = result[0];
+    return {
+      id: user.id,
+      username: (user as any).username || user.email.split('@')[0],
+      email: user.email,
+      role: user.role,
+      isActive: (user as any).isActive !== undefined ? (user as any).isActive : true,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt
+    };
   },
 
   async createUser(user: Omit<User, 'id' | 'createdAt' | 'updatedAt'>): Promise<User> {
-    const newUser: User = {
+    const newUser: any = {
       email: user.email,
-      name: user.name,
-      username: user.email.split('@')[0],
-      id: crypto.randomUUID(),
+      username: user.username || user.email.split('@')[0],
+      password: user.password,
       role: user.role || 'user',
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date()
+      isActive: user.isActive !== undefined ? user.isActive : true
     };
     const result = await db.insert(users).values(newUser).returning();
-    return result[0];
+    const created = result[0] as any;
+    return {
+      id: created.id,
+      username: created.username || created.email.split('@')[0],
+      email: created.email,
+      role: created.role,
+      isActive: created.isActive !== undefined ? created.isActive : true,
+      createdAt: created.createdAt,
+      updatedAt: created.updatedAt
+    };
   },
 
   async updateUser(id: string, updates: Partial<User>): Promise<User | null> {
@@ -83,7 +120,17 @@ export const storage = {
       updatedAt: new Date(),
     };
     const result = await db.update(users).set(updatedUser).where(eq(users.id, id)).returning();
-    return result.length > 0 ? result[0] : null;
+    if (result.length === 0) return null;
+    const user = result[0];
+    return {
+      id: user.id,
+      username: (user as any).username || user.email.split('@')[0],
+      email: user.email,
+      role: user.role,
+      isActive: (user as any).isActive !== undefined ? (user as any).isActive : true,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt
+    };
   },
 
   async createSecurityEvent(event: SecurityEvent): Promise<void> {
@@ -108,6 +155,14 @@ export const storage = {
 
   async createErrorLog(error: any): Promise<void> {
     console.error('Error logged:', error);
+  },
+
+  async createSystemMetric(metric: any): Promise<void> {
+    console.log('📊 Creating system metric:', metric);
+  },
+
+  async createSelfHealingAction(action: any): Promise<void> {
+    console.log('🔧 Creating self-healing action:', action);
   },
 
   async getDocument(id: string): Promise<any> {

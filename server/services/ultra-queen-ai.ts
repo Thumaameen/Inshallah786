@@ -1,4 +1,3 @@
-replit_final_file>
 /**
  * 🔱 ULTRA QUEEN AI SYSTEM - MULTI-PROVIDER INTELLIGENCE
  * 
@@ -382,7 +381,7 @@ class UltraQueenAI {
         provider: 'openai',
         metadata: {
           executionTime: Date.now() - startTime,
-          tokensUsed: usage.total_tokens,
+          tokensUsed: usage?.total_tokens ?? 0,
           model,
           confidence: 0.95
         }
@@ -419,8 +418,7 @@ class UltraQueenAI {
 
       const result = await anthropicService.generateSecureResponse(
         request.message,
-        request.previousContext?.join('\n'),
-        modelToUse // Pass the selected model
+        request.previousContext?.join('\n')
       );
 
       return {
@@ -448,7 +446,7 @@ class UltraQueenAI {
     try {
       const modelToUse = AI_MODEL_CONFIG.PERPLEXITY_SONAR; // Perplexity uses a specific model name
 
-      const result = await perplexityService.getFactualAnswer(request.message, modelToUse);
+      const result = await perplexityService.getFactualAnswer(request.message);
 
       return {
         success: true,
@@ -843,4 +841,3 @@ class UltraQueenAI {
 
 // Export singleton instance
 export const ultraQueenAI = new UltraQueenAI();
-</replit_final_file>

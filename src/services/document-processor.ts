@@ -1,5 +1,5 @@
 import { PDFDocument, PDFPage, rgb, StandardFonts } from 'pdf-lib';
-import { ultraQueenAI, UltraQueenAI } from './ultra-queen-ai.js';
+import { ultraQueenAIService as ultraQueenAI, UltraQueenAI } from './ultra-queen-ai.js';
 import QRCode from 'qrcode';
 import sharp from 'sharp';
 import { createCanvas, loadImage } from 'canvas';
