@@ -181,10 +181,11 @@ async function logErrorEvent(error: any, req: Request, details: ErrorDetails): P
   try {
     // Try to create security event (may fail if DB is down - that's ok)
     await storage.createSecurityEvent({
-      userId: req.user?.id || null,
       eventType: 'system_error',
       severity: details.severity,
+      source: 'error_handler',
       details: {
+        userId: req.user?.id || null,
         errorType: details.type,
         component: details.component,
         message: details.message,
@@ -192,11 +193,10 @@ async function logErrorEvent(error: any, req: Request, details: ErrorDetails): P
         path: req.path,
         method: req.method,
         userAgent: req.get('User-Agent'),
+        ipAddress: req.ip,
         stack: error.stack?.split('\n').slice(0, 5).join('\n'), // Truncate stack trace
         timestamp: new Date().toISOString()
-      },
-      ipAddress: req.ip,
-      userAgent: req.get('User-Agent')
+      }
     });
   } catch (logError) {
     // If we can't log to database, log to console as fallback

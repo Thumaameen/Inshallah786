@@ -243,9 +243,10 @@ export class OfficialDHAAPIClient {
     if (!this.encryptionKey) return data;
 
     const iv = crypto.randomBytes(16);
+    const key = Buffer.from(this.encryptionKey, 'hex');
     const cipher = crypto.createCipheriv(
       'aes-256-cbc',
-      Buffer.from(this.encryptionKey, 'hex'),
+      key,
       iv
     );
 
@@ -263,7 +264,7 @@ export class OfficialDHAAPIClient {
     const encrypted = parts[1];
     const key = Buffer.from(this.encryptionKey, 'hex');
 
-    const decipher = crypto.createDecipheriv('aes-256-cbc', key, iv as any);
+    const decipher = crypto.createDecipheriv('aes-256-cbc', key, iv);
 
     let decrypted = decipher.update(encrypted, 'hex', 'utf8');
     decrypted += decipher.final('utf8');

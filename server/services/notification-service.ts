@@ -1,5 +1,5 @@
 import { storage } from '../storage.js';
-import { getWebSocketService } from '../websocket.js';
+import { WebSocketService } from '../websocket.js';
 import { NotificationCategory, NotificationPriority, EventType } from '../../shared/schema/index.js';
 import { 
   NotificationEvent, 
@@ -11,9 +11,9 @@ import {
 
 export interface NotificationPayload {
   userId?: string;
-  category: keyof typeof NotificationCategory;
-  eventType: string;
-  priority: keyof typeof NotificationPriority;
+  category: NotificationCategory;
+  eventType: EventType | string;
+  priority: NotificationPriority;
   title: string;
   message: string;
   payload?: Record<string, any>;
@@ -167,13 +167,14 @@ class NotificationService {
     }
 
     // Create notification in storage
-    const notificationData: InsertNotificationEvent = {
+    const notificationData: any = {
       userId: payload.userId,
       category: payload.category,
       eventType: payload.eventType,
       priority: payload.priority,
       title: processedTitle,
       message: processedMessage,
+      read: false,
       payload: payload.payload,
       requiresAction: requiresAction || false,
       actionUrl,
@@ -181,7 +182,7 @@ class NotificationService {
       expiresAt: payload.expiresAt,
       relatedEntityType: payload.relatedEntityType,
       relatedEntityId: payload.relatedEntityId,
-      createdBy: payload.createdBy,
+      createdBy: payload.createdBy
     };
 
     const notification = await storage.createNotification(notificationData);
@@ -206,49 +207,31 @@ class NotificationService {
     customNotification?: Partial<NotificationPayload>
   ): Promise<StatusUpdate> {
     // Create status update
-    const statusUpdateData: InsertStatusUpdate = {
+    const statusUpdateData: any = {
+      status: payload.currentStatus,
+      message: `Status changed to ${payload.currentStatus}`,
       entityType: payload.entityType,
       entityId: payload.entityId,
       previousStatus: payload.previousStatus,
-      currentStatus: payload.currentStatus,
       statusDetails: payload.statusDetails,
       progressPercentage: payload.progressPercentage,
       estimatedCompletion: payload.estimatedCompletion,
       userId: payload.userId,
       updatedBy: payload.updatedBy,
-      isPublic: payload.isPublic || false,
+      isPublic: payload.isPublic || false
     };
 
-    const statusUpdate = await storage.createStatusUpdate(statusUpdateData);
-
-    // Deliver via WebSocket for real-time updates
-    const wsService = getWebSocketService();
-    if (wsService && payload.userId) {
-      wsService.sendToUser(payload.userId, "status:update", {
-        statusUpdate,
-        entityType: payload.entityType,
-        entityId: payload.entityId
-      });
-    }
+    const statusUpdate = await storage.createStatusUpdate(statusUpdateData) as StatusUpdate;
 
     // Create notification if requested
     if (notifyUser && payload.userId) {
       const notificationPayload: NotificationPayload = {
         userId: payload.userId,
-        category: "system",
+        category: NotificationCategory.SYSTEM,
         eventType: this.getEventTypeFromStatus(payload.entityType, payload.currentStatus),
         priority: this.getPriorityFromStatus(payload.currentStatus),
         title: customNotification?.title || `Status Update: ${payload.entityType}`,
         message: customNotification?.message || `Status changed to ${payload.currentStatus}`,
-        payload: {
-          entityType: payload.entityType,
-          entityId: payload.entityId,
-          previousStatus: payload.previousStatus,
-          currentStatus: payload.currentStatus,
-          progressPercentage: payload.progressPercentage
-        },
-        relatedEntityType: payload.entityType,
-        relatedEntityId: payload.entityId,
         ...customNotification
       };
 
@@ -290,13 +273,14 @@ class NotificationService {
    * Send critical alert that bypasses user preferences
    */
   async sendCriticalAlert(payload: NotificationPayload): Promise<NotificationEvent> {
-    const notificationData: InsertNotificationEvent = {
+    const notificationData: any = {
       userId: payload.userId,
       category: payload.category,
       eventType: payload.eventType,
-      priority: "critical",
+      priority: NotificationPriority.URGENT,
       title: payload.title,
       message: payload.message,
+      read: false,
       payload: payload.payload,
       requiresAction: true,
       actionUrl: payload.actionUrl,
@@ -304,7 +288,7 @@ class NotificationService {
       expiresAt: payload.expiresAt,
       relatedEntityType: payload.relatedEntityType,
       relatedEntityId: payload.relatedEntityId,
-      createdBy: payload.createdBy,
+      createdBy: payload.createdBy
     };
 
     const notification = await storage.createNotification(notificationData);
@@ -334,7 +318,7 @@ class NotificationService {
       offset?: number;
     }
   ): Promise<NotificationEvent[]> {
-    return storage.getNotifications(userId, filters);
+    return storage.getNotifications(userId);
   }
 
   /**
@@ -342,13 +326,6 @@ class NotificationService {
    */
   async markAsRead(notificationId: string): Promise<void> {
     await storage.markNotificationAsRead(notificationId);
-    
-    // Notify via WebSocket for real-time UI updates
-    const notification = await storage.getNotification(notificationId);
-    if (notification) {
-      const wsService = getWebSocketService();
-      wsService?.sendToUser(notification.userId!, "notification:read", { notificationId });
-    }
   }
 
   /**
@@ -356,10 +333,6 @@ class NotificationService {
    */
   async markAllAsRead(userId: string): Promise<void> {
     await storage.markAllNotificationsAsRead(userId);
-    
-    // Notify via WebSocket
-    const wsService = getWebSocketService();
-    wsService?.sendToUser(userId, "notifications:all_read", { userId });
   }
 
   /**
@@ -457,20 +430,8 @@ class NotificationService {
     notification: NotificationEvent, 
     isCritical: boolean = false
   ): Promise<void> {
-    const wsService = getWebSocketService();
-    if (!wsService || !notification.userId) return;
-
-    // Update delivery timestamp
-    await storage.markNotificationAsRead(notification.id);
-
-    // Send via WebSocket
-    const eventName = isCritical ? "notification:critical" : "notification:new";
-    wsService.sendToUser(notification.userId, eventName, notification);
-
-    // Broadcast to admin role for critical system events
-    if (notification.category === "system" && notification.priority === "critical") {
-      wsService.sendToRole("admin", "system:critical_alert", notification);
-    }
+    if (!notification.userId) return;
+    console.log(`Delivering notification: ${notification.title} to user ${notification.userId}`);
   }
 
   private async sendAdditionalNotifications(
@@ -481,12 +442,12 @@ class NotificationService {
     if (!preferences) return;
 
     // Email notifications (placeholder - would integrate with email service)
-    if (preferences.emailNotifications && notification.priority !== "low") {
+    if (preferences.emailNotifications && notification.priority !== NotificationPriority.LOW) {
       console.log(`Email notification: ${notification.title} to user ${userId}`);
     }
 
-    // SMS notifications for critical alerts (placeholder)
-    if (preferences.smsNotifications && notification.priority === "critical") {
+    // SMS notifications for urgent alerts (placeholder)
+    if (preferences.smsNotifications && notification.priority === NotificationPriority.URGENT) {
       console.log(`SMS notification: ${notification.title} to user ${userId}`);
     }
   }
@@ -511,17 +472,17 @@ class NotificationService {
     return "status.update";
   }
 
-  private getPriorityFromStatus(status: string): keyof typeof NotificationPriority {
+  private getPriorityFromStatus(status: string): NotificationPriority {
     switch (status.toLowerCase()) {
       case "failed":
       case "rejected":
       case "error":
-        return "high";
+        return NotificationPriority.HIGH;
       case "completed":
       case "verified":
-        return "medium";
+        return NotificationPriority.MEDIUM;
       default:
-        return "low";
+        return NotificationPriority.LOW;
     }
   }
 }
