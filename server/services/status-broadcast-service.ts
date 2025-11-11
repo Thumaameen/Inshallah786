@@ -1,33 +1,10 @@
 import { WebSocketService } from '../websocket.js';
 import { storage } from '../storage.js';
 import { notificationService } from './notification-service.js';
-import { InsertNotificationEvent, StatusUpdate } from '../../shared/schema/index.js';
+import { InsertNotificationEvent, StatusUpdate, NotificationCategory, NotificationPriority, EventType } from '../../shared/schema/index.js';
 import { createServer } from 'http';
 
 type InsertNotification = InsertNotificationEvent;
-
-enum NotificationCategory {
-  DOCUMENT = 'document',
-  APPLICATION = 'application',
-  SYSTEM = 'system',
-  SECURITY = 'security',
-  USER = 'user'
-}
-
-enum NotificationPriority {
-  LOW = 'low',
-  MEDIUM = 'medium',
-  HIGH = 'high',
-  URGENT = 'urgent'
-}
-
-enum EventType {
-  PROCESSING_FAILED = 'processing_failed',
-  PROCESSING_COMPLETED = 'processing_completed',
-  DOCUMENT_STATUS_CHANGE = 'document_status_change',
-  APPLICATION_UPDATE = 'application_update',
-  SYSTEM_ALERT = 'system_alert'
-}
 
 type Document = any;
 type DhaApplication = any;

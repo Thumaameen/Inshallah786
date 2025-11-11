@@ -235,13 +235,57 @@ export type InsertErrorLog = typeof errorLogs.$inferInsert;
 export type Incident = typeof incidents.$inferSelect;
 export type InsertIncident = typeof incidents.$inferInsert;
 
-// Notification types
-export type EventType = 'document_generated' | 'verification_complete' | 'security_alert' | 'system_update';
+// Notification enums and types
+export enum NotificationCategory {
+  DOCUMENT = 'document',
+  APPLICATION = 'application',
+  SYSTEM = 'system',
+  SECURITY = 'security',
+  USER = 'user'
+}
+
+export enum NotificationPriority {
+  LOW = 'low',
+  MEDIUM = 'medium',
+  HIGH = 'high',
+  URGENT = 'urgent'
+}
+
+export enum EventType {
+  DOCUMENT_UPLOADED = 'document_uploaded',
+  DOCUMENT_PROCESSING = 'document_processing',
+  DOCUMENT_PROCESSED = 'document_processed',
+  DOCUMENT_VERIFIED = 'document_verified',
+  DOCUMENT_REJECTED = 'document_rejected',
+  SECURITY_BREACH = 'security_breach',
+  SECURITY_LOGIN = 'security_login',
+  SECURITY_FAILED_LOGIN = 'security_failed_login',
+  FRAUD_DETECTED = 'fraud_detected',
+  BIOMETRIC_ENROLLED = 'biometric_enrolled',
+  BIOMETRIC_VERIFIED = 'biometric_verified',
+  BIOMETRIC_FAILED = 'biometric_failed',
+  ADMIN_REVIEW_REQUIRED = 'admin_review_required',
+  SYSTEM_HEALTH_ALERT = 'system_health_alert',
+  DOCUMENT_GENERATED = 'document_generated',
+  VERIFICATION_COMPLETE = 'verification_complete',
+  SECURITY_ALERT = 'security_alert',
+  SYSTEM_UPDATE = 'system_update',
+  PROCESSING_FAILED = 'processing_failed',
+  PROCESSING_COMPLETED = 'processing_completed',
+  DOCUMENT_STATUS_CHANGE = 'document_status_change',
+  APPLICATION_UPDATE = 'application_update',
+  SYSTEM_ALERT = 'system_alert',
+  SYSTEM_MAINTENANCE = 'system_maintenance',
+  USER_REGISTERED = 'user_registered'
+}
 
 export interface NotificationEvent {
   id: string;
   userId: string;
   eventType: EventType;
+  category: NotificationCategory;
+  priority: NotificationPriority;
+  title: string;
   message: string;
   read: boolean;
   createdAt: Date;
@@ -254,6 +298,14 @@ export interface UserNotificationPreferences {
   email: boolean;
   push: boolean;
   sms: boolean;
+  emailNotifications: boolean;
+  smsNotifications: boolean;
+  categories?: Record<string, boolean>;
+  quietHours?: {
+    enabled: boolean;
+    start: string;
+    end: string;
+  };
 }
 
 export interface StatusUpdate {

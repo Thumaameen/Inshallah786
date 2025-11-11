@@ -19,6 +19,58 @@ export const storage = {
   delete: async (key: string): Promise<void> => {
     return;
   },
+
+  getDocument: async (documentId: string): Promise<any> => {
+    return null;
+  },
+
+  createNotification: async (notification: any): Promise<any> => {
+    const id = crypto.randomUUID();
+    return { id, ...notification, createdAt: new Date() };
+  },
+
+  getNotifications: async (userId: string): Promise<any[]> => {
+    return [];
+  },
+
+  getNotification: async (notificationId: string): Promise<any> => {
+    return null;
+  },
+
+  markNotificationAsRead: async (notificationId: string): Promise<void> => {
+    return;
+  },
+
+  markAllNotificationsAsRead: async (userId: string): Promise<void> => {
+    return;
+  },
+
+  getUserNotificationPreferences: async (userId: string): Promise<any> => {
+    return {
+      userId,
+      email: true,
+      push: true,
+      sms: false,
+      emailNotifications: true,
+      smsNotifications: false
+    };
+  },
+
+  createUserNotificationPreferences: async (preferences: any): Promise<any> => {
+    return preferences;
+  },
+
+  updateUserNotificationPreferences: async (userId: string, preferences: any): Promise<any> => {
+    return { userId, ...preferences };
+  },
+
+  getUnreadNotificationCount: async (userId: string): Promise<number> => {
+    return 0;
+  },
+
+  getAllUsers: async (): Promise<any[]> => {
+    return [];
+  },
   
   createSecurityEvent: async (event: InsertSecurityEvent): Promise<void> => {
     await db.insert(securityEvents).values(event);

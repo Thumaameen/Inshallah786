@@ -284,19 +284,20 @@ export function enhancedRateLimit(customConfig?: Partial<RateLimitConfig>) {
       
       // Log the violation
       await storage.createSecurityEvent({
-        userId: req.user?.id || null,
         eventType: 'rate_limit_exceeded',
         severity: 'medium',
+        source: 'enhanced_rate_limit',
         details: {
+          userId: req.user?.id || null,
           path: req.path,
           method: req.method,
           limiterType,
           identifier: userId,
           points: rateLimiterRes.points || 0,
-          remainingPoints: rateLimiterRes.remainingPoints || 0
-        },
-        ipAddress: req.ip,
-        userAgent: req.get('User-Agent')
+          remainingPoints: rateLimiterRes.remainingPoints || 0,
+          ipAddress: req.ip,
+          userAgent: req.get('User-Agent')
+        }
       });
       
       // CRITICAL: Trigger Enhanced Security Response Service for rate limit violations

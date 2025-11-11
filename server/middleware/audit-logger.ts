@@ -365,18 +365,17 @@ export class AuditLogger {
         await storage.createSecurityEvent({
           eventType: event.eventType as any,
           severity: event.severity as any,
-          userId: event.userId || null,
+          source: 'audit_logger',
           details: {
             ...event.details,
+            userId: event.userId || null,
             auditEventId: event.eventId,
             action: event.action,
             resource: event.resource,
             result: event.result,
             metadata: event.metadata,
             compliance: complianceContext
-          },
-          ipAddress: event.ipAddress || null,
-          userAgent: event.userAgent || null
+          }
         });
       }
 
