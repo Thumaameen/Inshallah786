@@ -1,7 +1,7 @@
 import { OpenAI } from 'openai';
 import { Anthropic } from '@anthropic-ai/sdk';
 import { Request, Response } from 'express';
-import { AI_CONFIG } from '../config/ai-config';
+import { AI_CONFIG } from '../config/ai-config.js';
 
 const aiConfig = {
   openai: {

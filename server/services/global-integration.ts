@@ -1,5 +1,5 @@
-import { serviceConfig, initializeWeb3, initializeGovernmentServices } from '../../config/service-integration'
-import { DocumentService } from '../services/document-service'
+import { serviceConfig, initializeWeb3, initializeGovernmentServices } from '../../config/service-integration.js'
+import { DocumentService } from '../services/document-service.js'
 import axios from 'axios'
 import { ethers } from 'ethers'
 import { Connection } from '@solana/web3.js'

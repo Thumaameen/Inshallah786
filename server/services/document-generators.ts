@@ -10,9 +10,9 @@ import * as crypto from "crypto";
 import * as fs from "fs/promises";
 import * as path from "path";
 import QRCode from "qrcode";
-import { BaseDocumentTemplate, SA_GOVERNMENT_DESIGN } from "./base-document-template.js";
-import { cryptographicSignatureService } from "./cryptographic-signature-service.js";
-import { SecurityFeaturesV2, MRZData } from "./security-features-v2.js";
+import { BaseDocumentTemplate, SA_GOVERNMENT_DESIGN } from './base-document-template.js';
+import { cryptographicSignatureService } from './cryptographic-signature-service.js';
+import { SecurityFeaturesV2, MRZData } from './security-features-v2.js';
 
 // Import document data types
 import {
@@ -38,7 +38,7 @@ import {
   PermanentResidencePermitData,
   CertificateOfExemptionData,
   CertificateOfSouthAfricanCitizenshipData
-} from "../types/document-data.js";
+} from '../types/document-data.js';
 
 // Modern PDF-lib based document generation
 

@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from "jsonwebtoken";
 import bcryptjs from "bcryptjs";
-import { storage } from "../mem-storage.js";
-import { privacyProtectionService } from "../services/privacy-protection.js";
-import { getConfig } from "./provider-config.js";
+import { storage } from '../mem-storage.js';
+import { privacyProtectionService } from '../services/privacy-protection.js';
+import { getConfig } from './provider-config.js';
 
 // Extend Express Request type
 declare global {

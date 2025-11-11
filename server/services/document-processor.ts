@@ -1,4 +1,4 @@
-import { storage } from "../storage.js";
+import { storage } from '../storage.js';
 import { InsertDocument } from '../../shared/schema/index.js';
 import multer from "multer";
 import path from "path";
@@ -25,10 +25,10 @@ const getTesseractWorker = async () => {
   return createWorker;
 };
 
-import { privacyProtectionService } from "./privacy-protection.js";
-import { enhancedSAOCR, type SAOCRResult, type SAOCROptions } from "./enhanced-sa-ocr.js";
-import { saPermitValidator, type PermitValidationRequest, type PermitValidationResult } from "./sa-permit-validator.js";
-import { aiAssistantService } from "./ai-assistant.js";
+import { privacyProtectionService } from './privacy-protection.js';
+import { enhancedSAOCR, type SAOCRResult, type SAOCROptions } from './enhanced-sa-ocr.js';
+import { saPermitValidator, type PermitValidationRequest, type PermitValidationResult } from './sa-permit-validator.js';
+import { aiAssistantService } from './ai-assistant.js';
 
 const UPLOAD_DIR = process.env.UPLOAD_DIR || "./uploads";
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB

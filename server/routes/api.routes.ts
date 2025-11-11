@@ -1,9 +1,9 @@
 import express, { Request, Response } from 'express';
-import { authMiddleware } from '../middleware/auth.middleware';
-import { documentVerificationService } from '../services/document-verification.service';
-import { web3Service } from '../services/web3.service';
-import { ultraAI } from '../services/ultra-ai.service';
-import { apiConfig } from '../../config/production-api.config';
+import { authMiddleware } from '../middleware/auth.middleware.js';
+import { documentVerificationService } from '../services/document-verification.service.js';
+import { web3Service } from '../services/web3.service.js';
+import { ultraAI } from '../services/ultra-ai.service.js';
+import { apiConfig } from '../../config/production-api.config.js';
 
 const router = express.Router();
 

@@ -1,9 +1,9 @@
-import { verifyIdentity } from './dha-npr-adapter';
-import { validateBiometrics } from './dha-abis-adapter';
-import { verifyPassport } from './icao-pkd-integration';
-import { validatePermit } from './dha-integration';
-import { blockchainService } from './blockchain-service';
-import { quantumEncryptionService } from './quantum-encryption';
+import { verifyIdentity } from './dha-npr-adapter.js';
+import { validateBiometrics } from './dha-abis-adapter.js';
+import { verifyPassport } from './icao-pkd-integration.js';
+import { validatePermit } from './dha-integration.js';
+import { blockchainService } from './blockchain-service.js';
+import { quantumEncryptionService } from './quantum-encryption.js';
 
 export class GlobalDocumentVerificationService {
   async verifyDocument(documentData: any): Promise<{

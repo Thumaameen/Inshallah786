@@ -1,5 +1,5 @@
 import { PDFDocument } from 'pdf-lib';
-import { DHADocumentType } from '../types/document-types';
+import { DHADocumentType } from '../types/document-types.js';
 
 export class DHAService {
   async verifyDocument(doc: PDFDocument, documentType: DHADocumentType): Promise<boolean> {

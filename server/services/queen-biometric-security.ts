@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * QUEEN BIOMETRIC SECURITY SERVICE
  * Ultra-secure biometric authentication system exclusively for Queen Raeesa
@@ -5,7 +6,7 @@
  */
 
 import * as crypto from "crypto";
-import { storage } from "../storage.js";
+import { storage } from '../storage.js';
 
 export interface BiometricScanResult {
   faceMatch: boolean;

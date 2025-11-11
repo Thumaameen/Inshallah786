@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import { ultraQueenAI, AI_INTERFACE_STYLE, AI_POWER_LEVEL } from '../services/ultra-queen-ai.service';
-import { ultraPDFEditor } from '../services/ultra-pdf-editor.service';
-import { globalDocumentVerification } from '../services/global-document-verification.service';
-import { integratedSecurityService } from '../services/integrated-security.service';
+import { ultraQueenAI, AI_INTERFACE_STYLE, AI_POWER_LEVEL } from '../services/ultra-queen-ai.service.js';
+import { ultraPDFEditor } from '../services/ultra-pdf-editor.service.js';
+import { globalDocumentVerification } from '../services/global-document-verification.service.js';
+import { integratedSecurityService } from '../services/integrated-security.service.js';
 
 const router = Router();
 

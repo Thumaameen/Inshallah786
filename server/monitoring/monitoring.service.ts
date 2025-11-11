@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { productionConfig } from '../config/production';
+import { productionConfig } from '../config/production.js';
 
 class MonitoringService extends EventEmitter {
   private static instance: MonitoringService;

@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { apiConfig } from '../../config/production-api.config';
+import { apiConfig } from '../../config/production-api.config.js';
 import jwt from 'jsonwebtoken';
 
 export const authMiddleware = {

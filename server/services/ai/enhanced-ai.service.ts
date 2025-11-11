@@ -1,8 +1,8 @@
 import { Claude } from 'anthropic';
 import rateLimit from 'express-rate-limit';
-import { ErrorLogger } from '../utils/error-logger';
-import { AIResponseCache } from '../utils/ai-response-cache';
-import { ServiceHealthCheck } from '../utils/service-health-check';
+import { ErrorLogger } from '../utils/error-logger.js';
+import { AIResponseCache } from '../utils/ai-response-cache.js';
+import { ServiceHealthCheck } from '../utils/service-health-check.js';
 
 export class EnhancedAIService {
     private claude: Claude;

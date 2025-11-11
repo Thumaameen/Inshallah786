@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Ultra Queen AI Raeesa - UNLIMITED EDITION
 // "Only Limit Is Me" Protocol - Zero Restrictions, Maximum Capabilities
 

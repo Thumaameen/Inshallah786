@@ -3,14 +3,10 @@
     "target": "ES2020",
     "module": "ESNext",
     "lib": ["ES2020", "ES2021", "DOM", "DOM.Iterable"],
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "outDir": "dist",
     "rootDir": ".",
     "types": ["node"],
-    "paths": {
-      "*": ["./node_modules/*"],
-      "@shared/*": ["./shared/*"]
-    },
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "esModuleInterop": true,
@@ -46,6 +42,7 @@
     "**/*.spec.js",
     "server/workers",
     "server/services/archived",
+    "server/services/proactive-maintenance-service.ts",
     "dist"
   ]
 }

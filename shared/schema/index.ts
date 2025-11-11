@@ -82,13 +82,9 @@ export const securityEvents = pgTable("security_events", {
   eventType: text("event_type").notNull(),
   severity: text("severity").notNull(),
   source: text("source").notNull(),
-  description: text("description"),
-  metadata: jsonb("metadata"),
-  ipAddress: text("ip_address"),
-  userId: varchar("user_id"),
-  createdAt: timestamp("created_at").notNull().default(sql`now()`),
-  resolvedAt: timestamp("resolved_at"),
-  isResolved: boolean("is_resolved").notNull().default(false)
+  timestamp: timestamp("timestamp").notNull().default(sql`now()`),
+  details: jsonb("details"),
+  metadata: jsonb("metadata")
 });
 
 export const auditLogs = pgTable("audit_logs", {
@@ -187,17 +183,45 @@ export type InsertApiAccess = typeof apiAccess.$inferInsert;
 export type VerificationHistory = typeof verificationHistory.$inferSelect;
 export type InsertVerificationHistory = typeof verificationHistory.$inferInsert;
 
-export type SecurityEvent = typeof securityEvents.$inferSelect;
-export type InsertSecurityEvent = typeof securityEvents.$inferInsert;
+export interface InsertSecurityEvent {
+  eventType: string;
+  severity: string;
+  source: string;
+  details?: any;
+  metadata?: any;
+  timestamp?: Date;
+}
 
-export type AuditLog = typeof auditLogs.$inferSelect;
-export type InsertAuditLog = typeof auditLogs.$inferInsert;
+export interface InsertAuditLog {
+  action: string;
+  actor: string;
+  result: string;
+  resource?: string | null;
+  resourceId?: string | null;
+  metadata?: any;
+  ipAddress?: string | null;
+  userAgent?: string | null;
+}
 
-export type SystemMetric = typeof systemMetrics.$inferSelect;
-export type InsertSystemMetric = typeof systemMetrics.$inferInsert;
+export interface InsertSystemMetric {
+  metricName: string;
+  metricValue: number;
+  metricType: string;
+  source: string;
+  metadata?: any;
+}
+
+export interface InsertSelfHealingAction {
+  actionType: string;
+  trigger: string;
+  status?: string;
+  result?: string | null;
+  metadata?: any;
+  completedAt?: Date | null;
+}
 
 export type SelfHealingAction = typeof selfHealingActions.$inferSelect;
-export type InsertSelfHealingAction = typeof selfHealingActions.$inferInsert;
+// InsertSelfHealingAction defined above as interface
 
 export type FraudAlert = typeof fraudAlerts.$inferSelect;
 export type InsertFraudAlert = typeof fraudAlerts.$inferInsert;

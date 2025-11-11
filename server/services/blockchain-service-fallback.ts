@@ -2,8 +2,8 @@
  * Blockchain Service Fallback
  * Provides offline functionality when blockchain services are unavailable
  */
-import { logger } from '../utils/logger';
-import { storage } from '../storage';
+import { logger } from '../utils/logger.js';
+import { storage } from '../storage.js';
 
 export class BlockchainServiceFallback {
   private static instance: BlockchainServiceFallback;

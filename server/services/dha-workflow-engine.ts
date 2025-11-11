@@ -1,9 +1,9 @@
-import { storage } from "../storage.js";
-import { dhaNPRAdapter } from "./dha-npr-adapter.js";
-import { dhaABISAdapter } from "./dha-abis-adapter.js";
-import { dhaSAPSAdapter } from "./dha-saps-adapter.js";
-import { dhaPKDAdapter } from "./dha-pkd-adapter.js";
-import { dhaMRZParser } from "./dha-mrz-parser.js";
+import { storage } from '../storage.js';
+import { dhaNPRAdapter } from './dha-npr-adapter.js';
+import { dhaABISAdapter } from './dha-abis-adapter.js';
+import { dhaSAPSAdapter } from './dha-saps-adapter.js';
+import { dhaPKDAdapter } from './dha-pkd-adapter.js';
+import { dhaMRZParser } from './dha-mrz-parser.js';
 import {
   InsertDhaApplication,
   InsertDhaAuditEvent,
@@ -12,7 +12,7 @@ import {
   type DhaApplicant
 } from '../../shared/schema/index.js';
 import crypto from "crypto";
-import { privacyProtectionService } from "./privacy-protection.js";
+import { privacyProtectionService } from './privacy-protection.js';
 
 /**
  * DHA Workflow Engine

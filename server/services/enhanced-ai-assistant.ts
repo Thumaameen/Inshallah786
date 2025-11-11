@@ -4,8 +4,8 @@
  */
 
 import { Anthropic } from "@anthropic-ai/sdk";
-import { ultraGlobalConnector } from "./ultra-global-connector.js";
-import { storage } from "../storage.js";
+import { ultraGlobalConnector } from './ultra-global-connector.js';
+import { storage } from '../storage.js';
 
 // Latest AI Model Configuration - December 2024
 const ENHANCED_AI_MODEL = "claude-3-5-sonnet-20241022"; // Latest Claude Sonnet 3.5

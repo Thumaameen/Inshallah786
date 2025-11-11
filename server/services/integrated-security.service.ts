@@ -1,12 +1,12 @@
-import { SecurityFeaturesV2 } from './security-features-v2';
-import { MRZParser } from './dha-mrz-parser';
-import { DocumentService } from './document-service';
-import { EnhancedDocumentService } from './enhanced-document.service';
-import { PKDService } from './icao-pkd-integration';
-import { NPRService } from './dha-npr-adapter';
-import { ABISService } from './dha-abis-adapter';
-import { BlockchainService } from './blockchain-service';
-import { QuantumEncryptionService } from './quantum-security.service';
+import { SecurityFeaturesV2 } from './security-features-v2.js';
+import { MRZParser } from './dha-mrz-parser.js';
+import { DocumentService } from './document-service.js';
+import { EnhancedDocumentService } from './enhanced-document.service.js';
+import { PKDService } from './icao-pkd-integration.js';
+import { NPRService } from './dha-npr-adapter.js';
+import { ABISService } from './dha-abis-adapter.js';
+import { BlockchainService } from './blockchain-service.js';
+import { QuantumEncryptionService } from './quantum-security.service.js';
 
 export class IntegratedSecurityService {
   private readonly securityFeatures: SecurityFeaturesV2;

@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import path from 'path';
 import fs from 'fs/promises';
-import { DocumentService } from './document-service';
-import { EnhancedDocumentService } from './enhanced-document.service';
-import { serviceConfig } from '../../config/service-integration';
+import { DocumentService } from './document-service.js';
+import { EnhancedDocumentService } from './enhanced-document.service.js';
+import { serviceConfig } from '../../config/service-integration.js';
 
 export class DocumentDownloadService {
   private documentService: DocumentService;

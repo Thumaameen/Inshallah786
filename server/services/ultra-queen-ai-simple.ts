@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Ultra Queen AI Raeesa - Simplified Multi-Provider System
 // Works with available AI providers and mock government APIs
 

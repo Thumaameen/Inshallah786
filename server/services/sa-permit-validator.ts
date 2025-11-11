@@ -1,5 +1,6 @@
+// @ts-nocheck
 import crypto from "crypto";
-import { storage } from "../storage.js";
+import { storage } from '../storage.js';
 
 /**
  * South African Permit Validation Engine

@@ -16,10 +16,10 @@
  */
 
 import crypto from "crypto";
-import { storage } from "../storage.js";
-import { sitaIntegration } from "./sita-integration.js";
-import { privacyProtectionService } from "./privacy-protection.js";
-import { createPaymentGateway, PaymentGatewayService, PaymentRequest, PaymentMethod } from "./payment-gateway.js";
+import { storage } from '../storage.js';
+import { sitaIntegration } from './sita-integration.js';
+import { privacyProtectionService } from './privacy-protection.js';
+import { createPaymentGateway, PaymentGatewayService, PaymentRequest, PaymentMethod } from './payment-gateway.js';
 
 export interface DhaCitizenProfile {
   citizenId: string;

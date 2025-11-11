@@ -19,7 +19,7 @@
  */
 
 import crypto from "crypto";
-import { storage } from "../storage.js";
+import { storage } from '../storage.js';
 
 export interface PaymentProvider {
   id: string;
@@ -613,6 +613,7 @@ export class PaymentGatewayService {
     await storage.createSecurityEvent({
       eventType: 'payment_processed',
       severity: result.status === 'completed' ? 'low' : 'medium',
+      source: 'payment-gateway',
       details: {
         paymentId: request.paymentId,
         providerId: result.providerId,

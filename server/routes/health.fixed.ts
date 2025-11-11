@@ -4,7 +4,7 @@
  */
 
 import { Router, Request, Response } from 'express';
-import { environmentConfig } from '../config/env';
+import { environmentConfig } from '../config/env.js';
 import { productionHealthCheck } from '../services/production-health-check.js';
 import { authenticate } from '../middleware/auth.js';
 import { integrationManager } from '../services/integration-manager.js';

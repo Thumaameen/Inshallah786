@@ -1,5 +1,5 @@
 
-import { icaoService } from './government/icao.service';
+import { icaoService } from './government/icao.service.js';
 
 export class InternationalVerificationService {
   async verifyDocumentInternationally(documentData: {

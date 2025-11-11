@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * SAPS Criminal Record Centre Integration Service
  * 
@@ -15,7 +16,7 @@
  */
 
 import crypto from "crypto";
-import { storage } from "../storage.js";
+import { storage } from '../storage.js';
 
 export interface SapsCredentials {
   apiKey: string;

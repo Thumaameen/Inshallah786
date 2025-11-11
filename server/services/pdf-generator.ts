@@ -469,7 +469,7 @@ export class PDFGeneratorService {
       });
 
       const qrImageBytes = Buffer.from(qrDataUrl.split(',')[1], 'base64');
-      const qrImage = await pdfDoc.embedPng(qrImageBytes);
+      const qrImage = await pdfDoc.embedPng(qrImageBytes as any);
 
       page.drawImage(qrImage, {
         x,

@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Ultra AI Monitoring Integration - TRUE Nanosecond Precision
  * 

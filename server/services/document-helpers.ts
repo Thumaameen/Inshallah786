@@ -1,5 +1,5 @@
 import { PDFDocument, PDFPage } from 'pdf-lib';
-import { ErrorCode, VerificationError } from '../types/errors';
+import { ErrorCode, VerificationError } from '../types/errors.js';
 import * as forge from 'node-forge';
 import crypto from 'crypto';
 

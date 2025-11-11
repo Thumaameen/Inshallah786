@@ -1,6 +1,6 @@
 import { Configuration } from 'openai';
 import { Anthropic } from '@anthropic-ai/sdk';
-import { serviceConfig } from '../../config/service-integration';
+import { serviceConfig } from '../../config/service-integration.js';
 
 export const AI_AGENTS = {
   AGENT: 'ultra-queen-agent',
