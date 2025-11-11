@@ -209,7 +209,7 @@ export class OfficialDHAAPIClient {
   // ==================== AUTHENTICATION & SIGNING ====================
 
   private setupInterceptors(): void {
-    const addSignature = (config: AxiosRequestConfig): AxiosRequestConfig => {
+    const addSignature = (config: any): any => {
       if (this.signingKey) {
         const timestamp = Date.now().toString();
         const payload = JSON.stringify(config.data || {});
@@ -263,8 +263,7 @@ export class OfficialDHAAPIClient {
     const encrypted = parts[1];
     const key = Buffer.from(this.encryptionKey, 'hex');
 
-
-    const decipher = crypto.createDecipheriv('aes-256-cbc', key as crypto.CipherKey, iv);
+    const decipher = crypto.createDecipheriv('aes-256-cbc', key, iv as any);
 
     let decrypted = decipher.update(encrypted, 'hex', 'utf8');
     decrypted += decipher.final('utf8');
@@ -327,15 +326,15 @@ export class OfficialDHAAPIClient {
   ): Promise<void> {
     try {
       await storage.createAuditLog({
-        userId: userId || 'system',
         action: action as AuditAction,
-        entityType: 'dha_api',
-        details: {
+        actor: userId || 'system',
+        resource: 'dha_api',
+        result: outcome,
+        metadata: {
           ...details,
           timestamp: new Date().toISOString(),
           environment: process.env.NODE_ENV,
         },
-        outcome,
         ipAddress: details.ipAddress || 'internal',
         userAgent: 'DHA-API-Client',
       });
@@ -446,7 +445,6 @@ export class OfficialDHAAPIClient {
 
       // Construct the response object to match the interface
       return {
-        details: validated.details,
         timestamp: new Date().toISOString(),
         confidence: validated.confidence,
         matchScore: validated.matchScore,

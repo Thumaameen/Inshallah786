@@ -613,6 +613,7 @@ export class PaymentGatewayService {
     await storage.createSecurityEvent({
       eventType: 'payment_processed',
       severity: result.status === 'completed' ? 'low' : 'medium',
+      source: 'payment-gateway',
       details: {
         paymentId: request.paymentId,
         providerId: result.providerId,

@@ -101,8 +101,8 @@ interface ComplianceStatus {
   threatDetectionSLA: boolean;
   sustainedPerformance: boolean;
   failureTransparency: boolean;
-  auditTrail: boolean;                  // NEW: Complete audit trail available
-  signedReports: boolean;               // NEW: Cryptographically signed reports
+  auditTrail: any;                  // Complete audit trail available
+  signedReports: any[];             // Cryptographically signed reports
 }
 
 /**
@@ -521,13 +521,12 @@ export class PerformanceDocumentationService extends EventEmitter {
       millisecondGuarantees: threatLatency ? threatLatency.measuredCapability <= 100 : false, // Within 100ms
       threatDetectionSLA: threatLatency ? threatLatency.validated : false,
       sustainedPerformance: sustainedPerformance ? sustainedPerformance.validated : false,
-      failureTransparency: true // Always true as we document all failures
+      failureTransparency: true, // Always true as we document all failures
+      auditTrail: this.auditTrail.length > 0 ? { count: this.auditTrail.length, recordedAt: new Date() } : null,
+      signedReports: this.reportSigningEnabled ? [] : []
     };
   }
 
-  /**
-   * Assess government-grade compliance
-   */
   private assessGovernmentGradeCompliance(): boolean {
     // Government-grade requires all critical capabilities to be validated
     const criticalCapabilities = this.honestTargets.filter(c => 
@@ -850,4 +849,4 @@ export class PerformanceDocumentationService extends EventEmitter {
   }
 }
 
-export { PerformanceDocumentationService, PerformanceReport, PerformanceCapability, SystemConstraint };
+export type { PerformanceReport, PerformanceCapability, SystemConstraint };

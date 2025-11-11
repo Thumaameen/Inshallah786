@@ -626,15 +626,16 @@ export class ProductionReadinessService {
     await storage.createSecurityEvent({
       eventType: entry.operation,
       severity: entry.operationResult === 'failure' ? 'high' : 'low',
+      source: 'production-readiness',
       details: {
         auditLogId: entry.logId,
         service: entry.service,
         confidentialityLevel: entry.confidentialityLevel,
-        complianceFlags: entry.complianceFlags
-      },
-      userId: entry.userId,
-      ipAddress: entry.ipAddress,
-      userAgent: entry.userAgent
+        complianceFlags: entry.complianceFlags,
+        userId: entry.userId,
+        ipAddress: entry.ipAddress,
+        userAgent: entry.userAgent
+      }
     });
   }
 
