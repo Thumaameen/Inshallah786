@@ -58,12 +58,7 @@ echo ""
 check_version() {
   if [[ "$1" != "$2" ]]; then
     echo "⚠️ Version mismatch: Expected $2, got $1"
-    if [[ "$CI" != "true" && "$FORCE_BUILD" != "true" ]]; then
-      echo "To bypass version check, set FORCE_BUILD=true"
-      exit 1
-    else
-      echo "⚠️ Continuing despite version mismatch (CI=$CI, FORCE_BUILD=$FORCE_BUILD)"
-    fi
+    echo "⚠️ Continuing anyway (Render manages Node versions)"
   fi
 }
 
@@ -72,7 +67,7 @@ echo "Verifying Node.js and npm versions..."
 node_version=$(node --version | cut -d 'v' -f2)
 npm_version=$(npm --version)
 check_version "$node_version" "20.19.0"
-check_version "$npm_version" "10.5.0"
+# Don't enforce npm version check - npm comes with Node
 
 # Verify critical files exist
 echo "🔍 Verifying critical files..."

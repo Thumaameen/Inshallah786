@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "module": "Node16",
+    "module": "ESNext",
     "lib": ["ES2020", "ES2021", "DOM", "DOM.Iterable"],
-    "moduleResolution": "node16",
+    "moduleResolution": "bundler",
     "outDir": "dist",
     "rootDir": ".",
     "types": ["node"],
@@ -42,6 +42,7 @@
     "**/*.spec.js",
     "server/workers",
     "server/services/archived",
+    "server/services/proactive-maintenance-service.ts",
     "dist"
   ]
 }

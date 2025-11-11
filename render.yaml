@@ -6,12 +6,7 @@ services:
     env: node
     plan: starter
     region: frankfurt
-    buildCommand: |
-      export NODE_ENV=production
-      export SKIP_HEALTH_CHECK=true
-      chmod +x scripts/check-node-version.sh
-      ./scripts/check-node-version.sh
-      bash render-build-production.sh
+    buildCommand: bash render-build-final.sh
     startCommand: node dist/server/index-minimal.js
     healthCheckPath: /api/health
     buildFilter:
@@ -30,12 +25,10 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
-      - key: NODE_VERSION
-        value: 20.19.0
-      - key: NPM_VERSION
-        value: 10.5.0
       - key: NODE_OPTIONS
         value: --max-old-space-size=4096
+      - key: NPM_CONFIG_LEGACY_PEER_DEPS
+        value: "true"
       - key: PORT
         value: 10000
       - key: SESSION_SECRET

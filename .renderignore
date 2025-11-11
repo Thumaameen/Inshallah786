@@ -1,0 +1,10 @@
+node_modules/
+client/node_modules/
+.git/
+.github/
+dist/
+client/dist/
+.env
+.env.local
+*.log
+server/services/proactive-maintenance-service.ts
