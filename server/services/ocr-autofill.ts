@@ -550,9 +550,9 @@ export class OCRAutoFillService {
 
       // Log successful auto-fill for analytics
       await storage.createSecurityEvent({
-        userId: '', // Will be set by the calling function
         eventType: 'ocr_auto_fill_completed',
         severity: 'low',
+        source: 'ocr_autofill',
         details: {
           sessionId,
           mappedFields: autoFillResult.appliedMappings.length,

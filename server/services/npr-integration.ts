@@ -179,6 +179,7 @@ export class NprIntegrationService {
       await storage.createSecurityEvent({
         eventType: "npr_integration_initialized",
         severity: "low",
+        source: "npr_integration",
         details: {
           environment: this.credentials.environment,
           apiVersion: "2025.1.0"
@@ -228,6 +229,7 @@ export class NprIntegrationService {
         await storage.createSecurityEvent({
           eventType: "id_number_validated",
           severity: "low",
+          source: "npr_integration",
           details: {
             idNumber: idNumber.substring(0, 6) + 'XXXXXX', // Mask for privacy
             isValid: result.isValid,
@@ -272,6 +274,7 @@ export class NprIntegrationService {
         await storage.createSecurityEvent({
           eventType: "citizen_record_accessed",
           severity: "low",
+          source: "npr_integration",
           details: {
             idNumber: idNumber.substring(0, 6) + 'XXXXXX',
             verificationLevel,
@@ -371,6 +374,7 @@ export class NprIntegrationService {
       await storage.createSecurityEvent({
         eventType: "biographic_verification",
         severity: result.verificationLevel === 'failed' ? "medium" : "low",
+        source: "npr_integration",
         details: {
           idNumber: idNumber.substring(0, 6) + 'XXXXXX',
           overallMatch: result.overallMatch,
