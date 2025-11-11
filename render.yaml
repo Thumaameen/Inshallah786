@@ -11,7 +11,7 @@ services:
       export SKIP_HEALTH_CHECK=true
       chmod +x scripts/check-node-version.sh
       ./scripts/check-node-version.sh
-      bash render-build.sh
+      bash render-build-production.sh
     startCommand: node dist/server/index-minimal.js
     healthCheckPath: /api/health
     buildFilter:
